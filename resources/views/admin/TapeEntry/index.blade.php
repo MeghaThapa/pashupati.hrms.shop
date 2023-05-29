@@ -275,6 +275,7 @@
             $(document).on('change click','#togodam',function(){
                 getgodam();
                 $('#plantname').empty();
+                $('#planttype').empty();
                 $('#shift').empty();
                 $('#tape_dana_tbody').empty();
                 $('#dana').empty();
