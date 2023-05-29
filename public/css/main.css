@@ -1,0 +1,226 @@
+/*==========================================================
+    Product Name: Productify::Production Management System
+    Created By: Codeshaper
+    Envato Profile: https://themeforest.net/user/codeshaperbd
+    Website: http://codeshaper.net
+    Description: Productify is a production management system build to simplify production or manufacturing process. Productify is lightweight, secure and fast and based on laravel.
+    Version: v1.0
+    Support: https://codeshaper.net/contact-us
+============================================================*/
+
+body{
+    font-family: 'Sen', sans-serif;
+	font-size: .95em;
+    line-height: 1.2;
+}
+.mt-12{
+    margin-top: 12px;
+}
+.mt-40{
+    margin-top: 40px !important;
+}
+.mt-25{
+    margin-top: 25px;
+}
+.ml-30{
+    margin-left: 30px;
+}
+.dynamic-btn{
+    margin-top: 55px !important;
+    position: relative;
+    top: -15px;
+}
+.dashboard-alert a{
+    text-decoration: none;
+    color: #fff;;
+}
+.todo-list > li {
+    padding: 0px 15px;
+}
+.todo-btn a{
+    position: relative;
+    top: -10px;
+    padding: 3px 5px;
+}
+.todo-label{
+    position: relative;
+    top: 17px;
+    font-weight: normal !important;
+}
+.no-display{
+    display: none !important;
+}
+.navbar-profile{
+    width: 30px;
+    height: 30px;
+}
+.main-sidebar .brand-link img{
+    height: 30px;
+    margin-left: 10px;
+}
+.main-sidebar {
+    position: fixed;
+}
+:not(.layout-fixed) .main-sidebar {
+    height: inherit;
+    min-height: 100%;
+    position: fixed;
+    top: 0;
+}
+
+.custom-sidebar:hover{
+    height: calc(100vh - (3.5rem + 1px));
+    overflow-y: scroll;
+}
+/* Scrollbar Styling */
+.custom-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-sidebar::-webkit-scrollbar-track {
+    background-color: #343a40;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.custom-sidebar::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    background: #6d6d6d;
+}
+
+.sidebar-form, .nav-sidebar > .nav-header {
+    padding: 5px 5px !important;
+}
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active, .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #4a5056;
+    color: #ffffff;
+}
+.required-field{
+    color: red;
+}
+.action-dropdown-toggle::after {
+    display: none;
+}
+.date-invalid-feedback{
+    display: block;
+    margin-top: -40px;
+    font-size: 11px;
+}
+.card{
+    padding: 0;
+}
+.view-table table{
+    background: #e9ecef;
+    margin-bottom: 0;
+    height: 100%;
+}
+.table-image-preview{
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    padding: 0;
+    margin-top: -5px;
+}
+.no-preview{
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background: #ddd;
+    display: block;
+    padding: 0;
+    margin-top: -5px;
+}
+.show-no-preview{
+    width: 90%;
+    height: 250px;
+    background: #ddd;
+    padding: 50px;
+    margin: 30px 10px;
+}
+.stats a{
+    text-decoration: none;
+}
+.set-up-page a{
+    text-decoration: none;
+}
+.invoice img{
+    width: 150px;
+}
+.alert a{
+    color: #fff;
+    text-decoration: none;
+    margin-top: -10px;
+}
+.info-box-content a{
+    color: #fff;
+    text-decoration: none;
+    margin-top: -10px;
+}
+.profile-user-im{
+    width: 150px;
+    height: 150px;
+}
+.image-preview img{
+    max-width: 200px;
+}
+.samll-logo-preview img{
+    max-width: 100px;
+}
+.favicon-image img{
+    max-width: 50px;
+}
+.logo-image img{
+    max-width: 200px;
+}
+.select2-container {
+    width: 100% !important;
+}
+.sidebar-collapse  .brand-link > .lg-logo,
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .sm-logo,
+.brand-link > .sm-logo,
+.sidebar-collapse .nav-item > .nav-link > span{
+    display:none;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .lg-logo,
+.sidebar-collapse  .brand-link > .sm-logo{
+    display: block;
+}
+@media only screen and (min-width: 320px) and (max-width: 479px){
+    .dashboard-alert a {
+        text-align: left !important;
+        margin-top: 15px;
+    }
+    .xs-text-left{
+        text-align: left !important;
+    }
+    .todo-btn a {
+        margin-top: 35px;
+        margin-left: 25px;
+    }
+    .breadcrumb .breadcrumb-item a{
+        font-size: 15px;
+    }
+    .dynamic-btn{
+        margin: 0px 15px;
+    }
+}
+@media only screen and (min-width: 480px) and (max-width: 767px){
+
+
+}
+@media only screen and (min-width: 768px) and (max-width: 991px){
+
+}
+@media only screen and (min-width: 992px){
+
+}
+
+.min-height-150{
+    min-height: 150px;
+}
+
+.search-close i {
+    color: #d32525;
+}
+

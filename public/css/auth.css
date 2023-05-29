@@ -1,0 +1,91 @@
+/*==========================================================
+    Product Name: Productify::Production Management System
+    Created By: Codeshaper
+    Envato Profile: https://themeforest.net/user/codeshaperbd
+    Website: http://codeshaper.net
+    Description: Productify is a production management system build to simplify production or manufacturing process. Productify is lightweight, secure and fast and based on laravel.
+    Version: v1.0
+    Support: https://codeshaper.net/contact-us
+============================================================*/
+body{
+    font-family: 'Sen', sans-serif;
+	font-size: 1em;
+    line-height: 1.2;
+    background: #fff;
+}
+.wrapper{
+    width: 100%;
+}
+.login{
+    min-height: 100vh;
+}
+.bg-image {
+    background-position: center center;
+    background: linear-gradient(60deg, rgba(158, 189, 19, 0.12),
+             rgba(0, 133, 82, 0.61)), url(../img/login-banner.png) center no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: flex-end;
+    align-content: center;
+    flex-direction: row;
+}
+.login .logo{
+    height: 70px;
+    margin-bottom: 20px;
+}
+.login .login-button{
+    font-size: 1.3rem;
+    font-weight: bold;
+    letter-spacing: .5px;
+    background: #0A6775;
+    border-radius: 30px;
+    color: #fff;
+    box-shadow: 3px 12px 20px #8e908fd4;
+}
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 400;
+}
+.login-form .invalid-feedback {
+    margin-left: 15px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.text-bold{
+    font-weight: bold;
+}
+
+
+/* 404 PAGE CSS */
+.page_404{
+    background: #fff;
+    padding: 80px 0;
+}
+.page_404 img{
+    width:100%;
+}
+.four_zero_four_bg{
+    background-image: url('../img/error.gif');
+    height: 400px;
+    background-position: center;
+}
+.four_zero_four_bg h1{
+    font-size: 5rem;
+    font-weight: bold;
+}
+.contant_box_404 h3{
+	font-size: 2.5rem;
+    font-weight: bold;
+}
+.contant_box_404 a{
+	color: #fff!important;
+    padding: 10px 20px;
+    background: #39ac31;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 4px;
+}
+.contant_box_404{
+    margin-top: -30px;
+}
