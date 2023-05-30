@@ -19,6 +19,7 @@ use App\Http\Controllers\RawMaterialStockController;
 use App\Http\Controllers\AutoloadController;
 use App\Http\Controllers\TapeEntryController;
 use App\Http\Controllers\AutoloadItemsController;
+use App\Http\Controllers\AutoLoadStockController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,8 +46,8 @@ Route::get('artisandone',function(){
     // \Artisan::call("make:model AutoloadItems");
     // \Artisan::call('make:migration create_autoload_items_stock_table');
     // \Artisan::call('make:migration add_department_id_to_processing_steps_table --table=processing_steps');
-    
-    
+
+
     // \Artisan::call("m:migrationcreate_processing_categories_and_subcategories_table");
     // if($artisan){
     //     return "done";
@@ -98,7 +99,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('shift/update/{id}', 'ShiftController@update')->name('shift.update');
     Route::get('/shift/getShiftData/{id}', 'ShiftController@getShiftData')->name('shift.getShiftData');
     Route::delete('/shift/delete/{id}', 'ShiftController@delete')->name('shift.delete');
-    
+
     //prpocessing categories
     Route::get('processing/categories',[ProcessingCategoryAndSubsController::class,"categoryindex"])->name('processing.categories'); //index for p-cat
     Route::get('processing/categories/create',[ProcessingCategoryAndSubsController::class,"categorycreate"])->name('processing.categories.create');
@@ -120,7 +121,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //Department Route
 
     Route::post('storeDepartmentFromModel', 'DepartmentController@storeDepartmentFromModel')->name('department.storeDepartmentFromModel');
-
     Route::resource('department', 'DepartmentController', [
         'names' => [
             'index' => 'department.index',
@@ -176,8 +176,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('storeinsetup/{slug}/staus', 'SetupstoreinController@changeStatus')->name('storeinsetup.status');
     Route::get('storeinsetup/{slug}/delete', 'SetupstoreinController@destroy')->name('storeinsetup.delete');
 
+    //autoloadStock
+    Route::get('autoloadStock/index', 'AutoLoadStockController@index')->name('autoloadStock.index');
+    Route::post('autoloadStock/filterAccGodam', 'AutoLoadStockController@filterAccGodam')->name('autoloadStock.filterAccGodam');
+
     //RawMaterial
-   Route::get('rawMaterial/index', 'RawMaterialController@index')->name('rawMaterial.index');
+    Route::get('rawMaterial/index', 'RawMaterialController@index')->name('rawMaterial.index');
     Route::get('rawMaterial/create', 'RawMaterialController@create')->name('rawMaterial.create');
     Route::post('rawMaterial/store', 'RawMaterialController@store')->name('rawMaterial.store');
     Route::get('rawMaterial/edit/{rawMaterial_id}', 'RawMaterialController@edit')->name('rawMaterial.edit');
@@ -204,7 +208,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //Dana Name
     Route::post('danaName/store', 'DanaNameController@store')->name('danaName.store');
 
-   
+
     // Setup Storeout routes
     Route::resource('storeoutsetup', 'SetupstoreoutController', [
         'names' => [
@@ -232,7 +236,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('processing-steps/{slug}/staus', 'ProcessingStepController@changeStatus')->name('processing-steps.status');
     Route::get('processing-steps/{slug}/delete', 'ProcessingStepController@destroy')->name('processing-steps.delete');
-    
+
      //Autoloader
   Route::get('autoload/index',[AutoloadController::class,'index'])->name('autoload.index');
     Route::get('autoload/create',[AutoloadController::class,'create'])->name('autoload.create');
@@ -242,19 +246,26 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('autoload/getPlantTypePlantName/{plantType_id}',[AutoloadController::class,'getPlantTypePlantName'])->name('autoload.getPlantTypePlantName');
     Route::get('autoload/getDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getDanaGroupDanaName'])->name('autoload.getDanaGroupDanaName');
     Route::get('autoload/getPlantTypeAccGodam/{department_id}',[AutoloadController::class,'getPlantTypeAccGodam'])->name('autoload.getPlantTypeAccGodam');
-    
+
+    Route::get('autoload/getEditDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getEditDanaGroupAccToGodam'])->name('autoLoad.getEditDanaGroupAccToGodam');
+    Route::get('autoload/getEditDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getEditDanaGroupDanaName'])->name('autoLoad.getEditDanaGroupDanaName');
+
+
      //AutoloadItem
    Route::post('autoloadItem/store',[AutoloadItemsController::class,'store'])->name('autoloadItem.store');
     Route::get('autoloadItem/getAutoloadItemsData/{autoload_id}',[AutoloadItemsController::class,'getAutoloadItemsData'])->name('autoloadItem.getAutoloadItemsData');
     Route::get('autoloadItem/getEditAutoloadItemData/{autoloadItem_id}',[AutoloadItemsController::class,'getEditAutoloadItemData'])->name('autoLoadItem.getEditAutoloadItemData');
     Route::post('autoloadItem/update',[AutoloadItemsController::class,'update'])->name('autoloadItem.update');
+    Route::delete('autoloadItem/delete/{autoloadItem_id}',[AutoloadItemsController::class,'delete'])->name('autoLoadItem.delete');
+
+
 
     Route::get('autoloadItem/getDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getDanaGroupAccToGodam'])->name('autoload.getDanaGroupAccToGodam');
 
 
 
     //Processing sub-category route
-   
+
     Route::resource('processing-subcat', 'ProcessingSubcatController', [
         'names' => [
             'index' => 'processing-subcat.index',

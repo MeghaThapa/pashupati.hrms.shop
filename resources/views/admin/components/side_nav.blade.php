@@ -170,6 +170,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('autoloadStock.index') }}"
+                        class="nav-link {{ request()->is('autoloadStock/index*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-spinner"></i>
+
+                        <p>{{ __('Auto Loader Stock') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('rawMaterial.index') }}"
                         class="nav-link {{ request()->is('rawMaterial/index*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-shopping-basket"></i>
