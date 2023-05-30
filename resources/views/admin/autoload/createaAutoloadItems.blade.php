@@ -433,6 +433,7 @@
                         setSuccessMessage(response.message);
                         clearInputFields();
                         setIntoTable(response.autoloadItems);
+                        deleteEventBtn();
 
                         //calculateTotalQuantity();
                     },
@@ -507,7 +508,9 @@
                         response.autoloadItems.forEach(function(autoloadItem) {
                            // console.log(autoloadItem);
                             setIntoTable(autoloadItem);
+
                         });
+                        deleteEventBtn();
                        // calculateTotalQuantity();
                     },
                     error: function(xhr, status, error) {
@@ -538,8 +541,8 @@
                                 "</td><td class='rowDanaName'>" + res.dana_name.name +
                                 "</td><td class='rowQuantity'>" + res.quantity +
                                 "</td><td>" +
-                                "<button class='btn btn-success editAutoladItemBtn' data-id=" +
-                                res.id + "><i class='fas fa-edit'></i></button>" +
+                                // "<button class='btn btn-success editAutoladItemBtn' data-id=" +
+                                // res.id + "><i class='fas fa-edit'></i></button>" +
                                 "  " +
                                 "<button class='btn btn-danger dltAutoloadItemBtn' data-id=" +
                                 res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
@@ -550,6 +553,29 @@
                             clearInputFields();
                             editEventBtn();
                             //deleteEventBtn()
+             }
+             function deleteEventBtn(){
+                let deleteButtons = document.getElementsByClassName('dltAutoloadItemBtn');
+                 for (var i = 0; i < deleteButtons.length; i++) {
+                    deleteButtons[i].addEventListener('click', function(event) {
+                        let autoloadItem_id = this.getAttribute('data-id');
+
+                        $.ajax({
+                            url: '{{ route('autoLoadItem.delete', ['autoloadItem_id' => ':lol']) }}'
+                                .replace(':lol', autoloadItem_id),
+                              method: 'DELETE',
+                                data:{
+                                    _token: "{{ csrf_token() }}"
+                                },
+                              success: async function(response) {
+                                // Refesh table
+                                // console.log(response);
+                                getAutoloadItemsData();
+                              }
+                        });
+
+                    })
+                }
              }
               function editEventBtn() {
                 // Assign event listener to buttons with class 'editItemBtn'
@@ -563,8 +589,6 @@
                                 .replace(':lol', autoloadItem_id),
                             method: 'GET',
                               success: async function(response) {
-
-
                                 $('#fromGodamIdModel').val(response.autoLoadItem.from_godam_id).trigger('change');
                                 $('#plantTypeIdModel').val(response.autoLoadItem.plant_type_id).trigger('change');
                                 $('#shiftIdModel').val(response.autoLoadItem.shift_id).trigger('change');
@@ -574,10 +598,10 @@
                                 await getPlantName(response.autoLoadItem.plant_type_id,'model');
                                 $('#plantNameIdModel').val(response.autoLoadItem.plant_name_id).trigger('change');
 
-                               await getDanaGroupName(response.autoLoadItem.from_godam_id,'model');
+                               await getEditDanaGroupName(response.autoLoadItem.from_godam_id,'model');
                                $('#danaGroupIdModel').val(response.autoLoadItem.dana_group_id).trigger('change');
 
-                               await getDanaName(response.autoLoadItem.from_godam_id,response.autoLoadItem.dana_group_id,'model');
+                               await getEditDanaName(response.autoLoadItem.from_godam_id,response.autoLoadItem.dana_group_id,'model');
                                 $('#danaNameModel').val(response.autoLoadItem.dana_name_id).trigger('change');
 
                                 $('#editAutoloadItemModel').modal('show');
@@ -707,6 +731,46 @@
                       });
                  })
             }
+            // For Edit
+            function getEditDanaGroupName($godam_id,selectFrom){
+                    let godam_id =$godam_id;
+                     return new Promise(function(resolve, reject) {
+                      $.ajax({
+                        url: "{{ route('autoLoad.getEditDanaGroupAccToGodam', ['department_id' => ':Replaced']) }}"
+                            .replace(
+                                ':Replaced',
+                                godam_id),
+                        method: 'GET',
+                         success: function(response) {
+                          // console.log(response);
+                            let selectOptions = '';
+                            if (response.length == 0) {
+                                selectOptions +=
+                                    "<option disabled selected value=''>" +
+                                    'no groups found' + '</option>';
+                            } else {
+                                selectOptions +=
+                                    "<option disabled selected value=''>" +
+                                    'select a group' + '</option>';
+                                for (var i = 0; i < response.length; i++) {
+                                    selectOptions += '<option value="' +
+                                        response[i].dana_group.id +
+                                        '">' +
+                                        response[i].dana_group.name + '</option>';
+                                }
+                            }
+                            if (selectFrom == 'blade') {
+                                $('#danaGroupId').html(selectOptions);
+                                resolve(response);
+                            } else {
+                                $('#danaGroupIdModel').html(selectOptions);
+                                resolve(response);
+                            }
+
+                        }
+                      });
+                 })
+            }
             function getPlantName($plantType_id,selectFrom){
                 let plantType_id=$plantType_id;
                  return new Promise(function(resolve, reject) {
@@ -745,8 +809,6 @@
             $('#danaGroupId').on('select2:select', function(e) {
                 let danaGroup_id = e.params.data.id;
                 let fromGodam_id= document.getElementById('fromGodamId').value;
-                // console.log('from id:',fromGodam_id);
-                // console.log('dana group id:',danaGroup_id);
                 getDanaName(danaGroup_id,fromGodam_id,'blade');
 
             });
@@ -762,6 +824,48 @@
 
                     $.ajax({
                         url: "{{ route('autoload.getDanaGroupDanaName', ['danaGroup_id' => ':Replaced','fromGodam_id' =>':fromGodam_id']) }}"
+                            .replace(':Replaced', danaGroup_id)
+                            .replace(':fromGodam_id', fromGodam_id),
+                        method: 'GET',
+                        success: function(response) {
+                             console.log('dana-name:',response);
+                            let selectOptions = '';
+                            if (response.length == 0) {
+                                selectOptions +=
+                                "<option disabled selected value =''>" +
+                                    'no items found' + '</option>';
+                            } else {
+                                selectOptions +=
+                                "<option disabled selected value =''>" +
+                                    'select an item' + '</option>';
+                                for (var i = 0; i < response.length; i++) {
+                                    selectOptions += '<option value="' +
+                                        response[i].dana_name.id +
+                                        '">' +
+                                        response[i].dana_name.name + '</option>';
+                                }
+                            }
+                            if (selectFrom == 'blade') {
+                                $('#danaName').html(selectOptions);
+                                resolve(response);
+                            } else {
+                                $('#danaNameModel').html(selectOptions);
+                                resolve(response);
+                            }
+
+                        },
+                        error: function(xhr, status, error) {
+                            reject(error);
+                        }
+                    });
+                });
+            }
+            //For  Edit
+            function getEditDanaName(danaGroup_id,fromGodam_id, selectFrom) {
+                return new Promise(function(resolve, reject) {
+
+                    $.ajax({
+                        url: "{{ route('autoLoad.getEditDanaGroupDanaName', ['danaGroup_id' => ':Replaced','fromGodam_id' =>':fromGodam_id']) }}"
                             .replace(':Replaced', danaGroup_id)
                             .replace(':fromGodam_id', fromGodam_id),
                         method: 'GET',

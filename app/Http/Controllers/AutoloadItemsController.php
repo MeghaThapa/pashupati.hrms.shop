@@ -6,7 +6,8 @@ use App\Models\AutoloadItems;
 use App\Models\AutoLoadItemStock;
 use Illuminate\Http\Request;
 use App\Models\RawMaterialStock;
-
+use Exception;
+use DB;
 class AutoloadItemsController extends Controller
 {
     /**
@@ -37,6 +38,8 @@ class AutoloadItemsController extends Controller
      */
     public function store(Request $request)
     {
+         try {
+            DB::beginTransaction();
         //return $request;
          $validator = $request->validate([
             'autoload_id' => 'required',
@@ -83,9 +86,6 @@ class AutoloadItemsController extends Controller
             $autoloadItemStock->quantity = $autoloadItem->quantity;
             $autoloadItemStock->save();
         }
-
-
-
         //deduct loaded items from the raw material item socks
         $autoloadItems=AutoLoadItems::with('autoload','plantName','plantType','shift','fromGodam','danaGroup','danaName')->find($autoloadItem->id);
 
@@ -94,33 +94,109 @@ class AutoloadItemsController extends Controller
         ->where('dana_name_id',$autoloadItems->dana_name_id)
         ->first();
         if ($rawMaterialStock) {
-                        if ($rawMaterialStock->quantity < $autoloadItems->quantity) {
-                            return response()->json([
-                                'message' => "you don't have enough stock available.",
-                            ], 400);
-                        } else {
-                           // console.log('dfghjjbg');
-                            $rawMaterialStock->quantity -=  $autoloadItems->quantity;
-                            $rawMaterialStock->save();
-                            if ($rawMaterialStock->quantity <= 0) {
-                                $rawMaterialStock->delete();
-                            }
-                        }
+            if ($rawMaterialStock->quantity < $autoloadItems->quantity) {
+                DB::rollback();
+                return response()->json([
+                    'message' => "you don't have enough stock available.",
+                ], 400);
+                } else {
+                  // console.log('dfghjjbg');
+                $rawMaterialStock->quantity -=  $autoloadItems->quantity;
+                $rawMaterialStock->save();
+                if ($rawMaterialStock->quantity <= 0) {
+                    $rawMaterialStock->delete();
+                    }
+                }
                     } else {
+                        DB::rollback();
                         return response()->json([
                             'message' => 'Something went wrong.',
                         ], 400);
                         // throw new Exception("Stock not found");
                     }
 
-        // return $rawMaterial;
-         return response()->json([
-                'message' => 'Autoload item created successfully',
-                'autoloadItems' => $autoloadItems,
-                'autoLoadItemStocks' => $autoLoadItemStocks,
+            // return $rawMaterial;
+             DB::commit();
+            return response()->json([
+                    'message' => 'Autoload item created successfully',
+                    'autoloadItems' => $autoloadItems,
+                    'autoLoadItemStocks' => $autoLoadItemStocks,
+                ], 200);
+         } catch (Exception $e) {
+            DB::rollback();
+            return response()->json($e, 400);
+        }
+    }
+    //delete
+    public function delete($autoloadItem_id){
+
+        try {
+            DB::beginTransaction();
+
+        $autoloadItem= AutoloadItems::find($autoloadItem_id);
+
+        $autoLoadItemStock=AutoLoadItemStock::where('from_godam_id',$autoloadItem->from_godam_id)
+        ->where('plant_type_id',$autoloadItem->plant_type_id)
+        ->where('plant_name_id',$autoloadItem->plant_name_id)
+        ->where('shift_id',$autoloadItem->shift_id)
+        ->where('dana_group_id',$autoloadItem->dana_group_id)
+        ->where('dana_name_id',$autoloadItem->dana_name_id)
+        ->first();
+
+        $autoLoadItemStock->quantity -= $autoloadItem->quantity;
+
+        if($autoLoadItemStock-> quantity <=0){
+            $autoLoadItemStock->delete();
+        }
+        else{
+            $autoLoadItemStock->save();
+        }
+
+        $rawMaterialStock=RawMaterialStock::where('department_id',$autoloadItem->from_godam_id)
+        ->where('dana_group_id',$autoloadItem->dana_group_id)
+        ->where('dana_name_id',$autoloadItem->dana_name_id)
+        ->first();
+
+
+            if(!$rawMaterialStock){
+               //return $autoloadItem;
+                $newRawMaterialStock=new RawMaterialStock();
+                $newRawMaterialStock->dana_name_id = $autoloadItem->dana_name_id;
+                $newRawMaterialStock->dana_group_id =$autoloadItem->dana_group_id;
+                $newRawMaterialStock->department_id =$autoloadItem->from_godam_id;
+                $newRawMaterialStock->quantity =$autoloadItem->quantity;
+                $newRawMaterialStock->save();
+
+            }else{
+
+                $rawMaterialStock-> quantity += $autoloadItem->quantity;
+                $rawMaterialStock->save();
+
+            }
+
+
+        $autoloadItem->delete();
+
+        DB::commit();
+        return response()->json([
+                'message' => 'Autoload item deleted successfully',
+
             ], 200);
+     } catch (Exception $e) {
+        DB::rollback();
+        return response()->json($e, 400);
     }
 
+
+    }
+
+
+
+
+
+
+
+    // get data for edit form
     public function getEditAutoloadItemData($autoloadItem_id){
         $autoLoadItem= AutoloadItems::find($autoloadItem_id);
           return response()->json([
@@ -135,6 +211,7 @@ class AutoloadItemsController extends Controller
             ], 200);
         //    return $autoloadItems;
     }
+    //not in use
     public function update(Request $request){
 
         //return $request;

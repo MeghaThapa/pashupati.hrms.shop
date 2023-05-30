@@ -45,7 +45,7 @@ class RawMaterialStockController extends Controller
             return false;
         }
     }
-   
+
 
     public function filterAccDanaGroup($danaGroup_id){
 
