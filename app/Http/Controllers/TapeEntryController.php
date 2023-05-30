@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TapeEntryStockModel;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\ProcessingStep;
@@ -9,33 +10,60 @@ use App\Models\ProcessingSubcat;
 use App\Models\DanaName;
 use App\Models\AutoLoadItemStock;
 use App\Models\Shift;
+use App\Models\TapeEntry;
 
 class TapeEntryController extends Controller
 {
+    // public function index(){
+    //         /************** for all data *********************/ 
+    //     // $department = Department::where('status','active')->get();
+    //     // $planttype =  ProcessingStep::where("status",'1')->get();
+    //     // $plantname = ProcessingSubcat::where('status','active')->get();
+    //     // $dananame = DanaName::where("status",'active')->get();
+        
+    //         /************** for stock data *********************/ 
+    //     $department = AutoLoadItemStock::with(['fromGodam'])->get();
+    //     // $planttype = AutoLoadItemStock::with(['plantType'])->get();
+    //     // $plantname = AutoLoadItemStock::with(['plantName'])->get();   
+    //     $shift = AutoLoadItemStock::with(['shift'])->get();    
+    //     // $dananame = AutoLoadItemStock::with(['danaName'])->get();
+        
+        
+        
+    //     // $department = Department::where('id',$departmentid)->get();
+    //     // $planttype = ProcessingStep::where('id',$planttypeid)->get();
+    //     // $plantname = ProcessingSubcat::where('id',$plantnameid)->get();
+    //     // $shift = Shift::where('id',$shift_id)->get();
+    //     // $dananame = DanaName::where('id',$dananame_id)->get();
+        
+    //     // return view('admin.TapeEntry.index',compact('department','planttype','plantname','shift','dananame'));
+    //     return view('admin.TapeEntry.index',compact('department','shift'));
+    // }
+
     public function index(){
-            /************** for all data *********************/ 
-        // $department = Department::where('status','active')->get();
-        // $planttype =  ProcessingStep::where("status",'1')->get();
-        // $plantname = ProcessingSubcat::where('status','active')->get();
-        // $dananame = DanaName::where("status",'active')->get();
-        
-            /************** for stock data *********************/ 
+        $tapeentries = TapeEntry::orderBy('created_at','DESC')->get();
+        return view('admin.TapeEntry.index',compact('tapeentries'));
+    }
+
+    public function tapeentrystore(Request $request){
+        $receipt_number = $request->receipt_number;
+        $tape_receive_date = $request->tape_receive_date;
+        $tapeentry = TapeEntry::create([
+            'receipt_number' => $receipt_number,
+            'tape_entry_date' => $tape_receive_date
+        ]);
+        if($tapeentry){
+            return back()->with(['message'=>'Tape Receive Created Successfully']);
+        }else{
+            return back()->with(['message_err'=>'Tape Receive Creation Unsuccessful']);
+        }
+    }
+
+    public function create($id){
         $department = AutoLoadItemStock::with(['fromGodam'])->get();
-        // $planttype = AutoLoadItemStock::with(['plantType'])->get();
-        // $plantname = AutoLoadItemStock::with(['plantName'])->get();   
-        $shift = AutoLoadItemStock::with(['shift'])->get();    
-        // $dananame = AutoLoadItemStock::with(['danaName'])->get();
-        
-        
-        
-        // $department = Department::where('id',$departmentid)->get();
-        // $planttype = ProcessingStep::where('id',$planttypeid)->get();
-        // $plantname = ProcessingSubcat::where('id',$plantnameid)->get();
-        // $shift = Shift::where('id',$shift_id)->get();
-        // $dananame = DanaName::where('id',$dananame_id)->get();
-        
-        // return view('admin.TapeEntry.index',compact('department','planttype','plantname','shift','dananame'));
-        return view('admin.TapeEntry.index',compact('department','shift'));
+        $shift = AutoLoadItemStock::with(['shift'])->get();
+        $tapeentries = TapeEntry::where('id',$id)->get();
+        return view('admin.TapeEntry.create',compact('department','shift','tapeentries'));
     }
     
     public function ajaxrequestplanttype(Request $request){
@@ -101,15 +129,36 @@ class TapeEntryController extends Controller
     }
 
     public function tapeentrystockstore(Request $request){
-        // return $request;
-        //baki xa garna
+        $tape_entry_id = $request->tape_entry_id;
         $shift = $request->shift;
         $plantname = $request->plantname;
         $planttype = $request->planttype;
         $department = $request->togodam;
+        $tapetype = $request->tapetype;
+        $tape_qty_in_kg = $request->tape_qty_in_kg;
+        $total_in_kg = $request->total_in_kg;
+        $loading = $request->loading;
+        $running = $request->running;
+        $bypass_wast = $request->bypass_wast;
+        $dana_in_kg = $request->dana_in_kg;
 
-        //yo delete hanni stock bata
-        $danaid = AutoLoadItemStock::where('from_godam_id',$department)
+        $tesm = TapeEntryStockModel::create([
+            'tape_entry_id'=>$tape_entry_id,
+            'togodam_id'=>$department,
+            'planttype_id'=>$planttype,
+            'plantname_id'=>$plantname,
+            'shift_id'=>$shift,
+            'tape_type'=>$tapetype,
+            'tape_qty_in_kg'=>$tape_qty_in_kg,
+            'total_in_kg'=>$total_in_kg,
+            'loading'=>$loading,
+            'running'=>$running,
+            'bypass_wast'=>$bypass_wast,
+            'dana_in_kg'=>$dana_in_kg,
+        ]);
+
+        if($tesm){
+            $danaid = AutoLoadItemStock::where('from_godam_id',$department)
                 ->where('plant_type_id',$planttype)
                 ->where('plant_name_id',$plantname)
                 ->where('shift_id',$shift)
@@ -118,8 +167,10 @@ class TapeEntryController extends Controller
         //add ganrne tape_entry_stock ma danaid bata ako data
         foreach($danaid as $data){
             //chaiyeko data relation lagau navay pardaina
-            return "here";
+            AutoLoadItemStock::where('id',$data->id)->delete();
         }
-
+        return view('admin.tapeentry.index')->with(['message'=>"Tape Receive Entry Successful"]);
+        //yo delete hanni stock bata
     }
+}
 }
