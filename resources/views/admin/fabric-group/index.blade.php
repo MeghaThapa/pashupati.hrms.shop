@@ -27,7 +27,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-3 col-md-5 col-6 mb-2">
-                    <form action="{{ route('categories.index') }}" method="GET" role="search">
+                    <form action="{{ route('fabric-groups.index') }}" method="GET" role="search">
                         <div class="input-group">
                             <input type="text" name="term" placeholder="{{ __('Type name or code...') }}"
                                     class="form-control" autocomplete="off"
@@ -40,7 +40,7 @@
                 </div>
                 <div class="col-lg-9 col-md-7 col-6">
                     <div class="card-tools text-md-right">
-                        <a class="btn btn-secondary" href="{{ route('categories.pdf') }}">
+                        <a class="btn btn-secondary" href="{{ route('fabric-groups.pdf') }}">
                             <i class="fas fa-download"></i> @lang('Export')
                         </a>
                         <a href="{{ route('fabric-groups.create') }}" class="btn btn-primary">
@@ -56,7 +56,6 @@
                     <tr>
                         <th>@lang('#')</th>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Note') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created') }}</th>
                         <th class="text-right">{{ __('Action') }}</th>
@@ -64,15 +63,14 @@
                     </thead>
                     <tbody>
 
-                    @if ($categories->total() > 0)
-                        @foreach ($categories as $key => $fabric_groups)
+                    @if ($fabricgroups->total() > 0)
+                        @foreach ($fabricgroups as $key => $fabric_groups)
                             <tr>
                                 <td>{{ ++$key }}</td>
                                 <td>
-                                    <a href="{{ route('categories.edit', $fabric_groups->slug) }}">
+                                    <a href="{{ route('fabric-groups.edit', $fabric_groups->slug) }}">
                                         {{ $fabric_groups->name }}</a>
                                 </td>
-                                <td>{{ $fabric_groups->shortNote() }} </td>
                                 <td>
                                     @if ($fabric_groups->isActive())
                                         <span class="badge badge-success">{{ __('Active') }}</span>
@@ -90,18 +88,18 @@
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             @if ($fabric_groups->isActive())
-                                                <a href="{{ route('categories.status', $fabric_groups->slug) }}"
+                                                <a href="{{ route('fabric-groups.status', $fabric_groups->slug) }}"
                                                     class="dropdown-item"><i class="fas fa-window-close"></i>
                                                     {{ __('Inactive') }}</a>
                                             @else
-                                                <a href="{{ route('categories.status', $fabric_groups->slug) }}"
+                                                <a href="{{ route('fabric-groups.status', $fabric_groups->slug) }}"
                                                     class="dropdown-item"><i class="fas fa-check-square"></i>
                                                     {{ __('Active') }}</a>
                                             @endif
-                                            <a href="{{ route('categories.edit', $fabric_groups->slug) }}"
+                                            <a href="{{ route('fabric-groups.edit', $fabric_groups->slug) }}"
                                                 class="dropdown-item"><i class="fas fa-edit"></i>
                                                 {{ __('Edit') }}</a>
-                                            <a href="{{ route('categories.delete', $fabric_groups->slug) }}"
+                                            <a href="{{ route('fabric-groups.delete', $fabric_groups->slug) }}"
                                                 class="dropdown-item delete-btn"
                                                 data-msg="{{ __('Are you sure you want to delete this fabric_groups?') }}"><i
                                                     class="fas fa-trash"></i> {{ __('Delete') }}</a>
@@ -116,7 +114,7 @@
                                 <div class="data_empty">
                                     <img src="{{ asset('img/result-not-found.svg') }}" alt="" title="">
                                     <p>{{ __('Sorry, no fabric_groups found in the database. Create your very first fabric_groups.') }}</p>
-                                    <a href="{{ route('categories.create') }}" class="btn btn-primary">
+                                    <a href="{{ route('fabric-groups.create') }}" class="btn btn-primary">
                                         {{ __('Add FabricGroup') }} <i class="fas fa-plus-circle"></i>
                                     </a>
                                 </div>
@@ -130,7 +128,7 @@
 
 
             <!-- pagination start -->
-            {{ $categories->links() }}
+            {{ $fabricgroups->links() }}
             <!-- pagination end -->
         </div>
     </div>

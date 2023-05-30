@@ -27,3 +27,5 @@ class FabricGroup extends Model
         return $this->status == 1 ? true : false;
     }
 }
+
+

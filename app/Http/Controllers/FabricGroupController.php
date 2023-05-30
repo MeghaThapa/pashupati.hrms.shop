@@ -15,8 +15,8 @@ class FabricGroupController extends Controller
             $term = request('term');
             $query->where('name', 'Like', '%' . $term . '%');
         }
-        $categories = $query->orderBy('id', 'DESC')->paginate(15);
-        return view('admin.fabric-group.index', compact('categories'));
+        $fabricgroups = $query->orderBy('id', 'DESC')->paginate(15);
+        return view('admin.fabric-group.index', compact('fabricgroups'));
     }
 
     /**
@@ -39,14 +39,12 @@ class FabricGroupController extends Controller
     {
         //validate form
         $validator = $request->validate([
-            'name' => 'required|string|max:50|unique:fabric_group',
-            'note' => 'nullable|string|max:255',
+            'name' => 'required|string|max:50|unique:fabric_groups',
         ]);
 
         // store category
         $category = FabricGroup::create([
             'name' => $request->name,
-            'note' => clean($request->note),
             'status' => $request->status
         ]);
         return redirect()->back()->withSuccess('FabricGroup added successfully!');
@@ -60,7 +58,7 @@ class FabricGroupController extends Controller
      */
     public function show($slug)
     {
-        return redirect()->route('fabric-group.index');
+        return redirect()->route('fabric-groups.index');
     }
 
     /**
@@ -71,8 +69,8 @@ class FabricGroupController extends Controller
      */
     public function edit($slug)
     {
-        $category = FabricGroup::where('slug', $slug)->first();
-        return view('admin.fabric-group.edit', compact('category'));
+        $fabricgroups = FabricGroup::where('slug', $slug)->first();
+        return view('admin.fabric-group.edit', compact('fabricgroups'));
     }
 
     /**
@@ -88,17 +86,16 @@ class FabricGroupController extends Controller
 
         //validate form
         $validator = $request->validate([
-            'name' => 'required|string|max:50|unique:fabric_group,name,' . $category->id,
+            'name' => 'required|string|max:50|unique:fabric_groups,name,' . $category->id,
             'note' => 'nullable|string|max:255',
         ]);
 
         // update category
         $category->update([
             'name' => $request->name,
-            'note' => clean($request->note),
             'status' => $request->status
         ]);
-        return redirect()->route('fabric-group.index')->withSuccess('FabricGroup updated successfully!');
+        return redirect()->route('fabric-groups.index')->withSuccess('FabricGroup updated successfully!');
     }
 
     /**
@@ -112,7 +109,7 @@ class FabricGroupController extends Controller
         $category = FabricGroup::where('slug', $slug)->first();
         // destroy category
         $category->delete();
-        return redirect()->route('fabric-group.index')->withSuccess('FabricGroup deleted successfully!');
+        return redirect()->route('fabric-groups.index')->withSuccess('FabricGroup deleted successfully!');
     }
 
 
@@ -136,7 +133,7 @@ class FabricGroupController extends Controller
                 'status' => 1
             ]);
         }
-        return redirect()->route('fabric-group.index')->withSuccess('FabricGroup status changed successfully!');
+        return redirect()->route('fabric-groups.index')->withSuccess('FabricGroup status changed successfully!');
     }
 
     // create pdf
@@ -145,8 +142,8 @@ class FabricGroupController extends Controller
         // retreive all records from db
         $data = FabricGroup::latest()->get();
         // share data to view
-        view()->share('fabric_group', $data);
-        $pdf = PDF::loadView('admin.pdf.fabric_group', $data->all());
+        view()->share('fabric_groups', $data);
+        $pdf = PDF::loadView('admin.pdf.fabricgroup', $data->all());
         // download PDF file with download method
         return $pdf->download('fabric_group-list.pdf');
     }
