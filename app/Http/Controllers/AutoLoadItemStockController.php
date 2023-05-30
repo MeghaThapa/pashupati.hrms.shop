@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AutoLoadItemStock;
 use Illuminate\Http\Request;
 
+
 class AutoLoadItemStockController extends Controller
 {
     /**
@@ -14,7 +15,7 @@ class AutoLoadItemStockController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
