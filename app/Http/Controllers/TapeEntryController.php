@@ -101,18 +101,25 @@ class TapeEntryController extends Controller
     }
 
     public function tapeentrystockstore(Request $request){
-
+        // return $request;
         //baki xa garna
         $shift = $request->shift;
         $plantname = $request->plantname;
         $planttype = $request->planttype;
-        $department = $request->department;
+        $department = $request->togodam;
 
+        //yo delete hanni stock bata
         $danaid = AutoLoadItemStock::where('from_godam_id',$department)
                 ->where('plant_type_id',$planttype)
                 ->where('plant_name_id',$plantname)
                 ->where('shift_id',$shift)
-                ->with(['danaName'])
                 ->get();
+
+        //add ganrne tape_entry_stock ma danaid bata ako data
+        foreach($danaid as $data){
+            //chaiyeko data relation lagau navay pardaina
+            return "here";
+        }
+
     }
 }
