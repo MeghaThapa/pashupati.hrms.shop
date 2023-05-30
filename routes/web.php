@@ -387,6 +387,36 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/status', 'SubCategoryController@changeStatus')->name('subCategories.status');
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
+  
+
+    // fabric_group route
+    Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
+    Route::resource('fabrics', 'FabricController', [
+        'names' => [
+            'index' => 'fabrics.index',
+            'create' => 'fabrics.create',
+            'store' => 'fabrics.store',
+            'edit' => 'fabrics.edit',
+            'update' => 'fabrics.update',
+        ]
+    ]);
+    Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
+    Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
+
+    // fabric_group route
+    Route::get('/fabric-groups/pdf', 'FabricGroupController@createPDF')->name('fabric-groups.pdf');
+    Route::resource('fabric-groups', 'FabricGroupController', [
+        'names' => [
+            'index' => 'fabric-groups.index',
+            'create' => 'fabric-groups.create',
+            'store' => 'fabric-groups.store',
+            'edit' => 'fabric-groups.edit',
+            'update' => 'fabric-groups.update',
+        ]
+    ]);
+    Route::get('fabric-groups/{id}/status', 'FabricGroupController@changeStatus')->name('fabric-groups.status');
+    Route::get('fabric-groups/{id}/delete', 'FabricGroupController@destroy')->name('fabric-groups.delete');
+
     // Items route
     Route::resource('items', 'ItemController', [
         'names' => [

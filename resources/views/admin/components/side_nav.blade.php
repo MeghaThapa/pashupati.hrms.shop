@@ -122,6 +122,24 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('fabric-groups.index') }}"
+                        class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric Group</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('fabrics.index') }}"
+                        class="nav-link {{ request()->is('admin/fabrics*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
+                
+                
+                <li class="nav-item">
                     <a href="{{ route('processing.index') }}"
                         class="nav-link {{ request()->is('admin/processing-products*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tools"></i>
