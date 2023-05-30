@@ -158,7 +158,7 @@ class RawMaterialController extends Controller
     public function createRawMaterialItems($rawMaterial_id)
     {
         $storeinTypes = Setupstorein::all();
-        $godams = Godam::all();
+        $godams = Department::all();
         $danaGroups = DanaGroup::all();
         $danaNames = DanaName::all();
         $rawMaterial = RawMaterial::find($rawMaterial_id);

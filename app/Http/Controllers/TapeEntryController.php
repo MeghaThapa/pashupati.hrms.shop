@@ -61,16 +61,58 @@ class TapeEntryController extends Controller
     public function ajaxrequestshift(Request $request){
         if($request->ajax()){
             $id =  $request->plantname_id;
-            $shift = AutoLoadItemStock::where('plant_name_id',$id)->get();
-            $arr = [];
-            foreach($shift as $data){
-                $s = $data->shift_id;
-                array_push($arr,$s);
-            }
-            
-            return response()->json([
-                "shift" => $arr
+            $shift = AutoLoadItemStock::where('plant_name_id',$id)->value('shift_id');
+            $sname = Shift::where('id',$shift)->get();
+            return response([
+                'shift' => $sname,
+                'status' => true    
             ]);
         }
+    }
+
+    public function ajaxrequestdanainfo(Request $request){
+        if($request->ajax()){
+            $shift = $request->shift;
+            $plantname = $request->plantname;
+            $planttype = $request->planttype;
+            $department = $request->department;
+
+            $danaid = AutoLoadItemStock::where('from_godam_id',$department)
+                    ->where('plant_type_id',$planttype)
+                    ->where('plant_name_id',$plantname)
+                    ->where('shift_id',$shift)
+                    ->with(['danaName'])->get();
+            
+            $totalqty = 0;
+            foreach($danaid as $data){
+                $totalqty =  $totalqty+$data->quantity;
+            }
+            if(count($danaid) > 0){
+                return [
+                    'data' => $danaid,
+                    'total_quantity' => $totalqty
+                ];
+            }else{
+                return[
+                    'data_err' => "No data Found"
+                ];
+            }
+        }
+    }
+
+    public function tapeentrystockstore(Request $request){
+
+        //baki xa garna
+        $shift = $request->shift;
+        $plantname = $request->plantname;
+        $planttype = $request->planttype;
+        $department = $request->department;
+
+        $danaid = AutoLoadItemStock::where('from_godam_id',$department)
+                ->where('plant_type_id',$planttype)
+                ->where('plant_name_id',$plantname)
+                ->where('shift_id',$shift)
+                ->with(['danaName'])
+                ->get();
     }
 }

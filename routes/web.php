@@ -642,6 +642,10 @@ Route::get('tape-entry/ajax-request/{department_id}',[TapeEntryController::class
 Route::get('tape-entry/ajax-request/plantname/{planttype_id}',[TapeEntryController::class,"ajaxrequestplantname"])->name('tape.entry.ajax.plantname');
     //retrieve shift
 Route::get('tape-entry/ajax-request/shift/{plantname_id}',[TapeEntryController::class,"ajaxrequestshift"])->name('tape.entry.ajax.shift');
+    //get dana info
+Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajaxrequestdanainfo"])->name('tape.entry.ajax.get.danainfo');
+    // tapeentrystock
+Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
 /**************tape entry end*************/
 
 //Storeout route
