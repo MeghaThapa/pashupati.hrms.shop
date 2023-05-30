@@ -247,11 +247,18 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('autoload/getDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getDanaGroupDanaName'])->name('autoload.getDanaGroupDanaName');
     Route::get('autoload/getPlantTypeAccGodam/{department_id}',[AutoloadController::class,'getPlantTypeAccGodam'])->name('autoload.getPlantTypeAccGodam');
 
+    Route::get('autoload/getEditDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getEditDanaGroupAccToGodam'])->name('autoLoad.getEditDanaGroupAccToGodam');
+    Route::get('autoload/getEditDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getEditDanaGroupDanaName'])->name('autoLoad.getEditDanaGroupDanaName');
+
+
      //AutoloadItem
    Route::post('autoloadItem/store',[AutoloadItemsController::class,'store'])->name('autoloadItem.store');
     Route::get('autoloadItem/getAutoloadItemsData/{autoload_id}',[AutoloadItemsController::class,'getAutoloadItemsData'])->name('autoloadItem.getAutoloadItemsData');
     Route::get('autoloadItem/getEditAutoloadItemData/{autoloadItem_id}',[AutoloadItemsController::class,'getEditAutoloadItemData'])->name('autoLoadItem.getEditAutoloadItemData');
     Route::post('autoloadItem/update',[AutoloadItemsController::class,'update'])->name('autoloadItem.update');
+    Route::delete('autoloadItem/delete/{autoloadItem_id}',[AutoloadItemsController::class,'delete'])->name('autoLoadItem.delete');
+
+
 
     Route::get('autoloadItem/getDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getDanaGroupAccToGodam'])->name('autoload.getDanaGroupAccToGodam');
 
