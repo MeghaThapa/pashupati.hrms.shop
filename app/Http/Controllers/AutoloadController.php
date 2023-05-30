@@ -12,7 +12,7 @@ use App\Models\Shift;
 use App\Models\DanaGroup;
 use App\Models\RawMaterial;
 use App\Models\RawMaterialStock;
-
+use App\Models\AutoLoadItemStock;
 class AutoloadController extends Controller
 {
     /**
@@ -76,20 +76,26 @@ class AutoloadController extends Controller
         //return $autoload;
         return view('admin.autoload.createaAutoloadItems',compact('fromGodams','plantTypes','plantNames','shifts','autoload'));
     }
+    // create
     public function getDanaGroupAccToGodam($department_id){
-        $danaGroups= RawMaterialStock::with('danaGroup')->where('department_id',$department_id)->select('dana_group_id')->distinct()->get();
-        return $danaGroups;
+        return RawMaterialStock::with('danaGroup')->where('department_id',$department_id)->select('dana_group_id')->distinct()->get();
     }
     //  public function getDanaGroupDanaName($danaGroup_id,$fromGodam_id)
      public function getDanaGroupDanaName($danaGroup_id,$fromGodam_id)
     {
-        //->where('department_id',$fromGodam_id)
-        
-        $rawMaterialStockDanaName=RawMaterialStock::with('danaName')->where('department_id',$fromGodam_id)->where('dana_group_id',$danaGroup_id)->get();
-    
-        return $rawMaterialStockDanaName;
-
+        return RawMaterialStock::with('danaName')->where('department_id',$fromGodam_id)->where('dana_group_id',$danaGroup_id)->get();
     }
+
+    //for Edit
+    public function getEditDanaGroupAccToGodam($department_id){
+        return AutoLoadItemStock::with('danaGroup')->where('from_godam_id',$department_id)->select('dana_group_id')->distinct()->get();
+    }
+    public function getEditDanaGroupDanaName($danaGroup_id,$fromGodam_id)
+    {
+        return AutoLoadItemStock::with('danaName')->where('from_godam_id',$fromGodam_id)->where('dana_group_id',$danaGroup_id)->get();
+    }
+
+
 
     public function getPlantTypePlantName($plantType_id){
         $plantNames=ProcessingSubcat::where('processing_steps_id',$plantType_id)->get();
