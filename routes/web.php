@@ -96,7 +96,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('shift/index', 'ShiftController@index')->name('shift.index');
     Route::get('shift/create', 'ShiftController@create')->name('shift.create');
     Route::post('shift/store', 'ShiftController@store')->name('shift.store');
-    Route::post('shift/update/{id}', 'ShiftController@update')->name('shift.update');
+    Route::post('shift/update', 'ShiftController@update')->name('shift.update');
     Route::get('/shift/getShiftData/{id}', 'ShiftController@getShiftData')->name('shift.getShiftData');
     Route::delete('/shift/delete/{id}', 'ShiftController@delete')->name('shift.delete');
 
@@ -194,6 +194,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/stock/danaNameFilter',[RawMaterialStockController::class,'danaNameFilter'])->name('rawMaterialStock.danaNameFilter');
     Route::get('rawMaterialStock/filterAccDanaName/{danaName_id}',[RawMaterialStockController::class,'filterAccDanaName'])->name('rawMaterialStock.filterAccDanaName');
     Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
+    Route::post('rawMaterialStock/filterAccGodam',[RawMaterialStockController::class,'filterAccGodam'])->name('rawmaterial.filterAccGodam');
+
 
     //RawMaterial Items
      Route::post('rawMaterialItem/store', 'RawMaterialItemController@store')->name('rawMaterialItem.store');
@@ -635,6 +637,8 @@ Route::get('stock/getDetailsAccItem/{item_id}', 'StockController@getDetailsAccIt
 
 //import stock
 Route::post('import/stock',[StockImportController::class,"import"])->name('import.stock');
+//import fabric
+Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
 
 /*****************tape entry**************/
 Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');
