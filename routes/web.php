@@ -96,7 +96,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('shift/index', 'ShiftController@index')->name('shift.index');
     Route::get('shift/create', 'ShiftController@create')->name('shift.create');
     Route::post('shift/store', 'ShiftController@store')->name('shift.store');
-    Route::post('shift/update/{id}', 'ShiftController@update')->name('shift.update');
+    Route::post('shift/update', 'ShiftController@update')->name('shift.update');
     Route::get('/shift/getShiftData/{id}', 'ShiftController@getShiftData')->name('shift.getShiftData');
     Route::delete('/shift/delete/{id}', 'ShiftController@delete')->name('shift.delete');
 
@@ -194,6 +194,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/stock/danaNameFilter',[RawMaterialStockController::class,'danaNameFilter'])->name('rawMaterialStock.danaNameFilter');
     Route::get('rawMaterialStock/filterAccDanaName/{danaName_id}',[RawMaterialStockController::class,'filterAccDanaName'])->name('rawMaterialStock.filterAccDanaName');
     Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
+    Route::post('rawMaterialStock/filterAccGodam',[RawMaterialStockController::class,'filterAccGodam'])->name('rawmaterial.filterAccGodam');
+
 
     //RawMaterial Items
      Route::post('rawMaterialItem/store', 'RawMaterialItemController@store')->name('rawMaterialItem.store');
@@ -640,6 +642,8 @@ Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
 
 /*****************tape entry**************/
 Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');
+Route::post('tape-entry/store',[TapeEntryController::class,"tapeentrystore"])->name("tape.entry.store");
+Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"])->name("tape.entry.receive.create");
     //reteieve planttype
 Route::get('tape-entry/ajax-request/{department_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
     //reteieve plantname

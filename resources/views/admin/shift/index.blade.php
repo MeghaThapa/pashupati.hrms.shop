@@ -75,7 +75,8 @@
                         @php
                             $i = 0;
                         @endphp
-                        @foreach ($shifts as $shift)
+                        @if ($shifts)
+                         @foreach ($shifts as $shift)
                             <tr>
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $shift->name }}</td>
@@ -97,12 +98,12 @@
                                 </td>
                             </tr>
                         @endforeach
+                        @endif
+
                     </tbody>
                 </table>
             </div>
             <!-- /.card-body -->
-
-
             <!-- pagination start -->
             {{-- {{ $allStaff->links() }} --}}
             <!-- pagination end -->
@@ -121,7 +122,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('shift.update', ['id' => $shift->id]) }}" method="POST"
+                    <form action="{{ route('shift.update') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
@@ -167,12 +168,6 @@
                         </div>
                     </form>
                 </div>
-                {{-- <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        Close
-                    </button>
-
-                </div> --}}
             </div>
         </div>
     </div>
