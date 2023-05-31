@@ -64,8 +64,9 @@ class TapeEntryController extends Controller
         $shift = AutoLoadItemStock::with(['shift'])->get();
         $tapeentries = TapeEntry::where('id',$id)->get();
         return view('admin.TapeEntry.create',compact('department','shift','tapeentries'));
+
     }
-    
+
     public function ajaxrequestplanttype(Request $request){
         if($request->ajax()){
             // return $request->department_id;
@@ -75,7 +76,7 @@ class TapeEntryController extends Controller
             ]);
         }
     }
-    
+
     public function ajaxrequestplantname(Request $request){
         if($request->ajax()){
             $id =  $request->planttype_id;
@@ -85,7 +86,7 @@ class TapeEntryController extends Controller
             ],200);
         }
     }
-    
+
     public function ajaxrequestshift(Request $request){
         if($request->ajax()){
             $id =  $request->plantname_id;
@@ -93,11 +94,12 @@ class TapeEntryController extends Controller
             $sname = Shift::where('id',$shift)->get();
             return response([
                 'shift' => $sname,
-                'status' => true    
+                'status' => true
             ]);
         }
     }
 
+    
     public function ajaxrequestdanainfo(Request $request){
         if($request->ajax()){
             $shift = $request->shift;
@@ -110,7 +112,7 @@ class TapeEntryController extends Controller
                     ->where('plant_name_id',$plantname)
                     ->where('shift_id',$shift)
                     ->with(['danaName'])->get();
-            
+
             $totalqty = 0;
             foreach($danaid as $data){
                 $totalqty =  $totalqty+$data->quantity;
