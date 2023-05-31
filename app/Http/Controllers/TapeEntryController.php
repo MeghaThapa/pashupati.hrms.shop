@@ -13,31 +13,31 @@ use App\Models\Shift;
 class TapeEntryController extends Controller
 {
     public function index(){
-            /************** for all data *********************/ 
+            /************** for all data *********************/
         // $department = Department::where('status','active')->get();
         // $planttype =  ProcessingStep::where("status",'1')->get();
         // $plantname = ProcessingSubcat::where('status','active')->get();
         // $dananame = DanaName::where("status",'active')->get();
-        
-            /************** for stock data *********************/ 
+
+            /************** for stock data *********************/
         $department = AutoLoadItemStock::with(['fromGodam'])->get();
         // $planttype = AutoLoadItemStock::with(['plantType'])->get();
-        // $plantname = AutoLoadItemStock::with(['plantName'])->get();   
-        $shift = AutoLoadItemStock::with(['shift'])->get();    
+        // $plantname = AutoLoadItemStock::with(['plantName'])->get();
+        $shift = AutoLoadItemStock::with(['shift'])->get();
         // $dananame = AutoLoadItemStock::with(['danaName'])->get();
-        
-        
-        
+
+
+
         // $department = Department::where('id',$departmentid)->get();
         // $planttype = ProcessingStep::where('id',$planttypeid)->get();
         // $plantname = ProcessingSubcat::where('id',$plantnameid)->get();
         // $shift = Shift::where('id',$shift_id)->get();
         // $dananame = DanaName::where('id',$dananame_id)->get();
-        
+
         // return view('admin.TapeEntry.index',compact('department','planttype','plantname','shift','dananame'));
         return view('admin.TapeEntry.index',compact('department','shift'));
     }
-    
+
     public function ajaxrequestplanttype(Request $request){
         if($request->ajax()){
             // return $request->department_id;
@@ -47,7 +47,7 @@ class TapeEntryController extends Controller
             ]);
         }
     }
-    
+
     public function ajaxrequestplantname(Request $request){
         if($request->ajax()){
             $id =  $request->planttype_id;
@@ -57,7 +57,7 @@ class TapeEntryController extends Controller
             ],200);
         }
     }
-    
+
     public function ajaxrequestshift(Request $request){
         if($request->ajax()){
             $id =  $request->plantname_id;
@@ -65,11 +65,12 @@ class TapeEntryController extends Controller
             $sname = Shift::where('id',$shift)->get();
             return response([
                 'shift' => $sname,
-                'status' => true    
+                'status' => true
             ]);
         }
     }
 
+    
     public function ajaxrequestdanainfo(Request $request){
         if($request->ajax()){
             $shift = $request->shift;
@@ -82,7 +83,7 @@ class TapeEntryController extends Controller
                     ->where('plant_name_id',$plantname)
                     ->where('shift_id',$shift)
                     ->with(['danaName'])->get();
-            
+
             $totalqty = 0;
             foreach($danaid as $data){
                 $totalqty =  $totalqty+$data->quantity;
