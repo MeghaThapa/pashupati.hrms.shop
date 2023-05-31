@@ -22,6 +22,7 @@ class FabricGroup extends Model
         ];
     }
 
+
     public function isActive()
     {
         return $this->status == 1 ? true : false;

@@ -31,14 +31,14 @@
             <div class="card-header">
                 <h3 class="card-title">{{ __('Add a new fabric') }}</h3>
                 <div class="card-tools">
-                    <a href="{{ route('subCategories.index') }}" class="btn btn-block btn-primary">
+                    <a href="{{ route('fabrics.index') }}" class="btn btn-block btn-primary">
                         <i class="fas fa-long-arrow-alt-left"></i> {{ __('Go Back') }}
                     </a>
                 </div>
             </div>
             <!-- /.card-header -->
             <div class="card-body p-0">
-                <form class="form-horizontal" action="{{ route('subCategories.store') }}" method="post" enctype="multipart/form-data">
+                <form class="form-horizontal" action="{{ route('fabrics.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="row">
@@ -53,11 +53,62 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="roll_no">{{ __('Roll No') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="roll_no" name="roll_no" placeholder="{{ __('Roll No') }}" value="{{ old('name') }}" required>
+                                @error('roll_no')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="loom_no">{{ __('Loom No') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('loom_no') is-invalid @enderror" id="loom_no" name="loom_no" placeholder="{{ __('Loom No') }}" value="{{ old('name') }}" required>
+                                @error('loom_no')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="gross_wt">{{ __('Gross Weight') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="gross_wt" name="gross_wt" placeholder="{{ __('Gross Weight') }}" value="{{ old('name') }}" required>
+                                @error('gross_wt')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="net_wt">{{ __('Net Weight') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('net_wt') is-invalid @enderror" id="net_wt" name="net_wt" placeholder="{{ __('Net Weight') }}" value="{{ old('name') }}" required>
+                                @error('net_wt')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 mt-3">
+                                <label for="meter">{{ __('Meter') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('meter') is-invalid @enderror" id="meter" name="meter" placeholder="{{ __('Meter') }}" value="{{ old('name') }}" required>
+                                @error('meter')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
                             <div class="col-md-6 form-group mt-3">
                                 <label for="FabricGroup">{{ __('FabricGroup Name') }}<span class="required-field">*</span></label>
                                 <select class="advance-select-box form-control @error('FabricGroup') is-invalid @enderror" id="FabricGroup" name="fabricgroup_id"  required>
                                     <option value="" selected disabled>{{ __('Select a FabricGroup') }}</option>
-                                    @foreach($fabric_groups as $key => $group)
+                                    @foreach($fabricgroups as $key => $group)
                                         <option value="{{ $group->id }}">{{ $group->name }}</option>
                                     @endforeach
                                 </select>
@@ -71,6 +122,7 @@
                         </div>
                         
                         <div class="row">
+                            
                             <div class="form-group col-md-12">
                                 <label for="status" class="col-form-label">{{ __('Status') }}</label>
                                 <select class="form-control" id="status" name="status" >
