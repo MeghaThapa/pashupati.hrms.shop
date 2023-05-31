@@ -51,20 +51,23 @@
                 </thead>
 
                 <tbody>
-
+                    @if ($rawMaterialStocks)
                     @foreach ($rawMaterialStocks as $i => $stock)
                     <tr>
                         <td>{{ ++$i }}</td>
-                        <td>{{ $stock->danaGroup->name }}</td>
-                        <td>{{ $stock->danaName->name }}</td>
+                        <td>{{ $stock->danaGroup }}</td>
+                        <td>{{ $stock->danaName }}</td>
                         <td>{{ $stock->quantity }}</td>
                     </tr>
-                @endforeach
-
+                     @endforeach
+                @endif
                 </tbody>
 
             </table>
         </div>
+          @if ($rawMaterialStocks)
+            {{$rawMaterialStocks->links()}}
+        @endif
     </div>
 </div>
 @endsection

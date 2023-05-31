@@ -20,24 +20,32 @@ class RawMaterialStockController extends Controller
     {
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
-       $rawMaterialStocks= RawMaterialStock::with('danaName','danaGroup')->get();
+       $rawMaterialStocks= DB::table('raw_material_stocks AS stock')
+       ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
+       ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
+       ->select(
+              'danaGroup.name as danaGroup',
+              'danaName.name as danaName',
+              'stock.quantity as quantity'
+          )
+          ->paginate(35);
         $godams=Department::where('status','active')->get(['id','department']);
         return view('admin.rawMaterialStock.rawMaterialStockIndex',compact('settings','rawMaterialStocks','godams'));
 
     }
     public function filterAccGodam(Request $request){
-        // $rawMaterialStocks=DB::table('raw_material_stocks AS stock')
-        //  ->when($request->godam_id != 'all', function ($query) use ($request) {
-        //         return $query->where('stock.department_id', $request->godam_id);
-        //     })
-        //     ->join('dana_names AS danaName', 'stock.dana_name_id ', '=', 'danaName.id')
-        //   ->join('dana_groups AS danaGroup', 'stock.plant_name_id', '=', 'plantName.id')
-        if($request->godam_id !='all'){
-             $rawMaterialStocks=RawMaterialStock::where('department_id',$request->godam_id)->with('danaName','danaGroup')->get();
-        }else{
-            $rawMaterialStocks=RawMaterialStock::with('danaName','danaGroup')->get();
-        }
-
+        $rawMaterialStocks=DB::table('raw_material_stocks AS stock')
+         ->when($request->godam_id != 'all', function ($query) use ($request) {
+                return $query->where('stock.department_id', $request->godam_id);
+            })
+            ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
+            ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
+            ->select(
+              'danaGroup.name as danaGroup',
+              'danaName.name as danaName',
+              'stock.quantity as quantity'
+          )
+          ->paginate(35);
         $helper= new AppHelper();
         $settings= $helper->getGeneralSettigns();
         $godams=Department::where('status','active')->get(['id','department']);
