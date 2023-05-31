@@ -66,6 +66,13 @@ class TapeEntryController extends Controller
         return view('admin.TapeEntry.create',compact('department','shift','tapeentries'));
     }
     
+    public function deleteTape(Request $request){
+        if($request->ajax()){
+            TapeEntry::where('id',$request->id)->delete();
+            return redirect()->back();
+        }
+    }
+
     public function ajaxrequestplanttype(Request $request){
         if($request->ajax()){
             // return $request->department_id;
@@ -158,6 +165,9 @@ class TapeEntryController extends Controller
         ]);
 
         if($tesm){
+            TapeEntry::where('id',$tape_entry_id)->update([
+                'status' => "created",
+            ]);
             $danaid = AutoLoadItemStock::where('from_godam_id',$department)
                 ->where('plant_type_id',$planttype)
                 ->where('plant_name_id',$plantname)
@@ -169,7 +179,9 @@ class TapeEntryController extends Controller
             //chaiyeko data relation lagau navay pardaina
             AutoLoadItemStock::where('id',$data->id)->delete();
         }
-        return view('admin.tapeentry.index')->with(['message'=>"Tape Receive Entry Successful"]);
+
+        return $this->index()->with(['message'=>"Tape Receive Entry Successful"]);
+        // return view('admin.tapeentry.index')->with(['message'=>"Tape Receive Entry Successful"]);
         //yo delete hanni stock bata
     }
 }

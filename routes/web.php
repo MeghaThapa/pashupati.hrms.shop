@@ -640,6 +640,7 @@ Route::post('import/stock',[StockImportController::class,"import"])->name('impor
 Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');
 Route::post('tape-entry/store',[TapeEntryController::class,"tapeentrystore"])->name("tape.entry.store");
 Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"])->name("tape.entry.receive.create");
+Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"deleteTape"])->name("tape.entry.receive.delete");
     //reteieve planttype
 Route::get('tape-entry/ajax-request/{department_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
     //reteieve plantname

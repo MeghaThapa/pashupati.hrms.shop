@@ -67,12 +67,18 @@
                                 @foreach($tapeentries as $key => $data)
                                     <tr>
                                         <td>{{ $key+1 }}</td>
-                                        <td>{{ $data->receipt_number }}</td>
-                                        <td>{{ $data->tape_entry_date }}</td>
+                                        <td>{{ $data->receipt_number }}  <span class="badge @if($data->status == 'created') badge-success @else badge-warning @endif">{{ $data->status }}</span></td>
+                                        <td>{{ $data->tape_entry_date }}</span></td>
                                         <td>
-                                            <div class="button-group">
-                                                <a href="{{ route('tape.entry.receive.create',['id'=>$data->id]) }}" class="btn btn-info" title="create tape receive entry">Create</a>
-                                                <a href="javascript:void(0)"class="btn btn-danger">Delete</a>
+                                            <div class="btn-group">
+                                                @if($data->status == 'pending')
+                                                    <a href="{{ route('tape.entry.receive.create',['id'=>$data->id]) }}" class="btn btn-info" title="create tape receive entry"><i class='fa fa-plus'></i></a>
+                                                    <form id="trash" action="{{ route('tape.entry.receive.delete',['id'=>$data->id]) }}">
+                                                        <button type="submit" class="btn btn-danger ml-2"><i class="fa fa-trash"></i></button>
+                                                    </form>
+                                                @elseif($data->status == 'created')
+                                                    <button type="submit" class="btn btn-info"><i class="fa fa-eye"></i></button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -93,6 +99,7 @@
 @section('extra-script')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 @if(session()->has('message'))
     <script>
         toastr.success('{{ session()->get("message")}}');
@@ -100,5 +107,42 @@
 @endif
 <script>
     let table = new DataTable('#myTable');
+</script>
+<script>
+   $("#trash").submit(function(e){
+    e.preventDefault();
+    let geturl = $('#trash').attr('action');
+    let csrf_token = $('meta[name="csrf-token"]').attr('content');
+    Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: geturl,
+                method : "POST",
+                data: {
+                    _token: csrf_token
+                },
+                success:function(response){
+                    Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                    );
+                    location.reload(true);
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        }
+    });
+   });
 </script>
 @endsection
