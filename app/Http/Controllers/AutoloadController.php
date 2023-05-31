@@ -13,6 +13,8 @@ use App\Models\DanaGroup;
 use App\Models\RawMaterial;
 use App\Models\RawMaterialStock;
 use App\Models\AutoLoadItemStock;
+use Yajra\DataTables\Facades\DataTables;
+use DB;
 class AutoloadController extends Controller
 {
     /**
@@ -63,17 +65,26 @@ class AutoloadController extends Controller
         return $autoload;
        // return redirect()->route('autoLoad.createAutoloadItem',['autoload_id'=>$autoload->id]);
     }
-     public function createAutoloadItem($autoload_id){
+    public function update(Request $request){
+       //return $request;
+       $autoload=AutoLoad::find($request->autoload_id_model);
+       $autoload->transfer_date = $request->transfer_date_model;
+       $autoload->receipt_no  = $request->receipt_no_model;
+       $autoload->save();
+
         $fromGodams = RawMaterialStock::with('department')->select('department_id')->distinct()->get();
-//return $fromGodams;
-       //return $fromGodams;
-        //$fromGodams = Department::all();
         $plantTypes = ProcessingStep::all();
         $plantNames = ProcessingSubcat::all();
         $shifts= Shift::where('status','active')->get();
-       // $danaGroups= DanaGroup::where('status','active')->get();
+        $autoload= AutoLoad::find($request->autoload_id_model);
+         return view('admin.autoload.createaAutoloadItems',compact('fromGodams','plantTypes','plantNames','shifts','autoload'));
+    }
+     public function createAutoloadItem($autoload_id){
+        $fromGodams = RawMaterialStock::with('department')->select('department_id')->distinct()->get();
+        $plantTypes = ProcessingStep::all();
+        $plantNames = ProcessingSubcat::all();
+        $shifts= Shift::where('status','active')->get();
         $autoload= AutoLoad::find($autoload_id);
-        //return $autoload;
         return view('admin.autoload.createaAutoloadItems',compact('fromGodams','plantTypes','plantNames','shifts','autoload'));
     }
     // create
@@ -106,12 +117,22 @@ class AutoloadController extends Controller
         return $processingSteps;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function dataTable(){
+         $autoloads = DB::table('auto_loads')->get();
+        // return $autoloads;
+        return DataTables::of($autoloads)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $actionBtn = '
+                <button class="btnEdit" data-id="'.$row->id.'">
+                <i class="fas fa-edit fa-lg"></i>
+                </button>';
+
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
     public function show($id)
     {
         //
@@ -123,9 +144,11 @@ class AutoloadController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+
+    public function getEditItemData($autoLoad_id)
     {
-        //
+        $autoload=AutoLoad::find($autoLoad_id);
+        return $autoload;
     }
 
     /**
@@ -135,10 +158,7 @@ class AutoloadController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+
 
     /**
      * Remove the specified resource from storage.
