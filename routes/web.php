@@ -633,6 +633,8 @@ Route::get('stock/getDetailsAccItem/{item_id}', 'StockController@getDetailsAccIt
 
 //import stock
 Route::post('import/stock',[StockImportController::class,"import"])->name('import.stock');
+//import fabric
+Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
 
 /*****************tape entry**************/
 Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');

@@ -41,13 +41,27 @@
                 </div>
                 <div class="col-lg-9 col-md-7 col-6">
                     <div class="card-tools text-md-right">
-                        <a class="btn btn-secondary" href="{{ route('subCategories.pdf') }}">
+                     {{--    <a class="btn btn-secondary" href="{{ route('fabrics.pdf') }}">
                             <i class="fas fa-download"></i> @lang('Export')
                         </a>
                         <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
                             {{ __('Add Sub Category') }} <i class="fas fa-plus-circle"></i>
-                        </a>
+                        </a> --}}
+
+                        <form action="{{ route('import.fabric') }}" method="POST" enctype="multipart/form-data">
+                          @csrf
+                          <div class="form-group mb-2" style="max-width: 500px; margin: 0 auto;">
+                              <div class="custom-file text-left">
+                                  <input type="file" name="file" class="custom-file-input" id="customFile">
+                                  <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                          <button class="btn btn-primary">Import data</button>
+                        </form>
                     </div>
+
+                    
+
                 </div>
             </div>
 
