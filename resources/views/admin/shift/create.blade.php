@@ -16,9 +16,9 @@
                         <a href="{{ route('admin.setup') }}">{{ __('Setup') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('sizes.index') }}">{{ __('Sizes') }}</a>
+                        <a href="{{ route('shift.index') }}">{{ __('Shift') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('Create Size') }}</li>
+                    <li class="breadcrumb-item active">{{ __('Create Shift') }}</li>
                 </ol>
             </div>
         </div>
