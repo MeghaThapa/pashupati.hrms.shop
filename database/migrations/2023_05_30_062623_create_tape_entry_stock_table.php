@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('tape_entry_stock', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('tape_entry_id');
+            $table->foreign('tape_entry_id')->references('id')->on('tape_entry')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('togodam_id');
             $table->foreign('togodam_id')->references('id')->on('department')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('planttype_id');
