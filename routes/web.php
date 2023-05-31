@@ -96,7 +96,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('shift/index', 'ShiftController@index')->name('shift.index');
     Route::get('shift/create', 'ShiftController@create')->name('shift.create');
     Route::post('shift/store', 'ShiftController@store')->name('shift.store');
-    Route::post('shift/update/{id}', 'ShiftController@update')->name('shift.update');
+    Route::post('shift/update', 'ShiftController@update')->name('shift.update');
     Route::get('/shift/getShiftData/{id}', 'ShiftController@getShiftData')->name('shift.getShiftData');
     Route::delete('/shift/delete/{id}', 'ShiftController@delete')->name('shift.delete');
 
