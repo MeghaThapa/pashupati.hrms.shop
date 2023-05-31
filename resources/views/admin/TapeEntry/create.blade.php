@@ -245,10 +245,7 @@
                             <div class="col-md-3">
                                 <label>Total Row/Dana in Kg</label>
                                 <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" disabled required/>
-                            </div>
-                            <div class="col-md-3">
-                                <button type="submit" id="btn-update" class="btn btn-info" disabled>Update</button>
-                                <button id="btn-view" id="btn-view" class=" btn btn-primary" disabled>View</button>
+                                <button type="submit" id="btn-update" class="btn btn-info mt-3" disabled>Update</button>
                             </div>
                         </div>
                         <hr>

@@ -11,6 +11,6 @@ class TapeEntry extends Model
     protected $table = "tape_entry";
     protected $id = 'id';
     protected $fillable = [
-        'receipt_number','tape_entry_date','created_at','updated_at'
+        'receipt_number','tape_entry_date','status','created_at','updated_at'
     ];
 }
