@@ -178,7 +178,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" id="hello" class="btn btn-primary">Update AutoLoad</button>
+                    <button type="submit" id="hello" class="btn btn-primary edit-btn">Update AutoLoad</button>
                 </div>
             </form>
         </div>
@@ -189,6 +189,10 @@
         @section('extra-script')
         <script>
         $(document).ready(function() {
+
+$('.edit-btn').on('click', function(){
+    $('#editAutoloadModel').modal('hide');
+})
             //for edit
                 document.getElementById('addAutoload').addEventListener('click', function(e){
                     $.ajax({

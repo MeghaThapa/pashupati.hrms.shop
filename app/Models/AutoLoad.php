@@ -17,4 +17,12 @@ class AutoLoad extends Model
     {
         return $this->belongsTo('App\Models\DanaGroup', 'dana_group_id', "id");
     }
+
+    public function autoLoadItems()
+    {
+        return $this->hasMany(AutoloadItems::class, "autoload_id", "id");
+    }
+
 }
+
+

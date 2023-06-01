@@ -67,16 +67,13 @@ class AutoloadController extends Controller
     }
     public function update(Request $request){
        //return $request;
-       $autoload=AutoLoad::find($request->autoload_id_model);
-       $autoload->transfer_date = $request->transfer_date_model;
-       $autoload->receipt_no  = $request->receipt_no_model;
-       $autoload->save();
-
+        $autoload=AutoLoad::find($request->autoload_id_model);
+        $autoload->transfer_date = $request->transfer_date_model;
+        $autoload->save();
         $fromGodams = RawMaterialStock::with('department')->select('department_id')->distinct()->get();
         $plantTypes = ProcessingStep::all();
         $plantNames = ProcessingSubcat::all();
         $shifts= Shift::where('status','active')->get();
-        $autoload= AutoLoad::find($request->autoload_id_model);
          return view('admin.autoload.createaAutoloadItems',compact('fromGodams','plantTypes','plantNames','shifts','autoload'));
     }
      public function createAutoloadItem($autoload_id){

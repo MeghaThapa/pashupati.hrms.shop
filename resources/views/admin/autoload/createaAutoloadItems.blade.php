@@ -501,7 +501,7 @@
                     url: '{{ route('autoloadItem.getAutoloadItemsData', ['autoload_id' => $autoload->id]) }}',
                     method: 'GET',
                     success: function(response) {
-                      //console.log(response);
+                      console.log(response);
                         if (response.count <= 0) {
                             return false;
                         }
@@ -529,7 +529,7 @@
 
 
             function setIntoTable(res) {
-
+                // console.log(res);
                             var html = "";
 
                             html = "<tr  id=editRowId-" + res.id + "><td>" + sn +
