@@ -254,6 +254,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('autoload/dataTable',[AutoloadController::class,'dataTable'])->name('autoLoad.dataTable');
     Route::get('autoload/getEditItemData/{autoLoad_id}',[AutoloadController::class,'getEditItemData'])->name('autoLoad.getEditItemData');
     Route::post('autoload/update',[AutoloadController::class,'update'])->name('autoload.update');
+    Route::delete('autoload/delete/{autoload_id}',[AutoloadController::class,'delete'])->name('autoload.delete');
+
+
 
      //AutoloadItemF
    Route::post('autoloadItem/store',[AutoloadItemsController::class,'store'])->name('autoloadItem.store');

@@ -115,20 +115,35 @@ class AutoloadController extends Controller
     }
 
     public function dataTable(){
-         $autoloads = DB::table('auto_loads')->get();
-        // return $autoloads;
+
+         $autoloads = DB::table('auto_loads')
+         ->leftJoin('autoload_items', 'auto_loads.id', '=', 'autoload_items.autoload_id')
+         ->select('auto_loads.*', 'autoload_items.id AS has_item')
+         ->get();
         return DataTables::of($autoloads)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $actionBtn = '
-                <button class="btnEdit" data-id="'.$row->id.'">
+                $actionBtn ='';
+                $actionBtn .= '
+                <button class=" btn btn-primary btnEdit" data-id="'.$row->id.'">
                 <i class="fas fa-edit fa-lg"></i>
                 </button>';
+                if(!$row->has_item){
+                    $actionBtn .= '
+                <button class="btn btn-danger btnAutoloadDlt" data-id="'.$row->id.'">
+                <i class="fas fa-trash fa-lg"></i>
+                </button>';
+                }
+
 
                 return $actionBtn;
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+    public function delete($autoload_id){
+        $autoload=AutoLoad::find($autoload_id);
+        $autoload->delete();
     }
     public function show($id)
     {
