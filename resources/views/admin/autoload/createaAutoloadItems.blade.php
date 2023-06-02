@@ -501,7 +501,7 @@
                     url: '{{ route('autoloadItem.getAutoloadItemsData', ['autoload_id' => $autoload->id]) }}',
                     method: 'GET',
                     success: function(response) {
-                      //console.log(response);
+                      console.log(response);
                         if (response.count <= 0) {
                             return false;
                         }
@@ -529,7 +529,7 @@
 
 
             function setIntoTable(res) {
-
+                // console.log(res);
                             var html = "";
 
                             html = "<tr  id=editRowId-" + res.id + "><td>" + sn +
@@ -559,7 +559,18 @@
                  for (var i = 0; i < deleteButtons.length; i++) {
                     deleteButtons[i].addEventListener('click', function(event) {
                         let autoloadItem_id = this.getAttribute('data-id');
+                         new swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, data will move completely removed!!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
 
+                })
+                .then((willDelete) => {
+                    if (willDelete.isConfirmed) {
                         $.ajax({
                             url: '{{ route('autoLoadItem.delete', ['autoloadItem_id' => ':lol']) }}'
                                 .replace(':lol', autoloadItem_id),
@@ -573,10 +584,12 @@
                                 getAutoloadItemsData();
                               }
                         });
-
+                    }
                     })
-                }
-             }
+
+                })
+            }
+        }
               function editEventBtn() {
                 // Assign event listener to buttons with class 'editItemBtn'
                 let editButtons = document.getElementsByClassName('editAutoladItemBtn');

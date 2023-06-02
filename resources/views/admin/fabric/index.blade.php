@@ -5,14 +5,14 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('Sub Categories') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('Fabric') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('Sub Categories') }}</li>
+                    <li class="breadcrumb-item active">{{ __('Fabric') }}</li>
                 </ol>
             </div>
         </div>
@@ -27,7 +27,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-3 col-md-5 col-6 mb-2">
-                    <form action="{{ route('subCategories.index') }}" method="GET" role="search">
+                    <form action="{{ route('fabrics.index') }}" method="GET" role="search">
                         <div class="input-group">
                             <input type="text" name="term"
                                     placeholder="{{ __('Type name or category name...') }}"
@@ -39,25 +39,30 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-lg-9 col-md-7 col-6">
+                <div class="col-lg-6 col-md-7 col-6">
                     <div class="card-tools text-md-right">
-                     {{--    <a class="btn btn-secondary" href="{{ route('fabrics.pdf') }}">
-                            <i class="fas fa-download"></i> @lang('Export')
+                       <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
+                            {{ __('Add Fabric') }} <i class="fas fa-plus-circle"></i>
                         </a>
-                        <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
-                            {{ __('Add Sub Category') }} <i class="fas fa-plus-circle"></i>
-                        </a> --}}
 
                         <form action="{{ route('import.fabric') }}" method="POST" enctype="multipart/form-data">
                           @csrf
                           <div class="form-group mb-2" style="max-width: 500px; margin: 0 auto;">
                               <div class="custom-file text-left">
-                                  <input type="file" name="file" class="custom-file-input" id="customFile">
+                                  <input type="file" name="file" class="custom-file-input" id="customFile" >
                                   <label class="custom-file-label" for="customFile">Choose file</label>
+
                               </div>
+
                           </div>
                           <button class="btn btn-primary">Import data</button>
-                        </form>
+                          
+                          @error('file')
+                          <span class="text-danger font-italic" role="alert">
+                            <strong>{{ $message }}</strong>
+                          </span>
+                          @enderror
+                        </form> 
                     </div>
 
                     
@@ -70,33 +75,39 @@
                     <thead>
                     <tr>
                         <th>@lang('#')</th>
+                        <th>{{ __('Roll NO') }}</th>
+                        <th>{{ __('Loom NO') }}</th>
                         <th>{{ __('Name') }}</th>
-                        <th>{{ __('Category') }}</th>
-                        <th>{{ __('Sizes') }}</th>
-                        <th>{{ __('Note') }}</th>
+                        <th>{{ __('FabricGroup') }}</th>
+                        <th>{{ __('Gross weight') }}</th>
+                        <th>{{ __('Net Weight') }}</th>
+                        <th>{{ __('Meter') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Created') }}</th>
                         <th class="text-right">{{ __('Action') }}</th>
                     </tr>
                     </thead>
-                    {{-- <tbody>
+                    <tbody>
 
-                    @if ($subCategories->total() > 0)
-                        @foreach ($subCategories as $key => $subCat)
+                    @if ($fabrics->total() > 0)
+                        @foreach ($fabrics as $key => $fabric)
                             <tr>
                                 <td>{{ ++$key }}</td>
-                                <td>{{ $subCat->name }} </td>
-                                <td>{{ $subCat->category->name }} </td>
-                                <td>{{ $subCat->sizes }} </td>
-                                <td>{{ $subCat->shortNote() }} </td>
+                                <td>{{ $fabric->roll_no }} </td>
+                                <td>{{ $fabric->loom_no }} </td>
+                                <td>{{ $fabric->name }} </td>
+                                <td>{{$fabric->fabricgroup->name}} </td>
+                                <td>{{ $fabric->gross_wt}} </td>
+                                <td>{{ $fabric->net_wt }}</td>
+                                <td>{{ $fabric->meter }}</td>
                                 <td>
-                                    @if ($subCat->isActive())
+                                    @if ($fabric->isActive())
                                         <span class="badge badge-success">{{ __('Active') }}</span>
                                     @else
                                         <span class="badge badge-warning">{{ __('Inactive') }}</span>
                                     @endif
                                 </td>
-                                <td>{{ \Carbon\Carbon::parse($subCat->created_at)->format('d-M-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($fabric->created_at)->format('d-M-Y') }}</td>
                                 <td class="text-right">
                                     <div class="btn-group">
                                         <button type="button"
@@ -105,19 +116,19 @@
                                             <i class="fas fa-ellipsis-v"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            @if ($subCat->isActive())
-                                                <a href="{{ route('subCategories.status', $subCat->slug) }}"
+                                            @if ($fabric->isActive())
+                                                <a href="{{ route('fabrics.status', $fabric->slug) }}"
                                                     class="dropdown-item"><i class="fas fa-window-close"></i>
                                                     {{ __('Inactive') }}</a>
                                             @else
-                                                <a href="{{ route('subCategories.status', $subCat->slug) }}"
+                                                <a href="{{ route('fabrics.status', $fabric->slug) }}"
                                                     class="dropdown-item"><i class="fas fa-check-square"></i>
                                                     {{ __('Active') }}</a>
                                             @endif
-                                            <a href="{{ route('subCategories.edit', $subCat->slug) }}"
+                                            <a href="{{ route('fabrics.edit', $fabric->slug) }}"
                                                 class="dropdown-item"><i class="fas fa-edit"></i>
                                                 {{ __('Edit') }}</a>
-                                            <a href="{{ route('subCategories.delete', $subCat->slug) }}"
+                                            <a href="{{ route('fabrics.delete', $fabric->slug) }}"
                                                 class="dropdown-item delete-btn"
                                                 data-msg="{{ __('Are you sure you want to delete this sub category?') }}"><i
                                                     class="fas fa-trash"></i> {{ __('Delete') }}</a>
@@ -133,20 +144,20 @@
                                     <img src="{{ asset('img/result-not-found.svg') }}" alt="" title="">
                                     <p>{{ __('Sorry, no sub category found in the database. Create your very first sub category.') }}
                                     </p>
-                                    <a href="{{ route('subCategories.create') }}" class="btn btn-primary">
+                                    <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
                                         {{ __('Add Sub Category') }} <i class="fas fa-plus-circle"></i>
                                     </a>
                                 </div>
                             </td>
                         </tr>
                     @endif
-                    </tbody> --}}
+                    </tbody>
                 </table>
             </div>
             <!-- /.card-body -->
 
             <!-- pagination start -->
-            {{-- {{ $subCategories->links() }} --}}
+            {{-- {{ $fabrics->links() }} --}}
             <!-- pagination end -->
         </div>
     </div>

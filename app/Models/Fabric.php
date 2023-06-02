@@ -30,6 +30,12 @@ class Fabric extends Model
        ];
    }
 
+   
+   public function fabricgroup()
+   {
+       return $this->belongsTo(FabricGroup::class, 'fabricgroup_id', 'id');
+   }
+
    /**
     * Return relation with Blog Model
     *

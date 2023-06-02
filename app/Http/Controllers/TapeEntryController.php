@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\TapeEntryStockModel;
+use App\Models\Wastages;
+use App\Models\WasteStock;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\ProcessingStep;
@@ -78,10 +80,9 @@ class TapeEntryController extends Controller
         
         $shift = AutoLoadItemStock::with('shift')->get();
         $tapeentries = TapeEntry::where('id', $id)->get();
+        $wastage = Wastages::all();
         
-        // return $department;
-        
-        return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries'));
+        return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries','wastage'));
 
     }
 
@@ -157,8 +158,15 @@ class TapeEntryController extends Controller
         }
     }
 
+    // public function getajaxwastage(){
+    //     $wastage = Wastages::all();
+    //     return response([
+    //         'data' => $wastage
+    //     ]);
+    // }
+
     public function tapeentrystockstore(Request $request){
-        return $request;
+        // return $request;
         $tape_entry_id = $request->tape_entry_id;
         $shift = $request->shift;
         $plantname = $request->plantname;
@@ -171,6 +179,12 @@ class TapeEntryController extends Controller
         $running = $request->running;
         $bypass_wast = $request->bypass_wast;
         $dana_in_kg = $request->dana_in_kg;
+        $wastetype = $request->wastetype ;
+
+        $totalwaste = $dana_in_kg - $total_in_kg;
+        if($totalwaste > 0){
+            $this->wastemgmt($totalwaste,$department,$wastetype);
+        }
 
         $tesm = TapeEntryStockModel::create([
             'tape_entry_id'=>$tape_entry_id,
@@ -197,25 +211,18 @@ class TapeEntryController extends Controller
                 ->where('shift_id',$shift)
                 ->get();
 
-        //add ganrne tape_entry_stock ma danaid bata ako data
         foreach($danaid as $data){
             AutoLoadItemStock::where('id',$data->id)->delete();
         }
 
-/*
-
-        "total_in_kg": "6900",
-"loading": "0",
-"running": "0",
-"bypass_wast": "100",
-"tapetype": "tape1",
-"tape_qty_in_kg": "6900",
-
-*/
-
         return $this->index()->with(['message'=>"Tape Receive Entry Successful"]);
-        // return view('admin.tapeentry.index')->with(['message'=>"Tape Receive Entry Successful"]);
-        //yo delete hanni stock bata
+        }
     }
-}
+    function wastemgmt($totalwaste,$department,$wastetype){
+        WasteStock::create([
+            'department_id' => $department,
+            'quantity_in_kg' => $totalwaste,
+            'waste_id' => '1'
+        ]);
+    }
 }

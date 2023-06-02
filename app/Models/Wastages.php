@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Wastages extends Model
 {
     use HasFactory;
+    protected $table = "wastages";
+    protected $id = 'id';
+    protected $fillable = [
+        'name','status','created_at','updated_at'
+    ];
 }

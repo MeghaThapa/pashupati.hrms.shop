@@ -67,16 +67,13 @@ class AutoloadController extends Controller
     }
     public function update(Request $request){
        //return $request;
-       $autoload=AutoLoad::find($request->autoload_id_model);
-       $autoload->transfer_date = $request->transfer_date_model;
-       $autoload->receipt_no  = $request->receipt_no_model;
-       $autoload->save();
-
+        $autoload=AutoLoad::find($request->autoload_id_model);
+        $autoload->transfer_date = $request->transfer_date_model;
+        $autoload->save();
         $fromGodams = RawMaterialStock::with('department')->select('department_id')->distinct()->get();
         $plantTypes = ProcessingStep::all();
         $plantNames = ProcessingSubcat::all();
         $shifts= Shift::where('status','active')->get();
-        $autoload= AutoLoad::find($request->autoload_id_model);
          return view('admin.autoload.createaAutoloadItems',compact('fromGodams','plantTypes','plantNames','shifts','autoload'));
     }
      public function createAutoloadItem($autoload_id){
@@ -118,20 +115,35 @@ class AutoloadController extends Controller
     }
 
     public function dataTable(){
-         $autoloads = DB::table('auto_loads')->get();
-        // return $autoloads;
+
+         $autoloads = DB::table('auto_loads')
+         ->leftJoin('autoload_items', 'auto_loads.id', '=', 'autoload_items.autoload_id')
+         ->select('auto_loads.*', 'autoload_items.id AS has_item')
+         ->get();
         return DataTables::of($autoloads)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $actionBtn = '
-                <button class="btnEdit" data-id="'.$row->id.'">
+                $actionBtn ='';
+                $actionBtn .= '
+                <button class=" btn btn-primary btnEdit" data-id="'.$row->id.'">
                 <i class="fas fa-edit fa-lg"></i>
                 </button>';
+                if(!$row->has_item){
+                    $actionBtn .= '
+                <button class="btn btn-danger btnAutoloadDlt" data-id="'.$row->id.'">
+                <i class="fas fa-trash fa-lg"></i>
+                </button>';
+                }
+
 
                 return $actionBtn;
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+    public function delete($autoload_id){
+        $autoload=AutoLoad::find($autoload_id);
+        $autoload->delete();
     }
     public function show($id)
     {

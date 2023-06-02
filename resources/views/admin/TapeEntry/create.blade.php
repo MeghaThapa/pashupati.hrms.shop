@@ -262,8 +262,21 @@
                 </div>
             </div>
             <hr>
-            <div class="row text-center d-flex justify-content-center">
-                <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <label for="">Waste Type</label>
+                            <select name="wastetype" id="wastetype" class="advance-select-box select2" disabled>
+                                    <option value="">select waste type here if needed</option>
+                                @foreach($wastage as $data)
+                                    <option value="{{ $data->id }}">{{  $data->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <label>Total Row/Dana in Kg</label>
                     <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" disabled required />
                     <button type="submit" id="btn-update" class="btn btn-info mt-3" disabled>Update</button>
@@ -486,6 +499,14 @@
                 let bypass = parseFloat($('#bypass_wast').val());
                 let tapetypeval = total - loading - running - bypass;
                 $("#tape_qty_in_kg").val(tapetypeval);
+
+                let tape_qty_in_kg = $("#tape_qty_in_kg").val();
+                let dana_in_kg = $("#dana_in_kg").val()
+                if(tape_qty_in_kg != dana_in_kg){
+                    $("#wastetype").prop('disabled',false);
+                }else if(tape_qty_in_kg == dana_in_kg){
+                    $("#wastetype").prop('disabled',true);
+                }
             });
 
             /*********************** form condition checks  **********************/

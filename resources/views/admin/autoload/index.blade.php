@@ -178,7 +178,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" id="hello" class="btn btn-primary">Update AutoLoad</button>
+                    <button type="submit" id="hello" class="btn btn-primary edit-btn">Update AutoLoad</button>
                 </div>
             </form>
         </div>
@@ -189,6 +189,10 @@
         @section('extra-script')
         <script>
         $(document).ready(function() {
+
+$('.edit-btn').on('click', function(){
+    $('#editAutoloadModel').modal('hide');
+})
             //for edit
                 document.getElementById('addAutoload').addEventListener('click', function(e){
                     $.ajax({
@@ -264,7 +268,7 @@
                     style: 'bootstrap4',
                     processing: true,
                     serverSide: true,
-                    ajax: "{{ route('autoLoad.dataTable') }}",
+                    ajax:"{{ route('autoLoad.dataTable') }}",
                     columns: [{
                             data: 'DT_RowIndex'
                         },
@@ -281,6 +285,45 @@
                         },
                     ]
                 });
+    });
+    $('body').on('click','.btnAutoloadDlt',function(){
+        let autoload_id = $(this).attr('data-id');
+         new swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, data will move completely removed!!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+
+                })
+                .then((willDelete) => {
+                    if (willDelete.isConfirmed) {
+                        $.ajax({
+                            type: "DELETE",
+                            url: "{{ route('autoload.delete', ['autoload_id' => ':Replaced']) }}".replace(
+                                ':Replaced',
+                                autoload_id),
+                            data: {
+                                '_token': $('meta[name=csrf-token]').attr("content"),
+
+                            },
+                            success: function(data) {
+                                new swal
+                                    ({
+                                        text: "Poof! Your data has been deleted!",
+                                        title: "Deleted",
+                                        icon: "success",
+                                    })
+                                location.reload();
+
+                            }
+                        })
+                    }
+
+                })
+
     });
     $('body').on('click', '.btnEdit', function () {
     let autoload_id = $(this).attr("data-id");
