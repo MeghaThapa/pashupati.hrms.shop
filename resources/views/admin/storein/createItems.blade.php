@@ -85,7 +85,7 @@
                             <label for="Category" class="col-form-label">{{ __('Category Name') }}<span class="required-field">*</span>
                             </label>
                             <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#exampleModalcat" style="margin-top:0 !important; top:8px;float:right;">
+                                data-target="#categoryModel" style="margin-top:0 !important; top:8px;float:right;">
                                 <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                             </a>
                             <select class="advance-select-box form-control  @error('Category') is-invalid @enderror"
@@ -106,7 +106,7 @@
                             <label for="products" class="col-form-label">{{ __('Item Name') }}<span class="required-field">*</span>
                             </label>
                             <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#exampleModaltype" style="margin-top:0 !important; top:8px;float:right;">
+                                data-target="#createItemModelPopup" style="margin-top:0 !important; top:8px;float:right;">
                                 <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                             </a>
                             <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
@@ -491,20 +491,21 @@
                 {{-- create charges pop up end --}}
                 <!--Category Model popup-->
 
-                <div class="modal fade" id="exampleModalcat" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
+                <div class="modal fade" id="categoryModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
                     aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
+
                                 <h5 class="modal-title" id="exampleModalcat">Add Category</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body">
-                                <form class="form-horizontal" action="{{ route('categories.store') }}" method="post"
-                                    enctype="multipart/form-data">
-                                    @csrf
+
+                                <form class="form-horizontal" id="createCategoryModel">
+                                    <div class="modal-body">
+                                <div id="categoryModelError" class="alert alert-danger" hidden></div>
                                     <div class="card-body">
                                         <div class="row">
 
@@ -512,8 +513,8 @@
                                                 <label  style="width:400px !important;" for="name">{{ __('Category Name') }}<span
                                                         class="required-field">*</span></label>
                                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                                    id="name" name="name" style="width:430px !important; " placeholder="{{ __('Category Name') }}"
-                                                    value="{{ old('name') }}" required>
+                                                    id="catNameModel" name="cat_name_model" style="width:430px !important; " placeholder="{{ __('Category Name') }}"
+                                                   required>
                                                 @error('name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
@@ -524,7 +525,7 @@
                                         <div class="row">
                                             <div class="form-group col-md-12">
                                                 <label for="note" class="col-form-label">{{ __('Category Note') }}</label>
-                                                <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
+                                                <textarea class="form-control @error('note') is-invalid @enderror" id="catNoteModel" name="cat_note_model"
                                                     placeholder="{{ __('Category Note') }}">{{ old('note') }}</textarea>
                                                 @error('note')
                                                     <span class="invalid-feedback" role="alert">
@@ -536,28 +537,27 @@
                                         <div class="row">
                                             <div class="form-group col-md-12">
                                                 <label for="status" class="col-form-label">{{ __('Status') }}</label>
-                                                <select class="form-control" id="status" name="status">
+                                                <select class="form-control" id="catStatus" name="cat_status">
                                                     <option value="1">{{ __('Active') }}</option>
                                                     <option value="0">{{ __('Inactive') }}</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-sm-10">
-                                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
-                                                    {{ __('Save Category') }}</button>
-                                            </div>
-                                        </div>
+
                                     </div>
                                     <!-- /.card-body -->
-                                </form>
+
                             </div>
                             <div class="modal-footer">
+
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                     Close
                                 </button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                    {{ __('Save Category') }}</button>
                                 <!--<button type="button" class="btn btn-primary">Save changes</button>-->
                             </div>
+                        </form>
                         </div>
                     </div>
                 </div>
@@ -565,7 +565,7 @@
                 <!--Category  Model Popup End-->
                 <!--Item Model popup-->
 
-                <div class="modal fade" id="exampleModaltype" tabindex="-1" role="dialog" aria-labelledby="exampleModalitem"
+                <div class="modal fade" id="createItemModelPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalitem"
                     aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -575,17 +575,17 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
+                        <form class="form-horizontal" id="createItemModel">
+
                             <div class="modal-body">
-                                <form class="form-horizontal" action="{{ route('items.store') }}" method="post"
-                                    enctype="multipart/form-data">
-                                    @csrf
+                                <div id="itemModelError" class="alert alert-danger" hidden></div>
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="form-group col-md-6">
                                                 <label for="item">{{ __('Items Name') }}<span
                                                         class="required-field">*</span></label>
                                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                                    id="item" name="item" placeholder="{{ __('Items Name') }}"
+                                                    id="itemNameModel" name="item_name_model" placeholder="{{ __('Items Name') }}"
                                                     value="{{ old('item') }}" required>
                                                 @error('name')
                                                     <span class="invalid-feedback" role="alert">
@@ -597,7 +597,7 @@
                                                 <label for="item">{{ __('Product Number') }}<span
                                                         class="required-field">*</span></label>
                                                 <input type="text" class="form-control @error('pnumber') is-invalid @enderror"
-                                                    id="pnumber" name="pnumber" placeholder="{{ __('Product No') }}"
+                                                    id="pnumberModel" name="pnumber_model" placeholder="{{ __('Product No') }}"
                                                     value="{{ old('pnumber') }}" required>
                                                 @error('name')
                                                     <span class="invalid-feedback" role="alert">
@@ -612,7 +612,7 @@
                                                         class="required-field">*</span></label>
                                                 <select
                                                     class="advance-select-box form-control @error('categoryName') is-invalid @enderror"
-                                                    id="categoryName" name="categoryName" required>
+                                                    id="categoryNameModel" name="categoryName_model" required>
                                                     <option value="" selected disabled>{{ __('Select a category') }}</option>
                                                     @foreach ($categories as $key => $category)
                                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -635,69 +635,39 @@
                                                     style="display:flex;align-items: center;justify-content: center;"></i>
                                             </a>
                                             <select class="advance-select-box form-control @error('department') is-invalid @enderror"
-                                                id="department" name="department_id">
+                                                id="departmentModel" name="department_id_model">
                                                 <option value="" selected disabled>{{ __('Select a department') }}</option>
                                                 @foreach ($departments as $department)
                                                     <option value="{{ $department->id }}">{{ $department->department }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('department')
+                                            @error('department_id_model')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
-
                                         </div>
-
-
-
                                         </div>
-
                                         <div class="row">
-                                        {{-- supplier --}}
-                                            {{-- <div class="col-md-6 form-group">
-                                                <label for="supplier" class="col-form-label">
-                                                    {{ __('Supplier') }}
-                                                </label>
-                                                <select
-                                                    class="advance-select-box form-control @error('supplier') is-invalid @enderror"
-                                                    id="supplier" name="supplier">
-                                                    <option value="" selected disabled>{{ __('Select a supplier') }}</option>
-                                                    @foreach ($suppliers as $supplier)
-                                                        <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('supplier')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-
-                                            </div> --}}
                                             <div class="form-group col-md-6">
                                                 <label for="status" class="col-form-label">{{ __('Status') }}</label>
-                                                <select class="form-control" id="status" name="status">
+                                                <select class="form-control" id="itemStatusModel" name="item_status_model">
                                                     <option value="1">{{ __('Active') }}</option>
                                                     <option value="0">{{ __('Inactive') }}</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-sm-10">
-                                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
-                                                    {{ __('Save Items') }}</button>
-                                            </div>
-                                        </div>
                                     </div>
                                     <!-- /.card-body -->
-                                </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                     Close
                                 </button>
-                                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                                    {{ __('Save Items') }}</button>
                             </div>
+                        </form>
                         </div>
                     </div>
                 </div>
@@ -1019,6 +989,7 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/storein.js') }}"></script>
     <script>
+        $(document).ready(function(){
         checkRowInTable();
         function checkRowInTable(){
             let tableTbody = document.querySelector("#storeInItemTable tbody");
@@ -1031,8 +1002,102 @@
             }
         }
 
+        document.getElementById('createCategoryModel').addEventListener('submit', function(e){
+            e.preventDefault();
+
+            const form = e.target;
+            let name = form.elements['cat_name_model'];
+            let note = form.elements['cat_note_model'];
+            let status = form.elements['cat_status'];
+            if (!name.value && !note.value &&
+                !status.value) {
+                setMessage('categoryModelError', 'Please Fill out all fields')
+                return false;
+            }
+             $.ajax({
+                url: "{{ route('categories.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name.value,
+                    note: note.value,
+                    status: status.value,
+                },
+                success: function(response) {
+                    $('#categoryModel').modal('hide');
+                    console.log(response.category.name);
+                    let selectElement = document.getElementById('categorySelect');
+                    let optionElement = document.createElement('option');
+
+                    optionElement.value=response.category.id;
+                    optionElement.text = response.category.name;
+                    selectElement.appendChild(optionElement);
+                    optionElement.selected = true;
+
+                    let selectElementModel = document.getElementById('categoryNameModel');
+
+                    let optionElementModel = document.createElement('option');
+
+                    optionElementModel.value=response.category.id;
+                    optionElementModel.text = response.category.name;
+                    selectElementModel.appendChild(optionElementModel);
+                   selectElementModel.selected = true;
+                },
+                error: function(xhr, status, error) {
+                    setMessage('categoryModelError', xhr.responseJSON.message)
+                }
+            })
+
+        })
+
+        document.getElementById('createItemModel').addEventListener('submit',function(e) {
+            e.preventDefault();
+            const form= e.target;
+            let name=form.elements['item_name_model'];
+            let product_no =form.elements['pnumber_model'];
+            let category_id =form.elements['categoryName_model'];
+            let department_id=form.elements['department_id_model'];
+            let status = form.elements['item_status_model'];
+             if (!name.value && !product_no.value &&
+                !category_id.value && !department_id.value && !status.value) {
+                setMessage('categoryModelError', 'Please Fill out all fields')
+                return false;
+            }
+              $.ajax({
+                url: "{{ route('items.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    item: name.value,
+                    pnumber: product_no.value,
+                    categoryName: category_id.value,
+                    department_id:department_id.value,
+                    status:status.value,
+                },
+                success: function(response) {
+                    $('#createItemModelPopup').modal('hide');
+                   // console.log(response.category.id);
+                     let selectItemElement = document.getElementById('ProductName');
+                     let optionElement = document.createElement('option');
+                     optionElement.value=response.item.id;
+                    optionElement.text = response.item.item;
+                     selectItemElement.appendChild(optionElement);
+                },
+                error: function(xhr, status, error) {
+                    setMessage('itemModelError', xhr.responseJSON.message)
+                }
+            })
 
 
+        })
+ function setMessage(element_id, message) {
+            let errorContainer = document.getElementById(element_id);
+            errorContainer.hidden = false;
+            errorContainer.innerHTML = message;
+            setTimeout(function() {
+                errorContainer.hidden = true;
+            }, 2000);
+        }
     setChargesFields();
 
     var chargeFieldsIndex = 1;
@@ -1300,9 +1365,7 @@
             }
         }, 3000);
 
-    </script>
 
-    <script>
 
 
    $('#categoryitem_id').on('select2:select', function (e) {
@@ -1636,7 +1699,7 @@
         }
 
         function clearInputFields() {
-            document.getElementById('categoryName').value = "";
+            document.getElementById('categorySelect').value = "";
             document.getElementById('ProductName').value = "";
             document.getElementById('qunatities-1').value = "";
             document.getElementById('size_id').value = "";
@@ -1787,14 +1850,14 @@
             }
         }
     });
-
-    </script>
-    <script>
+});
+</script>
+<script>
         $(document).ready(function() {
             // Hide the error message after 5 seconds
             setTimeout(function() {
                 $('#error-container').fadeOut('fast');
             }, 3000); // 5000 milliseconds = 5 seconds
         });
-    </script>
+</script>
 @endsection
