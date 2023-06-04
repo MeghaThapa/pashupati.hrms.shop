@@ -23,6 +23,7 @@ class FabricController extends Controller
         return view('admin.fabric.index', compact('fabrics'));
     }
 
+   
      public function create()
     {
         $fabricgroups = FabricGroup::get();
@@ -108,7 +109,7 @@ class FabricController extends Controller
             'net_wt' => $request['net_wt'],
             'meter' => $request['meter'],
         ]);
-    
+
 
         return redirect()->route('fabrics.index')->withSuccess('Fabric updated successfully!');
     }

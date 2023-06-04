@@ -13,10 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('admin_store_out_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('size_id')->index();
-            $table->foreign('size_id')->references('id')->on('sizes');
-            $table->string('remark');
+        Schema::create('storein_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->string('code');
+            $table->text('note');
+            $table->enum('status',['active','inactive']);
+            $table->timestamps();
         });
     }
 
@@ -27,8 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('admin_store_out_items', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('storein_types');
     }
 };

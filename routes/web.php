@@ -11,6 +11,7 @@ use App\Http\Controllers\StoreinController;
 use App\Http\Controllers\StoreoutController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\StoreinDepartmentController;
 use App\Http\Controllers\PlacementController;
 use App\Http\Controllers\StockImportController;
 use App\Http\Controllers\ProcessingCategoryAndSubsController;
@@ -20,6 +21,17 @@ use App\Http\Controllers\AutoloadController;
 use App\Http\Controllers\TapeEntryController;
 use App\Http\Controllers\AutoloadItemsController;
 use App\Http\Controllers\AutoLoadStockController;
+
+
+use App\Http\Controllers\FabricSendReceiveController;
+use App\Http\Controllers\StoreinCategoryController;
+use App\Http\Controllers\ItemsOfStoreinController;
+
+use App\Http\Controllers\FabricNonWovenController;
+
+use App\Http\Controllers\WastageController;
+use App\Http\Controllers\WastageStockController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -117,6 +129,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('tax/{slug}/staus', 'TaxController@changeStatus')->name('tax.status');
     Route::get('tax/{slug}/delete', 'TaxController@destroy')->name('tax.delete');
+
+    //StoreinDepartment Route
+     Route::post('storeinDepartment/store', 'StoreinDepartmentController@store')->name('storeinDepartment.store');
 
     //Department Route
 
@@ -376,7 +391,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('suppliers/{id}/status', 'SupplierController@changeStatus')->name('suppliers.status');
     Route::get('suppliers/{id}/delete', 'SupplierController@destroy')->name('suppliers.delete');
-
+    //Storein Category Routes
+     Route::post('/storeinCategory/store', 'StoreinCategoryController@store')->name('storeinCategory.store');
     // categories route
     Route::get('/categories/pdf', 'CategoryController@createPDF')->name('categories.pdf');
     Route::resource('categories', 'CategoryController', [
@@ -405,7 +421,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/status', 'SubCategoryController@changeStatus')->name('subCategories.status');
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
-
+    //fabric send receive contoller
+    Route::get('/fabricSendReceive/index', 'FabricSendReceiveController@index')->name('fabricSendReceive.index');
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
@@ -421,6 +438,23 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
 
+
+    //fabric send and receive
+
+
+
+     // fabric_group route
+
+    Route::resource('nonwovenfabrics', 'FabricNonWovenController', [
+        'names' => [
+            'index' => 'nonwovenfabrics.index',
+            'create' => 'nonwovenfabrics.create',
+            'store' => 'nonwovenfabrics.store',
+            'edit' => 'nonwovenfabrics.edit',
+            'update' => 'nonwovenfabrics.update',
+        ]
+    ]);
+
     // fabric_group route
     Route::get('/fabric-groups/pdf', 'FabricGroupController@createPDF')->name('fabric-groups.pdf');
     Route::resource('fabric-groups', 'FabricGroupController', [
@@ -434,6 +468,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabric-groups/{id}/status', 'FabricGroupController@changeStatus')->name('fabric-groups.status');
     Route::get('fabric-groups/{id}/delete', 'FabricGroupController@destroy')->name('fabric-groups.delete');
+//Storein Item route
+    Route::post('storeinItems/store', 'ItemsOfStoreinController@store')->name('storeinItems.store');
 
     // Items route
     Route::resource('items', 'ItemController', [
@@ -601,6 +637,8 @@ Route::get('storein/storeinItemCreate/{id}', 'StoreinController@storeinItemCreat
 Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemDelete')->name('storein.storeinItemDelete');
 Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
 
+Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
+
 Route::resource('storein', 'StoreinController', [
     'names' => [
         'index' => 'storein.index',
@@ -647,6 +685,7 @@ Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
 Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');
 Route::post('tape-entry/store',[TapeEntryController::class,"tapeentrystore"])->name("tape.entry.store");
 Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"])->name("tape.entry.receive.create");
+Route::get('tape-entry/receive/view/{id}',[TapeEntryController::class,"view"])->name("tape.entry.receive.view");
 Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"deleteTape"])->name("tape.entry.receive.delete");
     //reteieve planttype
 Route::get('tape-entry/ajax-request/{department_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
@@ -659,6 +698,12 @@ Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajax
     // tapeentrystock
 Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
 /**************tape entry end*************/
+
+/******************** wastages *****************************/
+Route::get('setup/wastage/index',[WastageController::class,'index'])->name('setup.wastage.index');
+Route::get('setup/wastage/create',[WastageController::class,'create'])->name('setup.wastage.create');
+Route::post('setup/wastage/store',[WastageController::class,'store'])->name('setup.wastage.store');
+/******************** wastages  end *****************************/
 
 //Storeout route
 Route::get('storeout/index', [StoreoutController::class, 'index'])->name('storeout.index');
@@ -679,6 +724,10 @@ Route::post('storeout/updateStoreOut/{storeout_id}', [StoreoutController::class,
 Route::get('storeout/getDepartmentPlacements/{dept_id}', [StoreoutController::class, 'getDepartmentPlacements'])->name('storeout.getDepartmentPlacements');
 // storeoutitem save
 Route::post('storeout/saveStoreoutItems', [StoreoutController::class, 'saveStoreoutItems'])->name('storeout.saveStoreoutItems');
+Route::get('storeout/storoutYajraDatabales', [StoreoutController::class, 'storoutYajraDatabales'])->name('storeout.storoutYajraDatabales');
+Route::delete('storeout/deleteStoreout/{storeout_id}', [StoreoutController::class, 'deleteStoreout'])->name('storeout.deleteStoreout');
+
+
 
 //placement route
 Route::post('placement/save', [PlacementController::class, 'save'])->name('placement.save');

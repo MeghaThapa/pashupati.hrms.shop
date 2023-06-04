@@ -11,25 +11,16 @@ class Stock extends Model
     protected $table = "stocks";
     protected $id = "id";
     protected $fillable = ['department_id','category_id','item_id','size','quantity','unit','avg_price','total_amount'];
-     
-    // protected $fillable = [
-    //     'department_id',
-    //     'category_id',
-    //     'item_id',
-    //     'size',
-    //     'quantity',
-    //     'unit',
-    //     'avg_price',
-    //     'total_amount',
-    //     'created_at','updated_at'
-    // ];
-     
-     
-    public static function createStock($storein_item_id)
+
+    public static function createStock($storeinItem)
     {
-        $storeinItem = StoreinItem::find($storein_item_id);
-        $stock = Stock::where('item_id', $storeinItem->item_id)->first();
-        $item = Items::find($storeinItem->item_id);
+        $item = ItemsOfStorein::find($storeinItem->storein_item_id);
+
+        $stock = Stock::where('item_id', $storeinItem->storein_item_id)
+        ->where('department_id', $item->department_id)
+        ->where('size',$storeinItem->size_id)
+        ->first();
+
         if (!$stock) {
             $stock = new Stock();
             $stock->quantity = $storeinItem->quantity;
@@ -41,12 +32,11 @@ class Stock extends Model
             $stock->avg_price = $total / $stock->quantity;
             $stock->total_amount  =  $stock->quantity * $stock->avg_price;
         }
-        $stock->item_id = $storeinItem->item_id;
-        $stock->size = Size::find($storeinItem->size_id)->name;
+        $stock->item_id = $storeinItem->storein_item_id;
+        $stock->size = $storeinItem->size_id;
         $stock->unit = Unit::find($storeinItem->unit_id)->name;
         $stock->department_id = $item->department_id;
         $stock->category_id = $item->category_id;
-
         $stock->save();
     }
 
@@ -78,12 +68,17 @@ class Stock extends Model
     // relate stock with category,item,department
     public function category()
     {
-        return $this->belongsTo('App\Models\Category', 'category_id', "id");
+        return $this->belongsTo(Category::class, 'category_id', "id");
     }
     public function item()
     {
-        return $this->belongsTo('App\Models\Items', 'item_id', "id");
+        return $this->belongsTo(ItemsOfStorein::class, 'item_id', "id");
     }
+    public function sizes()
+    {
+        return $this->belongsTo(Size::class, 'size', "id");
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id', 'id');

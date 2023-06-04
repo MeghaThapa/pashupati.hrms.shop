@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('admin_storein', function (Blueprint $table) {
-            $table->longText('extra_charges')->nullable();
+        Schema::create('storein_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->index();
+            $table->string('note');
+            $table->enum('status',['active','inactive']);
+            $table->timestamps();
         });
     }
 
@@ -25,8 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('admin_storein', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('storein_categories');
     }
 };

@@ -77,7 +77,7 @@
                                                         <button type="submit" class="btn btn-danger ml-2"><i class="fa fa-trash"></i></button>
                                                     </form>
                                                 @elseif($data->status == 'created')
-                                                    <button type="submit" class="btn btn-info"><i class="fa fa-eye"></i></button>
+                                                    <a href="{{ route('tape.entry.receive.view',['id'=>$data->id]) }}" type="submit" class="btn btn-info"><i class="fa fa-eye"></i></a>
                                                 @endif
                                             </div>
                                         </td>

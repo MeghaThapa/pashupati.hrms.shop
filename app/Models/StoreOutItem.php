@@ -5,23 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AdminStoreOutItem extends Model
+class StoreOutItem extends Model
 {
     use HasFactory;
 
-    protected $table = "admin_store_out_items";
+    protected $table = "store_out_items";
     protected $id = "id";
     public function placement()
     {
         return $this->belongsTo('App\Models\Placement', 'placement_id', "id");
     }
-    public function item()
+    public function itemsOfStorein()
     {
-        return $this->belongsTo('App\Models\Items', 'item_id', "id");
+        return $this->belongsTo('App\Models\ItemsOfStorein', 'item_of_storein_id', "id");
     }
     public function department()
     {
-        return $this->belongsTo('App\Models\Department', 'department_id', "id");
+        return $this->belongsTo('App\Models\StoreinDepartment', 'storeinDepartment_id', "id");
     }
     public function storeOut()
     {

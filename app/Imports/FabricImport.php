@@ -16,6 +16,8 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
    public function collection(Collection $rows)
    {
        foreach ($rows as $row) {
+           // dd($row);
+           $size = trim($row['size']);
            $slug = $row['gram'];
 
            $fabricgroup = FabricGroup::firstOrCreate([
@@ -31,7 +33,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
            $fabric = Fabric::firstOrCreate([
                'roll_no' => $row['roll_no']
            ], [
-               'name' => $row['size'],
+               'name' => $size,
                'roll_no' => $row['roll_no'],
                'loom_no' => $row['loom_no'],
                'fabricgroup_id' => $fabricgroup_id,

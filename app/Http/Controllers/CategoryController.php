@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use PDF;
+use Exception;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -46,15 +48,24 @@ class CategoryController extends Controller
         $validator = $request->validate([
             'name' => 'required|string|max:50|unique:categories',
             'note' => 'nullable|string|max:255',
+            'status' => 'required'
         ]);
-
+        try{
         // store category
         $category = Category::create([
-            'name' => $request->name,
-            'note' => clean($request->note),
-            'status' => $request->status
+            'name' => clean(strtolower($request->name)),
+            'note' => clean(strtolower($request->note)),
+            'slug' => clean(Str::slug(strtolower($request->name))),
+            'status' => clean($request->status)
         ]);
-        return redirect()->back()->withSuccess('Category added successfully!');
+        return response()->json([
+            'message' =>'Category Created Successfully',
+            'category' => $category,
+        ],201);
+        }
+        catch (Exception $ex){
+            return $ex;
+        }
     }
 
     /**

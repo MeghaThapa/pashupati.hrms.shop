@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\TapeEntryStockModel;
+use App\Models\Wastages;
+use App\Models\WasteStock;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\ProcessingStep;
@@ -60,13 +62,33 @@ class TapeEntryController extends Controller
     }
 
     public function create($id){
-        $department = AutoLoadItemStock::with(['fromGodam'])->get();
-        $shift = AutoLoadItemStock::with(['shift'])->get();
-        $tapeentries = TapeEntry::where('id',$id)->get();
-        return view('admin.TapeEntry.create',compact('department','shift','tapeentries'));
+        // $department = AutoLoadItemStock::with('fromGodam')->get();
+        
+        // return $department = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
+        
+        $departments = AutoLoadItemStock::with('fromGodam')
+            ->whereHas('fromGodam', function ($query) {
+                $query->where('slug', '<>', 'bsw');
+            })
+            ->distinct('from_godam_id')
+            ->get(['from_godam_id']);
+        
+        $departmentIds = $departments->pluck('from_godam_id')->toArray();
+        
+        $department = Department::whereIn('id', $departmentIds)->get();
+
+        
+        $shift = AutoLoadItemStock::with('shift')->get();
+        $tapeentries = TapeEntry::where('id', $id)->get();
+        $wastage = Wastages::all();
+        
+        return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries','wastage'));
 
     }
 
+    public function view($id){
+        return TapeEntryStockModel::where('tape_entry_id',$id)->get();
+    }
     
     public function deleteTape(Request $request){
         if($request->ajax()){
@@ -139,7 +161,15 @@ class TapeEntryController extends Controller
         }
     }
 
+    // public function getajaxwastage(){
+    //     $wastage = Wastages::all();
+    //     return response([
+    //         'data' => $wastage
+    //     ]);
+    // }
+
     public function tapeentrystockstore(Request $request){
+        // return $request;
         $tape_entry_id = $request->tape_entry_id;
         $shift = $request->shift;
         $plantname = $request->plantname;
@@ -152,6 +182,12 @@ class TapeEntryController extends Controller
         $running = $request->running;
         $bypass_wast = $request->bypass_wast;
         $dana_in_kg = $request->dana_in_kg;
+        $wastetype = $request->wastetype ;
+
+        $totalwaste = $dana_in_kg - $total_in_kg;
+        if($totalwaste > 0){
+            $this->wastemgmt($totalwaste,$department,$wastetype);
+        }
 
         $tesm = TapeEntryStockModel::create([
             'tape_entry_id'=>$tape_entry_id,
@@ -178,15 +214,18 @@ class TapeEntryController extends Controller
                 ->where('shift_id',$shift)
                 ->get();
 
-        //add ganrne tape_entry_stock ma danaid bata ako data
         foreach($danaid as $data){
-            //chaiyeko data relation lagau navay pardaina
             AutoLoadItemStock::where('id',$data->id)->delete();
         }
 
         return $this->index()->with(['message'=>"Tape Receive Entry Successful"]);
-        // return view('admin.tapeentry.index')->with(['message'=>"Tape Receive Entry Successful"]);
-        //yo delete hanni stock bata
+        }
     }
-}
+    function wastemgmt($totalwaste,$department,$wastetype){
+        WasteStock::create([
+            'department_id' => $department,
+            'quantity_in_kg' => $totalwaste,
+            'waste_id' => '1'
+        ]);
+    }
 }

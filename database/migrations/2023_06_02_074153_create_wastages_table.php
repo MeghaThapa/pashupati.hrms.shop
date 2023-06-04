@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('admin_storein_item', function (Blueprint $table) {
-            $table->unsignedBigInteger('size_id');
-            $table->foreign('size_id')->references('id')->on('sizes')->nullable();
+        Schema::create('wastages', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->enum('status',['active','inactive'])->default('active');
+            $table->timestamps();
         });
     }
 
@@ -26,8 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('admin_storein_item', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('wastages');
     }
 };
