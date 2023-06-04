@@ -223,7 +223,7 @@
                     Add
                 </button>
             </div>
-    </div>
+    </form>
     </form>
     {{-- table --}}
     <div class="row">
