@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('fabrics', function (Blueprint $table) {
+        Schema::create('department', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('department');
             $table->string('slug');
-            $table->bigInteger('fabricgroup_id')->unsigned()->index();
-            $table->foreign('fabricgroup_id')->references('id')->on('fabric_groups')->onDelete('cascade');
-            $table->string('gram');
-            $table->boolean('status')->nullable()->default(1);
+            $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fabrics');
+        Schema::dropIfExists('department');
     }
 };

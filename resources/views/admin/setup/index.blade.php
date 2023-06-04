@@ -217,8 +217,23 @@
                     </a>
                 </div>
                 
+                <div class="col-md-4 col-sm-6 col-12">
+                    <a href="{{ route('setup.wastage.index') }}">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success">
+                                <i class="fas fa-wallet"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">{{ __('Wastages Type') }}</span>
+                                <span class="info-box-number text-bold">{{ App\Models\Wastages::count() }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </a>
+                </div>
                 
-                {{-- Yp Chaidaina --}}
+                {{-- Yo Chaidaina --}}
                 {{-- <div class="col-md-4 col-sm-6 col-12">
                     <a href="{{ route('processing.categories') }}">
                         <div class="info-box">

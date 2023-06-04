@@ -21,6 +21,9 @@ use App\Http\Controllers\TapeEntryController;
 use App\Http\Controllers\AutoloadItemsController;
 use App\Http\Controllers\AutoLoadStockController;
 use App\Http\Controllers\FabricNonWovenController;
+use App\Http\Controllers\WastageController;
+use App\Http\Controllers\WastageStockController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -670,6 +673,12 @@ Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajax
     // tapeentrystock
 Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
 /**************tape entry end*************/
+
+/******************** wastages *****************************/
+Route::get('setup/wastage/index',[WastageController::class,'index'])->name('setup.wastage.index');
+Route::get('setup/wastage/create',[WastageController::class,'create'])->name('setup.wastage.create');
+Route::post('setup/wastage/store',[WastageController::class,'store'])->name('setup.wastage.store');
+/******************** wastages  end *****************************/
 
 //Storeout route
 Route::get('storeout/index', [StoreoutController::class, 'index'])->name('storeout.index');
