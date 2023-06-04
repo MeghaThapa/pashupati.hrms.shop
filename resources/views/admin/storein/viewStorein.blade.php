@@ -124,7 +124,7 @@
                                                             @foreach ($storein->storeinItems as $items)
                                                                 <tr>
                                                                     <td>{{ $i++ }}</td>
-                                                                    <td>{{ $items->item->item }}</td>
+                                                                    <td>{{ $items->itemsOfStorein->name }}</td>
                                                                     <td>{{ $items->quantity }}</td>
                                                                     <td>{{ $items->price }}</td>
                                                                     <td>{{ $items->price * $items->quantity }}</td>

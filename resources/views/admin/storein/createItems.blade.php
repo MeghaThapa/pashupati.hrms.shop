@@ -82,10 +82,10 @@
             @csrf
             <div class="row">
                         <div class="col-md-2 form-group">
-                            <label for="Category" class="col-form-label">{{ __('Category Name') }}<span class="required-field">*</span>
+                            <label for="Category" class="col-form-label">{{ __('Storein Category Name') }}<span class="required-field">*</span>
                             </label>
                             <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#categoryModel" style="margin-top:0 !important; top:8px;float:right;">
+                                data-target="#storeinCategoryModel" style="margin-top:0 !important; top:8px;float:right;">
                                 <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                             </a>
                             <select class="advance-select-box form-control  @error('Category') is-invalid @enderror"
@@ -103,10 +103,10 @@
                         </div>
                         {{-- item --}}
                         <div class="col-md-2 form-group">
-                            <label for="products" class="col-form-label">{{ __('Item Name') }}<span class="required-field">*</span>
+                            <label for="products" class="col-form-label">{{ __('Storein Item Name') }}<span class="required-field">*</span>
                             </label>
                             <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#createItemModelPopup" style="margin-top:0 !important; top:8px;float:right;">
+                                data-target="#createStoreinItemModelPopup" style="margin-top:0 !important; top:8px;float:right;">
                                 <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                             </a>
                             <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
@@ -217,7 +217,7 @@
                     <div>
                         <input type="text" step="any" min="0" style="width:200px; "
                             class="form-control @error('singleTotal') is-invalid @enderror" id="department_id"
-                            name="department_id" placeholder="{{ __('Department name') }}">
+                            name="department_id" placeholder="{{ __('Department name') }}" readonly>
                     </div>
                 </div>
              <div class="d-flex" style="gap:10px">
@@ -409,9 +409,7 @@
                                     <label for="itemSelect" class="col-form-label" style="font-weight: bold;">Item
                                         Name</label>
                                     <select class="advance-select-box form-control" name="item_id" id="item_id">
-                                        {{-- @foreach ($items as $item)
-                                            <option value="{{ $item->id }}">{{ $item->item }}</option>
-                                        @endforeach --}}
+
 
                                     </select>
                                 </div>
@@ -490,14 +488,13 @@
         </div>
                 {{-- create charges pop up end --}}
                 <!--Category Model popup-->
-
-                <div class="modal fade" id="categoryModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
+                <div class="modal fade" id="storeinCategoryModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
                     aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
 
-                                <h5 class="modal-title" id="exampleModalcat">Add Category</h5>
+                                <h5 class="modal-title" id="exampleModalcat">Add Storein Category</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -565,17 +562,17 @@
                 <!--Category  Model Popup End-->
                 <!--Item Model popup-->
 
-                <div class="modal fade" id="createItemModelPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalitem"
+                <div class="modal fade" id="createStoreinItemModelPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalitem"
                     aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalitem">Add Items</h5>
+                                <h5 class="modal-title" id="exampleModalitem">Add Storein Items</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                        <form class="form-horizontal" id="createItemModel">
+                        <form class="form-horizontal" id="createStoreinItemModel">
 
                             <div class="modal-body">
                                 <div id="itemModelError" class="alert alert-danger" hidden></div>
@@ -629,7 +626,7 @@
                                                 {{ __('Department') }}
                                             </label>
                                             <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                                data-target="#addDepartmentModel"
+                                                data-target="#addStoreinDepartmentModel"
                                                 style="margin-top:-5px !important; top:0;float:right;">
                                                 <i class="fas fa-plus"
                                                     style="display:flex;align-items: center;justify-content: center;"></i>
@@ -638,7 +635,7 @@
                                                 id="departmentModel" name="department_id_model">
                                                 <option value="" selected disabled>{{ __('Select a department') }}</option>
                                                 @foreach ($departments as $department)
-                                                    <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
                                                 @endforeach
                                             </select>
                                             @error('department_id_model')
@@ -673,15 +670,14 @@
                 </div>
                 <!--Item Model Popup End-->
                 {{-- department model popup --}}
-                <div class="modal fade" id="addDepartmentModel" tabindex="-1" role="dialog"
+                <div class="modal fade" id="addStoreinDepartmentModel" tabindex="-1" role="dialog"
                     aria-labelledby="addDepartmentModel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <form class="form-horizontal" action="{{ route('department.storeDepartmentFromModel') }}" method="post"
-                                enctype="multipart/form-data">
-                                @csrf
+                            <form class="form-horizontal" id="storeinDepartmentCreate" >
+
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="addDepartmentModel">Add Department</h5>
+                                    <h5 class="modal-title" id="addDepartmentModel">Add Storein Department</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -690,7 +686,7 @@
                                 <div class="modal-body">
 
                                     <div class="card-body">
-
+                                         <div id="departmentModelError" class="alert alert-danger" hidden></div>
                                         <div class="row">
                                             <div class="col-md-6 form-group">
                                                 <label for="department" class="col-form-label">{{ __('Department Name') }}<span
@@ -1001,6 +997,51 @@
                 saveStoreInBtn.disabled = false;
             }
         }
+        document.getElementById('storeinDepartmentCreate').addEventListener('submit', function(e){
+            e.preventDefault();
+             const form = e.target;
+             let name= form.elements['department'];
+             let status= form.elements['status'];
+              if (!name.value &&
+                !status.value) {
+                setMessage('departmentModelError', 'Please Fill out all fields')
+                return false;
+            }
+              $.ajax({
+                url: "{{ route('storeinDepartment.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name.value,
+                    status: status.value,
+                },
+                success: function(response) {
+                     $('#addStoreinDepartmentModel').modal('hide');
+
+                    name.value='';
+                   let  selectElement=document.getElementById('departmentModel');
+                   let option = document.createElement('option');
+                    option.value=response.storeinDepartment.id;
+                    option.text=response.storeinDepartment.name;
+                    selectElement.append(option);
+
+                   // console.log(response);
+                },
+                error:function(xhr, status, error){
+                      setMessage('departmentModelError',xhr.responseJSON.message);
+                }
+
+            });
+        });
+         function setMessage(element_id, message) {
+            let errorContainer = document.getElementById(element_id);
+            errorContainer.hidden = false;
+            errorContainer.innerHTML = message;
+            setTimeout(function() {
+                errorContainer.hidden = true;
+            }, 2000);
+        }
+
 
         document.getElementById('createCategoryModel').addEventListener('submit', function(e){
             e.preventDefault();
@@ -1015,7 +1056,7 @@
                 return false;
             }
              $.ajax({
-                url: "{{ route('categories.store') }}",
+                url: "{{ route('storeinCategory.store') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
@@ -1024,7 +1065,11 @@
                     status: status.value,
                 },
                 success: function(response) {
-                    $('#categoryModel').modal('hide');
+                    $('#storeinCategoryModel').modal('hide');
+
+                    name.value='';
+                    note.value='';
+
                     console.log(response.category.name);
                     let selectElement = document.getElementById('categorySelect');
                     let optionElement = document.createElement('option');
@@ -1050,7 +1095,7 @@
 
         })
 
-        document.getElementById('createItemModel').addEventListener('submit',function(e) {
+        document.getElementById('createStoreinItemModel').addEventListener('submit',function(e) {
             e.preventDefault();
             const form= e.target;
             let name=form.elements['item_name_model'];
@@ -1064,23 +1109,22 @@
                 return false;
             }
               $.ajax({
-                url: "{{ route('items.store') }}",
+                url: "{{ route('storeinItems.store') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    item: name.value,
+                    name: name.value,
                     pnumber: product_no.value,
-                    categoryName: category_id.value,
+                    category_id: category_id.value,
                     department_id:department_id.value,
                     status:status.value,
                 },
                 success: function(response) {
-                    $('#createItemModelPopup').modal('hide');
-                   // console.log(response.category.id);
+                    $('#createStoreinItemModelPopup').modal('hide');
                      let selectItemElement = document.getElementById('ProductName');
                      let optionElement = document.createElement('option');
                      optionElement.value=response.item.id;
-                    optionElement.text = response.item.item;
+                     optionElement.text = response.item.name;
                      selectItemElement.appendChild(optionElement);
                 },
                 error: function(xhr, status, error) {
@@ -1398,8 +1442,8 @@
 
                     method: 'GET',
                     success: function(response) {
-                        //  console.log(response);
-                      document.getElementById('department_id').value=response.department.department;
+                        console.log(response);
+                      document.getElementById('department_id').value=response.storein_department.name;
 
                     },
                     error: function(xhr, status, error) {
@@ -1417,14 +1461,14 @@
 
                     method: 'GET',
                     success: function(response) {
-                         console.log(response);
+                        // console.log(response);
                         var selectOptions = '';
                         if(response.length==0){
                             selectOptions += '<option disabled selected>' + 'no items found'+ '</option>';
                         }else{
                             selectOptions += '<option disabled selected>' + 'select an item'+ '</option>';
                             for (var i = 0; i < response.length; i++) {
-                                selectOptions += '<option value="' + response[i].id + '">' + response[i].item + '</option>';
+                                selectOptions += '<option value="' + response[i].id + '">' + response[i].name + '</option>';
                             }
                         }   if(click_by == 'blade'){
                             $('#ProductName').html(selectOptions);
@@ -1645,8 +1689,8 @@
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    categoryName: category_id,
-                    productName: product_id,
+                    category_id: category_id,
+                    item_id: product_id,
                     quantity: quantities,
                     units: unit_id,
                     unit_price: unit_price,
@@ -1679,16 +1723,16 @@
             var html = "";
 
             html = "<tr id=editRow-" + res.id + "><td>" + sn+
-                "</td><td class='rowItemName'>" + res.item.item +
+                "</td><td class='rowItemName'>" + res.items_of_storein.name +
                 "</td><td class='rowsize_id'>" +res.size.name +
                 "</td><td class='rowQuantity'>" +res.quantity +
                 "</td><td class='rowUnitName'>" + res.unit.name +
                 "</td><td class='rowPrice'>" + res.price +
                 "</td><td class='rowTotalAmount'>" +res.total_amount +
                 "</td> <td>" +
-                "<button class='btn btn-success editItemBtn' data-id=" +
-                res.id + "><i class='fas fa-edit'></i></button>" +
-                "  " +
+                // "<button class='btn btn-success editItemBtn' data-id=" +
+                // res.id + "><i class='fas fa-edit'></i></button>" +
+                // "  " +
                 "<button class='btn btn-danger dltstoreinItem' data-id=" +
                 res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
 
@@ -1787,6 +1831,7 @@
                             },
                     success: function(result) {
 
+
                         dataRetrive();
                         totalAmountCalculation();
                         new swal({
@@ -1826,17 +1871,17 @@
                             .replace(':lol', itemId),
                         method: 'GET',
                         success: async function(response) {
-                           // console.log('modelevent', response);
+
                             $('#storein_id').val(response.storein_id);
                             $('#storeinItem_id').val(response.id);
                             $('#quantity').val(response.quantity);
                             $('#unit_id').val(response.unit_id);
                             $('#price').val(response.price);
                             //console.log('category',response.category_id)
-                            $('#categoryitem_id').val(response.category_id).trigger('change');
-                           let category= await getCategoryItems(response.category_id,'model');
+                            $('#categoryitem_id').val(response.storein_category_id).trigger('change');
+                           let category= await getCategoryItems(response.storein_category_id,'model');
 
-                            $('#item_id').val(response.item_id).trigger('change');
+                            $('#item_id').val(response.storein_item_id).trigger('change');
                             $('#editItemModal').modal('show');
 
                         },
