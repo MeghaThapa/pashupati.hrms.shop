@@ -86,6 +86,9 @@ class TapeEntryController extends Controller
 
     }
 
+    public function view($id){
+        return TapeEntryStockModel::where('tape_entry_id',$id)->get();
+    }
     
     public function deleteTape(Request $request){
         if($request->ajax()){
