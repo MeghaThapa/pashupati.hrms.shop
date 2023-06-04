@@ -22,9 +22,12 @@ use App\Http\Controllers\TapeEntryController;
 use App\Http\Controllers\AutoloadItemsController;
 use App\Http\Controllers\AutoLoadStockController;
 
+
 use App\Http\Controllers\FabricSendReceiveController;
 use App\Http\Controllers\StoreinCategoryController;
 use App\Http\Controllers\ItemsOfStoreinController;
+
+use App\Http\Controllers\FabricNonWovenController;
 
 use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
@@ -435,11 +438,24 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
 
+
     //fabric send and receive
 
 
 
      // fabric_group route
+
+    Route::resource('nonwovenfabrics', 'FabricNonWovenController', [
+        'names' => [
+            'index' => 'nonwovenfabrics.index',
+            'create' => 'nonwovenfabrics.create',
+            'store' => 'nonwovenfabrics.store',
+            'edit' => 'nonwovenfabrics.edit',
+            'update' => 'nonwovenfabrics.update',
+        ]
+    ]);
+
+    // fabric_group route
     Route::get('/fabric-groups/pdf', 'FabricGroupController@createPDF')->name('fabric-groups.pdf');
     Route::resource('fabric-groups', 'FabricGroupController', [
         'names' => [
@@ -708,6 +724,10 @@ Route::post('storeout/updateStoreOut/{storeout_id}', [StoreoutController::class,
 Route::get('storeout/getDepartmentPlacements/{dept_id}', [StoreoutController::class, 'getDepartmentPlacements'])->name('storeout.getDepartmentPlacements');
 // storeoutitem save
 Route::post('storeout/saveStoreoutItems', [StoreoutController::class, 'saveStoreoutItems'])->name('storeout.saveStoreoutItems');
+Route::get('storeout/storoutYajraDatabales', [StoreoutController::class, 'storoutYajraDatabales'])->name('storeout.storoutYajraDatabales');
+Route::delete('storeout/deleteStoreout/{storeout_id}', [StoreoutController::class, 'deleteStoreout'])->name('storeout.deleteStoreout');
+
+
 
 //placement route
 Route::post('placement/save', [PlacementController::class, 'save'])->name('placement.save');

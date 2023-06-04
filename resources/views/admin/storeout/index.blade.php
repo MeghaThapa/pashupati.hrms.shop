@@ -54,7 +54,7 @@
             </div>
 
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table">
+                <table class="table" id="storeoutTable">
                     <thead>
                         <tr>
                             <th>@lang('SN')</th>
@@ -68,36 +68,7 @@
                     </thead>
 
                     <tbody>
-                        @php
-                            $i = 0;
-                        @endphp
-                        @foreach ($storeOutDatas as $storeOutData)
-                            <tr>
-                                <td>{{ ++$i }}</td>
-                                <td>{{ $storeOutData->receipt_date }}</td>
-                                <td>{{ $storeOutData->receipt_no }}</td>
-                                <td>{{ $storeOutData->for }}</td>
-                                <td>{{ $storeOutData->total_amount }}</td>
-                                <td class="d-flex " style="text-align: center !important; gap:5px;">
-                                    {{-- href="{{ route('storein.invoiceView', ['storeout_id' => $storeOutData->id]) }}" --}}
-                                    {{-- <a>
-                                        <button class="btn btn-info">
-                                            <i class="fas fa-file-invoice"></i>
-                                        </button>
-                                    </a> --}}
-                                    <button class="btn btn-danger" id="dltstorein" data-id="{{ $storeOutData->id }}">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                    {{-- href="{{ route('storein.editStorein', ['storeout_id' => $storeOutData->id]) }}" --}}
-                                    <a href="{{ route('storeout.edit', ['storeout_id' => $storeOutData->id]) }}">
-                                        <button class="btn btn-success">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </a>
-                                </td>
 
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -105,4 +76,83 @@
         </div>
     </div>
     <!-- /.content -->
+@endsection
+@section('extra-script')
+<script>
+     $(document).ready(function(){
+             var table = $('#storeoutTable').DataTable({
+                    lengthMenu: [
+                        [30, 40, 50, -1],
+                        ['30 rows', '40 rows', '50 rows', 'Show all']
+                    ],
+                    style: 'bootstrap4',
+                    processing: true,
+                    serverSide: true,
+                    ajax:"{{ route('storeout.storoutYajraDatabales')}}",
+                    columns: [{
+                            data: 'DT_RowIndex'
+                        },
+                        {
+                            data: 'receipt_date'
+                        },
+                        {
+                            data: 'receipt_no'
+                        },
+                        {
+                            data: 'storein_department_name'
+                        },
+                        {
+                            data: 'total_amount'
+                        },
+                        {
+                            data: 'action',
+                            orderable: true,
+                            searchable: true,
+                        },
+                    ]
+                });
+
+                 $('body').on('click', '#dltStoreout', function() {
+            let id = this.getAttribute('data-id');
+            // let id = $(this).attr('data-id').val();
+            console.log(id);
+            new swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, data will deleted completely!!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+
+                })
+                .then((willDelete) => {
+                    if (willDelete.isConfirmed) {
+
+                        $.ajax({
+                            type: "DELETE",
+                            url: "{{route('storeout.deleteStoreout',['storeout_id'=>':id'])}}".replace(':id',id),
+                            data: {
+                                '_token': $('meta[name=csrf-token]').attr("content"),
+                            },
+                            success: function(data) {
+
+                               new swal
+                                    ({
+                                        text: "Poof! Your data has been deleted!",
+                                        title: "Deleted",
+                                        icon: "success",
+                                    });
+                                location.reload();
+                            },
+                            error: function(xhr) {
+                                console.log(xhr.responseJSON.message);
+                            }
+                        })
+
+                    }
+                })
+        })
+        });
+</script>
 @endsection
