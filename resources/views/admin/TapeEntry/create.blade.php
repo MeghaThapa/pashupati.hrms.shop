@@ -65,8 +65,8 @@
     }
 
     /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        } */
+        width:150px !important;
+    } */
 </style>
 @endsection
 
@@ -262,13 +262,13 @@
                 </div>
             </div>
             <hr>
-            <div class="row">
-                <div class="col-md-6">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-3" title='This is enabled if wastage ooccurs'>
                     <div class="card">
                         <div class="card-body">
                             <label for="">Waste Type</label>
                             <select name="wastetype" id="wastetype" class="advance-select-box select2" disabled>
-                                    <option value="">select waste type here if needed</option>
+                                    <option value="">select waste type</option>
                                 @foreach($wastage as $data)
                                     <option value="{{ $data->id }}">{{  $data->name }}</option>
                                 @endforeach
@@ -463,9 +463,6 @@
 
             function disabledstuffs(){
                 $('#total_in_kg').prop('disabled',false);
-                $('#loading').prop('disabled',false);
-                $('#running').prop('disabled',false);
-                $('#bypass_wast').prop('disabled',false);
                 $('#btn-update').prop('disabled',false);
                 $('#dana_in_kg').prop('disabled',false);
                 $("#btn-view").prop('disabled',false);
@@ -483,6 +480,16 @@
                 $("#btn-update").prop('disabled',true);
                 $("#add_new_dana_to_autoloader_stock").prop('disabled',true);
             }
+
+            $(document).on("keyup","#total_in_kg",function(e){
+                 $('#loading').prop('disabled',false);
+            });
+            $(document).on("keyup","#loading",function(e){
+                 $('#running').prop('disabled',false);
+            });
+            $(document).on("keyup","#running",function(e){
+                 $('#bypass_wast').prop('disabled',false);
+            });
             /***************** Additional Functionalities End ****************************/
 
             /********************* ajax functions *********************/
