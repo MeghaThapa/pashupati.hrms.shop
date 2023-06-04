@@ -13,19 +13,25 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('admin_store_out_items', function (Blueprint $table) {
+        Schema::create('store_out_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('item_id')->index();
-            $table->foreign('item_id')->references('id')->on('items');
-            $table->unsignedBigInteger('department_id')->index();
-            $table->foreign('department_id')->references('id')->on('department');
+            $table->unsignedBigInteger('item_of_storein_id')->index();
+            $table->foreign('item_of_storein_id')->references('id')->on('items_of_storeins');
+
+            $table->unsignedBigInteger('storeinDepartment_id')->index();
+            $table->foreign('storeinDepartment_id')->references('id')->on('storein_departments');
+
             $table->unsignedBigInteger('placement_id')->index();
             $table->foreign('placement_id')->references('id')->on('placements');
+
+             $table->unsignedBigInteger('storeout_id')->index();
+            $table->foreign('storeout_id')->references('id')->on('storeout')->cascadeOnDelete();
+
             $table->string('unit');
             $table->string('size');
             $table->string('quantity');
             $table->string('rate');
-            $table->string('through');
+            $table->string('through')->nullable();
             $table->string('total');
             $table->timestamps();
         });
@@ -38,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('admin_store_out_items');
+        //
     }
 };

@@ -696,6 +696,10 @@ Route::post('storeout/updateStoreOut/{storeout_id}', [StoreoutController::class,
 Route::get('storeout/getDepartmentPlacements/{dept_id}', [StoreoutController::class, 'getDepartmentPlacements'])->name('storeout.getDepartmentPlacements');
 // storeoutitem save
 Route::post('storeout/saveStoreoutItems', [StoreoutController::class, 'saveStoreoutItems'])->name('storeout.saveStoreoutItems');
+Route::get('storeout/storoutYajraDatabales', [StoreoutController::class, 'storoutYajraDatabales'])->name('storeout.storoutYajraDatabales');
+Route::delete('storeout/deleteStoreout/{storeout_id}', [StoreoutController::class, 'deleteStoreout'])->name('storeout.deleteStoreout');
+
+
 
 //placement route
 Route::post('placement/save', [PlacementController::class, 'save'])->name('placement.save');

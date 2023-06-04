@@ -99,13 +99,13 @@
             <div class="row">
                 <input type="text" class="form-control" value="{{ $storeOut->id }}" id="storeOut_id" data-number="1"
                     name="store_out_id" placeholder="{{ __('store_out_id') }}" hidden>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label for="item_name" style="width:80px !important;"
                         class="col-form-label">{{ __('Item Name') }}</label>
                     <select class="advance-select-box form-control" id="items" name="item_id" required>
                         <option value="" selected disabled>{{ __('Select an item') }}</option>
                         @foreach ($items as $key => $stock)
-                            <option value="{{ $stock->item_id }}">{{ $stock->item->item }}
+                            <option value="{{ $stock->item_id }}">{{ $stock->item->name }} /ppNo: {{$stock->item->pnumber}} /size: {{$stock->sizes->name}}
                             </option>
                         @endforeach
                     </select>
@@ -125,7 +125,7 @@
                         </span>
                     @enderror
                 </div>
-                <div class="col-md-3">
+                {{-- <div class="col-md-3">
                     <label for="size" class="col-form-label">{{ __('Size') }}</label>
                     <input type="text" class="form-control " id="size" data-number="1" name="size"
                         placeholder="{{ __('Size') }}" readonly tabindex="-1">
@@ -134,7 +134,7 @@
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
-                </div>
+                </div> --}}
                 <div class="col-md-2">
                     <label for="unit" class="col-form-label">{{ __('Unit') }}</label>
                     <input type="text" step="any" min="0" max="99" class="form-control " id="item_unit"
@@ -177,8 +177,8 @@
                     </a>
                     <select class="advance-select-box form-control" id="departments" name="department" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
-                        @foreach ($departments as $key => $department)
-                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                        @foreach ($storeinDepartment as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
                         @endforeach
                     </select>
                     @error('department')
@@ -206,7 +206,7 @@
                 <div class="col-md-3 " style="gap:3px;">
                     <label for="category" class="col-form-label">{{ __('Through') }}</label>
                     <input type="text" class="form-control " id="through" name="through"
-                        placeholder="{{ __('Through') }}">
+                        placeholder="{{ __('Through') }}" required>
                     @error('through')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -321,8 +321,8 @@
                                     <select class="advance-select-box form-control @error('supplier') is-invalid @enderror"
                                         id="model_department" name="department">
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($departments as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                        @foreach ($storeinDepartment as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('department')
@@ -487,8 +487,8 @@
                                     <select class="advance-select-box form-control" id="departmentIdModel"
                                         name="department_id_model" required>
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($departments as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                        @foreach ($storeinDepartment as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('department_id_model')
@@ -553,17 +553,6 @@
             //  checkIfTableHasData();
             $('#items').focus();
 
-            // function checkIfTableHasData() {
-            // let tableTbody = document.querySelector("#storeOutItemTable tbody");
-            //   let saveStoreoutBtn = document.getElementById('saveStoreOutButton');
-            // console.log('length', tableTbody.rows.length);
-            //  if (tableTbody.rows.length <= 0) {
-            //    saveStoreoutBtn.disabled = true;
-            // } else {
-            //      saveStoreoutBtn.disabled = false;
-            //  }
-            //   }
-
 
             setTimeout(function() {
                 var alertMessage = document.getElementById('alert-message');
@@ -594,7 +583,7 @@
 
             $('#items').on('select2:select', function(e) {
                 //select item so as to get size unit and rate
-                let itemsSize = document.getElementById('size');
+
                 let itemUnit = document.getElementById('item_unit');
                 let itemRate = document.getElementById('rate');
                 let stockQuantity = document.getElementById('stock_quantity');
@@ -610,7 +599,7 @@
 
                         var selectOptions = '';
                         stockQuantity.value = response.quantity;
-                        itemsSize.value = response.size;
+
                         itemUnit.value = response.unit;
                         itemRate.value = response.avg_price;
                         $('#placementSelect').html(selectOptions);
@@ -787,6 +776,7 @@
                     // Goes Into Request
                 },
                 success: function(response) {
+                    console.log(response);
                     setIntoTable(response.storeOutItem);
                     $('#items').focus();
                     if (response.stock.quantity <= 0) {
@@ -814,19 +804,20 @@
         let sn = 1;
         //set Values to storein Items table
         function setIntoTable(res) {
+            console.log(res);
             var html = "";
 
             html = "<tr  id=editRow-" + res.id + "><td>" + sn +
-                "</td><td class='rowItemName'>" + res.item.item +
+                "</td><td class='rowItemName'>" + res.items_of_storein.name +
                 "</td><td class='rowsize_id'>" + res.size +
                 "</td><td class='rowQuantity'>" + res.quantity +
                 "</td><td class='rowUnitName'>" + res.unit +
                 "</td><td class='rowPrice'>" + res.rate +
                 "</td><td class='rowTotalAmount'>" + res.total +
                 "</td> <td>" +
-                "<button class='btn btn-success editStoreoutBtn' data-id=" +
-                res.id + "><i class='fas fa-edit'></i></button>" +
-                "  " +
+                // "<button class='btn btn-success editStoreoutBtn' data-id=" +
+                // res.id + "><i class='fas fa-edit'></i></button>" +
+                // "  " +
                 "<button class='btn btn-danger dltstoreoutItem' data-id=" +
                 res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
 
