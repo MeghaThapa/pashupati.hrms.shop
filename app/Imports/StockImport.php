@@ -5,6 +5,7 @@ namespace App\Imports;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use App\Models\Department;
 use App\Models\Category;
 use App\Models\Items;
@@ -12,7 +13,7 @@ use App\Models\Stock;
 use Illuminate\Support\Str;
 
 //for silent creations
-class StockImport implements ToCollection,WithHeadingRow
+class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 {
     /**
      * @param Collection $collection
@@ -62,19 +63,19 @@ class StockImport implements ToCollection,WithHeadingRow
                     'department_id'=> $department,
                     "category_id" => $category,
                     'status' => "1",
-                    'pnumber' => isset($row['part_number'])? $row['part_number'] : "Any",
+                    'pnumber' => isset($row['parts_number'])? $row['parts_number'] : "Any",
                 ]);
                 $item = $createitem->id;
                 // return back()->with(['message_err'=>"Category:".$item ."Not Found"]); }
             }
             if($department && $category && $item ){
                  Stock::create([
-                'item_id' => "$item",
+                'item_id' => $item,
                 'size' => $row['size'],
-                'quantity' => $row['qty'],
+                'quantity' => $row['quantity'],
                 'unit' => $row['unit'],
                 'avg_price' => $row['avg_rate'],
-                'total_amount' => $row['total_amt'],
+                'total_amount' => $row['total_amount'],
                 'department_id' => $department,
                 'category_id' => $category,
                 ]);
