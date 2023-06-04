@@ -137,6 +137,14 @@
                         {{-- <p>{{ __('Categories') }}</p> --}}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('nonwovenfabrics.index') }}"
+                        class="nav-link {{ request()->is('admin/nonwovenfabrics*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Non Woven Fabric Received Entry</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
                 
                 
                 <li class="nav-item">
