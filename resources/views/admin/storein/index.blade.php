@@ -54,7 +54,7 @@
             </div>
 
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table">
+                <table class="table" id="storeinTable">
                     <thead>
                         <tr>
                             <th>@lang('#')</th>
@@ -70,46 +70,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php
-                            $key = 0;
-                        @endphp
-                        @foreach ($storeinDatas as $storeinData)
-                            <tr>
-                                <td>{{ ++$key }}</td>
-                                <td>{{ $storeinData->purchase_date }}</td>
-                                <td>{{ $storeinData->supplier->name }}</td>
-                                <td>{{ $storeinData->sr_no ?? 'Empty' }}</td>
-                                <td>{{ $storeinData->bill_no ?? 'Empty' }}</td>
-                                <td>{{ $storeinData->pp_no ?? 'Empty' }}</td>
-                                <td>{{ $storeinData->total_discount }}</td>
-                                <td>{{ $storeinData->grand_total }}</td>
-                                <td>{{ $storeinData->status }}</td>
-                                <td class="d-flex " style="gap:5px;">
-                                    {{-- @if ($storeinData->storein_status == 'pending')
-                                        <a href="{{ route('storein.createItems', ['id' => $storeinData->id]) }}">
-                                            <button class="btn btn-success">
-                                                Continue
-                                            </button>
-                                        </a>
-                                    @endif --}}
-                                    <a href="{{ route('storein.invoiceView', ['storein_id' => $storeinData->id]) }}">
-                                        <button class="btn btn-info">
-                                            <i class="fas fa-file-invoice"></i>
-                                        </button>
-                                    </a>
 
-                                    <button class="btn btn-danger" id="dltstorein" data-id="{{ $storeinData->id }}">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-
-                                    <a href="{{ route('storein.editStorein', ['storein_id' => $storeinData->id]) }}">
-                                        <button class="btn btn-success">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -125,6 +86,49 @@
 
 @section('extra-script')
     <script>
+         var table = $('#storeinTable').DataTable({
+                    lengthMenu: [
+                        [30, 40, 50, -1],
+                        ['30 rows', '40 rows', '50 rows', 'Show all']
+                    ],
+                    style: 'bootstrap4',
+                    processing: true,
+                    serverSide: true,
+                    ajax:"{{ route('storein.storinYajraDatabales')}}",
+                    columns: [{
+                            data: 'DT_RowIndex'
+                        },
+                        {
+                            data: 'purchase_date'
+                        },
+                        {
+                            data: 'storein_type_name'
+                        },
+                        {
+                            data: 'supplier_name'
+                        },
+                        {
+                            data: 'sr_no'
+                        },
+                        {
+                            data: 'bill_no'
+                        },
+                        {
+                            data: 'pp_no'
+                        },
+                        {
+                            data: 'total_discount'
+                        },
+                        {
+                            data: 'grand_total'
+                        },
+                        {
+                            data: 'action',
+                            orderable: true,
+                            searchable: true,
+                        },
+                    ]
+                });
         $('body').on('click', '#dltstorein', function() {
             let id = this.getAttribute('data-id');
             // let id = $(this).attr('data-id').val();
@@ -150,14 +154,17 @@
                                 "storein": id,
                             },
                             success: function(data) {
-                                // console.log(data);
-                                new swal
+                                console.log(data);
+                               new swal
                                     ({
                                         text: "Poof! Your data has been deleted!",
                                         title: "Deleted",
                                         icon: "success",
-                                    })
+                                    });
                                 location.reload();
+                            },
+                            error: function(xhr) {
+                                console.log(xhr.responseJSON.message);
                             }
                         })
 

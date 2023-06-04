@@ -14,23 +14,26 @@ return new class extends Migration
     public function up()
     {
 
-        Schema::create('admin_storein_item', function (Blueprint $table) {
+        Schema::create('storein_item', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('storein_id');
-            $table->foreign('storein_id')->references('id')->on('admin_storein')->cascadeOnDelete();
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('categories');
-            $table->unsignedBigInteger('item_id');
-            $table->foreign('item_id')->references('id')->on('items');
-            $table->string('quantity');
+            $table->foreign('storein_id')->references('id')->on('storein')->cascadeOnDelete();
+
+            $table->unsignedBigInteger('storein_category_id');
+            $table->foreign('storein_category_id')->references('id')->on('storein_categories');
+
+            $table->unsignedBigInteger('storein_item_id');
+            $table->foreign('storein_item_id')->references('id')->on('items_of_storeins');
+
             $table->unsignedBigInteger('unit_id');
             $table->foreign('unit_id')->references('id')->on('units');
+
             $table->unsignedBigInteger('size_id');
             $table->foreign('size_id')->references('id')->on('sizes');
 
+            $table->string('quantity');
             $table->string('price');
-            $table->string('discount_percentage')->default('0');
-            $table->string('discount_amount')->default('0');
             $table->string('total_amount')->default('0');
             $table->timestamps();
         });

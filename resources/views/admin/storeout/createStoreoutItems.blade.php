@@ -626,7 +626,7 @@
         document.getElementById('updateStoreOutItem').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const form = event.target;
+            const form = e.target;
             //let storeout_id = form.elements['store_out_id'].value;
             let item_id = form.elements['name_model'];
             let quantity = form.elements['quantityModel'];

@@ -17,17 +17,23 @@ class Storein extends Model
      *
      * @var array
      */
-    protected $table = 'admin_storein';
+    protected $table = 'storein';
     protected $fillable = [
-        'purchase_date',
-        'supplier_id',
-        'sr_no',
-        'bill_no',
-        'pp_no',
-        'size',
-        'tax',
-        'category_id', 'subcategory_id', 'type', 'item', 'purchase_code', 'sub_total', 'discount', 'trasnport', 'total', 'total_paid', 'total_due', 'payment_type', 'purchase_image', 'status', 'storein_status', 'note'
-    ];
+            'purchase_date',
+            'supplier_id',
+            'sr_no',
+            'bill_no',
+            'pp_no',
+            'storein_department_id',
+            'sub_total',
+            'total_discount',
+            'dicount_percent',
+            'grand_total',
+            'image_path',
+            'status',
+            'note',
+            'extra_charges'
+        ];
 
 
     /**
@@ -60,40 +66,9 @@ class Storein extends Model
      */
     public function supplier()
     {
-        return $this->belongsTo('App\Models\Supplier', 'supplier_id');
+        return $this->belongsTo('App\Models\Supplier','supplier_id');
     }
 
-
-    /**
-     * Return relation with PurchaseProduct Model
-     *
-     *
-     */
-    public function purchaseProducts()
-    {
-        return $this->hasMany('App\Models\PurchaseProduct', 'purchase_id');
-    }
-
-    /**
-     * Return relation with ProcessingProduct Model
-     *
-     *
-     */
-    public function processingProducts()
-    {
-        return $this->hasMany('App\Models\ProcessingProduct', 'purchase_id');
-    }
-
-
-
-    /**
-     *
-     * Get the purchase return record associated with the purchase.
-     */
-    public function purchaseReturn()
-    {
-        return $this->hasOne('App\Models\PurchaseReturn');
-    }
 
     /**
      *
@@ -109,33 +84,19 @@ class Storein extends Model
     {
         return $this->belongsTo(Tax::class, "tax_id", "id");
     }
-    // public
-    public function paymentMethod()
+
+    // public function storeinproduct()
+    // {
+    //     return $this->belongsTo(ItemsOfStorein::class, "items_id", "id");
+    // }
+
+    public function storeInDepartment()
     {
-        return $this->belongsTo(PaymentMethod::class, "payment_method_id", "id");
-    }
-    public function purchaseDamage()
-    {
-        return $this->hasOne('App\Models\PurchaseDamage');
+        return $this->belongsTo(StoreinDepartment::class, "storein_department_id", "id");
     }
 
-    public function storeincategory()
+    public function storeinType()
     {
-        return $this->belongsTo(Category::class, "category_id", "id");
-    }
-
-    public function storeinsubcategory()
-    {
-        return $this->belongsTo(SubCategory::class, "sub_categories_id", "id");
-    }
-
-    public function storeinproduct()
-    {
-        return $this->belongsTo(Items::class, "items_id", "id");
-    }
-
-    public function storeintype()
-    {
-        return $this->belongsTo(Setupstorein::class, "storein_id", "id");
+        return $this->belongsTo(StoreinType::class, "storein_type_id", "id");
     }
 }
