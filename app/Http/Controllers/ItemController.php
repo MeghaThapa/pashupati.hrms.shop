@@ -60,11 +60,13 @@ class ItemController extends Controller
         // validate form
         $validator = $request->validate([
             'item' => 'required|string|max:60|unique:items',
-            'pnumber' => 'required|integer|unique:items,pnumber',
+            'pnumber' => 'required|unique:items,pnumber',
             'categoryName' => 'required|integer',
             'department_id' => 'required',
 
         ]);
+
+      try{
 
         $items = new Items();
         $items->item = $request->item;
@@ -73,14 +75,16 @@ class ItemController extends Controller
         $items->department_id = $request->department_id;
         $items->status = $request->status;
         $items->save();
-        return redirect()->back()->withSuccess('Item created successfully!');
-        // $subCategory = Items::create([
-        //     'name' => $request->name,
-        //     'category_id' => $request->categoryName,
-        //     'sub_cat_id' => $request->subcategory,
-        //     'status' => $request->status
-        // ]);
-        // return redirect()->route('items.index')->withSuccess('Item created successfully!');
+        return response()->json([
+            'message' =>'Item Created Successfully',
+            'item' => $items,
+        ],201);
+        }
+        catch (Exception $ex){
+            return $ex;
+        }
+       // return redirect()->back()->withSuccess('Item created successfully!');
+
     }
 
     /**

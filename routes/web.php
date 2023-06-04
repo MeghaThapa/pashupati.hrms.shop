@@ -11,6 +11,7 @@ use App\Http\Controllers\StoreinController;
 use App\Http\Controllers\StoreoutController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\StoreinDepartmentController;
 use App\Http\Controllers\PlacementController;
 use App\Http\Controllers\StockImportController;
 use App\Http\Controllers\ProcessingCategoryAndSubsController;
@@ -20,8 +21,14 @@ use App\Http\Controllers\AutoloadController;
 use App\Http\Controllers\TapeEntryController;
 use App\Http\Controllers\AutoloadItemsController;
 use App\Http\Controllers\AutoLoadStockController;
+
+use App\Http\Controllers\FabricSendReceiveController;
+use App\Http\Controllers\StoreinCategoryController;
+use App\Http\Controllers\ItemsOfStoreinController;
+
 use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -119,6 +126,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('tax/{slug}/staus', 'TaxController@changeStatus')->name('tax.status');
     Route::get('tax/{slug}/delete', 'TaxController@destroy')->name('tax.delete');
+
+    //StoreinDepartment Route
+     Route::post('storeinDepartment/store', 'StoreinDepartmentController@store')->name('storeinDepartment.store');
 
     //Department Route
 
@@ -378,7 +388,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('suppliers/{id}/status', 'SupplierController@changeStatus')->name('suppliers.status');
     Route::get('suppliers/{id}/delete', 'SupplierController@destroy')->name('suppliers.delete');
-
+    //Storein Category Routes
+     Route::post('/storeinCategory/store', 'StoreinCategoryController@store')->name('storeinCategory.store');
     // categories route
     Route::get('/categories/pdf', 'CategoryController@createPDF')->name('categories.pdf');
     Route::resource('categories', 'CategoryController', [
@@ -407,7 +418,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/status', 'SubCategoryController@changeStatus')->name('subCategories.status');
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
-
+    //fabric send receive contoller
+    Route::get('/fabricSendReceive/index', 'FabricSendReceiveController@index')->name('fabricSendReceive.index');
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
@@ -423,7 +435,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
 
-    // fabric_group route
+    //fabric send and receive
+
+
+
+     // fabric_group route
     Route::get('/fabric-groups/pdf', 'FabricGroupController@createPDF')->name('fabric-groups.pdf');
     Route::resource('fabric-groups', 'FabricGroupController', [
         'names' => [
@@ -436,6 +452,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabric-groups/{id}/status', 'FabricGroupController@changeStatus')->name('fabric-groups.status');
     Route::get('fabric-groups/{id}/delete', 'FabricGroupController@destroy')->name('fabric-groups.delete');
+//Storein Item route
+    Route::post('storeinItems/store', 'ItemsOfStoreinController@store')->name('storeinItems.store');
 
     // Items route
     Route::resource('items', 'ItemController', [
@@ -602,6 +620,8 @@ Route::get('storein/storeinItemCreate/{id}', 'StoreinController@storeinItemCreat
 
 Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemDelete')->name('storein.storeinItemDelete');
 Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
+
+Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
 
 Route::resource('storein', 'StoreinController', [
     'names' => [
