@@ -93,6 +93,7 @@
     @endif
 
     <div class="card-body p-0 m-0">
+        <div id="formdiv">
         <form id="createStoreOutItem">
             @csrf
             {{-- Item --}}
@@ -117,7 +118,7 @@
                 </div>
                 <div class="col-md-2">
                     <label for="stock_quantity" class="col-form-label">{{ __('Stock Quantity') }}</label>
-                    <input type="number" class="form-control " id="stock_quantity" name="stock_quantity"
+                    <input type="number" class="form-control " id="stock_quantity" name="stock_quantity" data-ignore
                         placeholder="{{ __('Stock Quantity') }}" readonly tabindex="-1">
                     @error('stock_quantity')
                         <span class="invalid-feedback" role="alert">
@@ -125,19 +126,11 @@
                         </span>
                     @enderror
                 </div>
-                {{-- <div class="col-md-3">
-                    <label for="size" class="col-form-label">{{ __('Size') }}</label>
-                    <input type="text" class="form-control " id="size" data-number="1" name="size"
-                        placeholder="{{ __('Size') }}" readonly tabindex="-1">
-                    @error('size')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div> --}}
+                <input type="text" class="form-control" id="size_id" name="size_id" data-ignore
+                         readonly tabindex="-1" hidden>
                 <div class="col-md-2">
                     <label for="unit" class="col-form-label">{{ __('Unit') }}</label>
-                    <input type="text" step="any" min="0" max="99" class="form-control " id="item_unit"
+                    <input type="text" step="any" min="0" max="99" class="form-control " id="item_unit" data-ignore
                         data-number="1" name="unit" placeholder="{{ __('Unit') }}" readonly tabindex="-1">
                     @error('unit')
                         <span class="invalid-feedback" role="alert">
@@ -147,7 +140,7 @@
                 </div>
                 <div class="col-md-2">
                     <label for="rate" class="col-form-label">{{ __('Rate') }}</label>
-                    <input type="number" class="form-control " id="rate" name="rate"
+                    <input type="number" class="form-control " id="rate" name="rate" data-ignore
                         placeholder="{{ __('Rate') }}" readonly tabindex="-1">
                     @error('rate')
                         <span class="invalid-feedback" role="alert">
@@ -223,8 +216,9 @@
                     Add
                 </button>
             </div>
-    </div>
+             </div>
     </form>
+    </div>
     {{-- table --}}
     <div class="row">
         <div class="Ajaxdata col-md-12">
@@ -552,7 +546,27 @@
             getStoreOutItems();
             //  checkIfTableHasData();
             $('#items').focus();
+              $(document).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
+                });
 
+            //for user accessibility
+            let formDiv = document.getElementById("formdiv");
+            let focusableElements = Array.from(formDiv.querySelectorAll("input, select,button")).filter(function(element) {
+            return !element.hasAttribute("data-ignore");
+            });
+
+            let currentIndex = -1;
+
+            formDiv.addEventListener("keydown", function(event) {
+            // Check if the pressed key is the tab key (key code 9)
+            if (event.keyCode === 9) {
+                event.preventDefault(); // Prevent the default tab behavior
+                var nextIndex = (currentIndex + 1) % focusableElements.length;
+                focusableElements[nextIndex].focus();
+                currentIndex = nextIndex;
+            }
+            });
 
             setTimeout(function() {
                 var alertMessage = document.getElementById('alert-message');
@@ -585,6 +599,7 @@
                 //select item so as to get size unit and rate
 
                 let itemUnit = document.getElementById('item_unit');
+                let size = document.getElementById('size_id');
                 let itemRate = document.getElementById('rate');
                 let stockQuantity = document.getElementById('stock_quantity');
                 let item_id = e.params.data.id;
@@ -599,7 +614,7 @@
 
                         var selectOptions = '';
                         stockQuantity.value = response.quantity;
-
+                        size.value= response.size;
                         itemUnit.value = response.unit;
                         itemRate.value = response.avg_price;
                         $('#placementSelect').html(selectOptions);
@@ -750,7 +765,8 @@
 
             let storeout_id = form.elements['store_out_id'].value;
             let item_name = form.elements['item_id'].value;
-            let size = form.elements['size'].value;
+            let size = form.elements['size_id'].value;
+
             let unit = form.elements['unit'].value;
             let rate = form.elements['rate'].value;
             let quantity = form.elements['quantity'].value;
@@ -779,6 +795,7 @@
                     console.log(response);
                     setIntoTable(response.storeOutItem);
                     $('#items').focus();
+
                     if (response.stock.quantity <= 0) {
                         let itemSelect = $('#items').find('option[value="' + response.stock.item_id +
                             '"]');
@@ -789,6 +806,8 @@
                     deleteEventBtn();
 
                     totalAmountCalculation();
+                    currentIndex = -1;
+                      $('#items').focus();
                     //   checkIfTableHasData();
                 },
                 error: function(xhr, status, error) {
@@ -921,7 +940,7 @@
         }
 
         function clearInputFields() {
-            document.getElementById('size').value = "";
+            document.getElementById('size_id').value = "";
             document.getElementById('item_unit').value = "";
             document.getElementById('rate').value = "";
             document.getElementById('quantity').value = "";

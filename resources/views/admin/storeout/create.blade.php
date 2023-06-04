@@ -83,7 +83,7 @@
                                             class="required-field">*</span>
                                     </label>
                                     <input type="text" class="form-control" id="receipt_no" name="receipt_no"
-                                        placeholder="{{ __('Receipt No') }}"
+                                        placeholder="{{ __('Receipt No') }}" tabindex="-1"
                                         @if ($storeOut) value="{{ $storeOut->receipt_no }}"
                                         @else
                                         value="{{ $receipt_no }}" @endif
@@ -284,76 +284,13 @@
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/storein.js') }}"></script>
-    {{-- <script>
-        $(document).ready(function() {
-            let ppno_input = document.getElementById('ppno');
-            let srno_input = document.getElementById('srno');
-            let billno_input = document.getElementById('billno');
-            ppno_input.disabled = true;
-            srno_input.disabled = true;
-            billno_input.disabled = true;
-
-            let editObj =JSON.parse(`{!! json_encode($storeinData) !!}`);
-            if(editObj){
-                let typeName = editObj.storeintype.name;
-                if(typeName=='Import'){
-                     billno_input.disabled = true;
-                     ppno_input.disabled = false;
-                     srno_input.disabled = false;
-                }
-                if(typeName=='Local'){
-                     ppno_input.disabled = true;
-                    srno_input.disabled = false;
-                    billno_input.disabled = false;
-                }
-                 if(typeName=='Sapt'){
-                   billno_input.disabled = false;
-                    ppno_input.disabled = true;
-                    srno_input.disabled = true;
-                }
-
-            }
-
-            console.log(editObj)
-            $('#type').focus();
-            //inable input field when there is value for edit
-              $('#type').on('select2:select', function(e) {
-
-              });
-
-
-            // Hide the error message after 5 seconds
-            setTimeout(function() {
-                $('#error-container').fadeOut('fast');
-            }, 3000);
-            $('#type').on('select2:select', function(e) {
-                let selectedName = e.params.data.text.replace(/\s/g, "");
-                if (selectedName == "Local") {
-                    ppno_input.disabled = true;
-                    ppno_input.value ="";
-                    srno_input.disabled = false;
-                    billno_input.disabled = false;
-                    srno_input.required = true;
-                    billno_input.required = true;
-                }
-                if (selectedName == "Import") {
-                    billno_input.disabled = true;
-                    billno_input.value = "";
-                    ppno_input.disabled = false;
-                    srno_input.disabled = false;
-                    ppno_input.required = true;
-                    srno_input.required = true;
-                }
-                if (selectedName == "Sapt") {
-                    billno_input.disabled = false;
-                    ppno_input.disabled = true;
-                    srno_input.disabled = true;
-                    ppno_input.value ="";
-                    srno_input.value = "";
-                    billno_input.required = true;
-                }
+   <script>
+    $(document).ready(function(){
+          $('#receipt_date').focus();
+        $(document).on('select2:open', () => {
+                document.querySelector('.select2-search__field').focus();
             });
 
-        });
-    </script> --}}
+    });
+   </script>
 @endsection

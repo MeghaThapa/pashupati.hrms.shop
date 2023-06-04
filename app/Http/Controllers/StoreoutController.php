@@ -206,7 +206,7 @@ class StoreoutController extends Controller
         $request->validate([
             'storeout_id' => 'required',
             'item_id' => 'required',
-            'size' => 'required',
+           'size' => 'required',
             'unit' => 'required',
             'rate' => 'required',
             'quantity' => 'required',
@@ -217,6 +217,7 @@ class StoreoutController extends Controller
 
         try {
             DB::beginTransaction();
+
             $storeOutItem = new StoreOutItem();
             $storeOutItem->item_of_storein_id = $request->item_id;
             $storeOutItem->storeout_id = $request->storeout_id;
@@ -230,8 +231,8 @@ class StoreoutController extends Controller
             $storeOutItem->total = $storeOutItem->quantity * $storeOutItem->rate;
             $storeOutItem->save();
 
-            $stock = Stock::where('item_id', $storeOutItem->item_of_storein_id)
-            ->where('department_id', $storeOutItem->storeinDepartment_id)
+            $stock = Stock::where('item_id', $request->item_id)
+            ->where('department_id', $request->department_id)
             ->where('size',$storeOutItem->size)
             ->first();
 
