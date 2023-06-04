@@ -137,6 +137,18 @@
                         {{-- <p>{{ __('Categories') }}</p> --}}
                     </a>
                 </li>
+
+                 <li class="nav-item">
+                    <a href="{{ route('fabricSendReceive.index') }}"
+                        class="nav-link">
+                        {{ request()->is('admin/fabrics/sendAndReceive*') ? 'active' : '' }}
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric Send Receive</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
+
+
                 <li class="nav-item">
                     <a href="{{ route('nonwovenfabrics.index') }}"
                         class="nav-link {{ request()->is('admin/nonwovenfabrics*') ? 'active' : '' }}">
@@ -146,7 +158,7 @@
                     </a>
                 </li>
                 
-                
+               
                 <li class="nav-item">
                     <a href="{{ route('processing.index') }}"
                         class="nav-link {{ request()->is('admin/processing-products*') ? 'active' : '' }}">

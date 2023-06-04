@@ -81,13 +81,13 @@
                                     {{-- @if()
                                     {{ $storeinData->storein_id }} --}}
                                     <select class="advance-select-box form-control @error('type') is-invalid @enderror"
-                                        id="type" name="type" required>
+                                        id="type" name="type" required focus>
                                         <option value="" selected disabled>{{ __('Select a store in type') }}
                                         </option>
 
                                         @foreach ($storeintype as $type)
                                             <option
-                                                @if ($storeinData) {{ $type->id == $storeinData->storein_id ? 'selected' : '' }} @endif
+                                                @if ($storeinData) {{ $type->id == $storeinData->storein_type_id ? 'selected' : '' }} @endif
                                                 value="{{ $type->id }}">{{ $type->name }}</option>
                                         @endforeach
 
@@ -103,7 +103,7 @@
 
 
                                     <label for="srno" class="col-form-label">{{ __('SR No.') }}</label>
-                                    <input type="number" class="form-control @error('srno') is-invalid @enderror"
+                                    <input type="text" class="form-control @error('srno') is-invalid @enderror"
                                         id="srno" name="srno"
                                         @if ($storeinData) value="{{ $storeinData->sr_no }}" @endif>
                                     @error('srno')
@@ -114,7 +114,7 @@
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label for="billno" class="col-form-label">{{ __('Bill No.') }}</label>
-                                    <input type="number" class="form-control @error('billno') is-invalid @enderror"
+                                    <input type="text" class="form-control @error('billno') is-invalid @enderror"
                                         id="billno" name="billno"
                                         @if ($storeinData) value="{{ $storeinData->bill_no }}" @endif>
                                     @error('billno')
@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label for="ppno" class="col-form-label">{{ __('PP No.') }}</label>
-                                    <input type="number" class="form-control @error('ppno') is-invalid @enderror"
+                                    <input type="text" class="form-control @error('ppno') is-invalid @enderror"
                                         id="ppno" name="ppno"
                                         @if ($storeinData) value="{{ $storeinData->pp_no }}" @endif>
                                     @error('ppno')
@@ -343,6 +343,19 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/storein.js') }}"></script>
     <script>
+
+
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+      });
+
+
+        // steal focus during close - only capture once and stop propogation
+        $('select.select2').on('select2:closing', function (e) {
+        $(e.target).data("select2").$selection.one('focus focusin', function (e) {
+            e.stopPropagation();
+        });
+        });
         $(document).ready(function() {
             let ppno_input = document.getElementById('ppno');
             let srno_input = document.getElementById('srno');
@@ -352,20 +365,22 @@
             billno_input.disabled = true;
 
             let editObj =JSON.parse(`{!! json_encode($storeinData) !!}`);
+            console.log(editObj);
             if(editObj){
-                let typeName = editObj.storeintype.name;
-                if(typeName=='Import'){
+                let typeName = editObj.storein_type.name.toLowerCase();
+                console.log(typeName);
+                if(typeName=='import'){
                      billno_input.disabled = true;
                      ppno_input.disabled = false;
                      srno_input.disabled = false;
                 }
-                if(typeName=='Local'){
+                else if(typeName=='local'){
                      ppno_input.disabled = true;
                     srno_input.disabled = false;
                     billno_input.disabled = false;
                 }
-                 if(typeName=='Sapt'){
-                   billno_input.disabled = false;
+                else if(typeName=='sapat'){
+                    billno_input.disabled = false;
                     ppno_input.disabled = true;
                     srno_input.disabled = true;
                 }
@@ -373,11 +388,8 @@
             }
 
             console.log(editObj)
-            $('#type').focus();
-            //inable input field when there is value for edit
-              $('#type').on('select2:select', function(e) {
+           $('#type').focus();
 
-              });
 
 
             // Hide the error message after 5 seconds
@@ -385,8 +397,8 @@
                 $('#error-container').fadeOut('fast');
             }, 3000);
             $('#type').on('select2:select', function(e) {
-                let selectedName = e.params.data.text.replace(/\s/g, "");
-                if (selectedName == "Local") {
+                let selectedName = e.params.data.text.replace(/\s/g, "").toLowerCase();
+                if (selectedName == "local") {
                     ppno_input.disabled = true;
                     ppno_input.value ="";
                     srno_input.disabled = false;
@@ -394,7 +406,7 @@
                     srno_input.required = true;
                     billno_input.required = true;
                 }
-                if (selectedName == "Import") {
+                if (selectedName == "import") {
                     billno_input.disabled = true;
                     billno_input.value = "";
                     ppno_input.disabled = false;
@@ -402,7 +414,7 @@
                     ppno_input.required = true;
                     srno_input.required = true;
                 }
-                if (selectedName == "Sapt") {
+                if (selectedName == "sapat") {
                     billno_input.disabled = false;
                     ppno_input.disabled = true;
                     srno_input.disabled = true;

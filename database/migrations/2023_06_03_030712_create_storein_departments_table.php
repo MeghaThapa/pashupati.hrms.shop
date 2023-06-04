@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('admin_storeout', function (Blueprint $table) {
-            $table->string('receipt_date');
-            $table->string('receipt_no');
-            $table->string('for');
+        Schema::create('storein_departments', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->index();
+            $table->enum('status',['active','inactive']);
+            $table->timestamps();
         });
     }
 
@@ -27,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('admin_storeout', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('storein_departments');
     }
 };

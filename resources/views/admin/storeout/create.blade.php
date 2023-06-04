@@ -24,11 +24,7 @@
         <div class="content-header mb-4">
             <div class="row align-items-center">
                 <div class="col-sm-6">
-                    {{-- @if ($storeinData)
-                        <h1 class="m-0 text-dark">{{ __('Edit Storein') }}</h1>
-                    @else
-                        <h1 class="m-0 text-dark">{{ __('Create Storein') }}</h1>
-                    @endif --}}
+
 
                 </div>
                 <div class="col-sm-6">
@@ -47,11 +43,11 @@
         <div class="content">
             <div class="card">
                 <div class="card-header">
-                    {{-- @if ($storeinData)
-                        <h3 class="card-title">{{ __('Edit Existing Storein') }}</h3>
+                    @if ($storeOut)
+                        <h3 class="card-title">{{ __('Edit Existing Storeout') }}</h3>
                     @else
-                        <h3 class="card-title">{{ __('Create New Storein') }}</h3>
-                    @endif --}}
+                        <h3 class="card-title">{{ __('Create New Storeout') }}</h3>
+                    @endif
 
                     <div class="card-tools">
                         <a href="{{ route('storein.index') }}" class="btn btn-block btn-primary">
@@ -60,12 +56,6 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
-                    {{-- <a href="{{ route('storein.storeinItemCreateLayout', ['storein_id' => 11]) }}">
-                    <button class="btn btn-primary">
-                        Layout
-                    </button>
-                </a> --}}
-
                     <form
                         @if ($storeOut) action="{{ route('storeout.updateStoreOut', ['storeout_id' => $storeOut->id]) }}"
                     @else
@@ -93,7 +83,7 @@
                                             class="required-field">*</span>
                                     </label>
                                     <input type="text" class="form-control" id="receipt_no" name="receipt_no"
-                                        placeholder="{{ __('Receipt No') }}"
+                                        placeholder="{{ __('Receipt No') }}" tabindex="-1"
                                         @if ($storeOut) value="{{ $storeOut->receipt_no }}"
                                         @else
                                         value="{{ $receipt_no }}" @endif
@@ -111,16 +101,14 @@
                                     </label>
                                     <select class="advance-select-box form-control" id="for_id" name="for_id" required>
                                         <option value="" selected disabled>{{ __('Select where to move ') }}</option>
-                                        <option value="new_psi"
-                                            @if ($storeOut) {{ $storeOut->for == 'new_psi' ? 'selected' : '' }} @endif>
-                                            {{ 'New PSI' }}</option>
-                                        <option value="old_psi"
-                                            @if ($storeOut) {{ $storeOut->for == 'old_psi' ? 'selected' : '' }} @endif>
-                                            {{ 'Old PSI' }}</option>
-                                        <option value="bsw_unit"
-                                            @if ($storeOut) {{ $storeOut->for == 'bsw_unit' ? 'selected' : '' }} @endif>
-                                            {{ 'BSW Unit' }}</option>
-                                        {{-- @endforeach --}}
+                                            @foreach ($storeinDepartment as $department)
+                                            <option value="{{$department->id}}"
+                                                @if ($storeOut) {{ $storeOut->for == $department->id ? 'selected' : '' }} @endif>
+                                                {{ $department->name }}
+                                            </option>
+                                            @endforeach
+
+
                                     </select>
                                     @error('for_id')
                                         <span class="invalid-feedback" role="alert">
@@ -128,18 +116,6 @@
                                         </span>
                                     @enderror
                                 </div>
-                                {{-- <div class="col-md-3">
-                                    <label for="category" class="col-form-label">{{ __('Category') }}</label>
-                                    <input type="number" step="any" min="0" max="99" class="form-control "
-                                        id="discounts-1" data-number="1" name="discounts"
-                                        placeholder="{{ __('Category') }}">
-                                    @error('discounts')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div> --}}
-
                             </div>
                             <div>
                                 <center>
@@ -308,76 +284,13 @@
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/storein.js') }}"></script>
-    {{-- <script>
-        $(document).ready(function() {
-            let ppno_input = document.getElementById('ppno');
-            let srno_input = document.getElementById('srno');
-            let billno_input = document.getElementById('billno');
-            ppno_input.disabled = true;
-            srno_input.disabled = true;
-            billno_input.disabled = true;
-
-            let editObj =JSON.parse(`{!! json_encode($storeinData) !!}`);
-            if(editObj){
-                let typeName = editObj.storeintype.name;
-                if(typeName=='Import'){
-                     billno_input.disabled = true;
-                     ppno_input.disabled = false;
-                     srno_input.disabled = false;
-                }
-                if(typeName=='Local'){
-                     ppno_input.disabled = true;
-                    srno_input.disabled = false;
-                    billno_input.disabled = false;
-                }
-                 if(typeName=='Sapt'){
-                   billno_input.disabled = false;
-                    ppno_input.disabled = true;
-                    srno_input.disabled = true;
-                }
-
-            }
-
-            console.log(editObj)
-            $('#type').focus();
-            //inable input field when there is value for edit
-              $('#type').on('select2:select', function(e) {
-
-              });
-
-
-            // Hide the error message after 5 seconds
-            setTimeout(function() {
-                $('#error-container').fadeOut('fast');
-            }, 3000);
-            $('#type').on('select2:select', function(e) {
-                let selectedName = e.params.data.text.replace(/\s/g, "");
-                if (selectedName == "Local") {
-                    ppno_input.disabled = true;
-                    ppno_input.value ="";
-                    srno_input.disabled = false;
-                    billno_input.disabled = false;
-                    srno_input.required = true;
-                    billno_input.required = true;
-                }
-                if (selectedName == "Import") {
-                    billno_input.disabled = true;
-                    billno_input.value = "";
-                    ppno_input.disabled = false;
-                    srno_input.disabled = false;
-                    ppno_input.required = true;
-                    srno_input.required = true;
-                }
-                if (selectedName == "Sapt") {
-                    billno_input.disabled = false;
-                    ppno_input.disabled = true;
-                    srno_input.disabled = true;
-                    ppno_input.value ="";
-                    srno_input.value = "";
-                    billno_input.required = true;
-                }
+   <script>
+    $(document).ready(function(){
+          $('#receipt_date').focus();
+        $(document).on('select2:open', () => {
+                document.querySelector('.select2-search__field').focus();
             });
 
-        });
-    </script> --}}
+    });
+   </script>
 @endsection

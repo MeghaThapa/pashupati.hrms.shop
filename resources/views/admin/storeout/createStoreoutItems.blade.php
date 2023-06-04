@@ -93,19 +93,20 @@
     @endif
 
     <div class="card-body p-0 m-0">
+        <div id="formdiv">
         <form id="createStoreOutItem">
             @csrf
             {{-- Item --}}
             <div class="row">
                 <input type="text" class="form-control" value="{{ $storeOut->id }}" id="storeOut_id" data-number="1"
                     name="store_out_id" placeholder="{{ __('store_out_id') }}" hidden>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label for="item_name" style="width:80px !important;"
                         class="col-form-label">{{ __('Item Name') }}</label>
                     <select class="advance-select-box form-control" id="items" name="item_id" required>
                         <option value="" selected disabled>{{ __('Select an item') }}</option>
                         @foreach ($items as $key => $stock)
-                            <option value="{{ $stock->item_id }}">{{ $stock->item->item }}
+                            <option value="{{ $stock->item_id }}">{{ $stock->item->name }} /ppNo: {{$stock->item->pnumber}} /size: {{$stock->sizes->name}}
                             </option>
                         @endforeach
                     </select>
@@ -117,7 +118,7 @@
                 </div>
                 <div class="col-md-2">
                     <label for="stock_quantity" class="col-form-label">{{ __('Stock Quantity') }}</label>
-                    <input type="number" class="form-control " id="stock_quantity" name="stock_quantity"
+                    <input type="number" class="form-control " id="stock_quantity" name="stock_quantity" data-ignore
                         placeholder="{{ __('Stock Quantity') }}" readonly tabindex="-1">
                     @error('stock_quantity')
                         <span class="invalid-feedback" role="alert">
@@ -125,19 +126,11 @@
                         </span>
                     @enderror
                 </div>
-                <div class="col-md-3">
-                    <label for="size" class="col-form-label">{{ __('Size') }}</label>
-                    <input type="text" class="form-control " id="size" data-number="1" name="size"
-                        placeholder="{{ __('Size') }}" readonly tabindex="-1">
-                    @error('size')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
+                <input type="text" class="form-control" id="size_id" name="size_id" data-ignore
+                         readonly tabindex="-1" hidden>
                 <div class="col-md-2">
                     <label for="unit" class="col-form-label">{{ __('Unit') }}</label>
-                    <input type="text" step="any" min="0" max="99" class="form-control " id="item_unit"
+                    <input type="text" step="any" min="0" max="99" class="form-control " id="item_unit" data-ignore
                         data-number="1" name="unit" placeholder="{{ __('Unit') }}" readonly tabindex="-1">
                     @error('unit')
                         <span class="invalid-feedback" role="alert">
@@ -147,7 +140,7 @@
                 </div>
                 <div class="col-md-2">
                     <label for="rate" class="col-form-label">{{ __('Rate') }}</label>
-                    <input type="number" class="form-control " id="rate" name="rate"
+                    <input type="number" class="form-control " id="rate" name="rate" data-ignore
                         placeholder="{{ __('Rate') }}" readonly tabindex="-1">
                     @error('rate')
                         <span class="invalid-feedback" role="alert">
@@ -177,8 +170,8 @@
                     </a>
                     <select class="advance-select-box form-control" id="departments" name="department" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
-                        @foreach ($departments as $key => $department)
-                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                        @foreach ($storeinDepartment as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
                         @endforeach
                     </select>
                     @error('department')
@@ -206,7 +199,7 @@
                 <div class="col-md-3 " style="gap:3px;">
                     <label for="category" class="col-form-label">{{ __('Through') }}</label>
                     <input type="text" class="form-control " id="through" name="through"
-                        placeholder="{{ __('Through') }}">
+                        placeholder="{{ __('Through') }}" required>
                     @error('through')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -223,8 +216,9 @@
                     Add
                 </button>
             </div>
-    </div>
+             </div>
     </form>
+    </div>
     {{-- table --}}
     <div class="row">
         <div class="Ajaxdata col-md-12">
@@ -321,8 +315,8 @@
                                     <select class="advance-select-box form-control @error('supplier') is-invalid @enderror"
                                         id="model_department" name="department">
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($departments as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                        @foreach ($storeinDepartment as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('department')
@@ -487,8 +481,8 @@
                                     <select class="advance-select-box form-control" id="departmentIdModel"
                                         name="department_id_model" required>
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($departments as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                        @foreach ($storeinDepartment as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('department_id_model')
@@ -552,18 +546,27 @@
             getStoreOutItems();
             //  checkIfTableHasData();
             $('#items').focus();
+              $(document).on('select2:open', () => {
+                    document.querySelector('.select2-search__field').focus();
+                });
 
-            // function checkIfTableHasData() {
-            // let tableTbody = document.querySelector("#storeOutItemTable tbody");
-            //   let saveStoreoutBtn = document.getElementById('saveStoreOutButton');
-            // console.log('length', tableTbody.rows.length);
-            //  if (tableTbody.rows.length <= 0) {
-            //    saveStoreoutBtn.disabled = true;
-            // } else {
-            //      saveStoreoutBtn.disabled = false;
-            //  }
-            //   }
+            //for user accessibility
+            let formDiv = document.getElementById("formdiv");
+            let focusableElements = Array.from(formDiv.querySelectorAll("input, select,button")).filter(function(element) {
+            return !element.hasAttribute("data-ignore");
+            });
 
+            let currentIndex = -1;
+
+            formDiv.addEventListener("keydown", function(event) {
+            // Check if the pressed key is the tab key (key code 9)
+            if (event.keyCode === 9) {
+                event.preventDefault(); // Prevent the default tab behavior
+                var nextIndex = (currentIndex + 1) % focusableElements.length;
+                focusableElements[nextIndex].focus();
+                currentIndex = nextIndex;
+            }
+            });
 
             setTimeout(function() {
                 var alertMessage = document.getElementById('alert-message');
@@ -594,8 +597,9 @@
 
             $('#items').on('select2:select', function(e) {
                 //select item so as to get size unit and rate
-                let itemsSize = document.getElementById('size');
+
                 let itemUnit = document.getElementById('item_unit');
+                let size = document.getElementById('size_id');
                 let itemRate = document.getElementById('rate');
                 let stockQuantity = document.getElementById('stock_quantity');
                 let item_id = e.params.data.id;
@@ -610,7 +614,7 @@
 
                         var selectOptions = '';
                         stockQuantity.value = response.quantity;
-                        itemsSize.value = response.size;
+                        size.value= response.size;
                         itemUnit.value = response.unit;
                         itemRate.value = response.avg_price;
                         $('#placementSelect').html(selectOptions);
@@ -626,7 +630,7 @@
         document.getElementById('updateStoreOutItem').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const form = event.target;
+            const form = e.target;
             //let storeout_id = form.elements['store_out_id'].value;
             let item_id = form.elements['name_model'];
             let quantity = form.elements['quantityModel'];
@@ -761,7 +765,8 @@
 
             let storeout_id = form.elements['store_out_id'].value;
             let item_name = form.elements['item_id'].value;
-            let size = form.elements['size'].value;
+            let size = form.elements['size_id'].value;
+
             let unit = form.elements['unit'].value;
             let rate = form.elements['rate'].value;
             let quantity = form.elements['quantity'].value;
@@ -787,8 +792,10 @@
                     // Goes Into Request
                 },
                 success: function(response) {
+                    console.log(response);
                     setIntoTable(response.storeOutItem);
                     $('#items').focus();
+
                     if (response.stock.quantity <= 0) {
                         let itemSelect = $('#items').find('option[value="' + response.stock.item_id +
                             '"]');
@@ -799,6 +806,8 @@
                     deleteEventBtn();
 
                     totalAmountCalculation();
+                    currentIndex = -1;
+                      $('#items').focus();
                     //   checkIfTableHasData();
                 },
                 error: function(xhr, status, error) {
@@ -814,19 +823,20 @@
         let sn = 1;
         //set Values to storein Items table
         function setIntoTable(res) {
+            console.log(res);
             var html = "";
 
             html = "<tr  id=editRow-" + res.id + "><td>" + sn +
-                "</td><td class='rowItemName'>" + res.item.item +
+                "</td><td class='rowItemName'>" + res.items_of_storein.name +
                 "</td><td class='rowsize_id'>" + res.size +
                 "</td><td class='rowQuantity'>" + res.quantity +
                 "</td><td class='rowUnitName'>" + res.unit +
                 "</td><td class='rowPrice'>" + res.rate +
                 "</td><td class='rowTotalAmount'>" + res.total +
                 "</td> <td>" +
-                "<button class='btn btn-success editStoreoutBtn' data-id=" +
-                res.id + "><i class='fas fa-edit'></i></button>" +
-                "  " +
+                // "<button class='btn btn-success editStoreoutBtn' data-id=" +
+                // res.id + "><i class='fas fa-edit'></i></button>" +
+                // "  " +
                 "<button class='btn btn-danger dltstoreoutItem' data-id=" +
                 res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
 
@@ -930,7 +940,7 @@
         }
 
         function clearInputFields() {
-            document.getElementById('size').value = "";
+            document.getElementById('size_id').value = "";
             document.getElementById('item_unit').value = "";
             document.getElementById('rate').value = "";
             document.getElementById('quantity').value = "";

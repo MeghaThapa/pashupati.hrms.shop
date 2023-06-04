@@ -13,9 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('admin_store_out_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('storeout_id')->index();
-            $table->foreign('storeout_id')->references('id')->on('admin_storeout');
+        Schema::create('storein_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->index();
+            $table->string('note');
+            $table->enum('status',['active','inactive']);
+            $table->timestamps();
         });
     }
 
@@ -26,8 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('admin_store_out_items', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('storein_categories');
     }
 };
