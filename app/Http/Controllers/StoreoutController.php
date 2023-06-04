@@ -155,7 +155,7 @@ class StoreoutController extends Controller
     {
        $request->validate([
             'receipt_date'          => 'required|string|max:50',
-            'receipt_no'         => 'required|string|unique:admin_storeout,receipt_no',
+            'receipt_no'         => 'required|string|unique:storeout,receipt_no',
             'for_id'         => 'required',
         ]);
         try{
