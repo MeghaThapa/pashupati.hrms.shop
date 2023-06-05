@@ -77,166 +77,169 @@
         </div>
     @endif
 
-    <div class="card-body p-0 m-0">
-        <form id="createStoreInItem">
-            @csrf
-            <div class="row">
-                        <div class="col-md-2 form-group">
-                            <label for="Category" class="col-form-label">{{ __('Storein Category Name') }}<span class="required-field">*</span>
-                            </label>
-                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#storeinCategoryModel" style="margin-top:0 !important; top:8px;float:right;">
-                                <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                            </a>
-                            <select class="advance-select-box form-control  @error('Category') is-invalid @enderror"
-                                id="categorySelect" name="categoryName" required>
-                                <option value="" selected disabled>{{ __('Select a Category') }}</option>
-                                @foreach ($categories as $key => $category)
-                                <option value="{{ $category->id }}" {{ (old('categoryName') == $category->id  )? 'selected' : '' }}>{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('categoryName')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                        </div>
-                        {{-- item --}}
-                        <div class="col-md-2 form-group">
-                            <label for="products" class="col-form-label">{{ __('Storein Item Name') }}<span class="required-field">*</span>
-                            </label>
-                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#createStoreinItemModelPopup" style="margin-top:0 !important; top:8px;float:right;">
-                                <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                            </a>
-                            <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
-                                id="ProductName" name="ProductName" required>
-                                <option value="" selected disabled>{{ __('Select a Product') }}</option>
-                            </select>
-                            @error('ProductName')
+    <div class="card-body p-0 m-0" >
+        <div id="formdiv">
+            <form id="createStoreInItem" >
+                @csrf
+
+                <div class="row">
+                            <div class="col-md-2 form-group">
+                                <label for="Category" class="col-form-label">{{ __('Storein Category Name') }}<span class="required-field">*</span>
+                                </label>
+                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                                    data-target="#storeinCategoryModel" style="margin-top:0 !important; top:8px;float:right;">
+                                    <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                                </a>
+                                <select class="advance-select-box form-control  @error('Category') is-invalid @enderror"
+                                    id="categorySelect" name="categoryName"  required >
+                                    <option value="" selected disabled>{{ __('Select a Category') }}</option>
+                                    @foreach ($categories as $key => $category)
+                                    <option value="{{ $category->id }}" {{ (old('categoryName') == $category->id  )? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('categoryName')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
+                            </div>
+                            {{-- item --}}
+                            <div class="col-md-2 form-group">
+                                <label for="products" class="col-form-label">{{ __('Storein Item Name') }}<span class="required-field">*</span>
+                                </label>
+                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                                    data-target="#createStoreinItemModelPopup" style="margin-top:0 !important; top:8px;float:right;">
+                                    <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                                </a>
+                                <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
+                                    id="ProductName" name="ProductName" required>
+                                    <option value="" selected disabled>{{ __('Select a Product') }}</option>
+                                </select>
+                                @error('ProductName')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            {{--size--}}
+                            <div class="col-md-2 form-group">
+                                <label for="size" class="col-form-label">{{ __('Size') }}<span
+                                        class="required-field">*</span>
+                                </label>
+                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                                    data-target="#exampleModalsize" style="margin-top:0 !important; top:8px;float:right;">
+                                    <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                                </a>
+                                {{-- recent --}}
+                                <select class="advance-select-box form-control @error('size') is-invalid @enderror" id="size_id"
+                                    name="size_id" required>
+                                    <option value="" selected disabled>{{ __('Select a Size ') }}</option>
+                                    @foreach ($sizes as $size)
+                                        <option value="{{ $size->id }}">{{ $size->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('size_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            {{--unit--}}
+                            <div class="col-md-2">
+                                <label for="units" class="col-form-label">{{ __('Unit') }}<span
+                                        class="required-field">*</span>
+                                </label>
+                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                                    data-target="#exampleModalunit" style="margin-top:0 !important; top:8px;float:right;">
+                                    <i class="fas fa-plus"
+                                        style="display:flex;align-items: center;justify-content: center;"></i>
+                                </a>
+                                <select class="form-control @error('units') is-invalid @enderror" name="units" id="units" required>
+                                    <option value="" disabled>{{ __('Select a unit') }}</option>
+                                    @foreach ($units as $unit)
+                                        <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('units')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+
+                            {{-- Quantity --}}
+
+                            <div class="col-md-2">
+                                <label for="qunatities" class="col-form-label">{{ __('Quantity') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="number" step="any" min="0"
+                                    class="form-control @error('qunatities') is-invalid @enderror calculator" id="qunatities-1"
+                                    data-number="1" name="quantities" placeholder="{{ __('Quantity') }}" min="1" required>
+                                @error('quantities')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            {{-- unit price --}}
+
+                            <div class="col-md-2">
+                                <label for="unitPrices[]" class="col-form-label">{{ __('Unit Price') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="number" step="any" min="0"
+                                    class="form-control @error('unitPrices') is-invalid @enderror calculator" id="unitPrices-1"
+                                    data-number="1" name="unitPrices" placeholder="{{ __('Unit Price') }}" min="1" required>
+                                @error('unitPrices')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            {{-- <div class="col-md-6">
+                                <label for="discounts[]" class="col-form-label">{{ __('Discount') }}(%)</label>
+                                <input type="number" step="any" min="0" max="99"
+                                    class="form-control @error('discounts') is-invalid @enderror calculator" id="discounts-1"
+                                    data-number="1" name="discounts" placeholder="{{ __('Discount') }}">
+                                @error('discounts')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div> --}}
+
+                </div>
+                {{--Department--}}
+                <div class="d-flex  mt-3" style="gap:10px"  >
+                    <div class="d-flex" style="gap:10px" >
+                        <div>
+                            <label for="singleTotal[]" class="col-form-label">{{ __('Department') }}</label>
                         </div>
-                         {{--size--}}
-                        <div class="col-md-2 form-group">
-                            <label for="size" class="col-form-label">{{ __('Size') }}<span
-                                    class="required-field">*</span>
-                            </label>
-                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#exampleModalsize" style="margin-top:0 !important; top:8px;float:right;">
-                                <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                            </a>
-                            {{-- recent --}}
-                            <select class="advance-select-box form-control @error('size') is-invalid @enderror" id="size_id"
-                                name="size_id" required>
-                                <option value="" selected disabled>{{ __('Select a Size ') }}</option>
-                                @foreach ($sizes as $size)
-                                    <option value="{{ $size->id }}">{{ $size->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('size_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                        <div>
+                            <input type="text" step="any" min="0" style="width:200px; "
+                                class="form-control @error('singleTotal') is-invalid @enderror" id="department_id"
+                                name="department_id" placeholder="{{ __('Department name') }}" data-ignore readonly tabindex="-1">
                         </div>
-                         {{--unit--}}
-                        <div class="col-md-2">
-                            <label for="units" class="col-form-label">{{ __('Unit') }}<span
-                                    class="required-field">*</span>
-                            </label>
-                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                data-target="#exampleModalunit" style="margin-top:0 !important; top:8px;float:right;">
-                                <i class="fas fa-plus"
-                                    style="display:flex;align-items: center;justify-content: center;"></i>
-                            </a>
-                            <select class="form-control @error('units') is-invalid @enderror" name="units" id="units" required>
-                                <option value="" disabled>{{ __('Select a unit') }}</option>
-                                @foreach ($units as $unit)
-                                    <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('units')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-
-                        {{-- Quantity --}}
-
-                        <div class="col-md-2">
-                            <label for="qunatities" class="col-form-label">{{ __('Quantity') }}<span
-                                    class="required-field">*</span></label>
-                            <input type="number" step="any" min="0"
-                                class="form-control @error('qunatities') is-invalid @enderror calculator" id="qunatities-1"
-                                data-number="1" name="quantities" placeholder="{{ __('Quantity') }}" min="1" required>
-                            @error('quantities')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        {{-- unit price --}}
-
-                        <div class="col-md-2">
-                            <label for="unitPrices[]" class="col-form-label">{{ __('Unit Price') }}<span
-                                    class="required-field">*</span></label>
-                            <input type="number" step="any" min="0"
-                                class="form-control @error('unitPrices') is-invalid @enderror calculator" id="unitPrices-1"
-                                data-number="1" name="unitPrices" placeholder="{{ __('Unit Price') }}" min="1" required>
-                            @error('unitPrices')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        {{-- <div class="col-md-6">
-                            <label for="discounts[]" class="col-form-label">{{ __('Discount') }}(%)</label>
-                            <input type="number" step="any" min="0" max="99"
-                                class="form-control @error('discounts') is-invalid @enderror calculator" id="discounts-1"
-                                data-number="1" name="discounts" placeholder="{{ __('Discount') }}">
-                            @error('discounts')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div> --}}
-
-            </div>
-            {{--Department--}}
-            <div class="d-flex  mt-3" style="gap:10px"  >
-                <div class="d-flex" style="gap:10px" >
+                    </div>
+                <div class="d-flex" style="gap:10px">
                     <div>
-                        <label for="singleTotal[]" class="col-form-label">{{ __('Department') }}</label>
+                        <label for="singleTotal[]" class="col-form-label">{{ __('Total') }}</label>
                     </div>
                     <div>
-                        <input type="text" step="any" min="0" style="width:200px; "
-                            class="form-control @error('singleTotal') is-invalid @enderror" id="department_id"
-                            name="department_id" placeholder="{{ __('Department name') }}" readonly>
+                        <input type="text" step="any" min="0" style="width:150px !important; "
+                            class="form-control @error('singleTotal') is-invalid @enderror" id="singleTotal-1"
+                            name="singleTotal" placeholder="{{ __('Product Total') }}" data-ignore  readonly tabindex="-1">
                     </div>
                 </div>
-             <div class="d-flex" style="gap:10px">
-                <div>
-                    <label for="singleTotal[]" class="col-form-label">{{ __('Total') }}</label>
+                <div >
+                    <button type="submit" id="storeinSubmitBtn" class="btn btn-primary" style=" padding:14px!important; margin-button:40px ;margin-left:10px!important;">
+                                    Submit
+                    </button>
                 </div>
-                <div>
-                    <input type="text" step="any" min="0" style="width:150px !important; "
-                        class="form-control @error('singleTotal') is-invalid @enderror" id="singleTotal-1"
-                        name="singleTotal" placeholder="{{ __('Product Total') }}" readonly>
                 </div>
-            </div>
-            <div >
-                 <button type="submit" id="storeinSubmitBtn" class="btn btn-primary" style=" padding:14px!important; margin-button:40px ;margin-left:10px!important;">
-                                Submit
-                </button>
-            </div>
-            </div>
-        </form>
+            </form>
+        </div>
         {{-- table --}}
         <div class="row">
             <div class="Ajaxdata col-md-12">
@@ -986,6 +989,11 @@
     <script src="{{ asset('js/storein.js') }}"></script>
     <script>
         $(document).ready(function(){
+         $('#categorySelect').focus();
+           $(document).on('select2:open', () => {
+                document.querySelector('.select2-search__field').focus();
+            });
+
         checkRowInTable();
         function checkRowInTable(){
             let tableTbody = document.querySelector("#storeInItemTable tbody");
@@ -997,6 +1005,25 @@
                 saveStoreInBtn.disabled = false;
             }
         }
+
+        let formDiv = document.getElementById("formdiv");
+        let focusableElements = Array.from(formDiv.querySelectorAll("input, select,button")).filter(function(element) {
+        return !element.hasAttribute("data-ignore");
+        });
+
+        let currentIndex = -1;
+
+        formDiv.addEventListener("keydown", function(event) {
+        // Check if the pressed key is the tab key (key code 9)
+        if (event.keyCode === 9) {
+            event.preventDefault(); // Prevent the default tab behavior
+            var nextIndex = (currentIndex + 1) % focusableElements.length;
+            focusableElements[nextIndex].focus();
+            currentIndex = nextIndex;
+        }
+        });
+
+
         document.getElementById('storeinDepartmentCreate').addEventListener('submit', function(e){
             e.preventDefault();
              const form = e.target;
@@ -1126,6 +1153,7 @@
                      optionElement.value=response.item.id;
                      optionElement.text = response.item.name;
                      selectItemElement.appendChild(optionElement);
+                    $('#categorySelect').focus();
                 },
                 error: function(xhr, status, error) {
                     setMessage('itemModelError', xhr.responseJSON.message)

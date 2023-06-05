@@ -13,8 +13,8 @@ class Placement extends Model
         'name', 'department_id', 'status'
     ];
 
-    public function department()
+    public function storeinDepartment()
     {
-        return $this->belongsTo(Department::class, 'department_id', 'id');
+        return $this->belongsTo(StoreinDepartment::class, 'department_id', 'id');
     }
 }

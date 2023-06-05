@@ -12,19 +12,6 @@ class Stock extends Model
     protected $id = "id";
     protected $fillable = ['department_id','category_id','item_id','size','quantity','unit','avg_price','total_amount'];
 
-    // protected $fillable = [
-    //     'department_id',
-    //     'category_id',
-    //     'item_id',
-    //     'size',
-    //     'quantity',
-    //     'unit',
-    //     'avg_price',
-    //     'total_amount',
-    //     'created_at','updated_at'
-    // ];
-
-
     public static function createStock($storeinItem)
     {
         $item = ItemsOfStorein::find($storeinItem->storein_item_id);
@@ -81,12 +68,17 @@ class Stock extends Model
     // relate stock with category,item,department
     public function category()
     {
-        return $this->belongsTo('App\Models\Category', 'category_id', "id");
+        return $this->belongsTo(Category::class, 'category_id', "id");
     }
     public function item()
     {
-        return $this->belongsTo('App\Models\Items', 'item_id', "id");
+        return $this->belongsTo(ItemsOfStorein::class, 'item_id', "id");
     }
+    public function sizes()
+    {
+        return $this->belongsTo(Size::class, 'size', "id");
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id', 'id');

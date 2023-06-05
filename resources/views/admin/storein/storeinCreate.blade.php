@@ -81,7 +81,7 @@
                                     {{-- @if()
                                     {{ $storeinData->storein_id }} --}}
                                     <select class="advance-select-box form-control @error('type') is-invalid @enderror"
-                                        id="type" name="type" required>
+                                        id="type" name="type" required focus>
                                         <option value="" selected disabled>{{ __('Select a store in type') }}
                                         </option>
 
@@ -343,6 +343,19 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/storein.js') }}"></script>
     <script>
+
+
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+      });
+
+
+        // steal focus during close - only capture once and stop propogation
+        $('select.select2').on('select2:closing', function (e) {
+        $(e.target).data("select2").$selection.one('focus focusin', function (e) {
+            e.stopPropagation();
+        });
+        });
         $(document).ready(function() {
             let ppno_input = document.getElementById('ppno');
             let srno_input = document.getElementById('srno');
@@ -375,11 +388,8 @@
             }
 
             console.log(editObj)
-            $('#type').focus();
-            //inable input field when there is value for edit
-              $('#type').on('select2:select', function(e) {
+           $('#type').focus();
 
-              });
 
 
             // Hide the error message after 5 seconds
