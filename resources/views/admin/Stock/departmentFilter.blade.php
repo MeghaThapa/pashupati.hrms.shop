@@ -14,7 +14,7 @@
                     <select class="advance-select-box form-control" id="department" name="departmentName" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
                         @foreach ($departments as $key => $department)
-                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
                         @endforeach
                     </select>
                 </div>

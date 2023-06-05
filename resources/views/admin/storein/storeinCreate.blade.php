@@ -78,6 +78,10 @@
                                     <label for="type" class="col-form-label">{{ __('Storein Type') }}<span
                                             class="required-field">*</span>
                                     </label>
+                                     <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                                        data-target="#storeinTypeModel" style="margin-top:0 !important; top:8px;float:right;">
+                                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                                    </a>
                                     {{-- @if()
                                     {{ $storeinData->storein_id }} --}}
                                     <select class="advance-select-box form-control @error('type') is-invalid @enderror"
@@ -193,7 +197,88 @@
             </div>
         </div>
     </div>
+ <!--Storein Type  Model popup-->
+    <div class="modal fade" id="storeinTypeModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModaltax">Add Storein Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                 <form id="modelFormStoreinType">
+                       @csrf
+                    <div class="modal-body">
+                        <div class="card-body">
+                            <div id="storeinTypeError" class="alert alert-danger" hidden>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="name">{{ __('name') }}<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" class="form-control @error('placement') is-invalid @enderror"
+                                        id="storeinType" name="storein_type_name" placeholder="{{ __('Placement') }}"
+                                        value="{{ old('storein_type_name') }}" required>
+                                    @error('storein_type')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="department">{{ __('Code') }}<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                        id="code" name="code" placeholder="{{ __('Code') }}"
+                                        value="{{ old('code') }}" required>
+                                    @error('department')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                             <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="note">{{ __('Notes') }}</label>
+                                    <textarea class="form-control @error('address') is-invalid @enderror" id="note" name="note"
+                                       >{{ old('note') }}</textarea>
+                                    @error('note')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label for="status" class="col-form-label">{{ __('Status') }}</label>
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="active">{{ __('Active') }}</option>
+                                        <option value="inactive">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
+                            </div>
 
+                        </div>
+                        <!-- /.card-body -->
+
+                </div>
+                <div class="modal-footer">
+                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                        {{ __('Save Storein Type') }}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--Storein Type Model Popup End-->
     {{-- supplier model popup --}}
     <div class="modal fade" id="addSupplierModel" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModel"
         aria-hidden="true">
@@ -344,7 +429,56 @@
     <script src="{{ asset('js/storein.js') }}"></script>
     <script>
 
+    document.getElementById('modelFormStoreinType').addEventListener('submit', function(e){
+        e.preventDefault();
+         const form = e.target;
+          let name= form.elements['storein_type_name'];
+          let code= form.elements['code'];
+          let note= form.elements['note'];
+          let status = form.elements['status'];
+           if (!name.value &&
+                !status.value && !code.value && !note.value) {
+                setMessage('storeinTypeError', 'Please Fill out all fields')
+                return false;
+            }
+         $.ajax({
+                url: "{{ route('storeinType.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name.value,
+                    code: code.value,
+                    note: note.value,
+                    status: status.value,
+                },
+                success: function(response) {
 
+                     $('#storeinTypeModel').modal('hide');
+
+                    name.value='';
+                    code.value='';
+                    note.value='';
+                   let  selectElement=document.getElementById('type');
+                    let option = document.createElement('option');
+                    option.value=response.storeinType.id;
+                    option.text=response.storeinType.name;
+                    selectElement.append(option);
+                },
+                error:function(xhr, status, error){
+                      setMessage('storeinTypeError',xhr.responseJSON.message);
+                }
+
+            });
+
+    });
+     function setMessage(element_id, message) {
+            let errorContainer = document.getElementById(element_id);
+            errorContainer.hidden = false;
+            errorContainer.innerHTML = message;
+            setTimeout(function() {
+                errorContainer.hidden = true;
+            }, 2000);
+        }
     $(document).on('select2:open', () => {
         document.querySelector('.select2-search__field').focus();
       });

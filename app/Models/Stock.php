@@ -81,6 +81,6 @@ class Stock extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class, 'department_id', 'id');
+        return $this->belongsTo(StoreinDepartment::class, 'department_id', 'id');
     }
 }
