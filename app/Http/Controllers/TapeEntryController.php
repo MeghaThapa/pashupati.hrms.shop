@@ -17,27 +17,27 @@ use App\Models\TapeEntry;
 class TapeEntryController extends Controller
 {
     // public function index(){
-    //         /************** for all data *********************/ 
+    //         /************** for all data *********************/
     //     // $department = Department::where('status','active')->get();
     //     // $planttype =  ProcessingStep::where("status",'1')->get();
     //     // $plantname = ProcessingSubcat::where('status','active')->get();
     //     // $dananame = DanaName::where("status",'active')->get();
-        
-    //         /************** for stock data *********************/ 
+
+    //         /************** for stock data *********************/
     //     $department = AutoLoadItemStock::with(['fromGodam'])->get();
     //     // $planttype = AutoLoadItemStock::with(['plantType'])->get();
-    //     // $plantname = AutoLoadItemStock::with(['plantName'])->get();   
-    //     $shift = AutoLoadItemStock::with(['shift'])->get();    
+    //     // $plantname = AutoLoadItemStock::with(['plantName'])->get();
+    //     $shift = AutoLoadItemStock::with(['shift'])->get();
     //     // $dananame = AutoLoadItemStock::with(['danaName'])->get();
-        
-        
-        
+
+
+
     //     // $department = Department::where('id',$departmentid)->get();
     //     // $planttype = ProcessingStep::where('id',$planttypeid)->get();
     //     // $plantname = ProcessingSubcat::where('id',$plantnameid)->get();
     //     // $shift = Shift::where('id',$shift_id)->get();
     //     // $dananame = DanaName::where('id',$dananame_id)->get();
-        
+
     //     // return view('admin.TapeEntry.index',compact('department','planttype','plantname','shift','dananame'));
     //     return view('admin.TapeEntry.index',compact('department','shift'));
     // }
@@ -63,33 +63,34 @@ class TapeEntryController extends Controller
 
     public function create($id){
         // $department = AutoLoadItemStock::with('fromGodam')->get();
-        
+
         // return $department = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
-        
+
         $departments = AutoLoadItemStock::with('fromGodam')
             ->whereHas('fromGodam', function ($query) {
                 $query->where('slug', '<>', 'bsw');
             })
             ->distinct('from_godam_id')
             ->get(['from_godam_id']);
-        
+
         $departmentIds = $departments->pluck('from_godam_id')->toArray();
-        
+
         $department = Department::whereIn('id', $departmentIds)->get();
 
-        
+
         $shift = AutoLoadItemStock::with('shift')->get();
         $tapeentries = TapeEntry::where('id', $id)->get();
         $wastage = Wastages::all();
-        
+
         return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries','wastage'));
 
     }
 
     public function view($id){
         return TapeEntryStockModel::where('tape_entry_id',$id)->get();
+        
     }
-    
+
     public function deleteTape(Request $request){
         if($request->ajax()){
             TapeEntry::where('id',$request->id)->delete();
@@ -130,7 +131,7 @@ class TapeEntryController extends Controller
         }
     }
 
-    
+
     public function ajaxrequestdanainfo(Request $request){
         if($request->ajax()){
             $shift = $request->shift;
