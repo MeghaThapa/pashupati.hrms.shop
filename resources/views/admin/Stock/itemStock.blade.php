@@ -96,6 +96,7 @@
                         @php
                             $i = 0;
                         @endphp
+
                         @if ($stocks && $stocks->total()>0)
                             @foreach ($stocks->items() as $stock)
                                 <tr>
@@ -115,6 +116,7 @@
 
                              <tr>
                                 <td colspan="5">No data available.</td>
+
                             </tr>
                         @endif
 

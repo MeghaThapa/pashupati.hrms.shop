@@ -90,6 +90,8 @@ class FabricSendReceiveController extends Controller
             // to_godam_id=1&plant_type_id=1&plant_name_id=1
 
             UnlaminatedFabric::create([
+                'bill_number' => $data['bill_number'],
+                'bill_date' => $data['bill_date'],
                 'fabric_id' =>$data['fabric_name_id'] ,
                 'roll_no' => $roll_number ,
                 'gross_wt' => $gross_weight ,
