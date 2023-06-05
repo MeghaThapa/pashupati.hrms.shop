@@ -673,13 +673,11 @@ Route::get('storein/{code}/delete', 'StoreinController@destroy')->name('storein.
 // stockController
 Route::post('stock/createUpdate/{storein_item_id}', 'StockController@createUpdate')->name('stock.createUpdate');
 Route::get('stock/index', 'StockController@index')->name('stock.index');
-Route::get('stock/filterStock', 'StockController@filterStock')->name('stock.filterStock');
 Route::get('stock/filterStockAccCategory/{category_id}', 'StockController@filterStockAccCategory')->name('stock.filterStockAccCategory');
-Route::get('stock/departmentFilter', 'StockController@departmentFilter')->name('stock.departmentFilter');
 Route::get('stock/filterStockAccDepartment/{department_id}', 'StockController@filterStockAccDepartment')->name('stock.filterStockAccDepartment');
 //recent megha
 Route::get('stock/getDetailsAccItem/{item_id}', 'StockController@getDetailsAccItem')->name('stock.getDetailsAccItem');
-
+Route::get('storeinStock/filter', 'StockController@filter')->name('storeinStock.filter');
 //import stock
 Route::post('import/stock',[StockImportController::class,"import"])->name('import.stock');
 //import fabric

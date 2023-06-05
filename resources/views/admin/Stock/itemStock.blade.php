@@ -7,16 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 @endpush
 @section('content')
-    <a href="{{ route('stock.filterStock') }}">
-        <button class="btn btn-primary">
-            Go To Category filter
-        </button>
-    </a>
-    <a href="{{ route('stock.departmentFilter') }}">
-        <button class="btn btn-primary">
-            Go To Department filter
-        </button>
-    </a>
     <a href="javascript:void(0)">
         <button class="btn btn-primary"  data-toggle="modal" data-target="#importstock">
             Import Stock
@@ -30,7 +20,8 @@
         Store Items Current Stock</div>
     {{-- table --}}
     <div class="row">
-          @if(session()->has('message'))
+
+        @if(session()->has('message'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
               <strong>{{ session()->get('message') }}</strong>
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -51,6 +42,37 @@
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @enderror
+        <form action="{{route('storeinStock.filter')}}">
+        <div class="row">
+
+                <div class="col-md-4">
+                    <label for="department">Department</label>
+                    <select class="advance-select-box form-control" id="storeinDepartment" name="storein_department" >
+                                <option value="" selected disabled>{{ __('Select Department') }}</option>
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name}}
+                                    </option>
+                                @endforeach
+                        </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="category">Category</label>
+                    <select class="advance-select-box form-control" id="storeinCategory" name="storein_category" >
+                                <option value="" selected disabled>{{ __('Select Category') }}</option>
+                                @foreach ($categories as $categorie)
+                                    <option value="{{ $categorie->id }}">{{ $categorie->name}}
+                                    </option>
+                                @endforeach
+                        </select>
+                </div>
+                <div class="col-md-4 mt-4">
+                    <button class="btn btn-primary" type="submit" >Search</button>
+                </div>
+        </div>
+        </form>
+
+
+
 
         <div class="Ajaxdata col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
@@ -74,24 +96,35 @@
                         @php
                             $i = 0;
                         @endphp
-                        @foreach ($stocks as $stock)
-                            <tr>
-                                <td>{{ ++$i }}</td>
-                                <td>{{ $stock->item->name }}</td>
-                                 <td>{{ $stock->item->pnumber}}</td>
-                                <td>{{ $stock->size }}</td>
-                                <td>{{ $stock->quantity }}</td>
-                                <td>{{ $stock->unit }}</td>
-                                <td>{{ $stock->avg_price }}</td>
-                                <td>{{ $stock->total_amount }}</td>
-                                <td>{{ $stock->department->name }}</td>
-                                <td>{{ $stock->category->name }}</td>
+
+                        @if ($stocks && $stocks->total()>0)
+                            @foreach ($stocks->items() as $stock)
+                                <tr>
+                                    <td>{{ ++$i }}</td>
+                                    <td>{{ $stock->item_name }}</td>
+                                    <td>{{ $stock->item_num }}</td>
+                                    <td>{{ $stock->size }}</td>
+                                    <td>{{ $stock->quantity }}</td>
+                                    <td>{{ $stock->unit }}</td>
+                                    <td>{{ $stock->avg_price }}</td>
+                                    <td>{{ $stock->total_amount }}</td>
+                                    <td>{{ $stock->department_name }}</td>
+                                    <td>{{ $stock->category_name }}</td>
+                                </tr>
+                            @endforeach
+                        @else
+
+                             <tr>
+                                <td colspan="5">No data available.</td>
+
                             </tr>
-                        @endforeach
+                        @endif
 
                     </tbody>
-
                 </table>
+                @if ($stocks)
+                        {{$stocks->links()}}
+                    @endif
             </div>
 
         </div>
@@ -123,51 +156,54 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModalCenteredPopUpMesage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Click buttons to create</h1>
-        {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
-      </div>
-      <div class="modal-body">
-            <form method="POST" id="import-creates">
-                <div class="form-item">
+    <div class="modal fade" id="exampleModalCenteredPopUpMesage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Click buttons to create</h1>
+            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
+        </div>
+        <div class="modal-body">
+                <form method="POST" id="import-creates">
+                    <div class="form-item">
 
-                    <label for='this' id="label-popup"></label>
-                    <input type="text" id="field_name" class="form-control"/>
-                </div>
-                <div class="mt-2">
-                    <div class="row">
-                        <div class="col-md-4 createdepartment d-none">
-                            <input type="submit" value="create department" name="createdepartment" class="form-control btn btn-success"/>
-                        </div>
-                        <div class="col-md-4 createitem d-none">
-                            <input type="submit" value="create item" name="createitem" class="form-control btn btn-info"/>
-                        </div>
-                        <div class="col-md-4 createcategory d-none">
-                            <input type="submit" value="Create category" name="createcategory" class="form-control btn btn-warning"/>
+                        <label for='this' id="label-popup"></label>
+                        <input type="text" id="field_name" class="form-control"/>
+                    </div>
+                    <div class="mt-2">
+                        <div class="row">
+                            <div class="col-md-4 createdepartment d-none">
+                                <input type="submit" value="create department" name="createdepartment" class="form-control btn btn-success"/>
+                            </div>
+                            <div class="col-md-4 createitem d-none">
+                                <input type="submit" value="create item" name="createitem" class="form-control btn btn-info"/>
+                            </div>
+                            <div class="col-md-4 createcategory d-none">
+                                <input type="submit" value="Create category" name="createcategory" class="form-control btn btn-warning"/>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-      </div>
+                </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
     </div>
-  </div>
-</div>
+    </div>
 
-
-@push('scripts')
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-@endpush
 @endsection
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    @endpush
+
 @section('extra-script')
-@if(session()->has('message_err'))
-    @foreach(session()->get('message_err') as $data)
-        <script>
+    <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+
+    <script>
+        @if(session()->has('message_err'))
+          @foreach(session()->get('message_err') as $data)
+
             $(document).ready(function() {
             let type = "{{ $data['type'] }}";
             // Show the modal when the page is ready
@@ -195,12 +231,11 @@
             });
 
         });
+        @endforeach
+        @endif
     </script>
-    <script>
 
-    </script>
-    @endforeach
-@endif
+
 @endsection
 
 

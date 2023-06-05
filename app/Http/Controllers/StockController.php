@@ -8,9 +8,11 @@ use App\Models\Size;
 use App\Models\Stock;
 use App\Models\Storein;
 use App\Models\StoreinItem;
+use App\Models\StoreinDepartment;
+use App\Models\StoreinCategory;
 use App\Models\Unit;
 use Illuminate\Http\Request;
-
+use DB;
 class StockController extends Controller
 {
     /**
@@ -20,9 +22,21 @@ class StockController extends Controller
      */
     public function index()
     {
-        $stocks = Stock::with('category', 'item', 'department')->get();
-        // return $stock;
-        return view('admin.Stock.itemStock', compact('stocks'));
+        $TOTAL_ROW=35;
+        $stocks = DB::table('stocks')
+        ->join('storein_categories','stocks.category_id','=','storein_categories.id')
+        ->join('items_of_storeins','stocks.item_id','=','items_of_storeins.id')
+        ->join('storein_departments','stocks.department_id','=','storein_departments.id')
+        ->select(
+        'stocks.*',
+        'storein_categories.name as category_name',
+        'items_of_storeins.name as item_name',
+        'items_of_storeins.pnumber as item_num',
+        'storein_departments.name as department_name'
+        )->paginate($TOTAL_ROW);
+        $departments=StoreinDepartment::where('status','active')->get();
+        $categories =StoreinCategory::where('status','active')->get();
+        return view('admin.Stock.itemStock', compact('stocks','departments','categories'));
     }
     public function filterStockAccCategory($category_id)
     {
@@ -34,6 +48,34 @@ class StockController extends Controller
             return false;
         }
     }
+
+    public function filter(Request $request){
+        $TOTAL_ROW=35;
+        $stocks = DB::table('stocks')
+        ->join('storein_categories', 'stocks.category_id', '=', 'storein_categories.id')
+        ->join('items_of_storeins', 'stocks.item_id', '=', 'items_of_storeins.id')
+        ->join('storein_departments', 'stocks.department_id', '=', 'storein_departments.id')
+        ->select(
+            'stocks.*',
+            'storein_categories.name as category_name',
+            'items_of_storeins.name as item_name',
+            'items_of_storeins.pnumber as item_num',
+            'storein_departments.name as department_name'
+        );
+        if ($request->storein_department || $request->storein_department != null) {
+            $stocks->where('stocks.department_id', $request->storein_department);
+        }
+        if($request->storein_category || $request->storein_category !=null){
+              $stocks->where('stocks.category_id', $request->storein_category);
+        }
+        $stocks = $stocks->paginate($TOTAL_ROW);
+
+
+        $departments=StoreinDepartment::where('status','active')->get();
+        $categories =StoreinCategory::where('status','active')->get();
+        return view('admin.Stock.itemStock', compact('stocks','departments','categories'));
+    }
+
     public function getDetailsAccItem($item_id){
         $stock=Stock::where('item_id', $item_id)->get()->first();
         return $stock;
