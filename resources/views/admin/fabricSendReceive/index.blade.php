@@ -678,9 +678,11 @@
     }
 
     function addplantname(data){
+        console.log(data);
         $("#plantName").empty();
         $('#plantName').append(`<option value="" disabled selected>Select Plantname</option>`);
         data.plantname.forEach( d => {
+            // if(d.name == '')
             $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
         });
     }

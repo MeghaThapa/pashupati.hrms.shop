@@ -84,7 +84,7 @@
                                 <td>{{ $stock->unit }}</td>
                                 <td>{{ $stock->avg_price }}</td>
                                 <td>{{ $stock->total_amount }}</td>
-                                <td>{{ $stock->department->department }}</td>
+                                <td>{{ $stock->department->name }}</td>
                                 <td>{{ $stock->category->name }}</td>
                             </tr>
                         @endforeach
