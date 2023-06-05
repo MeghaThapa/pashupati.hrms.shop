@@ -257,10 +257,10 @@
                                     </a>
                                     <select class="advance-select-box form-control" id="fromGodamIdModel" name="from_godam_id_model" required>
                                         <option value="" selected disabled>{{ __('Select From Godam') }}</option>
-                                        @foreach ($fromGodams as $fromGodam)
-                                            <option value="{{ $fromGodam->department->id }}">{{ $fromGodam->department->department}}
-                                            </option>
-                                        @endforeach
+                                       @foreach ($fromGodams as $fromGodam)
+                                        <option value="{{ $fromGodam->department_id }}">{{ $fromGodam->department->department}}
+                                        </option>
+                                    @endforeach
                                     </select>
                                     @error('from_godam_id')
                                         <span class="invalid-feedback" role="alert">

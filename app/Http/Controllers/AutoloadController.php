@@ -78,6 +78,7 @@ class AutoloadController extends Controller
     }
      public function createAutoloadItem($autoload_id){
         $fromGodams = RawMaterialStock::with('department')->select('department_id')->distinct()->get();
+        //return $fromGodams;
         $plantTypes = ProcessingStep::all();
         $plantNames = ProcessingSubcat::all();
         $shifts= Shift::where('status','active')->get();
