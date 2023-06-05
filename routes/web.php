@@ -21,7 +21,7 @@ use App\Http\Controllers\AutoloadController;
 use App\Http\Controllers\TapeEntryController;
 use App\Http\Controllers\AutoloadItemsController;
 use App\Http\Controllers\AutoLoadStockController;
-
+use App\Http\Controllers\StoreinTypeController;
 
 use App\Http\Controllers\FabricSendReceiveController;
 use App\Http\Controllers\StoreinCategoryController;
@@ -624,29 +624,21 @@ Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 //Storein route
 // Route::resource('storein',StoreinController::class);
 Route::get('storein/getItemsDepartment/{product_id}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
-
 Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
 Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');
 Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('storein.storeinIndex');
 Route::post('storein/saveStorein', 'StoreinController@saveStorein')->name('storein.saveStorein');
 Route::get('storein/createItems/{id}', 'StoreinController@createItems')->name('storein.createItems');
 Route::post('storein/saveStoreinItems/{id}', 'StoreinController@saveStoreinItems')->name('storein.saveStoreinItems');
-
 Route::get('storein/getcategoryItems/{category_id}', 'StoreinController@getcategoryItems')->name('storein.getcategoryItems');
-
 Route::get('storein/storeInItemsRetrive/{storein_id}', 'StoreinController@storeInItemsRetrive')->name('storein.storeInItemsRetrive');
-// recent
 Route::get('storein/getEditItemData/{storeinItem_id}', 'StoreinController@getEditItemData')->name('storein.getEditItemData');
 Route::post('storein/EditItemStoreData', 'StoreinController@EditItemStoreData')->name('storein.EditItemStoreData');
 Route::post('storein/saveEntireStorein/{storein_id}', 'StoreinController@saveEntireStorein')->name('storein.saveEntireStorein');
 Route::get('storein/invoiceView/{storein_id}', 'StoreinController@invoiceView')->name('storein.invoiceView');
-// layout
 Route::get('storein/storeinItemCreate/{id}', 'StoreinController@storeinItemCreate')->name('storein.storeinItemCreate');
-
-
 Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemDelete')->name('storein.storeinItemDelete');
 Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
-
 Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
 
 Route::resource('storein', 'StoreinController', [
@@ -659,6 +651,8 @@ Route::resource('storein', 'StoreinController', [
         'update' => 'storein.update',
     ]
 ]);
+//StoreinType Controller
+Route::post('/storeinType/store', 'StoreinTypeController@store')->name('storeinType.store');
 
 // storein edit routes
 Route::get('storein/editStorein/{storein_id}', 'StoreinController@editStorein')->name('storein.editStorein');

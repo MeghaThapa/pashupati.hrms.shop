@@ -216,7 +216,7 @@
                     Add
                 </button>
             </div>
-             </div>
+    </form>
     </form>
     </div>
     {{-- table --}}
