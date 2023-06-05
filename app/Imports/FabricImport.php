@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use App\Models\Fabric;
 use App\Models\FabricGroup;
 use Illuminate\Support\Str;
+use App\Models\FabricStock;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 
 class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
@@ -44,6 +45,16 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                
            ]);
 
+           $fabricstock = FabricStock::firstOrCreate([
+            'name' => $size,
+            'roll_no' => $row['roll_no'],
+            'loom_no' => $row['loom_no'],
+            'fabricgroup_id' => $fabricgroup_id,
+            'gross_wt' => $row['gross_wt'],
+            'net_wt' => $row['net_wt'],
+            'meter' => $row['meter'],
+            'gram' => $row['grams'],
+        ]);
        }
    }
 }

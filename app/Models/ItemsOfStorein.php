@@ -9,6 +9,7 @@ class ItemsOfStorein extends Model
 {
     use HasFactory;
     protected $table='items_of_storeins';
+    protected $fillable = ['name', 'pnumber','department_id' ,'category_id', 'status' ];//,'supplier_id'
     public function storeinCategory()
     {
         return $this->belongsTo('App\Models\StoreinCategory', 'category_id', "id");

@@ -6,11 +6,14 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-use App\Models\Department;
-use App\Models\Category;
+// use App\Models\Department;
+// use App\Models\Category;
 use App\Models\Items;
 use App\Models\Stock;
 use Illuminate\Support\Str;
+use App\Models\StoreinDepartment;
+use App\Models\StoreinCategory;
+use App\Models\ItemsOfStorein;
 
 //for silent creations
 class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
@@ -26,9 +29,9 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $trimItem = trim($row['item_name']);
             
             /*******trims spaces in between**********/
-            $department = Department::whereRaw('LOWER(REPLACE(department, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimDepartment)])->value('id');
-            $category = Category::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimCategory)])->value('id');
-            $item = Items::whereRaw('LOWER(REPLACE(item, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
+            $department = StoreinDepartment::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimDepartment)])->value('id');
+            $category = StoreinCategory::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimCategory)])->value('id');
+            $item = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
              /******* end trims spaces in between**********/
             
             
@@ -40,8 +43,8 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             
             // if(!$department){
             if ($department === null) {
-                $createdepartment = Department::create([
-                    'department' => $row['department'],
+                $createdepartment = StoreinDepartment::create([
+                    'name' => $row['department'],
                     'slug' => Str::slug($row['department']),
                     'status' => "active"
                 ]);
@@ -49,17 +52,18 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 // return back()->with(['message_err'=>"Department:".$department." Not Found"]);
             // }elseif(!$category){
             } elseif ($category === null) {
-                $createcategory = Category::create([
+                $createcategory = StoreinCategory::create([
                     'name' => $row['category'],
                     'slug' => Str::slug($row['category']),
+                    'note' => isset($row['note'])? $row['note'] : 'N/A',
                     'status' => "active"
                 ]);
                 $category = $createcategory->id;
                 // return back()->with(['message_err'=>"Category:".$category ."Not Found"]);
             // }elseif(!$item){
             } elseif ($item === null) {
-                $createitem= Items::create([
-                    'item' => $row['item_name'],
+                $createitem= ItemsOfStorein::create([
+                    'name' => $row['item_name'],
                     'department_id'=> $department,
                     "category_id" => $category,
                     'status' => "1",
