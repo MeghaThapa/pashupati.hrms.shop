@@ -419,7 +419,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
     //fabric send receive contoller
+    /************* aile baki xa **************/
+        Route::get('/fabricSendReceive/create', 'FabricSendReceiveController@create')->name('fabricSendReceive.create');
+        Route::post('/fabricSendReceive/store', 'FabricSendReceiveController@store')->name('fabricSendReceive.store');
+    /************* aile baki xa **************/
     Route::get('/fabricSendReceive/index', 'FabricSendReceiveController@index')->name('fabricSendReceive.index');
+    Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
+    Route::get('/fabricSendReceive/ajax/get/plantname/{id}', 'FabricSendReceiveController@getplantname')->name('fabricSendReceive.get.plantname');
+    Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
+    Route::post("fabric/send/unlaminated/store",[FabricSendReceiveController::class,'sendunlaminated'])->name("fabricSendReceive.send.unlaminated");
+    //getting unlaminated into form
+    Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
