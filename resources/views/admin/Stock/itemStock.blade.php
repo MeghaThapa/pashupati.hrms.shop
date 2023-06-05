@@ -40,18 +40,18 @@
             {{-- @endforeach --}}
         @elseif(session()->has('message_err'))
         {{-- session()->get('message_err') --}}
-            @foreach(session()->get('message_err') as $error) 
+            @foreach(session()->get('message_err') as $error)
                 {{-- $error['type']."<br>" --}}
-            @endforeach 
+            @endforeach
         @endif
-        
+
         @error('file')
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
               <strong>{{ $message }}</strong>
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @enderror
-        
+
         <div class="Ajaxdata col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
                 <table class="table" id="storeInItemTable">
@@ -77,7 +77,7 @@
                         @foreach ($stocks as $stock)
                             <tr>
                                 <td>{{ ++$i }}</td>
-                                <td>{{ $stock->item->item }}</td>
+                                <td>{{ $stock->item->name }}</td>
                                  <td>{{ $stock->item->pnumber}}</td>
                                 <td>{{ $stock->size }}</td>
                                 <td>{{ $stock->quantity }}</td>
@@ -96,7 +96,7 @@
 
         </div>
     </div>
-    
+
     <!-- Modal -->
     <div class="modal fade" id="importstock" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -133,7 +133,7 @@
       <div class="modal-body">
             <form method="POST" id="import-creates">
                 <div class="form-item">
-                    
+
                     <label for='this' id="label-popup"></label>
                     <input type="text" id="field_name" class="form-control"/>
                 </div>
@@ -185,7 +185,7 @@
             //     $("#field_name").attr('value',"{!! $data['data'] !!}");
             //     $('.createdepartment').removeClass('d-none');
             // }
-            
+
             $('#exampleModalCenteredPopUpMesage').on('hidden.bs.modal',function(e){
                 $('#label-popup').removeClass("text-danger");
                 $('#label-popup').text("");
@@ -193,11 +193,11 @@
                 $("#import-creates").removeAttr("value");
                 $('.createdepartment').addClass('d-none');
             });
-            
+
         });
     </script>
     <script>
-        
+
     </script>
     @endforeach
 @endif
