@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('fabrics', function (Blueprint $table) {
-            $table->string('roll_no')->after('name');
-            $table->string('loom_no');
-            $table->string('gross_wt');
-            $table->string('net_wt');
-            $table->string('meter');
+        Schema::create('tax', function (Blueprint $table) {
+            $table->id();
+            $table->string('tax_type');
+            $table->string('slug');
+            $table->string('percentage');
+            $table->enum('status',['active', 'inactive']);
+            $table->timestamps();
         });
     }
 
@@ -29,8 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('fabrics', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('tax');
     }
 };
