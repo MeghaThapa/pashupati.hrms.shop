@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UnlaminatedFabricStock extends Model
 {
     use HasFactory;
-    protected $table = "unlaminated_fabric";
+    protected $table = "unlaminated_fabric_stocks";
     protected $id = 'id';
     protected $fillable = [
         'fabric_id','roll_no','gross_wt','net_wt','meter','average','gram','created_at','updated_at',
