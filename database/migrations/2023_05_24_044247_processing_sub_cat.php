@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-     Schema::create('processing_subCats', function (Blueprint $table) {
+     Schema::create('processing_subcats', function (Blueprint $table) {
             $table->id();
              $table->unsignedBigInteger('processing_steps_id')->index();
             $table->foreign('processing_steps_id')->references('id')->on('processing_steps');

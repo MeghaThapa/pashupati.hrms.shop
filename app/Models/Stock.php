@@ -68,7 +68,7 @@ class Stock extends Model
     // relate stock with category,item,department
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id', "id");
+        return $this->belongsTo(StoreinCategory::class, 'category_id', "id");
     }
     public function item()
     {
