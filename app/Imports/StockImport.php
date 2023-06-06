@@ -33,7 +33,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $category = StoreinCategory::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimCategory)])->value('id');
             $item = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
              /******* end trims spaces in between**********/
-            
+             
             
             /*******for normal trim**********/
             // $department = Department::where('department', $trimDepartment)->value('id');
