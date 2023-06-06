@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('department_id')->index();
-            $table->foreign('department_id')->references('id')->on('storein_departments')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('department_id')->references('id')->on('storein_departments');
             $table->unsignedBigInteger('category_id')->index();
-            $table->foreign('category_id')->references('id')->on('storein_categories')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('storein_categories');
             $table->unsignedBigInteger('item_id')->index();
-            $table->foreign('item_id')->references('id')->on('items_of_storeins')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('item_id')->references('id')->on('items_of_storeins');
             $table->string('size')->nullable();
             $table->string('quantity');
             $table->string('unit');
