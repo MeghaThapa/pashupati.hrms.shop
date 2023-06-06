@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Fabric;
 use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
+use App\Models\Department;
 use Maatwebsite\Excel\Facades\Excel;
 
-class FabricNonWovenController extends Controller
+class FabricNonWovenReceiveEntryController extends Controller
 {
     public function index(Request $request)
     {
@@ -19,12 +20,13 @@ class FabricNonWovenController extends Controller
         }
         $nonwovenfabrics = $query->orderBy('id', 'DESC')->paginate(15);
 
-        return view('admin.nonwovenfabric.index', compact('nonwovenfabrics'));
+        return view('admin.nonwovenfabrics-receiveentry.index', compact('nonwovenfabrics'));
     }
 
     public function create()
     {
-        return view('admin.nonwovenfabric.create');
+        $departments = Department::get();
+        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments'));
     }
 
     public function store(Request $request)

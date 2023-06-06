@@ -447,6 +447,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
+   
 
 
     //fabric send and receive
@@ -464,6 +465,23 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'update' => 'nonwovenfabrics.update',
         ]
     ]);
+
+    Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
+    Route::get('nonwovenfabrics/{id}/delete', 'FabricNonWovenController@destroy')->name('nonwovenfabrics.delete');
+
+
+    Route::resource('nonwovenfabrics-receiveentry', 'FabricNonWovenReceiveEntryController', [
+        'names' => [
+            'index' => 'nonwovenfabrics-receiveentry.index',
+            'create' => 'nonwovenfabrics-receiveentry.create',
+            'store' => 'nonwovenfabrics-receiveentry.store',
+            'edit' => 'nonwovenfabrics-receiveentry.edit',
+            'update' => 'nonwovenfabrics-receiveentry.update',
+        ]
+    ]);
+
+    Route::get('nonwovenfabrics-receiveentry/{id}/status', 'FabricNonWovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
+    Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'FabricNonWovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
 
     // fabric_group route
     Route::get('/fabric-groups/pdf', 'FabricGroupController@createPDF')->name('fabric-groups.pdf');
