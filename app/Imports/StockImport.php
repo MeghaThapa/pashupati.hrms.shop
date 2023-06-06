@@ -27,20 +27,19 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $trimDepartment = trim($row['department']);
             $trimCategory = trim($row['category']);
             $trimItem = trim($row['item_name']);
-            
+
             /*******trims spaces in between**********/
             $department = StoreinDepartment::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimDepartment)])->value('id');
             $category = StoreinCategory::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimCategory)])->value('id');
             $item = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
              /******* end trims spaces in between**********/
-             
-            
+
             /*******for normal trim**********/
             // $department = Department::where('department', $trimDepartment)->value('id');
             // $category = Category::where('name', $trimCategory)->value('id');
             // $item = Items::where('item', $trimCategory)->value('id');
             /*******end for normal trim**********/
-            
+
             // if(!$department){
             if ($department === null) {
                 $createdepartment = StoreinDepartment::create([
@@ -94,14 +93,14 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 //     {
 //         // private $errorMessages = [];
 //         private $errorMessages = [];
-    
+
 //         public function collection(Collection $rows)
 //         {
 //             foreach ($rows as $rowIndex => $row) {
 //                 $department = Department::where('department', $row['department'])->value('id');
 //                 $category = Category::where('name', $row['category'])->value('id');
 //                 $item = Items::where('item', $row['item_name'])->value('id');
-    
+
 //                 if (!$department) {
 //                     // $this->addError("Row " . ($rowIndex + 2) . ": Department '{$row['department']}' not found");
 //                     // $this->addError($row['department']);
@@ -134,24 +133,24 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 //                 }
 //             }
 //         }
-    
+
 //         public function onError(\Throwable $e)
 //         {
 //             // $this->addError($e->getMessage());
 //             $this->addError("General Error", $e->getMessage());
 //         }
-    
+
 //         public function addError($type,$errorMessage)
 //         {
 //             // $this->errorMessages[] = $errorMessage;
 //             // $this->errorMessages = $errorMessage;
-            
+
 //             $this->errorMessages[] = array(
 //                 "type" => $type,
 //                 "data" => $errorMessage
 //             );
 //         }
-    
+
 //         public function getErrorMessages()
 //         {
 //             // dd($this->errorMessages);
