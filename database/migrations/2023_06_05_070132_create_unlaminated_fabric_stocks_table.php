@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('unlaminated_fabric_stocks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('fabric_id');
-            $table->foreign('fabric_id')->references("id")->on('fabrics')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('fabric_id')->references("id")->on('fabric_stock')->onDelete('cascade')->onUpdate('cascade');
             $table->string('roll_no');
             $table->string('gross_wt');
             $table->string('net_wt');
@@ -29,6 +29,8 @@ return new class extends Migration
             $table->foreign('planttype_id')->references('id')->on('processing_steps')->onDelete('cascade');
             $table->unsignedBigInteger('plantname_id');
             $table->foreign('plantname_id')->references('id')->on('processing_subcats')->onDelete('cascade');
+            $table->string('bill_number');
+            $table->string('bill_date');
             $table->timestamps();
         });
     }
