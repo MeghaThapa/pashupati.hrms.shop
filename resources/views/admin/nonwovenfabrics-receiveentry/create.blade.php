@@ -75,7 +75,7 @@
 <div class="content-header mb-4">
     <div class="row align-items-center">
         <div class="col-sm-6 mt-2">
-            <h4><strong>Tape Receive Entry</strong></h4>
+            <h4><strong>NonWoven Fabric Received Entry</strong></h4>
         </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -113,23 +113,9 @@
                     <div class='row mt-2'>
                         <div class="col-md-6">
                             <label for="receipt_no">To Godam</label>
-                            <select class="form-control select2 advance-select-box" name="togodam" id="togodam"
+                            <select class="form-control select2 advance-select-box" name="togodam" id="godam_data"
                                 required> {{-- select2 advance-select-box --}}
                                 <option>Select Godam/Department</option>
-                                {{-- @php
-                                    $previousDepartment = null;
-                                @endphp
-                                @foreach($department as $data)
-                                    @php
-                                        $currentDepartment = $data->fromGodam->department;
-                                    @endphp
-                                    @if ($currentDepartment !== $previousDepartment)
-                                        <option value="{{ $data->from_godam_id }}">{{ $currentDepartment }}</option>
-                                    @endif
-                                    @php
-                                        $previousDepartment = $currentDepartment;
-                                    @endphp
-                                @endforeach --}}
                                 
                                 @foreach($departments as $data)
                                     <option value="{{ $data->id }}">{{ $data->department }}</option>
@@ -138,7 +124,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="receipt_no">Plant Type</label>
-                            <select class="form-control select2 advance-select-box" name="planttype" id="planttype"
+                            <select class="form-control select2 advance-select-box" name="planttype" id="planttype_data"
                                 required> {{-- advance-select-box --}}
                                 {{-- @foreach($planttype as $data)
                                 <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -151,7 +137,7 @@
                         
                         <div class="col-md-6">
                             <label for="receipt_no">Plant Name</label>
-                            <select class="form-control select2 advance-select-box" name="plantname" id="plantname"
+                            <select class="form-control select2 advance-select-box" name="plantname" id="plantname_data"
                                 required> {{-- advance-select-box --}}
                                 {{-- @foreach($plantname as $data)
                                 <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -161,20 +147,10 @@
                         <div class="col-md-6">
                             <label for="receipt_no">Plant Shift</label>
                             <select class="form-control select2 advance-select-box" name="shift" id="shift" required>
-                                {{-- select2 advance-select-box --}}
-                               {{--  @foreach($shift as $data)
-                                @php
-                                $currentDepartment = $data->shift->name;
-                                @endphp
-
-                                @if ($loop->first || $currentDepartment !== $previousDepartment)
-                                <option value="{{ $data->shift_id }}">{{ $currentDepartment }}</option>
-                                @endif
-
-                                @php
-                                $previousDepartment = $currentDepartment;
-                                @endphp
-                                @endforeach --}}
+                                  @foreach($shifts as $data)
+                                  <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                  @endforeach 
+                              </select>
                             </select>
                         </div>
                     </div>
@@ -187,7 +163,12 @@
                         </div>
                         <div class="col-md-6">
                             <label for="fabric_gsm">Fabric GSM</label>
-                            <input type="text" class="form-control" name="fabric_gsm" id="fabric_gsm">
+                            <select class="form-control select2 advance-select-box" name="fabric_gsm" id="fabric_gsm" required>
+                                  @foreach($nonwovenfabrics as $data)
+                                  <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                  @endforeach 
+                              </select>
+                            </select>
                         </div>
                     </div>
 
@@ -261,6 +242,88 @@
 </div>
 </div>
 @push('scripts')
+<script type="text/javascript">
+  $("body").on("change","#godam_data", function(event){
+    // Pace.start();
+    var godam_id = $('#godam_data').val(),
+        token = $('meta[name="csrf-token"]').attr('content');
+      // $('#idcardShift').val(godam_id);
+    $.ajax({
+      type:"POST",
+      dataType:"JSON",
+      url:"{{route('getPlantTypeList')}}",
+      data:{
+        _token: token,
+        godam_id: godam_id
+      },
+      success: function(response){
+        console.log(response);
+        $('#planttype_data').html('');
+        $('#planttype_data').append('<option value="">--Choose PlantType--</option>');
+        $.each( response, function( i, val ) {
+          $('#planttype_data').append('<option value='+val.id+'>'+val.name+'</option>');
+        });
+      },
+      error: function(event){
+        alert("Sorry");
+      }
+    });
+        // Pace.stop();
+  });
+
+  $("body").on("change","#planttype_data", function(event){
+    // Pace.start();
+    var planttype_id = $('#planttype_data').val(),
+        token = $('meta[name="csrf-token"]').attr('content');
+      // $('#idcardShift').val(godam_id);
+    $.ajax({
+      type:"POST",
+      dataType:"JSON",
+      url:"{{route('getPlantNameList')}}",
+      data:{
+        _token: token,
+        planttype_id: planttype_id
+      },
+      success: function(response){
+        console.log(response);
+        $('#plantname_data').html('');
+        $('#plantname_data').append('<option value="">--Choose PlantName--</option>');
+        $.each( response, function( i, val ) {
+          $('#plantname_data').append('<option value='+val.id+'>'+val.name+'</option>');
+        });
+      },
+      error: function(event){
+        alert("Sorry");
+      }
+    });
+        // Pace.stop();
+  });
+
+  // $("body").on("change","#fabric_gsm", function(event){
+  //   // Pace.start();
+  //   var fabric_gsm_id = $('#fabric_gsm').val(),
+  //       token = $('meta[name="csrf-token"]').attr('content');
+  //     // $('#idcardShift').val(godam_id);
+  //   $.ajax({
+  //     type:"POST",
+  //     dataType:"JSON",
+  //     url:"{{route('getPlantNameList')}}",
+  //     data:{
+  //       _token: token,
+  //       fabric_gsm_id: fabric_gsm_id
+  //     },
+  //     success: function(response){
+  //       console.log(response);
+  //       $('#fabric_gsm').val();
+        
+  //     },
+  //     error: function(event){
+  //       alert("Sorry");
+  //     }
+  //   });
+  //       // Pace.stop();
+  // });
+</script>
 <script>
     $(document).ready(function(){
             // let receipt_number = $('#receipt_number_1').val();

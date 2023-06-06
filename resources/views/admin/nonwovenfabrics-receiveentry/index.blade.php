@@ -43,7 +43,7 @@
                         <a class="btn btn-secondary" href="{{ route('fabric-groups.pdf') }}">
                             <i class="fas fa-download"></i> @lang('Export')
                         </a>
-                        <a href="{{ route('nonwovenfabrics.create') }}" class="btn btn-primary">
+                        <a href="{{ route('nonwovenfabrics-receiveentry.create') }}" class="btn btn-primary">
                             {{ __('Add NonWoven Recive Entry') }} <i class="fas fa-plus-circle"></i>
                         </a>
                     </div>

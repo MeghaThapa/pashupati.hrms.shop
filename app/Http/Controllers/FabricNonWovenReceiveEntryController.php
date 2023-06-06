@@ -7,7 +7,11 @@ use App\Models\Fabric;
 use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
 use App\Models\Department;
+use App\Models\ProcessingStep;
+use App\Models\ProcessingSubcat;
+use App\Models\Shift;
 use Maatwebsite\Excel\Facades\Excel;
+use Response;
 
 class FabricNonWovenReceiveEntryController extends Controller
 {
@@ -26,7 +30,9 @@ class FabricNonWovenReceiveEntryController extends Controller
     public function create()
     {
         $departments = Department::get();
-        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments'));
+        $shifts = Shift::get();
+        $nonwovenfabrics = NonWovenFabric::get();
+        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics'));
     }
 
     public function store(Request $request)
@@ -133,5 +139,25 @@ class FabricNonWovenReceiveEntryController extends Controller
             ]);
         }
         return redirect()->route('nonwovenfabrics.index')->withSuccess('Fabric status changed successfully!');
+    }
+
+    public function getPlantTypeList(Request $request){
+      $godam_id = $request->godam_id;
+      $department_list = ProcessingStep::where('department_id',$godam_id)
+      // ->where('is_active','1')
+      ->with('department')
+      ->get();
+      // dd($department_list);
+      return Response::json($department_list);
+    }
+
+    public function getPlantNameList(Request $request){
+        // dd('hh');
+        // dd($request);
+      $planttype_id = $request->planttype_id;
+      $plantname_list = ProcessingSubcat::where('processing_steps_id',$planttype_id)
+      // ->where('is_active','1')
+      ->get();
+      return Response::json($plantname_list);
     }
 }
