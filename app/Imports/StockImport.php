@@ -77,7 +77,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 'size' => $row['size'],
                 'quantity' => $row['quantity'],
                 'unit' => $row['unit'],
-                'avg_price' => $row['avg_rate'],
+                'avg_price' => $row['average_rate'],
                 'total_amount' => $row['total_amount'],
                 'department_id' => $department,
                 'category_id' => $category,
