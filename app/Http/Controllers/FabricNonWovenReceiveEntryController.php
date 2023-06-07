@@ -37,7 +37,7 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function store(Request $request)
     {
-        // dd('hello');
+        dd('hello');
         //validate form
 
 
@@ -159,5 +159,23 @@ class FabricNonWovenReceiveEntryController extends Controller
       // ->where('is_active','1')
       ->get();
       return Response::json($plantname_list);
+    }
+
+    public function getDataList()
+    {
+        // dd('kk');
+        // $category = NonWovenFabric::where('slug', $slug)->first();
+
+        // // change category status
+        // if ($category->status == 1) {
+        //     $category->update([
+        //         'status' => 0
+        //     ]);
+        // } else {
+        //     $category->update([
+        //         'status' => 1
+        //     ]);
+        // }
+        return view('admin.nonwovenfabrics-receiveentry.bill_row');
     }
 }

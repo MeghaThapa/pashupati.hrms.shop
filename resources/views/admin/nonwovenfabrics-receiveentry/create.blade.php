@@ -93,8 +93,7 @@
         {{-- <div class="card"> --}}
 
             {{-- <div class="card-body"> --}}
-                <form id="tape_entry_form" action="{{ route('tape.entry.stock.store') }}" method="post">
-                    @csrf
+           
                     {{-- @foreach($tapeentries as $data) --}}
                     <div class='row mt-2'>
                         <div class="col-md-4">
@@ -111,7 +110,7 @@
                     {{-- @endforeach --}}
                     <hr>
                     <div class='row mt-2'>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="receipt_no">To Godam</label>
                             <select class="form-control select2 advance-select-box" name="togodam" id="godam_data"
                                 required> {{-- select2 advance-select-box --}}
@@ -122,7 +121,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="receipt_no">Plant Type</label>
                             <select class="form-control select2 advance-select-box" name="planttype" id="planttype_data"
                                 required> {{-- advance-select-box --}}
@@ -131,11 +130,7 @@
                                 @endforeach --}}
                             </select>
                         </div>
-                    </div>
-
-                    <div class='row mt-2'>
-                        
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="receipt_no">Plant Name</label>
                             <select class="form-control select2 advance-select-box" name="plantname" id="plantname_data"
                                 required> {{-- advance-select-box --}}
@@ -144,7 +139,7 @@
                                 @endforeach --}}
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="receipt_no">Plant Shift</label>
                             <select class="form-control select2 advance-select-box" name="shift" id="shift" required>
                                   @foreach($shifts as $data)
@@ -201,38 +196,43 @@
             </div>
             <hr>
             <div class='row mt-3'>
+                <button class="add_item mt-4 btn btn-primary btn-block">Add more</button>
                 
                 <div class="col-md-12">
                     <div class="card">
-                        <table class="table table-bordered" id="tape_entry_dana_table"
-                            style="background:rgba(241, 214, 147,0.2)">
-                            <thead class="table-warning">
-                                <tr>
-                                    <th style="width:100px">Sr No</th>
-                                    <th>Roll</th>
-                                    <th>GSM</th>
-                                    <th>ItemName</th>
-                                    <th>Color</th>
-                                    <th>Length</th>
-                                    <th>Gross Weight</th>
-                                    <th>Net Weight</th>
-                                </tr>
-                            </thead>
-                            {{-- <tbody>
-                                <tr>
-                                    <th>1</th>
-                                    <th>dana name</th>
-                                    <th>dana qty</th>
-                                </tr>
-                            </tbody> --}}
-                        </table>
+                        <form role="form" method="POST" action="{{route('nonwovenfabrics.store')}}" class="validate" id="validate">
+                          <div class="card-body">
+                            @csrf
+                            <div class="row">
+                             <table class="table table-bordered" id="tape_entry_dana_table"
+                                 style="background:rgba(241, 214, 147,0.2)">
+                                 <thead class="table-warning">
+                                     <tr>
+                                         <th style="width:100px">Sr No</th>
+                                         <th>Roll</th>
+                                         <th>GSM</th>
+                                         <th>ItemName</th>
+                                         <th>Color</th>
+                                         <th>Length</th>
+                                         <th>Gross Weight</th>
+                                         <th>Net Weight</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody id="bill_ppend_list"></tbody>
+                                 
+                             </table>
+                            </div>
+                          </div>
+                          <input type="submit">
+                          
+                        </form>
+                        
                     </div>
                 </div>
             </div>
             <hr>
             
             <hr>
-            </form>
             {{--
         </div>--}}
         <!-- card-body -->
@@ -242,6 +242,36 @@
 </div>
 </div>
 @push('scripts')
+<script type="text/javascript">
+  $('.add_item').click(function(event){
+    var item_id = $("#item_id").val();
+    debugger;
+    var  token = $('meta[name="csrf-token"]').attr('content');
+    $.ajax({
+      type:"POST",
+      dataType:"html",
+      url:"{{route('getDataList')}}",
+      data:{
+        _token:token,
+        item_id: item_id
+      },
+      success: function(response){
+        $('#bill_ppend_list').append(response);
+        $('table').on('click','#cross',function(e){
+          e.preventDefault();
+          $(this).closest('tr').remove();
+        });
+        $("#submit").addClass('d-none');
+        $("#calculate").removeClass('d-none');
+        $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
+      },
+      error:function(event){
+        alert('Error');
+        return false;
+      }
+    })
+  })
+</script>
 <script type="text/javascript">
   $("body").on("change","#godam_data", function(event){
     // Pace.start();

@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-lg-6 col-md-7 col-6">
                     <div class="card-tools text-md-right">
-                       <a href="{{ route('nonwovenfabrics-receiveentry.create') }}" class="btn btn-primary">
+                       <a href="{{ route('nonwovenfabrics.create') }}" class="btn btn-primary">
                             {{ __('Add NonWovenFabric') }} <i class="fas fa-plus-circle"></i>
                         </a>
 
