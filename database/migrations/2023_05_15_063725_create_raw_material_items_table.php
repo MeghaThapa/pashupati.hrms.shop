@@ -14,26 +14,36 @@ return new class extends Migration
     public function up()
     {
         Schema::create('raw_material_items', function (Blueprint $table) {
+            // $table->id();
+            // $table->unsignedBigInteger('raw_material_id')->index();
+            // $table->foreign('raw_material_id')->references('id')->on('raw_materials');
+            // $table->unsignedBigInteger('storein_type_id')->index();
+            // $table->foreign('storein_type_id')->references('id')->on('storein_types')->onDelete('cascade')->onUpdate('cascade');
+            // $table->unsignedBigInteger('from_godam_id')->index();
+            // $table->foreign('from_godam_id')->references('id')->on('department')->onDelete('cascade')->onUpdate('cascade')->nullable();
+            // $table->string('challan_no')->nullable();
+            // $table->string('gp_no')->nullable();
+            // $table->unsignedBigInteger('to_godam_id')->index();
+            // $table->foreign('to_godam_id')->references('id')->on('department')->onDelete('cascade')->onUpdate('cascade')->nullable();
+            // $table->string('receipt_no');
+            // $table->string('remark')->nullable();
+            // $table->string('lorry_no');
+            // $table->unsignedBigInteger('dana_group_id')->index();
+            // $table->foreign('dana_group_id')->references('id')->on('dana_groups')->onDelete('cascade')->onUpdate('cascade');
+            // $table->unsignedBigInteger('dana_name_id')->index();
+            // $table->foreign('dana_name_id')->references('id')->on('dana_names')->onDelete('cascade')->onUpdate('cascade');
+            // $table->string('quantity');
+            // $table->timestamps();
+
             $table->id();
-            $table->unsignedBigInteger('raw_material_id')->index();
-            $table->foreign('raw_material_id')->references('id')->on('raw_materials');
-            $table->unsignedBigInteger('storein_type_id')->index();
-            $table->foreign('storein_type_id')->references('id')->on('storein_types')->onDelete('cascade')->onUpdate('cascade');
-            $table->unsignedBigInteger('from_godam_id')->index();
-            $table->foreign('from_godam_id')->references('id')->on('department')->onDelete('cascade')->onUpdate('cascade')->nullable();
-            $table->string('challan_no')->nullable();
-            $table->string('gp_no')->nullable();
-            $table->unsignedBigInteger('to_godam_id')->index();
-            $table->foreign('to_godam_id')->references('id')->on('department')->onDelete('cascade')->onUpdate('cascade')->nullable();
-            $table->string('receipt_no');
-            $table->string('remark')->nullable();
             $table->string('lorry_no');
             $table->unsignedBigInteger('dana_group_id')->index();
-            $table->foreign('dana_group_id')->references('id')->on('dana_groups')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('dana_group_id')->references('id')->on('dana_groups');
             $table->unsignedBigInteger('dana_name_id')->index();
-            $table->foreign('dana_name_id')->references('id')->on('dana_names')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('dana_name_id')->references('id')->on('dana_names');
             $table->string('quantity');
             $table->timestamps();
+
         });
     }
 

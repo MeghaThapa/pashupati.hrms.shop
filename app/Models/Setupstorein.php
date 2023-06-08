@@ -13,7 +13,7 @@ class Setupstorein extends Model
      *
      * @var array
      */
-    protected $table='storein';
+    protected $table='storein_types';
     protected $fillable = [
         'name', 'slug', 'code', 'note', 'status'
     ];
