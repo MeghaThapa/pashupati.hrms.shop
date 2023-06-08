@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('non_woven_fabrics', function (Blueprint $table) {
+        Schema::create('godam', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
-            $table->string('gsm');
-            $table->string('color');
-            $table->boolean('status')->nullable()->default(1);
+            $table->enum('status',['active','inactive']);
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('non_woven_fabrics');
+        Schema::dropIfExists('godam');
     }
 };

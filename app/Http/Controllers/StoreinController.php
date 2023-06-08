@@ -278,7 +278,7 @@ class StoreinController extends Controller
     // not in use
     public function getcategoryItems($category_id)
     {
-        return ItemsOfStorein::with('storeinCategory')->where('category_id', $category_id)->get();
+        return ItemsOfStorein::with(['storeinCategory:id,name', 'size:id,name', 'unit:id,name'])->where('category_id', $category_id)->get();
     }
     public function EditItemStoreData(Request $request)
     {
@@ -389,20 +389,15 @@ try{
         $validator = $request->validate([
             'category_id'  => 'required',
             'item_id'   => 'required',
-            'units'         => 'required',
-            'size_id'       => 'required',
             'quantity'      => 'required|numeric',
             'unit_price'   => 'required|numeric',
         ]);
         $totalAmt = ($request->quantity * $request->unit_price);
-        // return $request;
+
         $storeinItem = new StoreinItem();
         $storeinItem->storein_category_id = $request->category_id;
         $storeinItem->storein_item_id = $request->item_id;
         $storeinItem->quantity = $request->quantity;
-        $storeinItem->unit_id = $request->units;
-        // recent added
-        $storeinItem->size_id = $request->size_id;
         $storeinItem->storein_id = $id;
         $storeinItem->price = $request->unit_price;
         $storeinItem->total_amount = $totalAmt;
@@ -441,11 +436,11 @@ try{
     }
     public function storeInItemsRetrive($storein_id)
     {
-        return Storein::with(['storeinItems.storeinCategory', 'storeinItems.itemsOfStorein', 'storeinItems.unit', 'storeinItems.size'])->find($storein_id);
+        return Storein::with(['storeinItems.storeinCategory:id,name', 'storeinItems.itemsOfStorein', 'storeinItems.itemsOfStorein.unit:id,name', 'storeinItems.itemsOfStorein.size:id,name'])->find($storein_id);
     }
     public function getStoreInById($id)
     {
-        return StoreinItem::with(['storeinCategory', 'itemsOfStorein', 'unit', 'size'])->find($id);
+        return StoreinItem::with(['storeinCategory:id,name', 'itemsOfStorein', 'itemsOfStorein.unit:id,name', 'itemsOfStorein.size:id,name'])->find($id);
     }
 
 

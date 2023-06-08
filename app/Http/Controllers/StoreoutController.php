@@ -12,6 +12,7 @@ use App\Models\ItemsOfStorein;
 use App\Models\Placement;
 use App\Models\Size;
 use App\Models\Stock;
+use App\Models\Godam;
 use App\Models\StoreinDepartment;
 use Exception;
 //use DB;
@@ -29,17 +30,18 @@ class StoreoutController extends Controller
      */
     public function index(Request $request)
     {
+
         $storeOutDatas = Storeout::all();
         // return $storeOutDatas;
         return view('admin.storeout.index', compact('storeOutDatas'));
     }
     public function storoutYajraDatabales()
     {
-        $storeout = DB::table('storeout')
-        ->join('storein_departments','storein_departments.id','=','storeout.for')
+          $storeout = DB::table('storeout')
+        ->join('godam','godam.id','=','storeout.godam_id')
         ->select(
             'storeout.id',
-            'storein_departments.name as storein_department_name',
+            'godam.name as storein_department_name',
             'storeout.receipt_date',
             'storeout.receipt_no',
             'storeout.total_amount',
@@ -132,9 +134,9 @@ class StoreoutController extends Controller
     public function create()
     {
         $receipt_no =  AppHelper::getStoreOutReceiptNo();
-        $storeinDepartment =StoreinDepartment::get(['id','name']);
+        $godams =Godam::get(['id','name']);
         $storeOut = null;
-        return view('admin.storeout.create', compact('receipt_no', 'storeOut','storeinDepartment'));
+        return view('admin.storeout.create', compact('receipt_no', 'storeOut','godams'));
     }
 
     public function getEditItemData($storeoutItem_id)
@@ -146,9 +148,9 @@ class StoreoutController extends Controller
     public function edit($storeout_id)
     {
         $receipt_no = null;
-        $storeinDepartment =StoreinDepartment::get(['id','name']);
+       $godams =Godam::get(['id','name']);
         $storeOut = StoreOut::find($storeout_id);
-        return view('admin.storeout.create', compact('receipt_no', 'storeOut','storeinDepartment'));
+        return view('admin.storeout.create', compact('receipt_no', 'storeOut','godams'));
     }
 
     public function saveStoreout(Request $request)
@@ -162,7 +164,7 @@ class StoreoutController extends Controller
             $storeout = new Storeout;
             $storeout->receipt_date = $request->receipt_date;
             $storeout->receipt_no = $request->receipt_no;
-            $storeout->for = $request->for_id;
+            $storeout->godam_id = $request->for_id;
             $storeout->save();
             return redirect()->route('storeout.storeOutItems', ['store_out_id' => $storeout->id]);
         }catch (Exception $ex){
@@ -193,7 +195,7 @@ class StoreoutController extends Controller
         $storeOut = Storeout::find($storeout_id);
         $storeOut->receipt_date = $request->receipt_date;
         $storeOut->receipt_no = $request->receipt_no;
-        $storeOut->for = $request->for_id;
+        $storeOut->godam_id  = $request->for_id;
         $storeOut->save();
         return redirect()->route('storeout.storeOutItems', ['store_out_id' => $storeOut->id]);
         }catch (Exception $ex){

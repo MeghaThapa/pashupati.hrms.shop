@@ -216,7 +216,7 @@
                         <!-- /.info-box -->
                     </a>
                 </div>
-                
+
                 <div class="col-md-4 col-sm-6 col-12">
                     <a href="{{ route('setup.wastage.index') }}">
                         <div class="info-box">
@@ -232,7 +232,22 @@
                         <!-- /.info-box -->
                     </a>
                 </div>
-                
+                 <div class="col-md-4 col-sm-6 col-12">
+                    <a href="{{ route('godam.index') }}">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success">
+                                <i class="fas fa-wallet"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">{{ __('Godam') }}</span>
+                                <span class="info-box-number text-bold">{{ App\Models\Godam::count() }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </a>
+                </div>
+
                 {{-- Yo Chaidaina --}}
                 {{-- <div class="col-md-4 col-sm-6 col-12">
                     <a href="{{ route('processing.categories') }}">
@@ -242,14 +257,14 @@
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">{{ __('Processing Categories') }}</span>
-                                <span class="info-box-number text-bold">{{ App\Models\Department::count() }}</span> 
+                                <span class="info-box-number text-bold">{{ App\Models\Department::count() }}</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
                         <!-- /.info-box -->
                     </a>
                 </div> --}}
-                
+
             </div>
         </div>
     </div>

@@ -12,6 +12,7 @@ use App\Models\Setupstorein;
 use App\Models\Department;
 use App\Models\Storein;
 use App\Models\Supplier;
+use App\Models\StoreinType;
 use Illuminate\Http\Request;
 use DateTime;
 use Yajra\DataTables\Facades\DataTables;
@@ -54,9 +55,10 @@ class RawMaterialController extends Controller
 
     public function create()
     {
+
         $receipt_no = AppHelper::getRawMaterialReceiptNo();
         $suppliers = Supplier::all();
-        $storeinTypes = Setupstorein::all();
+        $storeinTypes = StoreinType::all();
         $godamAsDept = Department::all();
         $rawMaterial = null;
         return view('admin.rawMaterial.create', compact('suppliers', 'storeinTypes', 'godamAsDept', 'receipt_no', 'rawMaterial'));
