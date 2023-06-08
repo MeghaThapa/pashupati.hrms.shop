@@ -484,7 +484,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('nonwovenfabrics-receiveentry/{id}/status', 'FabricNonWovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
     Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'FabricNonWovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
-      Route::post('nonwovenfabrics-receiveentry/getDataList', 'FabricNonWovenReceiveEntryController@getDataList')->name('getDataList');
+    Route::post('nonwovenfabrics-receiveentry/getDataList', 'FabricNonWovenReceiveEntryController@getDataList')->name('getDataList');
+
+    Route::post('nonwovenfabrics-receiveentry/getDanaList', 'FabricNonWovenReceiveEntryController@getDanaList')->name('getDanaList');
 
 
     Route::post('department/getPlantTypeList', 'FabricNonWovenReceiveEntryController@getPlantTypeList')->name('getPlantTypeList');

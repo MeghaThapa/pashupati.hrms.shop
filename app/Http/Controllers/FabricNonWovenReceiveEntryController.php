@@ -32,20 +32,24 @@ class FabricNonWovenReceiveEntryController extends Controller
         $departments = Department::get();
         $shifts = Shift::get();
         $nonwovenfabrics = NonWovenFabric::get();
-        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics'));
+        $receipt_no = "NFE"."-".getNepaliDate(date('Y-m-d'));
+        // dd($date);
+        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics','receipt_no'));
     }
 
     public function store(Request $request)
     {
-        dd('hello');
+        // dd('hello');
         //validate form
 
+        dd($request);
 
-        $validator = $request->validate([
-            'name' => 'required|string|max:60|unique:non_woven_fabrics',
-            'gsm' => 'required|numeric|unique:non_woven_fabrics',
-            'color' => 'required',
-        ]);
+
+        // $validator = $request->validate([
+        //     'name' => 'required|string|max:60|unique:non_woven_fabrics',
+        //     'gsm' => 'required|numeric|unique:non_woven_fabrics',
+        //     'color' => 'required',
+        // ]);
 
         $fabric = NonWovenFabric::create([
             'name' => $request['name'],
@@ -161,21 +165,13 @@ class FabricNonWovenReceiveEntryController extends Controller
       return Response::json($plantname_list);
     }
 
-    public function getDataList()
+    public function getDataList(Request $request)
     {
-        // dd('kk');
-        // $category = NonWovenFabric::where('slug', $slug)->first();
+        return view('admin.nonwovenfabrics-receiveentry.bill_row',compact('request'));
+    }
 
-        // // change category status
-        // if ($category->status == 1) {
-        //     $category->update([
-        //         'status' => 0
-        //     ]);
-        // } else {
-        //     $category->update([
-        //         'status' => 1
-        //     ]);
-        // }
-        return view('admin.nonwovenfabrics-receiveentry.bill_row');
+    public function getDanaList(Request $request)
+    {
+        return view('admin.nonwovenfabrics-receiveentry.bill_dana',compact('request'));
     }
 }
