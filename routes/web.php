@@ -31,7 +31,7 @@ use App\Http\Controllers\FabricNonWovenController;
 
 use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
-
+use App\Http\Controllers\GodamController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -210,6 +210,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterialStock/filterAccDanaName/{danaName_id}',[RawMaterialStockController::class,'filterAccDanaName'])->name('rawMaterialStock.filterAccDanaName');
     Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
     Route::post('rawMaterialStock/filterAccGodam',[RawMaterialStockController::class,'filterAccGodam'])->name('rawmaterial.filterAccGodam');
+
+
+    //Godam
+    Route::get('godam/index',[GodamController::class,'index'])->name('godam.index');
+    Route::get('godam/create',[GodamController::class,'create'])->name('godam.create');
+    Route::post('godam/store',[GodamController::class,'store'])->name('godam.store');
+    Route::get('godam/edit/{godam_id}',[GodamController::class,'edit'])->name('godam.edit');
+    Route::post('godam/update/{godam_id}',[GodamController::class,'update'])->name('godam.update');
+    Route::get('godam/delete/{godam_id}',[GodamController::class,'delete'])->name('godam.delete');
 
 
     //RawMaterial Items
@@ -449,7 +458,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
-   
+
 
 
     //fabric send and receive

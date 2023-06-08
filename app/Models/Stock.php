@@ -16,6 +16,7 @@ class Stock extends Model
     {
         $item = ItemsOfStorein::find($storeinItem->storein_item_id);
 
+
         $stock = Stock::where('item_id', $storeinItem->storein_item_id)
         ->where('department_id', $item->department_id)
         ->where('size',$storeinItem->size_id)
@@ -33,8 +34,8 @@ class Stock extends Model
             $stock->total_amount  =  $stock->quantity * $stock->avg_price;
         }
         $stock->item_id = $storeinItem->storein_item_id;
-        $stock->size = $storeinItem->size_id;
-        $stock->unit = Unit::find($storeinItem->unit_id)->name;
+        $stock->size = $item->size_id;
+        $stock->unit = Unit::find($item->unit_id)->name;
         $stock->department_id = $item->department_id;
         $stock->category_id = $item->category_id;
         $stock->save();

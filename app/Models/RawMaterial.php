@@ -12,7 +12,7 @@ class RawMaterial extends Model
 
     public function storein_type()
     {
-        return $this->belongsTo('App\Models\Setupstorein', 'storein_type_id', 'id');
+        return $this->belongsTo('App\Models\StoreinType', 'storein_type_id', 'id');
     }
     public function toGodam()
     {
@@ -22,5 +22,5 @@ class RawMaterial extends Model
     {
         return $this->belongsTo('App\Models\Department', 'from_godam_id', 'id');
     }
-    
+
 }

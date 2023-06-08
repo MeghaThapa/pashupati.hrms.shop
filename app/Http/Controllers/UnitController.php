@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class UnitController extends Controller
 {
@@ -38,18 +39,28 @@ class UnitController extends Controller
         // validate form
         $validator = $request->validate([
             'name' => 'required|string|max:30|unique:units',
-            'unitCode' => 'required|string|max:30|unique:units,code',
+            'code' => 'required|string|max:30|unique:units,code',
+            'status' =>'required',
             'note' => 'nullable|string|max:255',
         ]);
 
         // store unit
+        try{
         $unit = Unit::create([
             'name' => $request->name,
-            'code' => $request->unitCode,
+            'code' => $request->code,
+            'slug' =>Str::slug($request->name),
             'note' => clean($request->note),
             'status' => $request->status
         ]);
-        return redirect()->back()->withSuccess('Unit added successfully!');
+         return response()->json([
+                'message' => 'Unit added successfully!',
+                'unit'=>$unit,
+            ], 200);
+        }catch(Exception $e){
+            return "something went wrong while creating unit";
+        }
+       // return redirect()->back()->withSuccess('Unit added successfully!');
     }
 
     /**
