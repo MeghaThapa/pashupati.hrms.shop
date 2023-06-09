@@ -26,13 +26,8 @@
               <strong>{{ session()->get('message') }}</strong>
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            {{-- @foreach(session()->get('message') as $error) --}}
-                {{-- $error."<br>" --}}
-            {{-- @endforeach --}}
         @elseif(session()->has('message_err'))
-        {{-- session()->get('message_err') --}}
             @foreach(session()->get('message_err') as $error)
-                {{-- $error['type']."<br>" --}}
             @endforeach
         @endif
 
@@ -70,10 +65,6 @@
                 </div>
         </div>
         </form>
-
-
-
-
         <div class="Ajaxdata col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
                 <table class="table" id="storeInItemTable">
@@ -103,9 +94,9 @@
                                     <td>{{ ++$i }}</td>
                                     <td>{{ $stock->item_name }}</td>
                                     <td>{{ $stock->item_num }}</td>
-                                    <td>{{ $stock->size }}</td>
+                                    <td>{{ $stock->size_name }}</td>
                                     <td>{{ $stock->quantity }}</td>
-                                    <td>{{ $stock->unit }}</td>
+                                    <td>{{ $stock->unit_name }}</td>
                                     <td>{{ $stock->avg_price }}</td>
                                     <td>{{ $stock->total_amount }}</td>
                                     <td>{{ $stock->department_name }}</td>

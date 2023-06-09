@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\FabricStock;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use App\Models\Shift;
 use App\Models\Fabric;
 use App\Models\UnlaminatedFabric;
+use App\Models\UnlaminatedFabricStock;
 use Illuminate\Http\Request;
 
 class FabricSendReceiveController extends Controller
@@ -56,7 +58,7 @@ class FabricSendReceiveController extends Controller
 
     public function getfabrics(Request $request){
         if($request->ajax()){
-            $fabrics = Fabric::where('status','1')->get();
+            $fabrics = FabricStock::where('status','1')->get();
             return response([
                 'fabrics' => $fabrics
             ]);
@@ -104,6 +106,21 @@ class FabricSendReceiveController extends Controller
                 'plantname_id' =>  $data['plant_name_id']
             ]);
 
+            UnlaminatedFabricStock::create([
+                'bill_number' => $data['bill_number'],
+                'bill_date' => $data['bill_date'],
+                'fabric_id' =>$data['fabric_name_id'] ,
+                'roll_no' => $roll_number ,
+                'gross_wt' => $gross_weight ,
+                'net_wt' => $net_wt,
+                'meter' => $meter,
+                'average' => $avg,
+                'gram' => $gram,
+                'department_id' =>$data['to_godam_id'],
+                'planttype_id' => $data['plant_type_id'],
+                'plantname_id' =>  $data['plant_name_id']
+            ]);
+
             // return $this->returnUnlaminatedStockData();
             // bill_date: "2023-06-04"
             // bill_number: "FSR-2080-2-21-5507"
@@ -126,5 +143,24 @@ class FabricSendReceiveController extends Controller
         }else{
             return response(['response'=> '404']);
         }   
+    }
+
+    public function sendunlaminateddelete(Request $request,$id){
+        if($request->ajax()){
+            $count = UnlaminatedFabric::where('id',$id)->get();
+            if(count($count) > 0){
+                UnlaminatedFabric::where('id',$id)->delete();
+                return response([
+                    'response'=> "200",
+                ]);
+            }else{
+                return response([
+                    'response'=> "400",
+                ]);
+            }
+        }
+    }
+    public function storelaminated(Request $request){
+        return $request->id;
     }
 }

@@ -38,18 +38,27 @@ class SizeController extends Controller
         // validate form
         $validator = $request->validate([
             'name' => 'required|string|max:30|unique:sizes',
-            'sizeCode' => 'required|string|max:30|unique:sizes,code',
+            'code' => 'required|string|max:30|unique:sizes,code',
             'note' => 'nullable|string|max:255',
+            'status' => 'required'
         ]);
 
         // store size
-        $size = Size::create([
-            'name' => $request->name,
-            'code' => $request->sizeCode,
-            'note' => clean($request->note),
-            'status' => $request->status
-        ]);
-        return redirect()->back()->withSuccess('Size added successfully!');
+        try{
+            $size = Size::create([
+                'name' =>strtolower($request->name),
+                'code' => $request->code,
+                'note' => clean($request->note),
+                'status' => $request->status
+            ]);
+            return response()->json([
+                    'message' => 'Size added successfully!',
+                    'size'=>$size,
+                ], 200);
+        }catch(Exception $e){
+            return "something went wrong while creating size";
+        }
+       // return redirect()->back()->withSuccess('Size added successfully!');
     }
 
     /**

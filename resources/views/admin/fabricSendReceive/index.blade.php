@@ -476,21 +476,22 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form action="">
+            <form id='sendtolaminationform' method="post">
+                @csrf
                 <div class="card">
                     <div class="card-body">
                         <div class="row m-2 p-3">
                             <div class="col-md-6">
                                 <label for="">Fabric</label>
-                                <input class='form-control' type="text" name="laminated_fabric_name" id="laminated_fabric_name">
+                                <input class='form-control' type="text" name="laminated_fabric_name" id="laminated_fabric_name" readonly>
                             </div>
                             <div class="col-md-3">
                                 <label for="">Group</label>
-                                <input class='form-control' type="text" name="laminated_fabric_group" id="laminated_fabric_group" disabled>
+                                <input class='form-control' type="text" name="laminated_fabric_group" id="laminated_fabric_group" readonly>
                             </div>
                             <div class="col-md-3">
                                 <label for="">standard weight gram</label>
-                                <input class='form-control' type="text" name="standard_weight_gram" id="standard_weight_gram" disabled>
+                                <input class='form-control' type="text" name="standard_weight_gram" id="standard_weight_gram" readonly>
                             </div>
                         </div>
                         <hr>
@@ -519,58 +520,57 @@
                         <div class="row m-2 p-3 d-flex justify-content-center">
                             <div class="col-md-2">
                                 <label for="">Roll</label>
-                                <input class='form-control' type="text" name="laminated_roll_no" id="laminated_roll_no">
+                                <input class='form-control' type="text" name="laminated_roll_no_2" id="laminated_roll_no_2">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Gross Weight</label>
-                                <input class='form-control' type="text" name="laminated_gross_weight" id="laminated_gross_weight">
+                                <input class='form-control' type="text" name="laminated_gross_weight_2" id="laminated_gross_weight_2">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Net Weight</label>
-                                <input class='form-control' type="text" name="laminated_net_weight" id="laminated_net_weight">
+                                <input class='form-control' type="text" name="laminated_net_weight_2" id="laminated_net_weight_2">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Average</label>
-                                <input class='form-control' type="text" name="laminated_avg_weight" id="laminated_avg_weight">
+                                <input class='form-control' type="text" name="laminated_avg_weight_2" id="laminated_avg_weight_2">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Gram</label>
-                                <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
+                                <input class='form-control' type="text" name="laminated_gram_2" id="laminated_gram_2">
                             </div>
                         </div>
                         <div class="row m-2 p-3 d-flex justify-content-center">
                             <div class="col-md-2">
                                 <label for="">Roll</label>
-                                <input class='form-control' type="text" name="laminated_roll_no" id="laminated_roll_no">
+                                <input class='form-control' type="text" name="laminated_roll_no_3" id="laminated_roll_no_3">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Gross Weight</label>
-                                <input class='form-control' type="text" name="laminated_gross_weight" id="laminated_gross_weight">
+                                <input class='form-control' type="text" name="laminated_gross_weight_3" id="laminated_gross_weight_3">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Net Weight</label>
-                                <input class='form-control' type="text" name="laminated_net_weight" id="laminated_net_weight">
+                                <input class='form-control' type="text" name="laminated_net_weight_3" id="laminated_net_weight_3">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Average</label>
-                                <input class='form-control' type="text" name="laminated_avg_weight" id="laminated_avg_weight">
+                                <input class='form-control' type="text" name="laminated_avg_weight_3" id="laminated_avg_weight_3">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Gram</label>
-                                <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
+                                <input class='form-control' type="text" name="laminated_gram_3" id="laminated_gram_3">
                             </div>
                         </div>
                         <hr>
-                        
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <button type='submit' class="btn btn-info">Create Group</button>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type='submit' class="btn btn-info">Update</button>
-                                    </div>
-                                </div>
-
+                        <div class="row d-flex justify-content-center text-center mb-2-">
+                            <div class="col-md-6">
+                                <button type='submit' class="btn btn-info">Create Group</button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type='submit' class="btn btn-info">Update</button>
+                            </div>
+                            <input type="text" name="idoffabricforsendtolamination" id="idoffabricforsendtolamination">
+                        </div>
                     </div>
                 </div>
             </form>
@@ -757,10 +757,21 @@
         $('#rawMaterialItemTbody').empty();
     }
 
+    $(document).on('click','#deletesendforlamination',function(e){
+        e.preventDefault();
+        let id = $(this).attr('data-id');
+        deletefromunlamintedtable(id);
+    });
+
     function filltable(data){
         // console.log(data);
         data.response.forEach(d => {
+            let title = d.fabric.name;
+            let group = d.gram.split('-')[0];
+            let result = parseFloat(title) * parseFloat(group);
+
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
+
             tr.append(`<td>${d.id}</td>`);
             tr.append(`<td>${d.fabric.name}</td>`);
             tr.append(`<td>${d.roll_no}</td>`);
@@ -769,12 +780,33 @@
             tr.append(`<td>${d.meter}</td>`)
             tr.append(`<td>avg</td>`);
             tr.append(`<td>${d.gram}</td>`);
-            tr.append(`<td><a id="sendforlamination" data-group='${d.gram}' data-standard="30.00" data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a></td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 
     function emptyform(){
         $("#createRawMaterial")[0].reset();
+    }
+
+    function deletefromunlamintedtable(data){
+        $.ajax({
+            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
+            method:'get',
+            beforeSend:function(){
+                console.log('deleteing from unlamintaed table');
+            },
+            success:function(response){
+                if(response.response == '200'){
+                    emptytable();
+                    callunlaminatedfabricajax();
+                }else if(response.response == '400'){
+                    alert('Not Allowed OR Data is no longer there');
+                }
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
     }
     /************************* Other Functionalities ***********************/
 
@@ -792,7 +824,19 @@
             let standard_weight_gram = $(this).attr('data-standard');
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
+            $("#idoffabricforsendtolamination").val(id);
+            // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
+            // $('#sendtolaminationform').attr('action',action);
+            // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
+            // action = action.slice(0, -2) + `${id}`;
+            // $('#sendtolaminationform').attr('action', action);
         });
+    });
+    // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
+    //     $(this).removeAttr('action');
+    // });
+        $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
+        $(this).removeAttr('action');
     });
     /************************* Send for lamination **************************/
 </script>

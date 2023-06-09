@@ -84,7 +84,7 @@
 
                 <div class="row">
                             <div class="col-md-2 form-group">
-                                <label for="Category" class="col-form-label">{{ __('Storein Category Name') }}<span class="required-field">*</span>
+                                <label for="Category" class="col-form-label">{{ __('Category Name') }}<span class="required-field">*</span>
                                 </label>
                                 <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
                                     data-target="#storeinCategoryModel" style="margin-top:0 !important; top:8px;float:right;">
@@ -104,7 +104,7 @@
                             @enderror
                             </div>
                             {{-- item --}}
-                            <div class="col-md-2 form-group">
+                            <div class="col-md-6 form-group">
                                 <label for="products" class="col-form-label">{{ __('Storein Item Name') }}<span class="required-field">*</span>
                                 </label>
                                 <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
@@ -116,51 +116,6 @@
                                     <option value="" selected disabled>{{ __('Select a Product') }}</option>
                                 </select>
                                 @error('ProductName')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            {{--size--}}
-                            <div class="col-md-2 form-group">
-                                <label for="size" class="col-form-label">{{ __('Size') }}<span
-                                        class="required-field">*</span>
-                                </label>
-                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
-                                    data-target="#exampleModalsize" style="margin-top:0 !important; top:8px;float:right;">
-                                    <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                                </a>
-                                {{-- recent --}}
-                                <select class="advance-select-box form-control @error('size') is-invalid @enderror" id="size_id"
-                                    name="size_id" required>
-                                    <option value="" selected disabled>{{ __('Select a Size ') }}</option>
-                                    @foreach ($sizes as $size)
-                                        <option value="{{ $size->id }}">{{ $size->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('size_id')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            {{--unit--}}
-                            <div class="col-md-2">
-                                <label for="units" class="col-form-label">{{ __('Unit') }}<span
-                                        class="required-field">*</span>
-                                </label>
-                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
-                                    data-target="#exampleModalunit" style="margin-top:0 !important; top:8px;float:right;">
-                                    <i class="fas fa-plus"
-                                        style="display:flex;align-items: center;justify-content: center;"></i>
-                                </a>
-                                <select class="form-control @error('units') is-invalid @enderror" name="units" id="units" required>
-                                    <option value="" disabled>{{ __('Select a unit') }}</option>
-                                    @foreach ($units as $unit)
-                                        <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('units')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -197,29 +152,50 @@
                                     </span>
                                 @enderror
                             </div>
-                            {{-- <div class="col-md-6">
-                                <label for="discounts[]" class="col-form-label">{{ __('Discount') }}(%)</label>
-                                <input type="number" step="any" min="0" max="99"
-                                    class="form-control @error('discounts') is-invalid @enderror calculator" id="discounts-1"
-                                    data-number="1" name="discounts" placeholder="{{ __('Discount') }}">
-                                @error('discounts')
+                        </div>
+
+                <div class="d-flex  mt-3" style="gap:10px"  >
+                     {{-- size --}}
+                              <div class="col-md-2">
+                                <label for="qunatities" class="col-form-label">{{ __('Size') }}<span
+                                        class="required-field">*</span></label>
+                                 <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
+                                    id="SideId" name="size_id" required>
+                                    <option value="" selected disabled>{{ __('Select a Size') }}</option>
+                                </select>
+                                @error('quantities')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div> --}}
-
-                </div>
-                {{--Department--}}
-                <div class="d-flex  mt-3" style="gap:10px"  >
-                    <div class="d-flex" style="gap:10px" >
+                            </div>
+                            {{-- unit --}}
+                             <div class="col-md-2">
+                                <label for="qunatities" class="col-form-label">{{ __('Unit') }}<span
+                                        class="required-field">*</span></label>
+                                 <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
+                                    id="unitId" name="unit_id" required>
+                                    <option value="" selected disabled>{{ __('Select a Unit') }}</option>
+                                </select>
+                                @error('quantities')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            {{--Department--}}
+                    <div class="col-md-4" style="gap:10px" >
                         <div>
                             <label for="singleTotal[]" class="col-form-label">{{ __('Department') }}</label>
                         </div>
                         <div>
-                            <input type="text" step="any" min="0" style="width:200px; "
-                                class="form-control @error('singleTotal') is-invalid @enderror" id="department_id"
-                                name="department_id" placeholder="{{ __('Department name') }}" data-ignore readonly tabindex="-1">
+                            <select class="advance-select-box form-control"
+                                    id="departmentId" name="department_id" required>
+                                    <option value="" selected disabled>{{ __('Select a department') }}</option>
+                            </select>
+                            {{-- <input type="text" step="any" min="0" style="width:200px; "
+                                class="form-control @error('singleTotal') is-invalid @enderror" id="department_id" --}}
+                                {{-- name="department_id" placeholder="{{ __('Department name') }}" data-ignore readonly tabindex="-1"> --}}
                         </div>
                     </div>
                 <div class="d-flex" style="gap:10px">
@@ -249,7 +225,8 @@
                             <tr>
                                 <th>{{ __('S.No') }}</th>
                                 {{-- <th>{{ __('Category Name') }}</th> --}}
-                                <th>{{ __('Item Name') }}</th>
+                                <th>{{ __('Item') }}</th>
+                                <th>{{ __('Department') }}</th>
                                 <th>{{ __('Size') }}</th>
                                 <th>{{ __('Quantity') }}</th>
                                 <th>{{ __('Unit') }}</th>
@@ -423,12 +400,7 @@
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label for="iUnit" class="form-label" style="font-weight: bold;">Unit</label>
-                                    <select class="form-control" name="unit_id" id="unit_id">
-                                        @foreach ($units as $unit)
-                                            <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                                        @endforeach
 
-                                    </select>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label for="iUnitPrice" class="form-label" style="font-weight: bold;">Unit
@@ -648,6 +620,51 @@
                                             @enderror
                                         </div>
                                         </div>
+                                         <div class="row">
+                                            <div class="col-md-6 form-group mt-3">
+                                                <label for="categoryName">{{ __('Unit Name') }}<span
+                                                        class="required-field">*</span></label>
+                                                 <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                                                    data-target="#exampleModalunitModel" style="margin-top:0 !important; top:8px;float:right;">
+                                                    <i class="fas fa-plus"
+                                                        style="display:flex;align-items: center;justify-content: center;"></i>
+                                                </a>
+                                                <select
+                                                    class="advance-select-box form-control @error('unitName') is-invalid @enderror"
+                                                    id="unitNameModel" name="unit_name_model" required>
+                                                    <option value="" selected disabled>{{ __('Select a category') }}</option>
+                                                    @foreach ($units as $key => $unit)
+                                                        <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('name')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-6 form-group mt-3">
+                                            <label for="supplier" class="col-form-label">
+                                                {{ __('Size') }}
+                                            </label>
+                                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                                                data-target="#exampleModalsizeCreate" style="margin-top:0 !important; top:8px;float:right;">
+                                                <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                                            </a>
+                                            <select class="advance-select-box form-control @error('size') is-invalid @enderror"
+                                                id="sizeModel" name="size_model">
+                                                <option value="" selected disabled>{{ __('Select a size') }}</option>
+                                                @foreach ($sizes as $size)
+                                                    <option value="{{ $size->id }}">{{ $size->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('department_id_model')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        </div>
                                         <div class="row">
                                             <div class="form-group col-md-6">
                                                 <label for="status" class="col-form-label">{{ __('Status') }}</label>
@@ -733,7 +750,7 @@
                 {{-- department model popup end --}}
                 <!--Unit Model popup-->
 
-                <div class="modal fade" id="exampleModalunit" tabindex="-1" role="dialog" aria-labelledby="exampleModalunit"
+                <div class="modal fade" id="exampleModalunitModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalunit"
                     aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -744,16 +761,10 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form class="form-horizontal"
-                                {{-- @if ()
-
-                                @else
-
-                                @endif --}}
-                                action="{{ route('units.store') }}" method="post"
-                                    enctype="multipart/form-data">
-                                    @csrf
+                                <form class="form-horizontal" id="unitStoreModelCreate"
+                                {{-- {{ route('units.store') }} --}}>
                                     <div class="card-body">
+                                        <div id="unitModelError" class="alert alert-danger" hidden></div>
                                         <div class="row">
                                             <div class="col-md-6 form-group">
                                                 <label for="name">{{ __('Unit Name') }}<span
@@ -771,7 +782,7 @@
                                                 <label for="unitCode">{{ __('Unit Code') }}<span
                                                         class="required-field">*</span></label>
                                                 <input type="text" class="form-control @error('unitCode') is-invalid @enderror"
-                                                    id="unitCode" name="unitCode" placeholder="{{ __('Unit Code') }}"
+                                                    id="unitCodeModel" name="unit_code_model" placeholder="{{ __('Unit Code') }}"
                                                     value="{{ old('unitCode') }}" required>
                                                 @error('unitCode')
                                                     <span class="invalid-feedback" role="alert">
@@ -824,7 +835,7 @@
                 <!--Unit  Model Popup End-->
                 <!--Size Model popup-->
 
-                <div class="modal fade" id="exampleModalsize" tabindex="-1" role="dialog" aria-labelledby="exampleModalsize"
+                <div class="modal fade" id="exampleModalsizeCreate" tabindex="-1" role="dialog" aria-labelledby="exampleModalsize"
                     aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -835,10 +846,13 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form class="form-horizontal" action="{{ route('sizes.store') }}" method="post">
-                                    @csrf
+                                <form class="form-horizontal" id="sizeCreateModel"
+                                {{-- {{ route('sizes.store')}} --}}
+                               >
                                     <div class="card-body">
+                                         <div id="sizeModelError" class="alert alert-danger" hidden></div>
                                         <div class="row">
+
                                             <div class="col-md-6 form-group">
                                                 <label for="name">{{ __('Size Name') }}<span
                                                         class="required-field">*</span></label>
@@ -855,7 +869,7 @@
                                                 <label for="sizeCode">{{ __('Size Code') }}<span
                                                         class="required-field">*</span></label>
                                                 <input type="text" class="form-control @error('sizeCode') is-invalid @enderror"
-                                                    id="sizeCode" name="sizeCode" placeholder="{{ __('Size Code') }}"
+                                                    id="sizeCode" name="size_code" placeholder="{{ __('Size Code') }}"
                                                     value="{{ old('sizeCode') }}" required>
                                                 @error('sizeCode')
                                                     <span class="invalid-feedback" role="alert">
@@ -981,6 +995,8 @@
                 </div>
 
 
+
+
                 <!--Tax  Model Popup End-->
 @endsection
 
@@ -989,6 +1005,7 @@
     <script src="{{ asset('js/storein.js') }}"></script>
     <script>
         $(document).ready(function(){
+
          $('#categorySelect').focus();
            $(document).on('select2:open', () => {
                 document.querySelector('.select2-search__field').focus();
@@ -1022,7 +1039,97 @@
             currentIndex = nextIndex;
         }
         });
+        //for size create
+        document.getElementById("sizeCreateModel").addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            let name= form.elements['name'];
+            let code= form.elements['size_code'];
+            let note= form.elements['note'];
+            let status= form.elements['status'];
+             if (!name.value && !code.value && !note.value && !status.value)
+             {
+                setMessage('sideModelError', 'Please Fill out all fields')
+                return false;
+            }
+            // {{ route('sizes.store')}}
+            $.ajax({
+                url: "{{ route('sizes.store')}}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name.value,
+                    code: code.value,
+                    note: note.value,
+                    status: status.value,
+                },
+                success: function(response) {
+                    $('#exampleModalsizeCreate').modal('hide');
 
+                    name.value='';
+                    code.value='';
+                    note.value='';
+
+                    let selectElement = document.getElementById('sizeModel');
+                    let optionElement = document.createElement('option');
+
+                    optionElement.value=response.size.id;
+                    optionElement.text = response.size.name;
+                    selectElement.appendChild(optionElement);
+                    optionElement.selected = true;
+                },
+                error: function(xhr, status, error) {
+
+                    setMessage('sizeModelError', xhr.responseJSON.message)
+                }
+            })
+        })
+        //for unit create
+        document.getElementById('unitStoreModelCreate').addEventListener('submit',function(e){
+            e.preventDefault();
+            const form = e.target;
+            let name= form.elements['name'];
+            let code= form.elements['unit_code_model'];
+            let note= form.elements['note'];
+            let status= form.elements['status'];
+             if (!name.value && !code.value && !note.value && !status.value)
+             {
+                setMessage('unitModelError', 'Please Fill out all fields')
+                return false;
+            }
+              $.ajax({
+
+                url: "{{ route('units.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name.value,
+                    code:code.value,
+                    note: note.value,
+                    status: status.value,
+                },
+                success: function(response) {
+                    console.log(response);
+                     $('#exampleModalunitModel').modal('hide');
+                    name.value='';
+                    code.value='';
+                    note.value='';
+                    status.value='';
+
+                   let  selectElement=document.getElementById('unitNameModel');
+                   let option = document.createElement('option');
+                    option.value=response.unit.id;
+                    option.text=response.unit.name;
+                    selectElement.append(option);
+
+                   // console.log(response);
+                },
+                error:function(xhr, status, error){
+                      setMessage('unitModelError',xhr.responseJSON.message);
+                }
+
+            });
+        })
 
         document.getElementById('storeinDepartmentCreate').addEventListener('submit', function(e){
             e.preventDefault();
@@ -1129,6 +1236,10 @@
             let product_no =form.elements['pnumber_model'];
             let category_id =form.elements['categoryName_model'];
             let department_id=form.elements['department_id_model'];
+
+            let unit_id=form.elements['unit_name_model'];
+            let size_id=form.elements['size_model'];
+
             let status = form.elements['item_status_model'];
              if (!name.value && !product_no.value &&
                 !category_id.value && !department_id.value && !status.value) {
@@ -1144,6 +1255,8 @@
                     pnumber: product_no.value,
                     category_id: category_id.value,
                     department_id:department_id.value,
+                    unit_id:unit_id.value,
+                    size_id:size_id.value,
                     status:status.value,
                 },
                 success: function(response) {
@@ -1154,6 +1267,7 @@
                      optionElement.text = response.item.name;
                      selectItemElement.appendChild(optionElement);
                     $('#categorySelect').focus();
+
                 },
                 error: function(xhr, status, error) {
                     setMessage('itemModelError', xhr.responseJSON.message)
@@ -1450,34 +1564,123 @@
         let product_id = e.params.data.id;
         console.log(product_id) ;
         getItemsDepartment(product_id);
+
     });
     $('#categorySelect').on('select2:select', function (e) {
         let category_id = e.params.data.id;
         getCategoryItems(category_id,'blade');
-
-    });
-    $('#ProductName').on('select2:select', function (e) {
-        let product_id = e.params.data.id;
-
-        getItemsDepartment(product_id);
     });
 
-   function getItemsDepartment(product_id){
-    $.ajax({
-                    url: "{{ route('storein.getItemsDepartment', ['product_id' => ':Replaced']) }}".replace(
+    $('#ProductName').on('select2:select', async function (e) {
+        let item_name = e.params.data.id;
+       let object = await getDepartmentSizeUnit(item_name);
+       fillOptionInSelect(object.department,'#departmentId');
+       fillOptionInSelect(object.size,'#SideId');
+       fillOptionInSelect(object.units,'#unitId');
+    });
+
+    function getDepartmentSizeUnit(item_name){
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                    url: "{{ route('storein.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced']) }}".replace(
                         ':Replaced',
-                        product_id),
+                        item_name),
+                    method: 'GET',
+                    success: function(response) {
+                            resolve(response);
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+            });
+    }
+    function fillOptionInSelect(obj,element_id){
+            let selectOptions = '';
+            if(obj.length==0){
+                selectOptions += '<option disabled selected>' + 'no size found'+ '</option>';
+            }else{
+                selectOptions += '<option disabled selected>' + 'select a item'+ '</option>';
+                for (let i = 0; i < obj.length; i++) {
+                let optionText = obj[i].name;
+                let optionValue = obj[i].id;
+                let option = new Option(optionText, optionValue);
+                selectOptions += option.outerHTML;
+            }
+            }
+            $(element_id).html(selectOptions);
+    }
+
+   function getUnitOfItemsOfStorin(item_name){
+    let myPromise = new Promise(function(resolve, reject) {
+            $.ajax({
+                    url: "{{ route('storein.getUnitOfItems', ['items_of_storein_name' => ':Replaced']) }}".replace(
+                        ':Replaced',
+                        item_name),
 
                     method: 'GET',
                     success: function(response) {
-                        console.log(response);
-                      document.getElementById('department_id').value=response.storein_department.name;
+                        //only unit found
+                        console.log('ajax size: ',response);
+                        let selectOptions = '';
+
+                        if(response.length==0){
+                            selectOptions += '<option disabled selected>' + 'no size found'+ '</option>';
+                        }else{
+                            selectOptions += '<option disabled selected>' + 'select Size item'+ '</option>';
+
+                            for (let i = 0; i < response.length; i++) {
+                            let optionText = response[i].size.name;
+                            let optionValue = response[i].size.id;
+                            let option = new Option(optionText, optionValue);
+                            selectOptions += option.outerHTML;
+                            }
+
+                        }
+                            $('#SideId').html(selectOptions);
+                            resolve(response);
 
                     },
                     error: function(xhr, status, error) {
                         reject(error);
                     }
                 });
+            });
+        }
+
+        function getItemsDepartment(items_of_storein_name){
+             let myPromise = new Promise(function(resolve, reject) {
+            $.ajax({
+                    url: "{{ route('storein.getItemsDepartment', ['items_of_storein_name' => ':Replaced']) }}".replace(
+                        ':Replaced',
+                        items_of_storein_name),
+
+                    method: 'GET',
+                    success: function(response) {
+                        let selectOptions = '';
+
+                        if(response.length==0){
+                            selectOptions += '<option disabled selected>' + 'no department found'+ '</option>';
+                        }else{
+                            selectOptions += '<option disabled selected>' + 'select department'+ '</option>';
+
+                            for (let i = 0; i < response.length; i++) {
+                            let optionText = response[i].storein_department.name;
+                            let optionValue = response[i].storein_department.id;
+                            let option = new Option(optionText, optionValue);
+                            selectOptions += option.outerHTML;
+                            }
+
+                        }
+                            $('#departmentId').html(selectOptions);
+                            resolve(response);
+
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+                 });
 }
    function getCategoryItems(category_id,click_by='blade'){
     return new Promise(function(resolve, reject) {
@@ -1489,15 +1692,21 @@
 
                     method: 'GET',
                     success: function(response) {
-                        // console.log(response);
-                        var selectOptions = '';
+                        console.log('ajax item: ',response);
+                        let selectOptions = '';
+
                         if(response.length==0){
                             selectOptions += '<option disabled selected>' + 'no items found'+ '</option>';
                         }else{
                             selectOptions += '<option disabled selected>' + 'select an item'+ '</option>';
-                            for (var i = 0; i < response.length; i++) {
-                                selectOptions += '<option value="' + response[i].id + '">' + response[i].name + '</option>';
+
+                            for (let i = 0; i < response.length; i++) {
+                            let optionText = response[i].name;
+                            let optionValue = response[i].name;
+                            let option = new Option(optionText, optionValue);
+                            selectOptions += option.outerHTML;
                             }
+
                         }   if(click_by == 'blade'){
                             $('#ProductName').html(selectOptions);
                             resolve(response);
@@ -1708,9 +1917,9 @@
             let category_id = form.elements['categoryName'].value;
             let product_id = form.elements['ProductName'].value;
             let quantities = form.elements['quantities'].value;
-            let unit_id = form.elements['units'].value;
+            let unit_id = form.elements['unit_id'].value;
             let unit_price = form.elements['unitPrices'].value;
-
+            let department_id = form.elements['department_id'].value;
 
             $.ajax({
                 url: '{{ route('storein.saveStoreinItems', ['id' => $storein->id]) }}',
@@ -1720,12 +1929,15 @@
                     category_id: category_id,
                     item_id: product_id,
                     quantity: quantities,
-                    units: unit_id,
+                    unit_id: unit_id,
                     unit_price: unit_price,
-                    size_id: size_id
+                   size_id: size_id,
+                    department_id:department_id
+
                     // Goes Into Request
                 },
                 success: function(response) {
+                    console.log('table item',response);
                     setIntoTable(response);
                     // calculate total amount
                     totalAmountCalculation();
@@ -1739,6 +1951,7 @@
 
 
 
+
                 },
                 error: function(xhr, status, error) {
                     // handle error response here
@@ -1748,10 +1961,12 @@
 
         // function for creating a new row in table
         function setIntoTable(res) {
+
             var html = "";
 
             html = "<tr id=editRow-" + res.id + "><td>" + sn+
                 "</td><td class='rowItemName'>" + res.items_of_storein.name +
+                "</td><td class='rowDepartmentName'>" + res.storein_department.name +
                 "</td><td class='rowsize_id'>" +res.size.name +
                 "</td><td class='rowQuantity'>" +res.quantity +
                 "</td><td class='rowUnitName'>" + res.unit.name +
@@ -1764,18 +1979,16 @@
                 "<button class='btn btn-danger dltstoreinItem' data-id=" +
                 res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
 
-            document.getElementById('result').innerHTML += html;
-            sn++;
-            // Clearing the input fields
-            clearInputFields();
+                 document.getElementById('result').innerHTML += html;
+                sn++;
+                // Clearing the input fields
+                clearInputFields();
         }
 
         function clearInputFields() {
             document.getElementById('categorySelect').value = "";
             document.getElementById('ProductName').value = "";
             document.getElementById('qunatities-1').value = "";
-            document.getElementById('size_id').value = "";
-            document.getElementById('units').value = "";
             document.getElementById('unitPrices-1').value = "";
             document.getElementById('singleTotal-1').value = "";
         }
@@ -1796,7 +2009,7 @@
                 url: '{{ route('storein.storeInItemsRetrive', ['storein_id' => $storein->id]) }}',
                 method: 'GET',
                 success: function(response) {
-                    console.log(response);
+                    console.log('table item',response);
                     if (response.storein_items.length <= 0) {
                         return false;
                     }

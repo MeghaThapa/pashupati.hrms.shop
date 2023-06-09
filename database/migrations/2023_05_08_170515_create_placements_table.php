@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('department_id')->index();
-            $table->foreign('department_id')->references('id')->on('department');
+            $table->foreign('department_id')->references('id')->on('storein_departments');
+            $table->enum('status',['active','inactive']);
             $table->timestamps();
         });
     }

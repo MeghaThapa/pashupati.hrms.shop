@@ -13,14 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('non_woven_fabrics', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->string('gsm');
-            $table->string('color');
-            $table->boolean('status')->nullable()->default(1);
-            $table->timestamps();
+        Schema::table('raw_material_items', function (Blueprint $table) {
+            $table->unsignedBigInteger('raw_material_id');
+            $table->foreign('raw_material_id')->references('id')->on('raw_materials')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
@@ -31,6 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('non_woven_fabrics');
+        Schema::table('raw_material_items', function (Blueprint $table) {
+            //
+        });
     }
 };

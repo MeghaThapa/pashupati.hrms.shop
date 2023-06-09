@@ -10,10 +10,12 @@ class ItemsOfStoreinController extends Controller
     {
         // validate form
         $validator = $request->validate([
-            'name' => 'required|string|max:60|unique:items_of_storeins',
+            'name' => 'required|string|max:60',
             'pnumber' => 'required|unique:items_of_storeins,pnumber',
             'category_id' => 'required|integer',
             'department_id' => 'required',
+            'unit_id' =>'required',
+            'size_id' =>'required'
 
         ]);
 
@@ -23,6 +25,9 @@ class ItemsOfStoreinController extends Controller
         $items->name = $request->name;
         $items->pnumber = $request->pnumber;
         $items->category_id = $request->category_id;
+        $items->unit_id = $request->unit_id;
+        $items->size_id = $request->size_id;
+
         $items->department_id = $request->department_id;
         $items->status = $request->status;
         $items->save();
