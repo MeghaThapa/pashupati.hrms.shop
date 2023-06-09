@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 use App\Models\StoreinDepartment;
 use App\Models\StoreinCategory;
 use App\Models\ItemsOfStorein;
+use App\Models\Size;
+use App\Models\Unit;
 
 //for silent creations
 class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
@@ -27,12 +29,17 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $trimDepartment = trim($row['department']);
             $trimCategory = trim($row['category']);
             $trimItem = trim($row['item_name']);
+            $trimSize = trim($row['size']);
+            $trimUnit =  trim($row['unit']);
 
             /*******trims spaces in between**********/
             $department = StoreinDepartment::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimDepartment)])->value('id');
             $category = StoreinCategory::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimCategory)])->value('id');
             $item = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
-             /******* end trims spaces in between**********/
+            $size = Size::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimSize)])->value('id');
+            $unit = Size::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimUnit)])->value('id');
+            // dd($category);
+            /******* end trims spaces in between**********/
 
             /*******for normal trim**********/
             // $department = Department::where('department', $trimDepartment)->value('id');
@@ -40,7 +47,28 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             // $item = Items::where('item', $trimCategory)->value('id');
             /*******end for normal trim**********/
 
-            // if(!$department){
+            if($size == null) {
+                $code = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)), 0, 10);
+                $createSize = Size::create([
+                    "name" => isset($row['name'])?$row['name']:"N/A",
+                    "code" => $code,
+                    'slug' => $code,
+                    'note' => "Excel Import",
+                    "status" => "1"
+                ]);
+                $size = $createSize->id;
+             }
+
+             if($unit == null){
+                $code = rand(0,9999);
+                $unitCreate = Unit::create([
+                    "name" => $row['unit'],
+                    "slug" => Str::slug($row['unit'].$code),
+                    "code" => $code
+                ]);
+                $unit = $unitCreate->id;
+             }
+
             if ($department === null) {
                 $createdepartment = StoreinDepartment::create([
                     'name' => $row['department'],
@@ -49,8 +77,9 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 ]);
                 $department = $createdepartment->id;
                 // return back()->with(['message_err'=>"Department:".$department." Not Found"]);
-            // }elseif(!$category){
-            } elseif ($category === null) {
+            }
+
+            if ($category === null) {
                 $createcategory = StoreinCategory::create([
                     'name' => $row['category'],
                     'slug' => Str::slug($row['category']),
@@ -59,29 +88,36 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 ]);
                 $category = $createcategory->id;
                 // return back()->with(['message_err'=>"Category:".$category ."Not Found"]);
-            // }elseif(!$item){
-            } elseif ($item === null) {
+            }
+
+            if ($item === null) {
                 $createitem= ItemsOfStorein::create([
                     'name' => $row['item_name'],
                     'department_id'=> $department,
                     "category_id" => $category,
                     'status' => "1",
+                    "unit_id" => $unit,
+                    "size_id" => $size,
                     'pnumber' => isset($row['parts_number'])? $row['parts_number'] : "Any",
                 ]);
                 $item = $createitem->id;
                 // return back()->with(['message_err'=>"Category:".$item ."Not Found"]); }
             }
-            if($department && $category && $item ){
-                 Stock::create([
+
+
+            if($department && $category && $item && $size && $unit){
+                Stock::create([
                 'item_id' => $item,
-                'size' => $row['size'],
+                'size' => $size,
                 'quantity' => $row['quantity'],
-                'unit' => $row['unit'],
+                'unit' => $unit,
                 'avg_price' => $row['average_rate'],
                 'total_amount' => $row['total_amount'],
                 'department_id' => $department,
                 'category_id' => $category,
                 ]);
+            }else{
+                dd($department, $category , $item , $size , $unit);
             }
         }
     }
