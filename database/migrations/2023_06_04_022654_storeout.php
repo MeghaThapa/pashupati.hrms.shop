@@ -17,8 +17,8 @@ return new class extends Migration
                 $table->id();
                 $table->date('receipt_date');
                 $table->string('receipt_no');
-                $table->unsignedBigInteger('for'); //Type
-                $table->foreign('for')->references('id')->on('storein_departments');
+                $table->unsignedBigInteger('godam_id'); //Type
+                $table->foreign('godam_id')->references('id')->on('godam');
                 $table->string('total_amount')->default('0');
                 $table->string('remark')->nullable();
                  $table->timestamps();

@@ -13,9 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->unsignedBigInteger('department_id');
-            $table->foreign('department_id')->references('id')->on('department')->nullable();
+        Schema::create('tax', function (Blueprint $table) {
+            $table->id();
+            $table->string('tax_type');
+            $table->string('slug');
+            $table->string('percentage');
+            $table->enum('status',['active', 'inactive']);
+            $table->timestamps();
         });
     }
 
@@ -26,8 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('items', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('tax');
     }
 };

@@ -12,6 +12,7 @@ use App\Models\Charges;
 use App\Models\StoreinDepartment;
 use App\Models\SubCategory;
  use App\Models\StoreinType;
+
 // use DBApp\Models\Setupstoreout;
 use App\Models\Storein;
 use App\Models\ItemsOfStorein;
@@ -38,6 +39,7 @@ class StoreinController extends Controller
      */
     public function index(Request $request)
     {
+
         $storeinDatas = Storein::with('supplier')->orderBy('created_at', 'DESC')->get();
 
         return view('admin.storein.index', compact('storeinDatas'));
@@ -278,7 +280,47 @@ class StoreinController extends Controller
     // not in use
     public function getcategoryItems($category_id)
     {
-        return ItemsOfStorein::with('storeinCategory')->where('category_id', $category_id)->get();
+        return ItemsOfStorein::where('category_id', $category_id)
+        ->select('name')
+        ->distinct()
+        ->get();
+    }
+    public function getDepartmentSizeUnit($items_of_storein_name){
+        $items_of_storein =ItemsOfStorein::with('storeinDepartment:id,name','unit:id,name','size:id,name')
+        ->where('name', $items_of_storein_name)
+        ->groupBy(['size_id','unit_id','department_id'])
+        ->get(['size_id','unit_id','department_id']);
+        $ArrayItemStorein =$items_of_storein->toArray();
+
+        $unitArray = [];
+        $sizeArray = [];
+        $departmentArray = [];
+
+        foreach ($items_of_storein as $item) {
+            $unit = $item->unit;
+            $size = $item->size;
+            $department = $item->storeinDepartment;
+
+            if (!in_array($unit, $unitArray, true)) {
+                $unitArray[] = $unit;
+            }
+
+            if (!in_array($size, $sizeArray, true)) {
+                $sizeArray[] = $size;
+            }
+
+            if (!in_array($department, $departmentArray, true)) {
+                $departmentArray[] = $department;
+            }
+        }
+
+        return response()->json(
+            [
+                'units' => $unitArray,
+                'size' => $sizeArray,
+                'department' => $departmentArray
+            ]
+            );
     }
     public function EditItemStoreData(Request $request)
     {
@@ -384,25 +426,28 @@ class StoreinController extends Controller
     // m
     public function saveStoreinItems(Request $request, $id)
     {
-try{
+        try{
         DB::beginTransaction();
         $validator = $request->validate([
             'category_id'  => 'required',
             'item_id'   => 'required',
-            'units'         => 'required',
-            'size_id'       => 'required',
             'quantity'      => 'required|numeric',
             'unit_price'   => 'required|numeric',
+            'size_id'   => 'required',
+            'unit_id'   => 'required',
+            'department_id'   => 'required',
         ]);
+      //  name comes here instead of item id so converting name to id
+        $itemofstorein_id=ItemsOfStorein::where('name',$request->item_id)->first()->id;
         $totalAmt = ($request->quantity * $request->unit_price);
-        // return $request;
+
         $storeinItem = new StoreinItem();
         $storeinItem->storein_category_id = $request->category_id;
-        $storeinItem->storein_item_id = $request->item_id;
+        $storeinItem->storein_item_id = $itemofstorein_id;
         $storeinItem->quantity = $request->quantity;
-        $storeinItem->unit_id = $request->units;
-        // recent added
-        $storeinItem->size_id = $request->size_id;
+        $storeinItem->size_id=$request->size_id;
+        $storeinItem->unit_id = $request->unit_id;
+        $storeinItem->department_id =$request->department_id;
         $storeinItem->storein_id = $id;
         $storeinItem->price = $request->unit_price;
         $storeinItem->total_amount = $totalAmt;
@@ -418,10 +463,35 @@ try{
             return 'some thing went wrong in store in item';
         }
     }
+
+    //get size of storeinitem
+    public function getSizeOfItems($items_of_storein_id){
+      $sizeOfItems = ItemsOfStorein::with('size')->find($items_of_storein_id);
+   // ->get(['size.size_id', 'size.name']);
+        // foreach($sizeOfItems as $sizeOfItem){
+        //     $size=Size::find($sizeOfItem)->get(['id','name']);
+        // }
+       // $size=Size::find('$sizeOfItem')->get(['id','name']);
+        return $sizeOfItems;
+        //  return response()->json([
+        //         'size' => $sizeOfItem,
+        //     ]);
+    }
+
     // getItems department name
-    public function getItemsDepartment($product_id)
+    public function getItemsDepartment($items_of_storein_name)
     {
-        return ItemsOfStorein::with('storeinDepartment')->find($product_id);
+        $items_of_storein =ItemsOfStorein::with('storeinDepartment')->where('name', $items_of_storein_name)->select('department_id')
+        ->distinct()
+        ->get();
+        return $items_of_storein;
+    }
+
+    public function getUnitOfItems($items_of_storein_name){
+        $items_of_storein =ItemsOfStorein::with('unit')->where('name', $items_of_storein_name)->select('department_id')
+        ->distinct()
+        ->get();
+        return $items_of_storein;
     }
     // layout
     public function storeinItemCreate($id)
@@ -441,11 +511,11 @@ try{
     }
     public function storeInItemsRetrive($storein_id)
     {
-        return Storein::with(['storeinItems.storeinCategory', 'storeinItems.itemsOfStorein', 'storeinItems.unit', 'storeinItems.size'])->find($storein_id);
+        return Storein::with(['storeinItems.storeinCategory:id,name', 'storeinItems.itemsOfStorein', 'storeinItems.unit:id,name', 'storeinItems.size:id,name','storeinItems.storeinDepartment:id,name'])->find($storein_id);
     }
     public function getStoreInById($id)
     {
-        return StoreinItem::with(['storeinCategory', 'itemsOfStorein', 'unit', 'size'])->find($id);
+        return StoreinItem::with(['storeinCategory:id,name', 'itemsOfStorein', 'unit:id,name', 'size:id,name','storeinDepartment:id,name'])->find($id);
     }
 
 

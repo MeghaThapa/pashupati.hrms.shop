@@ -27,12 +27,16 @@ class StockController extends Controller
         ->join('storein_categories','stocks.category_id','=','storein_categories.id')
         ->join('items_of_storeins','stocks.item_id','=','items_of_storeins.id')
         ->join('storein_departments','stocks.department_id','=','storein_departments.id')
+        ->join('units','stocks.unit','=','units.id')
+        ->join('sizes','stocks.size','=','sizes.id')
         ->select(
         'stocks.*',
         'storein_categories.name as category_name',
         'items_of_storeins.name as item_name',
         'items_of_storeins.pnumber as item_num',
-        'storein_departments.name as department_name'
+        'storein_departments.name as department_name',
+        'units.name as unit_name',
+        'sizes.name as size_name',
         )->paginate($TOTAL_ROW);
         $departments=StoreinDepartment::where('status','active')->get();
         $categories =StoreinCategory::where('status','active')->get();
@@ -55,12 +59,16 @@ class StockController extends Controller
         ->join('storein_categories', 'stocks.category_id', '=', 'storein_categories.id')
         ->join('items_of_storeins', 'stocks.item_id', '=', 'items_of_storeins.id')
         ->join('storein_departments', 'stocks.department_id', '=', 'storein_departments.id')
+         ->join('units','stocks.unit','=','units.id')
+        ->join('sizes','stocks.size','=','sizes.id')
         ->select(
             'stocks.*',
             'storein_categories.name as category_name',
             'items_of_storeins.name as item_name',
             'items_of_storeins.pnumber as item_num',
-            'storein_departments.name as department_name'
+            'storein_departments.name as department_name',
+            'units.name as unit_name',
+            'sizes.name as size_name',
         );
         if ($request->storein_department || $request->storein_department != null) {
             $stocks->where('stocks.department_id', $request->storein_department);

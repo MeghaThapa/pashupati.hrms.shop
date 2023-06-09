@@ -32,9 +32,9 @@
     <!-- Google font -->
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap"
         rel="stylesheet">
-    
+
     @stack('styles')
-    
+
     <!-- Main css -->
     <link rel="stylesheet" type="text/css" href=" {{ asset('css/app.css') }} ">
     {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"> --}}
@@ -44,7 +44,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/app.js') }} "></script>
     @yield('extra-style')
-    
+
 </head>
 
 <body
@@ -81,10 +81,12 @@
 
     <!-- REQUIRED SCRIPTS -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.   4.min.js"></script>
     <script src="{{ asset('js/main.js') }} "></script>
     <script src="{{ asset('js/sidebar_control.js') }} "></script>
     @yield('extra-script')
+
+
     <!-- Language script -->
 
 </body>

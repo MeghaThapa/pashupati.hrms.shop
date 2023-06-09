@@ -42,5 +42,8 @@ class DatabaseSeeder extends Seeder
                 'value' => $value
             ]);
         }
+
+
+
     }
 }
