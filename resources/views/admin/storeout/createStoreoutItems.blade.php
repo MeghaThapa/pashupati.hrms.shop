@@ -106,8 +106,10 @@
                     <select class="advance-select-box form-control" id="items" name="item_id" required>
                         <option value="" selected disabled>{{ __('Select an item') }}</option>
                         @foreach ($items as $key => $stock)
+                         @if ($stock && $stock->item && $stock->sizes)
                             <option value="{{ $stock->item_id }}">{{ $stock->item->name }} /ppNo: {{$stock->item->pnumber}} /size: {{$stock->sizes->name}}
                             </option>
+                        @endif
                         @endforeach
                     </select>
                     @error('item_name')
@@ -171,7 +173,9 @@
                     <select class="advance-select-box form-control" id="departments" name="department" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
                         @foreach ($storeinDepartment as $department)
-                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                             @if ($department && $department->name)
+                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endif
                         @endforeach
                     </select>
                     @error('department')
@@ -448,8 +452,10 @@
                                         required>
                                         <option value="" selected disabled>{{ __('Select an item') }}</option>
                                         @foreach ($items as $key => $stock)
-                                            <option value="{{ $stock->item_id }}">{{ $stock->item->item }}
+                                         @if ($stock && $stock->item)
+                                            <option value="{{ $stock->item_id }}">{{ $stock->item->name }}
                                             </option>
+                                        @endif
                                         @endforeach
                                     </select>
                                     @error('nameModel')

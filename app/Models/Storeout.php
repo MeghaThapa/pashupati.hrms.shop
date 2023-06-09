@@ -18,5 +18,8 @@ class Storeout extends Model
     {
         return $this->hasMany(StoreOutItem::class, "storeout_id", "id");
     }
+    public function godam(){
+         return $this->hasMany(StoreOutItem::Godam, "storeout_id", "id");
+    }
 
 }

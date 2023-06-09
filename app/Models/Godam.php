@@ -9,8 +9,13 @@ class Godam extends Model
 {
     use HasFactory;
     protected  $id = "id";
-    protected $table = "godams";
+    protected $table = "godam";
     protected $fillable = [
-        'name','status','created_at','updated_at'
+        'name','status'
     ];
+
+     public function isActive()
+    {
+        return $this->status == 'active' ? true : false;
+    }
 }

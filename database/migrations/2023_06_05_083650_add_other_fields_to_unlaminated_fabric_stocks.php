@@ -13,14 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('non_woven_fabrics', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->string('gsm');
-            $table->string('color');
-            $table->boolean('status')->nullable()->default(1);
-            $table->timestamps();
+        Schema::table('unlaminated_fabric_stocks', function (Blueprint $table) {
+            $table->string('bill_number');
+            $table->string('bill_date');
         });
     }
 
@@ -31,6 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('non_woven_fabrics');
+        Schema::table('unlaminated_fabric_stocks', function (Blueprint $table) {
+            //
+        });
     }
 };

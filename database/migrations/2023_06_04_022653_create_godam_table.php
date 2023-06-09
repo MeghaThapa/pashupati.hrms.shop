@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('raw_material_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('raw_material_id');
-            $table->foreign('raw_material_id')->references('id')->on('raw_materials')->onDelete('cascade')->onUpdate('cascade');
+        Schema::create('godam', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->enum('status',['active','inactive']);
+            $table->timestamps();
         });
     }
 
@@ -26,8 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('raw_material_items', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('godam');
     }
 };

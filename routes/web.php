@@ -31,7 +31,7 @@ use App\Http\Controllers\FabricNonWovenController;
 
 use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
-
+use App\Http\Controllers\GodamController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -210,6 +210,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterialStock/filterAccDanaName/{danaName_id}',[RawMaterialStockController::class,'filterAccDanaName'])->name('rawMaterialStock.filterAccDanaName');
     Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
     Route::post('rawMaterialStock/filterAccGodam',[RawMaterialStockController::class,'filterAccGodam'])->name('rawmaterial.filterAccGodam');
+
+
+    //Godam
+    Route::get('godam/index',[GodamController::class,'index'])->name('godam.index');
+    Route::get('godam/create',[GodamController::class,'create'])->name('godam.create');
+    Route::post('godam/store',[GodamController::class,'store'])->name('godam.store');
+    Route::get('godam/edit/{godam_id}',[GodamController::class,'edit'])->name('godam.edit');
+    Route::post('godam/update/{godam_id}',[GodamController::class,'update'])->name('godam.update');
+    Route::get('godam/delete/{godam_id}',[GodamController::class,'delete'])->name('godam.delete');
 
 
     //RawMaterial Items
@@ -449,7 +458,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
-   
+
 
 
     //fabric send and receive
@@ -482,8 +491,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
+    Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
+
     Route::get('nonwovenfabrics-receiveentry/{id}/status', 'FabricNonWovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
     Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'FabricNonWovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
+    Route::post('nonwovenfabrics-receiveentry/getDataList', 'FabricNonWovenReceiveEntryController@getDataList')->name('getDataList');
+
+    Route::post('nonwovenfabrics-receiveentry/getDanaList', 'FabricNonWovenReceiveEntryController@getDanaList')->name('getDanaList');
+
+
+    Route::post('department/getPlantTypeList', 'FabricNonWovenReceiveEntryController@getPlantTypeList')->name('getPlantTypeList');
+     Route::post('department/getPlantNameList', 'FabricNonWovenReceiveEntryController@getPlantNameList')->name('getPlantNameList');
 
     // fabric_group route
     Route::get('/fabric-groups/pdf', 'FabricGroupController@createPDF')->name('fabric-groups.pdf');
@@ -643,7 +661,10 @@ Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 
 //Storein route
 // Route::resource('storein',StoreinController::class);
-Route::get('storein/getItemsDepartment/{product_id}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
+Route::get('storein/getItemsDepartment/{items_of_storein_name}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
+Route::get('storein/getUnitOfItems/{items_of_storein_name}', 'StoreinController@getUnitOfItems')->name('storein.getUnitOfItems');
+
+
 Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
 Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');
 Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('storein.storeinIndex');
@@ -660,6 +681,10 @@ Route::get('storein/storeinItemCreate/{id}', 'StoreinController@storeinItemCreat
 Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemDelete')->name('storein.storeinItemDelete');
 Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
 Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
+Route::get('/storein/getSizeOfItems/{items_of_storein_id}', 'StoreinController@getSizeOfItems')->name('storein.getSizeOfItems');
+Route::get('/storein/getDepartmentSizeUnit/{items_of_storein_name}', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
+
+
 
 Route::resource('storein', 'StoreinController', [
     'names' => [

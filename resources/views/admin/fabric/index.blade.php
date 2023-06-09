@@ -108,8 +108,8 @@
                                 <td>{{ $fabric->gross_wt}} </td>
                                 <td>{{ $fabric->net_wt }}</td>
                                 <td>{{ $fabric->meter }}</td>
-                                <td>{{round($fabric->gram, 2)}}</td>
-                                <td>{{round(round($fabric->gram, 2) /  (int) filter_var($fabric->name, FILTER_SANITIZE_NUMBER_INT) )}}</td>
+                                {{-- <td>{{round($fabric->gram, 2)}}</td> --}}
+                                {{-- <td>{{round(round($fabric->gram, 2) /  (int) filter_var($fabric->name, FILTER_SANITIZE_NUMBER_INT) )}}</td> --}}
                                 <td>
                                     @if ($fabric->isActive())
                                         <span class="badge badge-success">{{ __('Active') }}</span>

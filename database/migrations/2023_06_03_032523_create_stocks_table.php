@@ -21,9 +21,14 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('storein_categories');
             $table->unsignedBigInteger('item_id')->index();
             $table->foreign('item_id')->references('id')->on('items_of_storeins');
-            $table->string('size')->nullable();
             $table->string('quantity');
-            $table->string('unit');
+
+             $table->unsignedBigInteger('size');
+            $table->foreign('size')->references('id')->on('sizes');
+
+            $table->unsignedBigInteger('unit');
+            $table->foreign('unit')->references('id')->on('units');
+
             $table->string('avg_price');
             $table->string('total_amount');
 

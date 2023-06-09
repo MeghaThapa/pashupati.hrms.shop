@@ -7,7 +7,11 @@ use App\Models\Fabric;
 use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
 use App\Models\Department;
+use App\Models\ProcessingStep;
+use App\Models\ProcessingSubcat;
+use App\Models\Shift;
 use Maatwebsite\Excel\Facades\Excel;
+use Response;
 
 class FabricNonWovenReceiveEntryController extends Controller
 {
@@ -26,7 +30,11 @@ class FabricNonWovenReceiveEntryController extends Controller
     public function create()
     {
         $departments = Department::get();
-        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments'));
+        $shifts = Shift::get();
+        $nonwovenfabrics = NonWovenFabric::get();
+        $receipt_no = "NFE"."-".getNepaliDate(date('Y-m-d'));
+        // dd($date);
+        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics','receipt_no'));
     }
 
     public function store(Request $request)
@@ -34,31 +42,48 @@ class FabricNonWovenReceiveEntryController extends Controller
         // dd('hello');
         //validate form
 
+        dd($request);
+        $fabric_gsm = $request->fabric_gsm;
 
-        $validator = $request->validate([
-            'name' => 'required|string|max:60|unique:non_woven_fabrics',
-            'gsm' => 'required|numeric|unique:non_woven_fabrics',
-            'color' => 'required',
-        ]);
+        foreach( $fabric_gsm AS $gsm ){
+          $fabricnonwovenreciveentry= FabricNonWovenReciveEntry::create([
+            'receive_date' => $request->input('receive_date'),
+            'receive_no' => $request->input('receive_no'),
+            'godam_data' => $request->input('godam_data'),
+            'planttype_data' => $request->input('planttype_data'),
+            'plantname_data' => $request->input('plantname_data'),
+            'shift' => $request->input('shift'),
+            'fabric_roll' => $request->input('fabric_roll'),
+            'fabric_gsm' => $gsm,
+            'fabric_name' => $request->input('fabric_name'),
+            'fabric_color' => $request->input('fabric_color'),
+            'length' => $request->input('length'),
+            'gross_weight' => $request->input('gross_wt'),
+            'net_weight' => $request->input('net_wt'),
+          ]);
 
-        $fabric = NonWovenFabric::create([
-            'name' => $request['name'],
-            'gsm' => $request['gsm'],
-            'color' => $request['color'],
-        ]);
+          $fabricnonwovenreciveentry= FabricNonWovenReceiveEntryStock::create([
+            'receive_date' => $request->input('receive_date'),
+            'receive_date' => $request->input('receive_date'),
+            'receive_no' => $request->input('receive_no'),
+            'godam_data' => $request->input('godam_data'),
+            'planttype_data' => $request->input('planttype_data'),
+            'plantname_data' => $request->input('plantname_data'),
+            'shift' => $request->input('shift'),
+            'fabric_roll' => $request->input('fabric_roll'),
+            'fabric_gsm' => $gsm,
+            'fabric_name' => $request->input('fabric_name'),
+            'fabric_color' => $request->input('fabric_color'),
+            'length' => $request->input('length'),
+            'gross_weight' => $request->input('gross_wt'),
+            'net_weight' => $request->input('net_wt'),
+          ]);
+
+        }
 
 
-        // store subcategory
-        // $fabric = Fabric::create([
-        //     'name' => $request['name'],
-        //     'roll_no' => $request['roll_no'],
-        //     'loom_no' => $request['loom_no'],
-        //     'fabricgroup_id' => $request['fabricgroup_id'],
-        //     'gross_wt' => $request['gross_wt'],
-        //     'net_wt' => $request['net_wt'],
-        //     'meter' => $request['meter'],
-        //     'gram' => '00',
-        // ]);
+       
+
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
 
@@ -133,5 +158,35 @@ class FabricNonWovenReceiveEntryController extends Controller
             ]);
         }
         return redirect()->route('nonwovenfabrics.index')->withSuccess('Fabric status changed successfully!');
+    }
+
+    public function getPlantTypeList(Request $request){
+      $godam_id = $request->godam_id;
+      $department_list = ProcessingStep::where('department_id',$godam_id)
+      // ->where('is_active','1')
+      ->with('department')
+      ->get();
+      // dd($department_list);
+      return Response::json($department_list);
+    }
+
+    public function getPlantNameList(Request $request){
+        // dd('hh');
+        // dd($request);
+      $planttype_id = $request->planttype_id;
+      $plantname_list = ProcessingSubcat::where('processing_steps_id',$planttype_id)
+      // ->where('is_active','1')
+      ->get();
+      return Response::json($plantname_list);
+    }
+
+    public function getDataList(Request $request)
+    {
+        return view('admin.nonwovenfabrics-receiveentry.bill_row',compact('request'));
+    }
+
+    public function getDanaList(Request $request)
+    {
+        return view('admin.nonwovenfabrics-receiveentry.bill_dana',compact('request'));
     }
 }

@@ -101,10 +101,10 @@
                                     </label>
                                     <select class="advance-select-box form-control" id="for_id" name="for_id" required>
                                         <option value="" selected disabled>{{ __('Select where to move ') }}</option>
-                                            @foreach ($storeinDepartment as $department)
-                                            <option value="{{$department->id}}"
-                                                @if ($storeOut) {{ $storeOut->for == $department->id ? 'selected' : '' }} @endif>
-                                                {{ $department->name }}
+                                            @foreach ($godams as $godam)
+                                            <option value="{{$godam->id}}"
+                                                @if ($storeOut) {{ $storeOut->godam_id == $godam->id ? 'selected' : '' }} @endif>
+                                                {{ $godam->name }}
                                             </option>
                                             @endforeach
 
