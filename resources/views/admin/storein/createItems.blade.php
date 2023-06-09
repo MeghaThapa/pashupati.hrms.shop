@@ -84,7 +84,7 @@
 
                 <div class="row">
                             <div class="col-md-2 form-group">
-                                <label for="Category" class="col-form-label">{{ __('Storein Category Name') }}<span class="required-field">*</span>
+                                <label for="Category" class="col-form-label">{{ __('Category Name') }}<span class="required-field">*</span>
                                 </label>
                                 <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
                                     data-target="#storeinCategoryModel" style="margin-top:0 !important; top:8px;float:right;">
@@ -122,6 +122,7 @@
                                 @enderror
                             </div>
 
+
                             {{-- Quantity --}}
 
                             <div class="col-md-2">
@@ -151,29 +152,50 @@
                                     </span>
                                 @enderror
                             </div>
-                            {{-- <div class="col-md-6">
-                                <label for="discounts[]" class="col-form-label">{{ __('Discount') }}(%)</label>
-                                <input type="number" step="any" min="0" max="99"
-                                    class="form-control @error('discounts') is-invalid @enderror calculator" id="discounts-1"
-                                    data-number="1" name="discounts" placeholder="{{ __('Discount') }}">
-                                @error('discounts')
+                        </div>
+
+                <div class="d-flex  mt-3" style="gap:10px"  >
+                     {{-- size --}}
+                              <div class="col-md-2">
+                                <label for="qunatities" class="col-form-label">{{ __('Size') }}<span
+                                        class="required-field">*</span></label>
+                                 <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
+                                    id="SideId" name="size_id" required>
+                                    <option value="" selected disabled>{{ __('Select a Size') }}</option>
+                                </select>
+                                @error('quantities')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div> --}}
-
-                </div>
-                {{--Department--}}
-                <div class="d-flex  mt-3" style="gap:10px"  >
-                    <div class="d-flex" style="gap:10px" >
+                            </div>
+                            {{-- unit --}}
+                             <div class="col-md-2">
+                                <label for="qunatities" class="col-form-label">{{ __('Unit') }}<span
+                                        class="required-field">*</span></label>
+                                 <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
+                                    id="unitId" name="unit_id" required>
+                                    <option value="" selected disabled>{{ __('Select a Unit') }}</option>
+                                </select>
+                                @error('quantities')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            {{--Department--}}
+                    <div class="col-md-4" style="gap:10px" >
                         <div>
                             <label for="singleTotal[]" class="col-form-label">{{ __('Department') }}</label>
                         </div>
                         <div>
-                            <input type="text" step="any" min="0" style="width:200px; "
-                                class="form-control @error('singleTotal') is-invalid @enderror" id="department_id"
-                                name="department_id" placeholder="{{ __('Department name') }}" data-ignore readonly tabindex="-1">
+                            <select class="advance-select-box form-control"
+                                    id="departmentId" name="department_id" required>
+                                    <option value="" selected disabled>{{ __('Select a department') }}</option>
+                            </select>
+                            {{-- <input type="text" step="any" min="0" style="width:200px; "
+                                class="form-control @error('singleTotal') is-invalid @enderror" id="department_id" --}}
+                                {{-- name="department_id" placeholder="{{ __('Department name') }}" data-ignore readonly tabindex="-1"> --}}
                         </div>
                     </div>
                 <div class="d-flex" style="gap:10px">
@@ -203,7 +225,8 @@
                             <tr>
                                 <th>{{ __('S.No') }}</th>
                                 {{-- <th>{{ __('Category Name') }}</th> --}}
-                                <th>{{ __('Item Name') }}</th>
+                                <th>{{ __('Item') }}</th>
+                                <th>{{ __('Department') }}</th>
                                 <th>{{ __('Size') }}</th>
                                 <th>{{ __('Quantity') }}</th>
                                 <th>{{ __('Unit') }}</th>
@@ -1541,34 +1564,123 @@
         let product_id = e.params.data.id;
         console.log(product_id) ;
         getItemsDepartment(product_id);
+
     });
     $('#categorySelect').on('select2:select', function (e) {
         let category_id = e.params.data.id;
         getCategoryItems(category_id,'blade');
-
-    });
-    $('#ProductName').on('select2:select', function (e) {
-        let product_id = e.params.data.id;
-
-        getItemsDepartment(product_id);
     });
 
-   function getItemsDepartment(product_id){
-    $.ajax({
-                    url: "{{ route('storein.getItemsDepartment', ['product_id' => ':Replaced']) }}".replace(
+    $('#ProductName').on('select2:select', async function (e) {
+        let item_name = e.params.data.id;
+       let object = await getDepartmentSizeUnit(item_name);
+       fillOptionInSelect(object.department,'#departmentId');
+       fillOptionInSelect(object.size,'#SideId');
+       fillOptionInSelect(object.units,'#unitId');
+    });
+
+    function getDepartmentSizeUnit(item_name){
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                    url: "{{ route('storein.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced']) }}".replace(
                         ':Replaced',
-                        product_id),
+                        item_name),
+                    method: 'GET',
+                    success: function(response) {
+                            resolve(response);
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+            });
+    }
+    function fillOptionInSelect(obj,element_id){
+            let selectOptions = '';
+            if(obj.length==0){
+                selectOptions += '<option disabled selected>' + 'no size found'+ '</option>';
+            }else{
+                selectOptions += '<option disabled selected>' + 'select a item'+ '</option>';
+                for (let i = 0; i < obj.length; i++) {
+                let optionText = obj[i].name;
+                let optionValue = obj[i].id;
+                let option = new Option(optionText, optionValue);
+                selectOptions += option.outerHTML;
+            }
+            }
+            $(element_id).html(selectOptions);
+    }
+
+   function getUnitOfItemsOfStorin(item_name){
+    let myPromise = new Promise(function(resolve, reject) {
+            $.ajax({
+                    url: "{{ route('storein.getUnitOfItems', ['items_of_storein_name' => ':Replaced']) }}".replace(
+                        ':Replaced',
+                        item_name),
 
                     method: 'GET',
                     success: function(response) {
-                        console.log(response);
-                      document.getElementById('department_id').value=response.storein_department.name;
+                        //only unit found
+                        console.log('ajax size: ',response);
+                        let selectOptions = '';
+
+                        if(response.length==0){
+                            selectOptions += '<option disabled selected>' + 'no size found'+ '</option>';
+                        }else{
+                            selectOptions += '<option disabled selected>' + 'select Size item'+ '</option>';
+
+                            for (let i = 0; i < response.length; i++) {
+                            let optionText = response[i].size.name;
+                            let optionValue = response[i].size.id;
+                            let option = new Option(optionText, optionValue);
+                            selectOptions += option.outerHTML;
+                            }
+
+                        }
+                            $('#SideId').html(selectOptions);
+                            resolve(response);
 
                     },
                     error: function(xhr, status, error) {
                         reject(error);
                     }
                 });
+            });
+        }
+
+        function getItemsDepartment(items_of_storein_name){
+             let myPromise = new Promise(function(resolve, reject) {
+            $.ajax({
+                    url: "{{ route('storein.getItemsDepartment', ['items_of_storein_name' => ':Replaced']) }}".replace(
+                        ':Replaced',
+                        items_of_storein_name),
+
+                    method: 'GET',
+                    success: function(response) {
+                        let selectOptions = '';
+
+                        if(response.length==0){
+                            selectOptions += '<option disabled selected>' + 'no department found'+ '</option>';
+                        }else{
+                            selectOptions += '<option disabled selected>' + 'select department'+ '</option>';
+
+                            for (let i = 0; i < response.length; i++) {
+                            let optionText = response[i].storein_department.name;
+                            let optionValue = response[i].storein_department.id;
+                            let option = new Option(optionText, optionValue);
+                            selectOptions += option.outerHTML;
+                            }
+
+                        }
+                            $('#departmentId').html(selectOptions);
+                            resolve(response);
+
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+                 });
 }
    function getCategoryItems(category_id,click_by='blade'){
     return new Promise(function(resolve, reject) {
@@ -1589,8 +1701,8 @@
                             selectOptions += '<option disabled selected>' + 'select an item'+ '</option>';
 
                             for (let i = 0; i < response.length; i++) {
-                            let optionText = response[i].name + '/size: ' + response[i].size.name + '/unit: ' + response[i].unit.name;
-                            let optionValue = response[i].id;
+                            let optionText = response[i].name;
+                            let optionValue = response[i].name;
                             let option = new Option(optionText, optionValue);
                             selectOptions += option.outerHTML;
                             }
@@ -1801,13 +1913,13 @@
         document.getElementById('createStoreInItem').addEventListener('submit', function(event) {
             event.preventDefault();
             const form = event.target;
-          //  let size_id = form.elements['size_id'].value;
+            let size_id = form.elements['size_id'].value;
             let category_id = form.elements['categoryName'].value;
             let product_id = form.elements['ProductName'].value;
             let quantities = form.elements['quantities'].value;
-          //  let unit_id = form.elements['units'].value;
+            let unit_id = form.elements['unit_id'].value;
             let unit_price = form.elements['unitPrices'].value;
-
+            let department_id = form.elements['department_id'].value;
 
             $.ajax({
                 url: '{{ route('storein.saveStoreinItems', ['id' => $storein->id]) }}',
@@ -1817,9 +1929,11 @@
                     category_id: category_id,
                     item_id: product_id,
                     quantity: quantities,
-                    //units: unit_id,
+                    unit_id: unit_id,
                     unit_price: unit_price,
-                   // size_id: size_id
+                   size_id: size_id,
+                    department_id:department_id
+
                     // Goes Into Request
                 },
                 success: function(response) {
@@ -1852,9 +1966,10 @@
 
             html = "<tr id=editRow-" + res.id + "><td>" + sn+
                 "</td><td class='rowItemName'>" + res.items_of_storein.name +
-                "</td><td class='rowsize_id'>" +res.items_of_storein.size.name +
+                "</td><td class='rowDepartmentName'>" + res.storein_department.name +
+                "</td><td class='rowsize_id'>" +res.size.name +
                 "</td><td class='rowQuantity'>" +res.quantity +
-                "</td><td class='rowUnitName'>" + res.items_of_storein.unit.name +
+                "</td><td class='rowUnitName'>" + res.unit.name +
                 "</td><td class='rowPrice'>" + res.price +
                 "</td><td class='rowTotalAmount'>" +res.total_amount +
                 "</td> <td>" +

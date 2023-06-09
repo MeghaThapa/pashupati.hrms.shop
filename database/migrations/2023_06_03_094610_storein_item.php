@@ -26,6 +26,15 @@ return new class extends Migration
             $table->unsignedBigInteger('storein_item_id');
             $table->foreign('storein_item_id')->references('id')->on('items_of_storeins');
 
+            $table->unsignedBigInteger('size_id');
+            $table->foreign('size_id')->references('id')->on('sizes');
+
+            $table->unsignedBigInteger('unit_id');
+            $table->foreign('unit_id')->references('id')->on('units');
+
+             $table->unsignedBigInteger('department_id');
+            $table->foreign('department_id')->references('id')->on('storein_departments');
+
             $table->string('quantity');
             $table->string('price');
             $table->string('total_amount')->default('0');

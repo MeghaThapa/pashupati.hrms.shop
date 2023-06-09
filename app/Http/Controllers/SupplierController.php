@@ -67,7 +67,7 @@ class SupplierController extends Controller
         }
 
         // store supplier
-        Supplier::create([
+        $supplier = Supplier::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone_number' => $request->phone,
@@ -77,6 +77,10 @@ class SupplierController extends Controller
             'profile_picture' => $imageName,
             'status' => $request->status
         ]);
+        //   return response()->json([
+        //         'message' =>'Supplier Created Successfully',
+        //         'supplier' => $supplier,
+        //     ],201);
 
         return redirect()->back()->withSuccess('Supplier added successfully!');
     }
