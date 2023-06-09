@@ -132,4 +132,6 @@ class FabricNonWovenController extends Controller
         }
         return redirect()->route('nonwovenfabrics.index')->withSuccess('Fabric status changed successfully!');
     }
+
+   
 }
