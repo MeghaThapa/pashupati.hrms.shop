@@ -46,7 +46,7 @@ class SizeController extends Controller
         // store size
         try{
             $size = Size::create([
-                'name' => $request->name,
+                'name' =>strtolower($request->name),
                 'code' => $request->code,
                 'note' => clean($request->note),
                 'status' => $request->status
