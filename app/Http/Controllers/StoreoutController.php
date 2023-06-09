@@ -119,6 +119,7 @@ class StoreoutController extends Controller
         ->where('size',$storeOutItem->size)
         ->first();
         $stock->quantity += $storeOutItem->quantity;
+        $stock->total_amount = $stock->quantity*$stock->avg_price;
         $stock->save();
         $storeOutItem->delete();
         DB::commit();
@@ -245,6 +246,7 @@ class StoreoutController extends Controller
                     ], 500);
                 } else {
                     $stock->quantity = $stock->quantity - $request->quantity;
+                    $stock->total_amount = $stock->quantity * $stock->avg_price;
                     $stock->save();
                     if ($stock->quantity <= 0) {
                         $stock->delete();
