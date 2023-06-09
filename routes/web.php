@@ -652,7 +652,10 @@ Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 
 //Storein route
 // Route::resource('storein',StoreinController::class);
-Route::get('storein/getItemsDepartment/{product_id}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
+Route::get('storein/getItemsDepartment/{items_of_storein_name}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
+Route::get('storein/getUnitOfItems/{items_of_storein_name}', 'StoreinController@getUnitOfItems')->name('storein.getUnitOfItems');
+
+
 Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
 Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');
 Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('storein.storeinIndex');
@@ -669,6 +672,10 @@ Route::get('storein/storeinItemCreate/{id}', 'StoreinController@storeinItemCreat
 Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemDelete')->name('storein.storeinItemDelete');
 Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
 Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
+Route::get('/storein/getSizeOfItems/{items_of_storein_id}', 'StoreinController@getSizeOfItems')->name('storein.getSizeOfItems');
+Route::get('/storein/getDepartmentSizeUnit/{items_of_storein_name}', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
+
+
 
 Route::resource('storein', 'StoreinController', [
     'names' => [

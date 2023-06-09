@@ -14,11 +14,9 @@ class Stock extends Model
 
     public static function createStock($storeinItem)
     {
-        $item = ItemsOfStorein::find($storeinItem->storein_item_id);
-
-
-        $stock = Stock::where('item_id', $storeinItem->storein_item_id)
-        ->where('department_id', $item->department_id)
+        $stock = Stock::where('item_id', $storeinItem->storein_item_id )
+        ->where('department_id', $storeinItem->department_id)
+        ->where('unit',$storeinItem->unit_id)
         ->where('size',$storeinItem->size_id)
         ->first();
 
@@ -34,10 +32,10 @@ class Stock extends Model
             $stock->total_amount  =  $stock->quantity * $stock->avg_price;
         }
         $stock->item_id = $storeinItem->storein_item_id;
-        $stock->size = $item->size_id;
-        $stock->unit = Unit::find($item->unit_id)->name;
-        $stock->department_id = $item->department_id;
-        $stock->category_id = $item->category_id;
+        $stock->size = $storeinItem->size_id;
+        $stock->unit = $storeinItem->unit_id;
+        $stock->department_id = $storeinItem->department_id;
+        $stock->category_id = $storeinItem->storein_category_id;
         $stock->save();
     }
 
@@ -78,6 +76,10 @@ class Stock extends Model
     public function sizes()
     {
         return $this->belongsTo(Size::class, 'size', "id");
+    }
+      public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id', "id");
     }
 
     public function department()

@@ -18,6 +18,10 @@ class StoreinItem extends Model
     {
         return $this->belongsTo('App\Models\Size', 'size_id', "id");
     }
+    public function storeinDepartment()
+    {
+        return $this->belongsTo('App\Models\StoreinDepartment', 'department_id', "id");
+    }
     public function itemsOfStorein()
     {
         return $this->belongsTo('App\Models\ItemsOfStorein', 'storein_item_id', "id");

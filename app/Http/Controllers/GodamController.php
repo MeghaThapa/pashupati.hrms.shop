@@ -26,7 +26,11 @@ class GodamController extends Controller
         $godam->name=$request->name;
         $godam->status=$request->status;
         $godam->save();
-        return redirect()->route('godam.index')->with("success", "Godam Created Successfully");
+         return response()->json([
+                'message' =>'godam Created Successfully',
+                'godam' => $godam,
+            ],201);
+        //return redirect()->route('godam.index')->with("success", "Godam Created Successfully");
     }
 
     // public function edit($id){
