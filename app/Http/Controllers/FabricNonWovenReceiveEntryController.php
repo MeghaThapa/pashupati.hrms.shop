@@ -43,32 +43,47 @@ class FabricNonWovenReceiveEntryController extends Controller
         //validate form
 
         dd($request);
+        $fabric_gsm = $request->fabric_gsm;
+
+        foreach( $fabric_gsm AS $gsm ){
+          $fabricnonwovenreciveentry= FabricNonWovenReciveEntry::create([
+            'receive_date' => $request->input('receive_date'),
+            'receive_no' => $request->input('receive_no'),
+            'godam_data' => $request->input('godam_data'),
+            'planttype_data' => $request->input('planttype_data'),
+            'plantname_data' => $request->input('plantname_data'),
+            'shift' => $request->input('shift'),
+            'fabric_roll' => $request->input('fabric_roll'),
+            'fabric_gsm' => $gsm,
+            'fabric_name' => $request->input('fabric_name'),
+            'fabric_color' => $request->input('fabric_color'),
+            'length' => $request->input('length'),
+            'gross_weight' => $request->input('gross_wt'),
+            'net_weight' => $request->input('net_wt'),
+          ]);
+
+          $fabricnonwovenreciveentry= FabricNonWovenReceiveEntryStock::create([
+            'receive_date' => $request->input('receive_date'),
+            'receive_date' => $request->input('receive_date'),
+            'receive_no' => $request->input('receive_no'),
+            'godam_data' => $request->input('godam_data'),
+            'planttype_data' => $request->input('planttype_data'),
+            'plantname_data' => $request->input('plantname_data'),
+            'shift' => $request->input('shift'),
+            'fabric_roll' => $request->input('fabric_roll'),
+            'fabric_gsm' => $gsm,
+            'fabric_name' => $request->input('fabric_name'),
+            'fabric_color' => $request->input('fabric_color'),
+            'length' => $request->input('length'),
+            'gross_weight' => $request->input('gross_wt'),
+            'net_weight' => $request->input('net_wt'),
+          ]);
+
+        }
 
 
-        // $validator = $request->validate([
-        //     'name' => 'required|string|max:60|unique:non_woven_fabrics',
-        //     'gsm' => 'required|numeric|unique:non_woven_fabrics',
-        //     'color' => 'required',
-        // ]);
+       
 
-        $fabric = NonWovenFabric::create([
-            'name' => $request['name'],
-            'gsm' => $request['gsm'],
-            'color' => $request['color'],
-        ]);
-
-
-        // store subcategory
-        // $fabric = Fabric::create([
-        //     'name' => $request['name'],
-        //     'roll_no' => $request['roll_no'],
-        //     'loom_no' => $request['loom_no'],
-        //     'fabricgroup_id' => $request['fabricgroup_id'],
-        //     'gross_wt' => $request['gross_wt'],
-        //     'net_wt' => $request['net_wt'],
-        //     'meter' => $request['meter'],
-        //     'gram' => '00',
-        // ]);
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
 

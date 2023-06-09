@@ -96,12 +96,12 @@
            
                     {{-- @foreach($tapeentries as $data) --}}
                     <div class='row mt-2'>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="bill_date"> Date</label>
                             <input type="date" value="{{ date('Y-m-d') }}" step="any" min="0" class="form-control calculator" id="billDate" data-number="1"
                                 name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="receipt_no">Receipt Number</label>
                             <input type="text" value="{{$receipt_no}}" id="receipt_number_1_repeat"
                                 name="receipt_number" class="form-control" readonly required />
@@ -126,6 +126,14 @@
                                 @endforeach --}}
                             </select>
                         </div>
+                 
+                    </div>
+                    {{-- @endforeach --}}
+                    <hr>
+                    
+
+                    <div class='row mt-2'>
+
                         <div class="col-md-3">
                             <label for="receipt_no">Plant Name</label>
                             <select class="form-control select2 advance-select-box" name="plantname" id="plantname_data"
@@ -145,18 +153,12 @@
                               </select>
                             </select>
                         </div>
-                    </div>
-                    {{-- @endforeach --}}
-                    <hr>
-                    
-
-                    <div class='row mt-2'>
                         
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="fabric_roll">Fabric  Roll</label>
                             <input type="text" class="form-control" name="fabric_roll" id="fabric_roll">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="fabric_gsm">Fabric GSM</label>
                             <select class="form-control select2 advance-select-box" name="fabric_gsm" id="fabric_gsm" required>
                                   @foreach($nonwovenfabrics as $data)
@@ -166,24 +168,25 @@
                               </select>
                             </select>
                         </div>
-                        <div class="col-md-2">
+
+                        <div class="col-md-3">
                             <label for="fabric_name">Fabric  Name</label>
                             <input type="text" class="form-control" name="fabric_name" id="fabric_name">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="fabric_color">Fabric Color</label>
                             <input type="text" class="form-control" name="fabric_color" id="fabric_color">
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="fabric_length">Length</label>
                             <input type="number" class="form-control" name="fabric_length" id="fabric_length">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="gross_weight">Gross weight</label>
                             <input type="number" class="form-control" name="gross_weight" id="gross_weight">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="net_weight">Net weight</label>
                             <input type="number" class="form-control" name="net_weight" id="net_weight">
                         </div>
@@ -223,7 +226,8 @@
                              </table>
                             </div>
                           </div>
-                           <button type="submit" class="btn btn-info text-capitalize" id="submit" data-toggle="tooltip" data-placement="top" title="Save Bill">Save Bill</button>
+                        <button type="submit" class="btn btn-info text-capitalize" id="submit" data-toggle="tooltip" data-placement="top" title="Save Bill">Save Bill</button>
+                          
                           
                         </form>
                         
@@ -372,7 +376,7 @@
                 <div class="col-md-6" style="height: 100%;">
                     <div class="row">
                         
-                     <form role="form" method="POST" action="{{route('nonwovenfabrics-receiveentry.store')}}" class="validate" id="validate">
+                     {{-- <form role="form" method="POST" action="{{route('nonwovenfabrics-receiveentry.store')}}" class="validate" id="validate"> --}}
                        <div class="card-body">
                          @csrf
                          <div class="row">
@@ -390,9 +394,8 @@
                           </table>
                          </div>
                        </div>
-                        <button type="submit" class="btn btn-info text-capitalize" id="submit" data-toggle="tooltip" data-placement="top" title="Save Bill">Save Bill</button>
                        
-                     </form>
+                     {{-- </form> --}}
                     </div>
 
 
@@ -502,7 +505,7 @@
         var filament = $("#filament").val();
         var roalcoast = $("#roalcoast").val();
         var strip = $("#strip").val();
-        var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast);
+        var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast) + parseInt(strip);
 
         $("#wastage").val(nettotal);
        
