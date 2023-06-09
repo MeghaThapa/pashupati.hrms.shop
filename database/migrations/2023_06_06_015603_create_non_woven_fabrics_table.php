@@ -13,9 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('raw_material_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('raw_material_id');
-            $table->foreign('raw_material_id')->references('id')->on('raw_materials')->onDelete('cascade')->onUpdate('cascade');
+        Schema::create('non_woven_fabrics', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->string('gsm');
+            $table->string('color');
+            $table->boolean('status')->nullable()->default(1);
+            $table->timestamps();
         });
     }
 
@@ -26,8 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('raw_material_items', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('non_woven_fabrics');
     }
 };

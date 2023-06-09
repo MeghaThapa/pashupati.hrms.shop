@@ -42,6 +42,9 @@ return new class extends Migration
             $table->unsignedBigInteger('dana_name_id')->index();
             $table->foreign('dana_name_id')->references('id')->on('dana_names');
             $table->string('quantity');
+            $table->unsignedBigInteger('raw_material_id');
+            $table->foreign('raw_material_id')->references('id')->on('raw_materials')->onDelete('cascade')->onUpdate('cascade');
+
             $table->timestamps();
 
         });
