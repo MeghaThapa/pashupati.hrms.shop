@@ -83,12 +83,6 @@ class StockController extends Controller
         $categories =StoreinCategory::where('status','active')->get();
         return view('admin.Stock.itemStock', compact('stocks','departments','categories'));
     }
-
-    public function getDetailsAccItem($item_id){
-        $stock=Stock::where('item_id', $item_id)->get()->first();
-        return $stock;
-    }
-
     public function departmentFilter()
     {
         $stocks = Stock::with('category', 'item', 'department')->get();

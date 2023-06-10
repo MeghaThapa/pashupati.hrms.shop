@@ -77,12 +77,15 @@
         </div>
     @endif
 
+ <div id="storeinItemError" class="alert alert-danger" hidden></div>
     <div class="card-body p-0 m-0" >
         <div id="formdiv">
             <form id="createStoreInItem" >
                 @csrf
 
                 <div class="row">
+
+
                             <div class="col-md-2 form-group">
                                 <label for="Category" class="col-form-label">{{ __('Category Name') }}<span class="required-field">*</span>
                                 </label>
@@ -160,7 +163,7 @@
                                 <label for="qunatities" class="col-form-label">{{ __('Size') }}<span
                                         class="required-field">*</span></label>
                                  <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
-                                    id="SideId" name="size_id" required>
+                                    id="SizeId" name="size_id" required>
                                     <option value="" selected disabled>{{ __('Select a Size') }}</option>
                                 </select>
                                 @error('quantities')
@@ -720,6 +723,23 @@
                                                     </span>
                                                 @enderror
                                             </div>
+                                             <div class="col-md-6 form-group mt-3">
+                                            <label for="supplier" class="col-form-label">
+                                                {{ __('Category') }}
+                                            </label>
+                                            <select class="advance-select-box form-control"
+                                                id="deptCatModel" name="dept_cat_model">
+                                                <option value="" selected disabled>{{ __('Select a category') }}</option>
+                                                @foreach ($categories as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('department_id_model')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
                                             <div class="col-md-6 form-group">
                                                 <label for="status" class="col-form-label">{{ __('Status') }}</label>
                                                 <select class="form-control" id="status" name="status">
@@ -1135,6 +1155,7 @@
             e.preventDefault();
              const form = e.target;
              let name= form.elements['department'];
+             let category_id = form.elements['dept_cat_model'];
              let status= form.elements['status'];
               if (!name.value &&
                 !status.value) {
@@ -1147,12 +1168,14 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     name: name.value,
+                    category_id:category_id.value,
                     status: status.value,
                 },
                 success: function(response) {
                      $('#addStoreinDepartmentModel').modal('hide');
 
                     name.value='';
+                    category_id.value='';
                    let  selectElement=document.getElementById('departmentModel');
                    let option = document.createElement('option');
                     option.value=response.storeinDepartment.id;
@@ -1186,6 +1209,7 @@
             let status = form.elements['cat_status'];
             if (!name.value && !note.value &&
                 !status.value) {
+                    //megha recent
                 setMessage('categoryModelError', 'Please Fill out all fields')
                 return false;
             }
@@ -1221,6 +1245,15 @@
                     optionElementModel.text = response.category.name;
                     selectElementModel.appendChild(optionElementModel);
                    selectElementModel.selected = true;
+
+                   let selectElementDepartmentModel =document.getElementById('deptCatModel');
+                   let optionElementDeptCatModel = document.createElement('option');
+
+                   optionElementDeptCatModel.value = response.category.id;
+                   optionElementDeptCatModel.text = response.category.name;
+                   selectElementDepartmentModel.appendChild(optionElementDeptCatModel);
+
+
                 },
                 error: function(xhr, status, error) {
                     setMessage('categoryModelError', xhr.responseJSON.message)
@@ -1552,7 +1585,11 @@
         }, 3000);
 
 
-
+     $('#categoryNameModel').on('select2:select', function (e) {
+        let category_id = e.params.data.id;
+        // let click_by=blade;
+        getDepartentAccCat(category_id);
+    });
 
    $('#categoryitem_id').on('select2:select', function (e) {
         let category_id = e.params.data.id;
@@ -1573,18 +1610,51 @@
 
     $('#ProductName').on('select2:select', async function (e) {
         let item_name = e.params.data.id;
-       let object = await getDepartmentSizeUnit(item_name);
+        let category_id = $('#categorySelect').val();
+
+       let object = await getDepartmentSizeUnit(item_name,category_id);
+       console.log('backend:',object) ;
        fillOptionInSelect(object.department,'#departmentId');
-       fillOptionInSelect(object.size,'#SideId');
+       fillOptionInSelect(object.size,'#SizeId');
        fillOptionInSelect(object.units,'#unitId');
     });
+    function getDepartentAccCat(category_id){
+          return new Promise(function(resolve, reject) {
+                 $.ajax({
+                    url: "{{ route('storein.getDepartentAccCat', ['category_id' => ':Replaced']) }}".replace(
+                        ':Replaced',
+                        category_id),
+                    method: 'GET',
+                    success: function(response) {
+                        let selectOptions = '';
+                        if(response.length==0){
+                            selectOptions += '<option disabled selected>' + 'no department found'+ '</option>';
+                        }else{
+                            selectOptions += '<option disabled selected>' + 'select department'+ '</option>';
 
-    function getDepartmentSizeUnit(item_name){
+                            for (let i = 0; i < response.length; i++) {
+                            let optionText = response[i].name;
+                            let optionValue = response[i].id;
+                            let option = new Option(optionText, optionValue);
+                            selectOptions += option.outerHTML;
+                            }
+                        }
+                            $('#departmentModel').html(selectOptions);
+                            resolve(response);
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+          });
+    }
+
+    function getDepartmentSizeUnit(item_name,category_id){
         return new Promise(function(resolve, reject) {
             $.ajax({
-                    url: "{{ route('storein.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced']) }}".replace(
-                        ':Replaced',
-                        item_name),
+                    url: "{{ route('storein.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced','category_id'=>':category']) }}"
+                    .replace(':Replaced',item_name)
+                    .replace(':category',category_id),
                     method: 'GET',
                     success: function(response) {
                             resolve(response);
@@ -1637,7 +1707,7 @@
                             }
 
                         }
-                            $('#SideId').html(selectOptions);
+                            $('#SizeId').html(selectOptions);
                             resolve(response);
 
                     },
@@ -1683,9 +1753,9 @@
                  });
 }
    function getCategoryItems(category_id,click_by='blade'){
-    return new Promise(function(resolve, reject) {
+                    return new Promise(function(resolve, reject) {
 
-     $.ajax({
+                    $.ajax({
                     url: "{{ route('storein.getcategoryItems', ['category_id' => ':Replaced']) }}".replace(
                         ':Replaced',
                         category_id),
@@ -1707,7 +1777,8 @@
                             selectOptions += option.outerHTML;
                             }
 
-                        }   if(click_by == 'blade'){
+                        }
+                         if(click_by == 'blade'){
                             $('#ProductName').html(selectOptions);
                             resolve(response);
 
@@ -1909,6 +1980,7 @@
 
         dataRetrive();
 
+
         //Creating New Storein Item and Adding into Table
         document.getElementById('createStoreInItem').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -1920,6 +1992,9 @@
             let unit_id = form.elements['unit_id'].value;
             let unit_price = form.elements['unitPrices'].value;
             let department_id = form.elements['department_id'].value;
+            if(!unit_id.value && !department_id.value){
+                  setMessage('storeinItemError', 'Please Fill out all fields')
+             }
 
             $.ajax({
                 url: '{{ route('storein.saveStoreinItems', ['id' => $storein->id]) }}',

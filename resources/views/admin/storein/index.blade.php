@@ -59,13 +59,13 @@
                         <tr>
                             <th>@lang('#')</th>
                             <th>{{ __('Date') }}</th>
+                            <th>{{ __('Type') }}</th>
                             <th>{{ __('Supplier') }}</th>
                             <th>{{ __('SR No') }}</th>
                             <th>{{ __('Bill No') }}</th>
                             <th>{{ __('PP No') }}</th>
                             <th>{{ __('Discount') }}</th>
                             <th>{{ __('Grand Total') }}</th>
-                            <th>{{ __('Status') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -74,11 +74,6 @@
                     </tbody>
                 </table>
             </div>
-            <!-- /.card-body -->
-
-            <!-- pagination start -->
-            {{-- {{ $storein->links() }} --}}
-            <!-- pagination end -->
         </div>
     </div>
     <!-- /.content -->

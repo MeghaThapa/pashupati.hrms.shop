@@ -10,6 +10,6 @@ class StoreinDepartment extends Model
     use HasFactory;
     protected $table='storein_departments';
     protected $fillable = [
-        'name', 'slug', 'status', 'id'
+        'name', 'slug', 'status', 'id','category_id'
     ];
 }
