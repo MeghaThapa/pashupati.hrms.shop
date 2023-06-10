@@ -175,15 +175,70 @@ class StoreoutController extends Controller
     public function storeOutItems($store_out_id)
     {
         $storeOut = Storeout::find($store_out_id);
-        $storeinDepartment =StoreinDepartment::get(['id','name']);
-        $items = Stock::with('item','sizes')->get();
-
-
-        return view('admin.storeout.createStoreoutItems', compact('storeinDepartment', 'items', 'storeOut'));
+       // $storeinDepartment =StoreinDepartment::get(['id','name']);
+        $stockCategory = DB::table('stocks')
+        ->join('storein_categories','storein_categories.id','=','stocks.category_id')
+        ->select('storein_categories.id as category_id','storein_categories.name as category_name')
+        ->distinct('storein_categories.name')
+        ->get();
+        //return $stockCategory;
+        return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory'));
     }
     public function getDepartmentPlacements($dept_id)
     {
         return Placement::where('department_id', $dept_id)->get(['id','name']);
+    }
+    public function getStoreinItemAccCat($category_id){
+        return DB::table('stocks')
+        ->where('stocks.category_id', $category_id)
+        ->join('items_of_storeins','items_of_storeins.id','stocks.item_id')
+        ->select(
+        'items_of_storeins.id as item_id',
+        'items_of_storeins.name as item_name',
+        'items_of_storeins.pnumber as item_code',
+
+        )
+        ->distinct('storein_categories.name')
+        ->get();
+    }
+    public function getDepartmentSizeUnit($items_of_storein_id){
+        $stock =Stock::with('department:id,name','unit:id,name','sizes:id,name')
+        ->where('id', $items_of_storein_id)
+        ->groupBy(['size','unit','department_id'])
+        ->get(['size','unit','department_id']);
+
+        $ArrayStock =$stock->toArray();
+
+        $unitArray = [];
+        $sizeArray = [];
+        $departmentArray = [];
+
+        foreach ($ArrayStock as $stock) {
+            $unit = $stock->unit;
+            $size = $stock->size;
+            $department = $stock->department;
+
+            if (!in_array($unit, $unitArray, true)) {
+                $unitArray[] = $unit;
+            }
+
+            if (!in_array($size, $sizeArray, true)) {
+                $sizeArray[] = $size;
+            }
+
+            if (!in_array($department, $departmentArray, true)) {
+                $departmentArray[] = $department;
+            }
+        }
+
+        return response()->json(
+            [
+                'units' => $unitArray,
+                'size' => $sizeArray,
+                'department' => $departmentArray
+            ]
+            );
+
     }
     public function updateStoreOut(Request $request, $storeout_id)
     {

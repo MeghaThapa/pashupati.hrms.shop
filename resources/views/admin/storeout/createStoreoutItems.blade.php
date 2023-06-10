@@ -98,19 +98,31 @@
             @csrf
             {{-- Item --}}
             <div class="row">
+                    {{-- storeout it passed from here --}}
                 <input type="text" class="form-control" value="{{ $storeOut->id }}" id="storeOut_id" data-number="1"
                     name="store_out_id" placeholder="{{ __('store_out_id') }}" hidden>
-                <div class="col-md-6">
+                 <div class="col-md-2 form-group">
+                                <label for="Category" class="col-form-label">{{ __('Category Name') }}<span class="required-field">*</span>
+                                </label>
+                                <select class="advance-select-box form-control  @error('Category') is-invalid @enderror"
+                                    id="categorySelect" name="categoryName"  required >
+                                    <option value="" selected disabled>{{ __('Select a Category') }}</option>
+                                    @foreach ($stockCategory as $category)
+                                    <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('categoryName')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                            </div>
+                <div class="col-md-4">
                     <label for="item_name" style="width:80px !important;"
                         class="col-form-label">{{ __('Item Name') }}</label>
                     <select class="advance-select-box form-control" id="items" name="item_id" required>
                         <option value="" selected disabled>{{ __('Select an item') }}</option>
-                        @foreach ($items as $key => $stock)
-                         @if ($stock && $stock->item && $stock->sizes)
-                            <option value="{{ $stock->item_id }}">{{ $stock->item->name }} /ppNo: {{$stock->item->pnumber}} /size: {{$stock->sizes->name}}
-                            </option>
-                        @endif
-                        @endforeach
+
                     </select>
                     @error('item_name')
                         <span class="invalid-feedback" role="alert">
@@ -128,7 +140,8 @@
                         </span>
                     @enderror
                 </div>
-                <input type="text" class="form-control" id="size_id" name="size_id" data-ignore
+
+                {{-- <input type="text" class="form-control" id="size_id" name="size_id" data-ignore
                          readonly tabindex="-1" hidden>
                 <div class="col-md-2">
                     <label for="unit" class="col-form-label">{{ __('Unit') }}</label>
@@ -139,7 +152,7 @@
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
-                </div>
+                </div> --}}
                 <div class="col-md-2">
                     <label for="rate" class="col-form-label">{{ __('Rate') }}</label>
                     <input type="number" class="form-control " id="rate" name="rate" data-ignore
@@ -150,10 +163,7 @@
                         </span>
                     @enderror
                 </div>
-
-            </div>
-            <div class="row mt-1">
-                <div class="col-md-3 gap-2">
+                 <div class="col-md-2 gap-2">
                     <label for="item_name" style="width:80px !important;"
                         class="col-form-label">{{ __('Quantity') }}</label>
                     <input type="text" class="form-control " id="quantity" data-number="1" name="quantity"
@@ -164,19 +174,39 @@
                         </span>
                     @enderror
                 </div>
-                <div class="col-md-3" style="gap:3px;">
+
+            </div>
+            <div class="row mt-1">
+                 <div class="col-md-2" style="gap:3px;">
+                    <label for="size" class="col-form-label">{{ __('Size') }}</label>
+
+                    <select class="advance-select-box form-control" id="size" name="size" required>
+                        <option value="" selected disabled>{{ __('Select a size') }}</option>
+                    </select>
+                    @error('size')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                 <div class="col-md-2" style="gap:3px;">
+                    <label for="size" class="col-form-label">{{ __('Unit') }}</label>
+
+                    <select class="advance-select-box form-control" id="unit" name="unit" required>
+                        <option value="" selected disabled>{{ __('Select a unit') }}</option>
+                    </select>
+                    @error('unit')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+
+                <div class="col-md-2" style="gap:3px;">
                     <label for="size" class="col-form-label">{{ __('Department') }}</label>
-                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
-                        data-target="#addDepartmentModel" style="margin-top:0 !important; top:8px;float:right;">
-                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                    </a>
+
                     <select class="advance-select-box form-control" id="departments" name="department" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
-                        @foreach ($storeinDepartment as $department)
-                             @if ($department && $department->name)
-                                <option value="{{ $department->id }}">{{ $department->name }}</option>
-                            @endif
-                        @endforeach
                     </select>
                     @error('department')
                         <span class="invalid-feedback" role="alert">
@@ -319,9 +349,9 @@
                                     <select class="advance-select-box form-control @error('supplier') is-invalid @enderror"
                                         id="model_department" name="department">
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($storeinDepartment as $department)
+                                        {{-- @foreach ($storeinDepartment as $department)
                                             <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                     @error('department')
                                         <span class="invalid-feedback" role="alert">
@@ -451,12 +481,12 @@
                                     <select class="advance-select-box form-control" id="itemNameModel" name="name_model"
                                         required>
                                         <option value="" selected disabled>{{ __('Select an item') }}</option>
-                                        @foreach ($items as $key => $stock)
+                                        {{-- @foreach ($items as $key => $stock)
                                          @if ($stock && $stock->item)
                                             <option value="{{ $stock->item_id }}">{{ $stock->item->name }}
                                             </option>
                                         @endif
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                     @error('nameModel')
                                         <span class="invalid-feedback" role="alert">
@@ -487,9 +517,9 @@
                                     <select class="advance-select-box form-control" id="departmentIdModel"
                                         name="department_id_model" required>
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($storeinDepartment as $department)
+                                        {{-- @foreach ($storeinDepartment as $department)
                                             <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                     @error('department_id_model')
                                         <span class="invalid-feedback" role="alert">
@@ -600,30 +630,65 @@
 
             });
 
+              $('#categorySelect').on('select2:select', function (e) {
+                    let category_id = e.params.data.id;
+                    // let click_by=blade;
+                    getStoreinItemAccCat(category_id);
+            });
+            function getStoreinItemAccCat(category_id){
+                return new Promise(function(resolve, reject) {
+
+                $.ajax({
+                    url: "{{ route('storeout.getStoreinItemAccCat', ['category_id' => ':Replaced']) }}"
+                        .replace(
+                            ':Replaced',
+                            category_id),
+
+                    method: 'GET',
+                    success: function(response) {
+                        console.log(response);
+                        let selectOptions = '';
+                        if (response.length == 0) {
+                            selectOptions += '<option disabled selected>' +
+                                'no items found' + '</option>';
+                        } else {
+                            selectOptions += '<option disabled selected>' +
+                                'select an item' + '</option>';
+                            for (var i = 0; i < response.length; i++) {
+                                selectOptions += '<option value="' + response[i].item_id + '">' +
+                                    response[i].item_name + ' / product no:' +
+                                    response[i].item_code + '</option>';
+                            }
+                        }
+
+                            $('#items').html(selectOptions);
+                            resolve(response);
+
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+                });
+            }
+
 
             $('#items').on('select2:select', function(e) {
-                //select item so as to get size unit and rate
 
-                let itemUnit = document.getElementById('item_unit');
-                let size = document.getElementById('size_id');
-                let itemRate = document.getElementById('rate');
-                let stockQuantity = document.getElementById('stock_quantity');
                 let item_id = e.params.data.id;
                 $.ajax({
-                    url: "{{ route('stock.getDetailsAccItem', ['item_id' => ':Replaced']) }}"
+                    url: "{{ route('storeout.getDepartmentSizeUnit', ['items_of_storein_id' => ':Replaced']) }}"
                         .replace(
                             ':Replaced',
                             item_id),
 
                     method: 'GET',
-                    success: function(response) {
+                    success: function(object) {
+                        console.log('item event:',object);
+                        fillOptionInSelect(object.department,'#departments');
+                        fillOptionInSelect(object.size,'#size');
+                        fillOptionInSelect(object.units,'#unit');
 
-                        var selectOptions = '';
-                        stockQuantity.value = response.quantity;
-                        size.value= response.size;
-                        itemUnit.value = response.unit;
-                        itemRate.value = response.avg_price;
-                        $('#placementSelect').html(selectOptions);
                     },
                     error: function(xhr, status, error) {
                         reject(error);
@@ -632,6 +697,21 @@
             });
 
         });
+        function fillOptionInSelect(obj,element_id){
+            let selectOptions = '';
+            if(obj.length==0){
+                selectOptions += '<option disabled selected>' + 'no size found'+ '</option>';
+            }else{
+                selectOptions += '<option disabled selected>' + 'select a item'+ '</option>';
+                for (let i = 0; i < obj.length; i++) {
+                let optionText = obj[i].name;
+                let optionValue = obj[i].id;
+                let option = new Option(optionText, optionValue);
+                selectOptions += option.outerHTML;
+            }
+            }
+            $(element_id).html(selectOptions);
+    }
 
         document.getElementById('updateStoreOutItem').addEventListener('submit', function(e) {
             e.preventDefault();

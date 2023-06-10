@@ -499,9 +499,9 @@
             billno_input.disabled = true;
 
             let editObj =JSON.parse(`{!! json_encode($storeinData) !!}`);
-            console.log(editObj);
+
             if(editObj){
-                let typeName = editObj.storein_type.name.toLowerCase();
+                let typeName = editObj.storein_type_name.toLowerCase();
                 console.log(typeName);
                 if(typeName=='import'){
                      billno_input.disabled = true;

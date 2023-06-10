@@ -62,18 +62,44 @@ class StoreinController extends Controller
     {
         $storeintype = StoreinType::all();
         $suppliers = Supplier::where('status', 1)->latest()->get();
-        $categories = StoreinCategory::where('status', 1)->get();
-        $storeinData = null;
-        return view('admin.storein.storeinCreate', compact('storeintype', 'suppliers', 'categories', 'storeinData'));
-    }
 
+        $storeinData = null;
+        return view('admin.storein.storeinCreate', compact('storeintype', 'suppliers','storeinData'));
+    }
+    //  public function editStorein($storein_id)
+    // {
+    //     // return $storein_id;
+    //     $storeintype = StoreinType::all();
+    //     $suppliers = Supplier::where('status', 1)->latest()->get();
+    //     $storeinData = Storein::with('storeinType', 'supplier')->find($storein_id);
+    //     // return $storeinData;
+    //     return view('admin.storein.storeinCreate', compact('storeintype', 'suppliers', 'storeinData'));
+    // }
     public function editStorein($storein_id)
     {
         // return $storein_id;
         $storeintype = StoreinType::all();
         $suppliers = Supplier::where('status', 1)->latest()->get();
-        $storeinData = Storein::with('storeinType', 'supplier')->find($storein_id);
-        // return $storeinData;
+        $storeinData = DB::table('storein')
+        ->join('suppliers', 'suppliers.id', '=', 'storein.supplier_id')
+        ->join('storein_types', 'storein_types.id', '=', 'storein.storein_type_id')
+        ->select(
+            'storein.id',
+            'suppliers.name as supplier_name',
+            'suppliers.id as supplier_id',
+            'storein_types.name as storein_type_name',
+            'storein_types.id as storein_type_id',
+            'storein.sr_no',
+            'storein.bill_no',
+            'storein.pp_no',
+            'storein.purchase_date',
+            'storein.total_discount',
+            'storein.grand_total'
+        )
+        ->where('storein.id', '=', $storein_id)
+        ->first();
+      //  return $storeinData;
+
         return view('admin.storein.storeinCreate', compact('storeintype', 'suppliers', 'storeinData'));
     }
 
@@ -280,16 +306,20 @@ class StoreinController extends Controller
     // not in use
     public function getcategoryItems($category_id)
     {
-        return ItemsOfStorein::where('category_id', $category_id)
-        ->select('name')
-        ->distinct()
-        ->get();
+       return ItemsOfStorein::where('category_id', $category_id)
+    ->select('name')
+    ->distinct()
+    ->get();
+
     }
-    public function getDepartmentSizeUnit($items_of_storein_name){
+    public function getDepartmentSizeUnit($items_of_storein_name,$category_id){
+
         $items_of_storein =ItemsOfStorein::with('storeinDepartment:id,name','unit:id,name','size:id,name')
         ->where('name', $items_of_storein_name)
+        ->where('category_id',$category_id)
         ->groupBy(['size_id','unit_id','department_id'])
         ->get(['size_id','unit_id','department_id']);
+
         $ArrayItemStorein =$items_of_storein->toArray();
 
         $unitArray = [];
@@ -508,6 +538,11 @@ class StoreinController extends Controller
         $addedCharges = $storein->extra_charges ? json_decode($storein->extra_charges) : [];
         $storeinItems = StoreinItem::where('storein_id', $storein->id)->with(['storeinCategory', 'itemsOfStorein', 'unit'])->get();
         return view('admin.storein.createItems', compact('storein', 'addedCharges', 'departments', 'categories', 'suppliers', 'items', 'units', 'charges', 'sizes', 'storeinItems', 'taxes'));
+    }
+
+    //to get department according to category
+    public function getDepartentAccCat($category_id){
+        return StoreinDepartment::where('category_id',$category_id)->get(['id','name']);
     }
     public function storeInItemsRetrive($storein_id)
     {

@@ -17,6 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->index();
+
+             $table->unsignedBigInteger('category_id')->index();
+            $table->foreign('category_id')->references('id')->on('storein_categories');
+
             $table->enum('status',['active','inactive']);
             $table->timestamps();
         });

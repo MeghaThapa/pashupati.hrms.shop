@@ -664,6 +664,7 @@ Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 Route::get('storein/getItemsDepartment/{items_of_storein_name}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
 Route::get('storein/getUnitOfItems/{items_of_storein_name}', 'StoreinController@getUnitOfItems')->name('storein.getUnitOfItems');
 
+Route::get('storein/getDepartentAccCat/{category_id}', 'StoreinController@getDepartentAccCat')->name('storein.getDepartentAccCat');
 
 Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
 Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');
@@ -682,7 +683,7 @@ Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemD
 Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
 Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
 Route::get('/storein/getSizeOfItems/{items_of_storein_id}', 'StoreinController@getSizeOfItems')->name('storein.getSizeOfItems');
-Route::get('/storein/getDepartmentSizeUnit/{items_of_storein_name}', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
+Route::get('/storein/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
 
 
 
@@ -721,7 +722,6 @@ Route::get('stock/index', 'StockController@index')->name('stock.index');
 Route::get('stock/filterStockAccCategory/{category_id}', 'StockController@filterStockAccCategory')->name('stock.filterStockAccCategory');
 Route::get('stock/filterStockAccDepartment/{department_id}', 'StockController@filterStockAccDepartment')->name('stock.filterStockAccDepartment');
 //recent megha
-Route::get('stock/getDetailsAccItem/{item_id}', 'StockController@getDetailsAccItem')->name('stock.getDetailsAccItem');
 Route::get('storeinStock/filter', 'StockController@filter')->name('storeinStock.filter');
 //import stock
 Route::post('import/stock',[StockImportController::class,"import"])->name('import.stock');
@@ -761,6 +761,11 @@ Route::get('storeout/getStoreOutItemData/{storeout_id}', [StoreoutController::cl
 Route::get('storeout/getEditItemData/{storeoutItem_id}', [StoreoutController::class, 'getEditItemData'])->name('storeout.getEditItemData');
 Route::post('storeout/updateStoreOutItems', [StoreoutController::class, 'updateStoreOutItems'])->name('storeout.updateStoreOutItems');
 Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::class, 'saveEntireStoreOut'])->name('storeout.saveEntireStoreOut');
+//get item acc cat
+Route::get('storeout/getStoreinItemAccCat/{category_id}', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
+//getDepartmentSizeUnit
+Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
+
 // delete storeoutItem
 Route::delete('storeout/storeoutItemDelete/{storeout_item_id}', [StoreoutController::class, 'storeoutItemDelete'])->name('storeout.storeoutItemDelete');
 //storeout edit

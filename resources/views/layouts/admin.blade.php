@@ -37,7 +37,8 @@
 
     <!-- Main css -->
     <link rel="stylesheet" type="text/css" href=" {{ asset('css/app.css') }} ">
-    {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"> --}}
+    {{-- data table css --}}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css">
     <!-- Admin panel css -->
     <link rel="stylesheet" type="text/css" href=" {{ asset('css/main.css') }} ">

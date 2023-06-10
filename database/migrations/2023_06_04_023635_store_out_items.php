@@ -27,8 +27,12 @@ return new class extends Migration
              $table->unsignedBigInteger('storeout_id')->index();
             $table->foreign('storeout_id')->references('id')->on('storeout')->cascadeOnDelete();
 
-            $table->string('unit');
-            $table->string('size');
+           $table->unsignedBigInteger('size_id');
+            $table->foreign('size_id')->references('id')->on('sizes');
+
+            $table->unsignedBigInteger('unit_id');
+            $table->foreign('unit_id')->references('id')->on('units');
+
             $table->string('quantity');
             $table->string('rate');
             $table->string('through')->nullable();
