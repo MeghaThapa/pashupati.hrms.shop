@@ -50,28 +50,26 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
             if($size == null) {
                 $code = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)), 0, 10);
-                $createSize = Size::create([
+                $createSize = Size::firstOrCreate([
+                    'code' => $code
+                ], [
                     "name" => isset($row['name'])?$row['name']:"N/A",
                     "code" => $code,
                     'slug' => $code,
                     'note' => "Excel Import",
                     "status" => "1"
+                    
                 ]);
-                $size = $createSize->id;
+               
+                
+                 $size = Size::where('code',$code)->value('id');
              }
 
              if($unit == null){
                 $code = rand(0,9999);
-                $slug = Str::slug($row['unit'].$code);
-                // $unitCreate = Unit::create([
-                //     "name" => $row['unit'],
-                //     "slug" => Str::slug($row['unit'].$code),
-                //     "code" => $code
-                // ]);
-                // $unit = $unitCreate->id;
 
                 $unitCreate = Unit::firstOrCreate([
-                    'slug' => $slug
+                    'code' => $code
                 ], [
                     "name" => $row['unit'],
                     "slug" => Str::slug($row['unit'].$code),
