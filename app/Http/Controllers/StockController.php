@@ -37,7 +37,14 @@ class StockController extends Controller
         'storein_departments.name as department_name',
         'units.name as unit_name',
         'sizes.name as size_name',
+        // DB::raw('SUM(stocks.total_amount) as sum_total_amount')
         )->paginate($TOTAL_ROW);
+
+        //  $totalAmount = $stocks->items()->sum('stocks.total_amount');
+        //  return $totalAmount;
+       // return $stocks->data;
+
+
         $departments=StoreinDepartment::where('status','active')->get();
         $categories =StoreinCategory::where('status','active')->get();
         return view('admin.Stock.itemStock', compact('stocks','departments','categories'));
@@ -88,6 +95,12 @@ class StockController extends Controller
         $stocks = Stock::with('category', 'item', 'department')->get();
         $departments = Department::where('status', 'active')->get();
         return view('admin.Stock.departmentFilter', compact('stocks', 'departments'));
+    }
+
+    //filter department acc categories
+    public function getCategoryDepartment($category_id){
+        $departments= StoreinDepartment::where('category_id',$category_id)->get();
+        return $departments;
     }
 
     public function filterStock()
