@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('unlaminated_fabric', function (Blueprint $table) {
+        Schema::create('laminated_fabric_stock', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('fabric_id');
             $table->foreign('fabric_id')->references("id")->on('fabric_stock')->onDelete('cascade')->onUpdate('cascade');
@@ -23,6 +23,14 @@ return new class extends Migration
             $table->string('meter');
             $table->string('average')->nullable();
             $table->string('gram');
+            $table->unsignedBigInteger('department_id');
+            $table->foreign('department_id')->references('id')->on("department")->onDelete('cascade');
+            $table->unsignedBigInteger('planttype_id');
+            $table->foreign('planttype_id')->references('id')->on('processing_steps')->onDelete('cascade');
+            $table->unsignedBigInteger('plantname_id');
+            $table->foreign('plantname_id')->references('id')->on('processing_subcats')->onDelete('cascade');
+            $table->string('bill_number');
+            $table->string('bill_date');
             $table->timestamps();
         });
     }
@@ -34,6 +42,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('unlaminated_fabric');
+        Schema::dropIfExists('laminated_fabric_stock');
     }
 };
