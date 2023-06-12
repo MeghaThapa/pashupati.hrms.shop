@@ -78,7 +78,8 @@ class StoreoutController extends Controller
                 foreach($storeoutItems as $storeOutItem){
                     $stock= Stock::where('item_id', $storeOutItem->item_of_storein_id)
                     ->where('department_id', $storeOutItem->storeinDepartment_id)
-                    ->where('size',$storeOutItem->size)
+                    ->where('size',$storeOutItem->size_id)
+                    ->where('unit',$storeOutItem->unit_id)
                     ->first();
                     $cat_id=ItemsOfStorein::find($storeOutItem->item_of_storein_id)->category_id;
                     if(!$stock){
@@ -95,8 +96,6 @@ class StoreoutController extends Controller
                     }
                     else{
                         $stock->quantity += $storeOutItem->quantity;
-                        $total = $stock->total_amount + $storeOutItem->total_amount;
-                        $stock->avg_price = $total / $stock->quantity;
                         $stock->total_amount  =  $stock->quantity * $stock->avg_price;
                         $stock->save();
                     }
@@ -109,19 +108,38 @@ class StoreoutController extends Controller
                 return $e;
         }
     }
+    //megha
     public function storeoutItemDelete($storeout_item_id)
     {
         try{
         DB::beginTransaction();
         $storeOutItem =StoreOutItem::find($storeout_item_id);
+
+       // return $category_id;
+
         $stock =Stock::where('item_id', $storeOutItem->item_of_storein_id)
         ->where('department_id', $storeOutItem->storeinDepartment_id)
         ->where('unit',$storeOutItem->unit_id )
         ->where('size',$storeOutItem->size_id )
         ->first();
-        $stock->quantity += $storeOutItem->quantity;
-        $stock->total_amount = $stock->quantity*$stock->avg_price;
-        $stock->save();
+
+        if(!$stock){
+            $stock= new Stock();
+            $stock->department_id =  $storeOutItem->storeinDepartment_id;
+            $stock->category_id = $storeOutItem->itemsOfStorein->category_id;
+            $stock->item_id = $storeOutItem->item_of_storein_id;
+            $stock->quantity= $storeOutItem->quantity;
+            $stock->size = $storeOutItem->size_id;
+            $stock->unit = $storeOutItem->unit_id;
+            $stock->avg_price = $storeOutItem->rate;
+            $stock->total_amount = $storeOutItem->quantity * $storeOutItem->rate;
+            $stock->save();
+        }else{
+            $stock->quantity += $storeOutItem->quantity;
+            $stock->total_amount = $stock->quantity*$stock->avg_price;
+            $stock->save();
+        }
+
         $storeOutItem->delete();
         DB::commit();
         return true;
@@ -201,6 +219,24 @@ class StoreoutController extends Controller
         )
         ->distinct('storein_categories.name')
         ->get();
+    }
+
+    //for stock qty rate
+    public function getStockQtyRate(Request $request){
+       $stockRateQty = Stock::where('category_id', $request->cat_id)
+        ->where('item_id', function ($query) use ($request) {
+            $query->select('id')
+                ->from('items_of_storeins')
+                ->where('name', $request->item_id);
+        })
+        ->where('department_id', $request->dept_id)
+        ->where('size', $request->side_id)
+        ->where('unit', $request->unit_id)
+        ->get(['avg_price','quantity'])
+        ->first();
+       return $stockRateQty;
+      //  return $request;
+
     }
     public function getDepartmentSizeUnit($items_of_storein_name, $category_id){
         $stocks =Stock::with('department:id,name','units:id,name','sizes:id,name')

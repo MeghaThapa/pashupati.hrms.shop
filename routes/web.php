@@ -767,6 +767,8 @@ Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::cl
 Route::get('storeout/getStoreinItemAccCat/{category_id}', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
 //getDepartmentSizeUnit
 Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
+//getStockQtyRate
+Route::post('/storeout/getStockQtyRate', 'StoreoutController@getStockQtyRate')->name('storeout.getStockQtyRate');
 
 // delete storeoutItem
 Route::delete('storeout/storeoutItemDelete/{storeout_item_id}', [StoreoutController::class, 'storeoutItemDelete'])->name('storeout.storeoutItemDelete');
