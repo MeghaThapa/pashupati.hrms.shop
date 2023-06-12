@@ -67,17 +67,43 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
              if($unit == null){
                 $code = rand(0,9999);
+                $slug = Str::slug($row['unit']);
 
                 $unitCreate = Unit::firstOrCreate([
-                    'code' => $code
+                    'slug' => $slug
                 ], [
                     "name" => $row['unit'],
-                    "slug" => Str::slug($row['unit'].$code),
+                    "slug" => Str::slug($row['unit']),
                     "code" => $code
                     
                 ]);
                 $unit = Unit::where('slug',$slug)->value('id');
              }
+
+             if ($category === null) {
+                 // $createcategory = StoreinCategory::create([
+                 //     'name' => $row['category'],
+                 //     'slug' => Str::slug($row['category']),
+                 //     'note' => isset($row['note'])? $row['note'] : 'N/A',
+                 //     'status' => "active"
+                 // ]);
+                 // $category = $createcategory->id;
+                 // return back()->with(['message_err'=>"Category:".$category ."Not Found"]);
+
+                 $slug = Str::slug($row['category']);
+
+                 $createcategory = StoreinCategory::firstOrCreate([
+                     'slug' => $slug
+                 ], [
+                     'name' => $row['category'],
+                     'slug' => Str::slug($row['category']),
+                     'note' => isset($row['note'])? $row['note'] : 'N/A',
+                     'status' => "active"
+                     
+                 ]);
+                 $category = StoreinCategory::where('slug',$slug)->value('id');
+             }
+
 
             if ($department === null) {
                 // $createdepartment = StoreinDepartment::create([
@@ -88,42 +114,21 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 // $department = $createdepartment->id;
                 // return back()->with(['message_err'=>"Department:".$department." Not Found"]);
                 $slug = Str::slug($row['department']);
+                // dd($slug);
 
                 $createdepartment = StoreinDepartment::firstOrCreate([
                     'slug' => $slug
                 ], [
                     'name' => $row['department'],
                     'slug' => Str::slug($row['department']),
+                    'category_id' => $category,
                     'status' => "active"
                     
                 ]);
                 $department = StoreinDepartment::where('slug',$slug)->value('id');
             }
 
-            if ($category === null) {
-                // $createcategory = StoreinCategory::create([
-                //     'name' => $row['category'],
-                //     'slug' => Str::slug($row['category']),
-                //     'note' => isset($row['note'])? $row['note'] : 'N/A',
-                //     'status' => "active"
-                // ]);
-                // $category = $createcategory->id;
-                // return back()->with(['message_err'=>"Category:".$category ."Not Found"]);
-
-                $slug = Str::slug($row['category']);
-
-                $createcategory = StoreinCategory::firstOrCreate([
-                    'slug' => $slug
-                ], [
-                    'name' => $row['category'],
-                    'slug' => Str::slug($row['category']),
-                    'note' => isset($row['note'])? $row['note'] : 'N/A',
-                    'status' => "active"
-                    
-                ]);
-                $category = StoreinCategory::where('slug',$slug)->value('id');
-            }
-
+         
             if ($item === null) {
                 $createitem= ItemsOfStorein::create([
                     'name' => $row['item_name'],
