@@ -3,7 +3,6 @@
 @section('extra-style')
 <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
 <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <style>
     .col-form-label {
         font-size: 12px !important;
@@ -83,14 +82,15 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill No') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="billnumber" value="{{ $bill_no }}"  name="bill_number" required/> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                <input type="text" class="form-control" id="billnumber" value="{{ $bill_no }}" name="bill_number"
+                    required /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
             </div>
 
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ date('Y-m-d') }}" step="any" min="0" class="form-control calculator" id="billDate" data-number="1"
-                    name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
+                <input type="date" value="{{ date('Y-m-d') }}" step="any" min="0" class="form-control calculator"
+                    id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
 
                 @error('bill_date')
                 <span class="invalid-feedback" role="alert">
@@ -104,9 +104,9 @@
                 <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
                     @foreach ($department as $data)
-                        <option value="{{ $data->id }}">{{ $data->department }}
+                    <option value="{{ $data->id }}">{{ $data->department }}
                     </option>
-                    @endforeach 
+                    @endforeach
                 </select>
                 @error('to_godam_id')
                 <span class="invalid-feedback" role="alert">
@@ -151,8 +151,8 @@
                 </label>
                 <select class="advance-select-box form-control" id="shiftName" name="shift_name_id" disabled required>
                     <option value="" selected disabled>{{ __('Select Shift Name') }}</option>
-                     @foreach ($shifts as $shift)
-                        <option value="{{ $shift->id }}">{{ $shift->name }}
+                    @foreach ($shifts as $shift)
+                    <option value="{{ $shift->id }}">{{ $shift->name }}
                     </option>
                     @endforeach
                 </select>
@@ -173,7 +173,8 @@
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id" disabled required>
+                <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id" disabled
+                    required>
                     <option value="" selected disabled>{{ __('Select Fabric Name') }}</option>
                     {{-- @foreach ($danaNames as $danaName)
                     <option value="{{ $danaName->id }}">{{ $danaName->name }}
@@ -195,8 +196,8 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Roll') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" step="any" min="0" class="form-control calculator" id="rollnumberfabric" data-number="1"
-                    name="roll_number" min="1" disabled required>
+                <input type="text" step="any" min="0" class="form-control calculator" id="rollnumberfabric"
+                    data-number="1" name="roll_number" min="1" disabled required>
 
                 @error('fabric_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -295,299 +296,329 @@
     </div>
 </div>
 <div class="row">
-
     <div class="col-md-5">
-        <div class="card card-body mt-2">
-            <div class="row p-2">
-                <div class="col-md-6">
-                    <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
-                    </label>
-                    <select class="advance-select-box form-control" id="danaNameId" name="fabric_name_id" required>
-                        <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                        {{-- @foreach ($danaNames as $danaName)
-                        <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                        </option>
-                        @endforeach --}}
-                    </select>
-                    @error('total_ul_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div class="col-md-4">
-                    <label for="size" class="col-form-label">{{ __('Qty:') }}<span class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
-                        data-number="1" name="total_ul_in_mtr" min="1" required>
-                    @error('total_ul_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary">
-                        Add
-                    </button>
+        <div class="card mt-2 p-5">
+            <div class="card-body">
+                <div class="row p-2">
+                    <div class="col-md-6">
+                        <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
+                        </label>
+                        <select class="advance-select-box form-control" id="danaNameId" name="fabric_name_id" required>
+                            <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
+                            @foreach ($dana as $danaName)
+                            <option value="{{ $danaName->id }}">{{ $danaName->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('total_ul_in_mtr')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="size" class="col-form-label">{{ __('Qty:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
+                            data-number="1" name="total_ul_in_mtr" min="1" required>
+                        @error('total_ul_in_mtr')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <button class=" form-control btn btn-primary">
+                            Add
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-7" style="height: 100%;">
-        <div class="row">
-            <div class="col-md-3 form-group">
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
-                        data-number="1" name="total_ul_in_mtr" min="1" required>
-                    @error('total_ul_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
+    <div class="card col-md-7">
+        <div class="card-body m-2 p-5">
+            <div class="col-md-12" style="height: 100%;">
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
+                                data-number="1" name="total_ul_in_mtr" min="1" required>
+                            @error('total_ul_in_mtr')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
+                                data-number="1" name="total_ul_in_mtr" min="1" required>
+                            @error('total_ul_in_mtr')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Polo Was:') }}<span class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="poloWaste" data-number="1"
+                                name="polo_waste" min="1" required>
+                            @error('polo_waste')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totalDana" data-number="1"
+                                name="totl_dana" min="1" required>
+                            @error('polo_waste')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+        
+                    </div>
+        
+                    <div class="col-md-4 form-group">
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totalLamInMtr"
+                                data-number="1" name="total_lam_in_mtr" min="1" required>
+                            @error('total_lam_in_mtr')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totalLamInMtr"
+                                data-number="1" name="total_lam_in_mtr" min="1" required>
+                            @error('total_lam_in_mtr')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Fabric Was:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="fabricWaste"
+                                data-number="1" name="fabric_waste" min="1" required>
+                            @error('fabric_waste')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Total Was:') }}<span class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totalWaste"
+                                data-number="1" name="total_waste" min="1" required>
+                            @error('polo_waste')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4" style="margin-top:70px;">
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Dif. UL Lam NW :') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="diffUuLamLamNw"
+                                data-number="1" name="diff_unLam_lamNw" min="1" required>
+                            @error('diff_unLam_lamNw')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="size" class="col-form-label">{{ __('Total Diff:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totalDiff" data-number="1"
+                                name="total_diff" min="1" required>
+                            @error('total_ul_in_mtr')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-4">
-                    <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
-                        data-number="1" name="total_ul_in_mtr" min="1" required>
-                    @error('total_ul_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Polo Was:') }}<span class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="poloWaste" data-number="1"
-                        name="polo_waste" min="1" required>
-                    @error('polo_waste')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalDana" data-number="1"
-                        name="totl_dana" min="1" required>
-                    @error('polo_waste')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-
             </div>
-            <div class="col-md-3 form-group">
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalLamInMtr"
-                        data-number="1" name="total_lam_in_mtr" min="1" required>
-                    @error('total_lam_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalLamInMtr"
-                        data-number="1" name="total_lam_in_mtr" min="1" required>
-                    @error('total_lam_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Fabric Was:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="fabricWaste"
-                        data-number="1" name="fabric_waste" min="1" required>
-                    @error('fabric_waste')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Total Was:') }}<span class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalWaste"
-                        data-number="1" name="total_waste" min="1" required>
-                    @error('polo_waste')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-
-            </div>
-            <div class="col-md-3" style="margin-top:70px;">
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Dif. UL Lam NW :') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="diffUuLamLamNw"
-                        data-number="1" name="diff_unLam_lamNw" min="1" required>
-                    @error('diff_unLam_lamNw')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div class="mb-4">
-                    <label for="size" class="col-form-label">{{ __('Total Diff:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="totalDiff" data-number="1"
-                        name="total_diff" min="1" required>
-                    @error('total_ul_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-info" disabled>Update</button>
         </div>
     </div>
 </div>
 
-  
-  <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h4>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form id='sendtolaminationform' method="post">
-                @csrf
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row m-2 p-3">
-                            <div class="col-md-6">
-                                <label for="">Fabric</label>
-                                <input class='form-control' type="text" name="laminated_fabric_name" id="laminated_fabric_name" readonly>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id='sendtolaminationform' action='{{ route("fabricSendReceive.store.laminated") }}' method="post">
+                    @csrf
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row m-2 p-3">
+                                <div class="col-md-6">
+                                    <label for="">Fabric</label>
+                                    <input class='form-control' type="text" name="laminated_fabric_name"
+                                        id="laminated_fabric_name" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="">Group</label>
+                                    <input class='form-control' type="text" name="laminated_fabric_group"
+                                        id="laminated_fabric_group" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="">standard weight gram</label>
+                                    <input class='form-control' type="text" name="standard_weight_gram"
+                                        id="standard_weight_gram" readonly>
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label for="">Group</label>
-                                <input class='form-control' type="text" name="laminated_fabric_group" id="laminated_fabric_group" readonly>
+                            <hr>
+                            <div class="row m-2 p-3 d-flex justify-content-center">
+                                <div class="col-md-2">
+                                    <label for="">Roll</label>
+                                    <input class='form-control' type="text" name="laminated_roll_no"
+                                        id="laminated_roll_no">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gross Weight</label>
+                                    <input class='form-control' type="text" name="laminated_gross_weight"
+                                        id="laminated_gross_weight">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Net Weight</label>
+                                    <input class='form-control' type="text" name="laminated_net_weight"
+                                        id="laminated_net_weight">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Average</label>
+                                    <input class='form-control' type="text" name="laminated_avg_weight"
+                                        id="laminated_avg_weight">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label for="">standard weight gram</label>
-                                <input class='form-control' type="text" name="standard_weight_gram" id="standard_weight_gram" readonly>
+                            <div class="row m-2 p-3 d-flex justify-content-center">
+                                <div class="col-md-2">
+                                    <label for="">Roll</label>
+                                    <input class='form-control' type="text" name="laminated_roll_no_2"
+                                        id="laminated_roll_no_2">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gross Weight</label>
+                                    <input class='form-control' type="text" name="laminated_gross_weight_2"
+                                        id="laminated_gross_weight_2">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Net Weight</label>
+                                    <input class='form-control' type="text" name="laminated_net_weight_2"
+                                        id="laminated_net_weight_2">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Average</label>
+                                    <input class='form-control' type="text" name="laminated_avg_weight_2"
+                                        id="laminated_avg_weight_2">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram_2"
+                                        id="laminated_gram_2">
+                                </div>
                             </div>
-                        </div>
-                        <hr>
-                        <div class="row m-2 p-3 d-flex justify-content-center">
-                            <div class="col-md-2">
-                                <label for="">Roll</label>
-                                <input class='form-control' type="text" name="laminated_roll_no" id="laminated_roll_no">
+                            <div class="row m-2 p-3 d-flex justify-content-center">
+                                <div class="col-md-2">
+                                    <label for="">Roll</label>
+                                    <input class='form-control' type="text" name="laminated_roll_no_3"
+                                        id="laminated_roll_no_3">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gross Weight</label>
+                                    <input class='form-control' type="text" name="laminated_gross_weight_3"
+                                        id="laminated_gross_weight_3">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Net Weight</label>
+                                    <input class='form-control' type="text" name="laminated_net_weight_3"
+                                        id="laminated_net_weight_3">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Average</label>
+                                    <input class='form-control' type="text" name="laminated_avg_weight_3"
+                                        id="laminated_avg_weight_3">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram_3"
+                                        id="laminated_gram_3">
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <label for="">Gross Weight</label>
-                                <input class='form-control' type="text" name="laminated_gross_weight" id="laminated_gross_weight">
+                            <hr>
+                            <div class="row d-flex justify-content-center text-center mb-2-">
+                                {{-- <div class="col-md-6">
+                                    <button type='submit' class="btn btn-info">Create Group</button>
+                                </div> --}}
+                                <div class="col-md-6">
+                                    <button type='submit' class="btn btn-info">Update</button>
+                                </div>
+                                <input type="hidden" name="idoffabricforsendtolamination"
+                                    id="idoffabricforsendtolamination">
                             </div>
-                            <div class="col-md-2">
-                                <label for="">Net Weight</label>
-                                <input class='form-control' type="text" name="laminated_net_weight" id="laminated_net_weight">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Average</label>
-                                <input class='form-control' type="text" name="laminated_avg_weight" id="laminated_avg_weight">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Gram</label>
-                                <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
-                            </div>
-                        </div>
-                        <div class="row m-2 p-3 d-flex justify-content-center">
-                            <div class="col-md-2">
-                                <label for="">Roll</label>
-                                <input class='form-control' type="text" name="laminated_roll_no_2" id="laminated_roll_no_2">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Gross Weight</label>
-                                <input class='form-control' type="text" name="laminated_gross_weight_2" id="laminated_gross_weight_2">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Net Weight</label>
-                                <input class='form-control' type="text" name="laminated_net_weight_2" id="laminated_net_weight_2">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Average</label>
-                                <input class='form-control' type="text" name="laminated_avg_weight_2" id="laminated_avg_weight_2">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Gram</label>
-                                <input class='form-control' type="text" name="laminated_gram_2" id="laminated_gram_2">
-                            </div>
-                        </div>
-                        <div class="row m-2 p-3 d-flex justify-content-center">
-                            <div class="col-md-2">
-                                <label for="">Roll</label>
-                                <input class='form-control' type="text" name="laminated_roll_no_3" id="laminated_roll_no_3">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Gross Weight</label>
-                                <input class='form-control' type="text" name="laminated_gross_weight_3" id="laminated_gross_weight_3">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Net Weight</label>
-                                <input class='form-control' type="text" name="laminated_net_weight_3" id="laminated_net_weight_3">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Average</label>
-                                <input class='form-control' type="text" name="laminated_avg_weight_3" id="laminated_avg_weight_3">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Gram</label>
-                                <input class='form-control' type="text" name="laminated_gram_3" id="laminated_gram_3">
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row d-flex justify-content-center text-center mb-2-">
-                            <div class="col-md-6">
-                                <button type='submit' class="btn btn-info">Create Group</button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type='submit' class="btn btn-info">Update</button>
-                            </div>
-                            <input type="text" name="idoffabricforsendtolamination" id="idoffabricforsendtolamination">
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
 
 @endsection
 @section('extra-script')
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+</script>
 <script>
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
@@ -840,4 +871,4 @@
     });
     /************************* Send for lamination **************************/
 </script>
-@endsection 
+@endsection
