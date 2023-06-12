@@ -349,9 +349,9 @@
                                     <select class="advance-select-box form-control @error('supplier') is-invalid @enderror"
                                         id="model_department" name="department">
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        {{-- @foreach ($storeinDepartment as $department)
+                                        @foreach ($storeinDepartment as $department)
                                             <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                     @error('department')
                                         <span class="invalid-feedback" role="alert">
@@ -655,7 +655,7 @@
                             selectOptions += '<option disabled selected>' +
                                 'select an item' + '</option>';
                             for (var i = 0; i < response.length; i++) {
-                                selectOptions += '<option value="' + response[i].item_id + '">' +
+                                selectOptions += '<option value="' + response[i].item_name + '">' +
                                     response[i].item_name + ' / product no:' +
                                     response[i].item_code + '</option>';
                             }
@@ -675,12 +675,16 @@
 
             $('#items').on('select2:select', function(e) {
 
-                let item_id = e.params.data.id;
+                let item_name = e.params.data.id;
+                let category_id =$('#categorySelect').val();
                 $.ajax({
-                    url: "{{ route('storeout.getDepartmentSizeUnit', ['items_of_storein_id' => ':Replaced']) }}"
+                    url: "{{ route('storeout.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced','category_id'=>':categoryId']) }}"
                         .replace(
                             ':Replaced',
-                            item_id),
+                            item_name)
+                        .replace(
+                            ':categoryId',
+                            category_id),
 
                     method: 'GET',
                     success: function(object) {
@@ -851,25 +855,22 @@
 
             let storeout_id = form.elements['store_out_id'].value;
             let item_name = form.elements['item_id'].value;
-            let size = form.elements['size_id'].value;
-
+            let size = form.elements['size'].value;
             let unit = form.elements['unit'].value;
-            let rate = form.elements['rate'].value;
             let quantity = form.elements['quantity'].value;
             let department = form.elements['department'].value;
             let placement = form.elements['placement_id'].value;
             let through = form.elements['through'].value;
-            // let remark = form.elements['remark'].value;
+
             $.ajax({
                 url: "{{ route('storeout.saveStoreoutItems') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
                     storeout_id: storeout_id,
-                    item_id: item_name,
+                    item_name: item_name,
                     size: size,
                     unit: unit,
-                    rate: rate,
                     quantity: quantity,
                     department_id: department,
                     placement_id: placement,
@@ -878,7 +879,7 @@
                     // Goes Into Request
                 },
                 success: function(response) {
-                    console.log(response);
+                   console.log('save storeout item respnse',response);
                     setIntoTable(response.storeOutItem);
                     $('#items').focus();
 
@@ -888,13 +889,11 @@
                         itemSelect.remove().trigger('change.select2');
 
                     }
-                    editStoreOutEvent();
                     deleteEventBtn();
-
                     totalAmountCalculation();
                     currentIndex = -1;
                       $('#items').focus();
-                    //   checkIfTableHasData();
+                     // checkIfTableHasData();
                 },
                 error: function(xhr, status, error) {
                     setErrorMessage(xhr.responseJSON.message);
@@ -914,9 +913,9 @@
 
             html = "<tr  id=editRow-" + res.id + "><td>" + sn +
                 "</td><td class='rowItemName'>" + res.items_of_storein.name +
-                "</td><td class='rowsize_id'>" + res.size +
+                "</td><td class='rowsize_id'>" + res.size.name +
                 "</td><td class='rowQuantity'>" + res.quantity +
-                "</td><td class='rowUnitName'>" + res.unit +
+                "</td><td class='rowUnitName'>" + res.unit.name +
                 "</td><td class='rowPrice'>" + res.rate +
                 "</td><td class='rowTotalAmount'>" + res.total +
                 "</td> <td>" +
@@ -1026,14 +1025,14 @@
         }
 
         function clearInputFields() {
-            document.getElementById('size_id').value = "";
-            document.getElementById('item_unit').value = "";
-            document.getElementById('rate').value = "";
+            document.getElementById('size').value = "";
+           // document.getElementById('item_id').value = "";
+           // document.getElementById('rate').value = "";
             document.getElementById('quantity').value = "";
             document.getElementById('through').value = "";
             //document.getElementById('remark').value = "";
             document.getElementById('stock_quantity').value = "";
-
+             $('#unit').val($('#unit option:first').val()).change();
             $('#items').val($('#items option:first').val()).change();
             $('#departments').val($('#items option:first').val()).change();
             $('#placementSelect').val($('#items option:first').val()).change();
