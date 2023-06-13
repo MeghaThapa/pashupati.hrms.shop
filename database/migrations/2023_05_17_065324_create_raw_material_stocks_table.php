@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('raw_material_stocks', function (Blueprint $table) {
             $table->id();
+             $table->unsignedBigInteger('godam_id')->index();
+            $table->foreign('godam_id')->references('id')->on('godam');
+
             $table->unsignedBigInteger('dana_group_id')->index();
             $table->foreign('dana_group_id')->references('id')->on('dana_groups');
             $table->unsignedBigInteger('dana_name_id')->index();
