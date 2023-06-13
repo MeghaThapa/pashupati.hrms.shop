@@ -6,12 +6,16 @@ use App\Models\DanaName;
 use App\Models\Department;
 use App\Models\FabricStock;
 use App\Models\LaminatedFabric;
+use App\Models\LaminatedFabricStock;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use App\Models\Shift;
 use App\Models\Fabric;
+use App\Models\Unit;
 use App\Models\UnlaminatedFabric;
 use App\Models\UnlaminatedFabricStock;
+use DB;
+use Exception;
 use Illuminate\Http\Request;
 
 class FabricSendReceiveController extends Controller
@@ -82,35 +86,46 @@ class FabricSendReceiveController extends Controller
             $gram = $fabricDetails->fabricgroup->name;
             $avg = ($net_wt + $gross_weight)/2;
 
-            UnlaminatedFabric::create([
-                'bill_number' => $data['bill_number'],
-                'bill_date' => $data['bill_date'],
-                'fabric_id' =>$data['fabric_name_id'] ,
-                'roll_no' => $roll_number ,
-                'gross_wt' => $gross_weight ,
-                'net_wt' => $net_wt,
-                'meter' => $meter,
-                'average' => $avg,
-                'gram' => $gram,
-                'department_id' =>$data['to_godam_id'],
-                'planttype_id' => $data['plant_type_id'],
-                'plantname_id' =>  $data['plant_name_id']
-            ]);
+            try{
+                DB::beginTransaction();
 
-            UnlaminatedFabricStock::create([
-                'bill_number' => $data['bill_number'],
-                'bill_date' => $data['bill_date'],
-                'fabric_id' =>$data['fabric_name_id'] ,
-                'roll_no' => $roll_number ,
-                'gross_wt' => $gross_weight ,
-                'net_wt' => $net_wt,
-                'meter' => $meter,
-                'average' => $avg,
-                'gram' => $gram,
-                'department_id' =>$data['to_godam_id'],
-                'planttype_id' => $data['plant_type_id'],
-                'plantname_id' =>  $data['plant_name_id']
-            ]);
+                UnlaminatedFabric::create([
+                    'bill_number' => $data['bill_number'],
+                    'bill_date' => $data['bill_date'],
+                    'fabric_id' =>$data['fabric_name_id'] ,
+                    'roll_no' => $roll_number ,
+                    'gross_wt' => $gross_weight ,
+                    'net_wt' => $net_wt,
+                    'meter' => $meter,
+                    'average' => $avg,
+                    'gram' => $gram,
+                    'department_id' =>$data['to_godam_id'],
+                    'planttype_id' => $data['plant_type_id'],
+                    'plantname_id' =>  $data['plant_name_id']
+                ]);
+
+                UnlaminatedFabricStock::create([
+                    'bill_number' => $data['bill_number'],
+                    'bill_date' => $data['bill_date'],
+                    'fabric_id' =>$data['fabric_name_id'] ,
+                    'roll_no' => $roll_number ,
+                    'gross_wt' => $gross_weight ,
+                    'net_wt' => $net_wt,
+                    'meter' => $meter,
+                    'average' => $avg,
+                    'gram' => $gram,
+                    'department_id' =>$data['to_godam_id'],
+                    'planttype_id' => $data['plant_type_id'],
+                    'plantname_id' =>  $data['plant_name_id']
+                ]);
+
+                DB::commit();
+            }catch(Exception $e){
+                DB::rollBack();
+                return response([
+                    "message" => "Something went wrong!{$e->getMessage()}" 
+                ]);
+            }
         }
 
     }
@@ -125,23 +140,140 @@ class FabricSendReceiveController extends Controller
 
     public function sendunlaminateddelete(Request $request,$id){
         if($request->ajax()){
-            $count = UnlaminatedFabric::where('id',$id)->get();
-            $unlaminatedStock = UnlaminatedFabricStock::where('id',$id)->get();
-            if(count($count) > 0 && count($unlaminatedStock) > 0 ){
-                UnlaminatedFabric::where('id',$id)->delete();
-                UnlaminatedFabricStock::where('id',$id)->delete();
+           try{
+                DB::beginTransaction();
+                $count = UnlaminatedFabric::where('id',$id)->get();
+                $unlaminatedStock = UnlaminatedFabricStock::where('id',$id)->get();
+                if(count($count) > 0 && count($unlaminatedStock) > 0 ){
+                    UnlaminatedFabric::where('id',$id)->delete();
+                    UnlaminatedFabricStock::where('id',$id)->delete();
+                    DB::commit();
+                    return response([
+                        'response'=> "200",
+                    ]);
+                
+                }else{
+                    DB::rollBack();
+                    return response([
+                        'response'=> "400",
+                    ]);
+                }
+                
+           }catch(Exception $e){
+                DB::rollBack();
                 return response([
-                    'response'=> "200",
+                    "message" => "Something went wrong!'{$e->getMessage()}'"
                 ]);
-            }else{
-                return response([
-                    'response'=> "400",
-                ]);
-            }
+           }
         }
     }
     public function storelaminated(Request $request){
-        // $data= [
+        // return   $request;
+        
+        try{
+
+            $idoffabricforsendtolamination = $request->idoffabricforsendtolamination;
+            $fabric =  UnlaminatedFabricStock::with('fabricstock')->first(); //where('id',$idoffabricforsendtolamination)->
+            $fabric_id = $fabric->fabric_id;
+            $department_id = $fabric->department_id;
+            $planttype_id = $fabric->planttype_id;
+            $plantname_id = $fabric->plantname_id;
+            $bill_number = $fabric->bill_number;
+            $bill_date = $fabric->bill_date; 
+            $meter = $fabric->meter;
+    
+            $total_goss_weight = floatval($request->laminated_gross_weight + $request->laminated_gross_weight_2 + $request->laminated_gross_weight_3);
+            $gross_weight = [
+                "laminated_gross_weight" => $request->laminated_gross_weight,
+                "laminated_gross_weight_2" => $request->laminated_gross_weight_2,
+                "laminated_gross_weight_3" => $request->laminated_gross_weight_3,
+                "total" => $total_goss_weight
+            ];
+    
+            $total_net_weight = floatval($request->laminated_net_weight + $request->laminated_net_weight_2 + $request->laminated_net_weight_3);
+            $net_weight = [
+                "laminated_net_weight" => $request->laminated_net_weight,
+                "laminated_net_weight_2" => $request->laminated_net_weight_2,
+                "laminated_net_weight_3" => $request->laminated_net_weight_3,
+                "total" => $total_net_weight
+            ];
+    
+            $total_avg_weight = floatval($request->laminated_avg_weight + $request->laminated_avg_weight_2 + $request->laminated_avg_weight_3);
+            $avg_weight = [
+                "laminated_avg_weight" => $request->laminated_avg_weight,
+                "laminated_avg_weight_2" => $request->laminated_avg_weight_2,
+                "laminated_avg_weight_3" => $request->laminated_avg_weight_3,
+                "total" => $total_avg_weight
+            ];
+    
+            $total_gram =  floatval($request->laminated_gram + $request->laminated_gram_2 + $request->laminated_gram_3);
+            $gram = [
+                "laminated_gram" => $request->laminated_gram,
+                "laminated_gram_2" => $request->laminated_gram_2,
+                "laminated_gram_3" => $request->laminated_gram_3,
+                "total" => $total_gram
+            ];
+
+           DB::beginTransaction();
+        
+                // Unit::create([
+                //     "name" => "TestUnit123",
+                //     "slug" => "test-unit-123",
+                //     "code" => "test-unit-123",
+                //     "note" => "TestUnit123",
+                //     "status" => "1"
+                // ]);
+                
+                $create = LaminatedFabric::create([
+                    "fabric_id" => $fabric_id,
+                    "standard_weight_gram" => $request->standard_weight_gram,
+                    "roll_no" => $request->laminated_roll_no,
+        
+                    "gross_wt" => json_encode($gross_weight),
+                    "net_wt" => json_encode($net_weight),
+                    "average" => json_encode($avg_weight),
+                    "gram" => json_encode($gram),
+                    "meter" => json_encode($meter), 
+        
+                    "bill_number" => $bill_number,
+                    'bill_date' => $bill_date,
+                    "department_id" => $department_id,
+                    "planttype_id" => $planttype_id,
+                    "plantname_id" => $plantname_id
+                ]);
+
+                $create = LaminatedFabricStock::create([
+                    "fabric_id" => $fabric_id,
+                    "standard_weight_gram" => $request->standard_weight_gram,
+                    "roll_no" => $request->laminated_roll_no,
+        
+                    "gross_wt" => json_encode($gross_weight),
+                    "net_wt" => json_encode($net_weight),
+                    "average" => json_encode($avg_weight),
+                    "gram" => json_encode($gram),
+                    "meter" => json_encode($meter), 
+        
+                    "bill_number" => $bill_number,
+                    'bill_date' => $bill_date,
+                    "department_id" => $department_id,
+                    "planttype_id" => $planttype_id,
+                    "plantname_id" => $plantname_id
+                ]);
+
+                UnlaminatedFabricStock::where('id',$idoffabricforsendtolamination)->delete();
+                UnlaminatedFabric::where('id',$idoffabricforsendtolamination)->delete();
+                Fabric::where('id',$fabric_id)->delete();
+                
+           DB::commit();
+        }
+        catch(Exception $e){
+            DB::rollback();
+            return $e->getMessage();
+        }
+
+
+
+       // $data= [
         //     "laminated_fabric_name" => $request->laminated_fabric_name,
         //     "laminated_fabric_group" => $request->laminated_fabric_group,
         //     "standard_weight_gram" => $request->standard_weight_gram,
@@ -161,48 +293,19 @@ class FabricSendReceiveController extends Controller
         //     "laminated_net_weight_3" => $request->laminated_net_weight_3,
         //     "laminated_avg_weight_3" => $request->laminated_avg_weight_3,
         //     "laminated_gram_3" => $request->laminated_gram_3,
+
+        //     "idoffabricforsendtolamination" => $request->idoffabricforsendtolamination
+        // ];
+                // return [
+        //     // "data" => $data,
+        //     "net_weigt"=>$net_weight,
+        //     "gross_weight" => $gross_weight,
+        //     "avg_weight" => $avg_weight,
+        //     'total_gram' => $gram
         // ];
 
 
-        $total_goss_weight = floatval($request->laminated_gross_weight + $request->laminated_gross_weight_2 + $request->laminated_gross_weight_3);
-        $gross_weight = [
-            "laminated_gross_weight" => $request->laminated_gross_weight,
-            "laminated_gross_weight_2" => $request->laminated_gross_weight_2,
-            "laminated_gross_weight_3" => $request->laminated_gross_weight_3,
-            "total" => $total_goss_weight
-        ];
-
-        $total_net_weight = floatval($request->laminated_net_weight + $request->laminated_net_weight_2 + $request->laminated_net_weight_3);
-        $net_weight = [
-            "laminated_net_weight" => $request->laminated_net_weight,
-            "laminated_net_weight_2" => $request->laminated_net_weight_2,
-            "laminated_net_weight_3" => $request->laminated_net_weight_3,
-            "total" => $total_net_weight
-        ];
-
-        $total_avg_weight = floatval($request->laminated_avg_weight + $request->laminated_avg_weight_2 + $request->laminated_avg_weight_3);
-        $avg_weight = [
-            "laminated_avg_weight" => $request->laminated_avg_weight,
-            "laminated_avg_weight_2" => $request->laminated_avg_weight_2,
-            "laminated_avg_weight_3" => $request->laminated_avg_weight_3,
-            "total" => $total_avg_weight
-        ];
-
-        $total_gram =  floatval($request->laminated_gram + $request->laminated_gram_2 + $request->laminated_gram_3);
-        $gram = [
-            "laminated_gram" => $request->laminated_gram,
-            "laminated_gram_2" => $request->laminated_gram_2,
-            "laminated_gram_3" => $request->laminated_gram_3,
-            "total" => $total_gram
-        ];
-        return [
-            // "data" => $data,
-            "net_weigt"=>$net_weight,
-            "gross_weight" => $gross_weight,
-            "avg_weight" => $avg_weight,
-            'total_gram' => $gram
-        ];
-
+        /************************* 
         $create = LaminatedFabric::create([
             "laminated_fabric_name" => $request->laminated_fabric_name,
             "laminated_fabric_group" => $request->laminated_fabric_group,
@@ -224,5 +327,6 @@ class FabricSendReceiveController extends Controller
             "laminated_avg_weight_3" => $request->laminated_avg_weight_3,
             "laminated_gram_3" => $request->laminated_gram_3,
         ]);
+        ****************************/
     }
 }

@@ -16,6 +16,6 @@ class UnlaminatedFabric extends Model
         'plantname_id','department_id','planttype_id','bill_number','bill_date'
     ];
     public function fabric(){
-        return $this->belongsTo(Fabric::class);
+        return $this->belongsTo(Fabric::class,"fabric_id","id");
     }
 }

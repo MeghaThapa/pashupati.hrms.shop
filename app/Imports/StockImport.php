@@ -35,22 +35,21 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             /*******trims spaces in between**********/
             $department = StoreinDepartment::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimDepartment)])->value('id');
             $category = StoreinCategory::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimCategory)])->value('id');
-            $item = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
+            $rowitem = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
             $size = Size::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimSize)])->value('id');
-            $unit = Size::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimUnit)])->value('id');
-            // dd($category);
+            $unit = Unit::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimUnit)])->value('id');
             /******* end trims spaces in between**********/
 
-            /*******for normal trim**********/
-            // $department = Department::where('department', $trimDepartment)->value('id');
-            // $category = Category::where('name', $trimCategory)->value('id');
-            // $item = Items::where('item', $trimCategory)->value('id');
-            /*******end for normal trim**********/
+            if($department && $category && $rowitem && $size && $unit){
+                $item = $rowitem;
+            }else{
+                $item = null;
+            }
 
             if($size == null) {
                 $code = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)), 0, 10);
                 $createSize = Size::create([
-                    "name" => isset($row['name'])?$row['name']:"N/A",
+                    "name" => isset($row['size'])?$row['size']:"N/A",
                     "code" => $code,
                     'slug' => $code,
                     'note' => "Excel Import",
