@@ -444,6 +444,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //getting unlaminated into form
     Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
     Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+    //sending for lamination
+    // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
@@ -729,6 +731,8 @@ Route::get('stock/filterStockAccCategory/{category_id}', 'StockController@filter
 Route::get('stock/filterStockAccDepartment/{department_id}', 'StockController@filterStockAccDepartment')->name('stock.filterStockAccDepartment');
 //recent megha
 Route::get('storeinStock/filter', 'StockController@filter')->name('storeinStock.filter');
+//filter department acc category
+Route::get('storeinStock/getCategoryDepartment/{category_id}', 'StockController@getCategoryDepartment')->name('storeinStock.getCategoryDepartment');
 //import stock
 Route::post('import/stock',[StockImportController::class,"import"])->name('import.stock');
 //import fabric
@@ -770,7 +774,9 @@ Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::cl
 //get item acc cat
 Route::get('storeout/getStoreinItemAccCat/{category_id}', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
 //getDepartmentSizeUnit
-Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
+Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
+//getStockQtyRate
+Route::post('/storeout/getStockQtyRate', 'StoreoutController@getStockQtyRate')->name('storeout.getStockQtyRate');
 
 // delete storeoutItem
 Route::delete('storeout/storeoutItemDelete/{storeout_item_id}', [StoreoutController::class, 'storeoutItemDelete'])->name('storeout.storeoutItemDelete');

@@ -23,6 +23,8 @@ class StockController extends Controller
     public function index()
     {
         $TOTAL_ROW=35;
+        $TOTAL_AMOUNT = 0;
+
         $stocks = DB::table('stocks')
         ->join('storein_categories','stocks.category_id','=','storein_categories.id')
         ->join('items_of_storeins','stocks.item_id','=','items_of_storeins.id')
@@ -36,11 +38,16 @@ class StockController extends Controller
         'items_of_storeins.pnumber as item_num',
         'storein_departments.name as department_name',
         'units.name as unit_name',
-        'sizes.name as size_name',
+        'sizes.name as size_name'
         )->paginate($TOTAL_ROW);
+
+        foreach ($stocks->items() as $stock){
+            $TOTAL_AMOUNT += $stock->total_amount;
+        }
+
         $departments=StoreinDepartment::where('status','active')->get();
         $categories =StoreinCategory::where('status','active')->get();
-        return view('admin.Stock.itemStock', compact('stocks','departments','categories'));
+        return view('admin.Stock.itemStock', compact('stocks','departments','categories','TOTAL_AMOUNT'));
     }
     public function filterStockAccCategory($category_id)
     {
@@ -55,6 +62,8 @@ class StockController extends Controller
 
     public function filter(Request $request){
         $TOTAL_ROW=35;
+        $TOTAL_AMOUNT = 0;
+
         $stocks = DB::table('stocks')
         ->join('storein_categories', 'stocks.category_id', '=', 'storein_categories.id')
         ->join('items_of_storeins', 'stocks.item_id', '=', 'items_of_storeins.id')
@@ -78,16 +87,26 @@ class StockController extends Controller
         }
         $stocks = $stocks->paginate($TOTAL_ROW);
 
+        foreach ($stocks->items() as $stock){
+            $TOTAL_AMOUNT += $stock->total_amount;
+        }
+
 
         $departments=StoreinDepartment::where('status','active')->get();
         $categories =StoreinCategory::where('status','active')->get();
-        return view('admin.Stock.itemStock', compact('stocks','departments','categories'));
+        return view('admin.Stock.itemStock', compact('stocks','departments','categories','TOTAL_AMOUNT'));
     }
     public function departmentFilter()
     {
         $stocks = Stock::with('category', 'item', 'department')->get();
         $departments = Department::where('status', 'active')->get();
         return view('admin.Stock.departmentFilter', compact('stocks', 'departments'));
+    }
+
+    //filter department acc categories
+    public function getCategoryDepartment($category_id){
+        $departments= StoreinDepartment::where('category_id',$category_id)->get();
+        return $departments;
     }
 
     public function filterStock()

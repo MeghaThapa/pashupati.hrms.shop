@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Fabric;
 class UnlaminatedFabricStock extends Model
 {
     use HasFactory;
@@ -15,6 +15,6 @@ class UnlaminatedFabricStock extends Model
         'plantname_id','department_id','planttype_id','bill_number','bill_date'
     ];
     public function fabric(){
-        return $this->belongsTo(Fabric::class);
+        return $this->belongsTo(Fabric::class,"fabric_id","id");
     }
 }

@@ -136,7 +136,7 @@
                                 '_token': $('meta[name=csrf-token]').attr("content"),
                             },
                             success: function(data) {
-
+                                console.log('hello',data);
                                new swal
                                     ({
                                         text: "Poof! Your data has been deleted!",
