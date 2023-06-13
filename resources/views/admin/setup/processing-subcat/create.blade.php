@@ -79,7 +79,7 @@
                                 <label for="name">{{ __('Select Department') }}<span class="required-field">*</span></label>
                                 <select
                                     class="advance-select-box select-2 form-control @error('department_id') is-invalid @enderror"
-                                    id="departmentId" name="department_id" required>
+                                    id="departmentId"  required> {{-- name="department_id" --}}
                                     <option value="" selected disabled>{{ __('Select Processing Steps') }}</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}"

@@ -61,7 +61,7 @@ class ProcessingSubcatController extends Controller
             'name' => 'required|string|max:30|unique:processing_subcats,name',
             'processing_steps_id' => 'required',
             'status' => 'required',
-            'department_id'=>'required'
+            // 'department_id'=>'required'
         ]);
 
         // store processing step
@@ -70,7 +70,7 @@ class ProcessingSubcatController extends Controller
             'processing_steps_id' =>$request->processing_steps_id,
             'slug' =>$request->name,
             'status' => $request->status,
-            'department_id' => $request->department_id,
+            // 'department_id' => $request->department_id,
         ]);
         return redirect()->route('processing-subcat.index')->withSuccess('Processing step added successfully!');
     }
@@ -116,7 +116,7 @@ class ProcessingSubcatController extends Controller
             'name' => 'required|string|max:30|unique:processing_steps,name,'.$processingStep->id,
             'processing_steps_id' =>'required',
             'status' =>'required',
-            'department_id'=>'required'
+            // 'department_id'=>'required'
         ]);
 
         // update processing step
@@ -125,7 +125,7 @@ class ProcessingSubcatController extends Controller
             'processing_steps_id' =>$request->processing_steps_id,
             'slug' =>$request->name,
             'status' => $request->status,
-            'department_id' => $request->department_id,
+            // 'department_id' => $request->department_id,
         ]);
         return redirect()->route('processing-subcat.index')->withSuccess('Processing step updated successfully!');
     }

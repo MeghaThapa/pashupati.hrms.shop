@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Fabric;
 use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
+use App\Models\FabricNonWovenReciveEntry;
+use App\Models\FabricNonWovenReceiveEntryStock;
 use App\Models\Department;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
@@ -31,7 +33,9 @@ class FabricNonWovenReceiveEntryController extends Controller
     {
         $departments = Department::get();
         $shifts = Shift::get();
-        $nonwovenfabrics = NonWovenFabric::get();
+        $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
+      
+        // dd($nonwovenfabrics);
         $receipt_no = "NFE"."-".getNepaliDate(date('Y-m-d'));
         // dd($date);
         return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics','receipt_no'));
@@ -39,52 +43,67 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function store(Request $request)
     {
-        // dd('hello');
-        //validate form
+        if($request->ajax()){
+            // return $request->data;
+            $data = [];
+            parse_str($request->data,$data);
+            // dd($data);
+            $nonfabric_id = NonWovenFabric::where('gsm',$data['fabric_gsm'])
+                                          ->where('name',$data['fabric_name'])
+                                          ->where('color',$data['fabric_color'])
+                                          ->value('id');
+                                          // dd($nonfabric_id);
 
-        dd($request);
-        $fabric_gsm = $request->fabric_gsm;
+               $fabricreceiveenty = FabricNonWovenReciveEntry::create([
+                'receive_date' => $data['receive_date'],
+                'receive_no' => $data['receive_no'],
+                'godam_id' => $data['to_godam_id'],
+                'planttype_id' => $data['planttype_id'],
+                'plantname_id' => $data['plantname_id'],
+                'shift_id' => $data['shift_id'],
+                'fabric_roll' => $data['fabric_roll'],
+                'fabric_gsm' => $data['fabric_gsm'],
+                'nonwovenfabric_id' => $nonfabric_id,
+                'fabric_name' => $data['fabric_name'],
+                'fabric_color' => $data['fabric_color'],
+                'length' => $data['fabric_length'],
+                'gross_weight' => $data['gross_weight'],
+                'net_weight' => $data['net_weight'],
+              ]);
 
-        foreach( $fabric_gsm AS $gsm ){
-          $fabricnonwovenreciveentry= FabricNonWovenReciveEntry::create([
-            'receive_date' => $request->input('receive_date'),
-            'receive_no' => $request->input('receive_no'),
-            'godam_data' => $request->input('godam_data'),
-            'planttype_data' => $request->input('planttype_data'),
-            'plantname_data' => $request->input('plantname_data'),
-            'shift' => $request->input('shift'),
-            'fabric_roll' => $request->input('fabric_roll'),
-            'fabric_gsm' => $gsm,
-            'fabric_name' => $request->input('fabric_name'),
-            'fabric_color' => $request->input('fabric_color'),
-            'length' => $request->input('length'),
-            'gross_weight' => $request->input('gross_wt'),
-            'net_weight' => $request->input('net_wt'),
-          ]);
 
-          $fabricnonwovenreciveentry= FabricNonWovenReceiveEntryStock::create([
-            'receive_date' => $request->input('receive_date'),
-            'receive_date' => $request->input('receive_date'),
-            'receive_no' => $request->input('receive_no'),
-            'godam_data' => $request->input('godam_data'),
-            'planttype_data' => $request->input('planttype_data'),
-            'plantname_data' => $request->input('plantname_data'),
-            'shift' => $request->input('shift'),
-            'fabric_roll' => $request->input('fabric_roll'),
-            'fabric_gsm' => $gsm,
-            'fabric_name' => $request->input('fabric_name'),
-            'fabric_color' => $request->input('fabric_color'),
-            'length' => $request->input('length'),
-            'gross_weight' => $request->input('gross_wt'),
-            'net_weight' => $request->input('net_wt'),
-          ]);
-
+            FabricNonWovenReceiveEntryStock::create([
+                'nonfabric_id' => $fabricreceiveenty->id,
+                'receive_date' => $data['receive_date'],
+                'receive_no' => $data['receive_no'],
+                'godam_id' => $data['to_godam_id'],
+                'planttype_id' => $data['planttype_id'],
+                'plantname_id' => $data['plantname_id'],
+                'shift_id' => $data['shift_id'],
+                'fabric_roll' => $data['fabric_roll'],
+                'fabric_gsm' => $data['fabric_gsm'],
+                'fabric_name' => $data['fabric_name'],
+                'fabric_color' => $data['fabric_color'],
+                'length' => $data['fabric_length'],
+                'gross_weight' => $data['gross_weight'],
+                'net_weight' => $data['net_weight'],
+            ]);
+    
         }
 
 
-       
-
         return redirect()->back()->withSuccess('NonWoven created successfully!');
+    }
+
+    public function getnonwovenentries(){
+        // return response(['response'=> '404']);
+        $data = FabricNonWovenReciveEntry::with('nonfabric')->get();
+        // dd($data);
+        if(count($data) != 0){
+            return response(['response'=>$data]);
+        }else{
+            return response(['response'=> '404']);
+        }   
     }
 
     public function edit($slug)
@@ -178,6 +197,29 @@ class FabricNonWovenReceiveEntryController extends Controller
       // ->where('is_active','1')
       ->get();
       return Response::json($plantname_list);
+    }
+
+
+    public function getFabricNameList(Request $request){
+        // dd('hh');
+        // dd($request);
+      $fabric_gsm = $request->fabric_gsm;
+      $plantname_list = NonWovenFabric::where('gsm',$fabric_gsm)
+      // ->where('is_active','1')
+      ->get();
+      return Response::json($plantname_list);
+    }
+
+    public function getFabricNameColorList(Request $request){
+        // dd('hh');
+        // dd($request->fabric_name);
+      $fabric_gsm = $request->fabric_gsm;
+      $fabric_name = $request->fabric_name;
+      $fabric_color_list = NonWovenFabric::where('gsm',$fabric_gsm)
+                                          ->where('name',$fabric_name)
+                                         ->get();
+                                         // dd($fabric_color_list);
+      return Response::json($fabric_color_list);
     }
 
     public function getDataList(Request $request)

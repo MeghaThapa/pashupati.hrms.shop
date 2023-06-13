@@ -55,7 +55,7 @@
                                     <td>{{ $processingStep->name }} </td>
 
                                     <td>{{ $processingStep->processingSteps->name }} </td>
-                                    <td>{{$processingStep->department->department}}</td>
+                                    <td>{{$processingStep->processingSteps->department->department}}</td>
                                     <td>
                                         @if($processingStep->isActive())
                                             <span class="badge badge-success">{{ __('Active') }}</span>

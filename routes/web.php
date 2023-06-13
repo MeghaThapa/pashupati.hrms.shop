@@ -491,11 +491,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
+    //getnonwovenreceiveentries
+    Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'FabricNonWovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
+
     Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
 
     Route::get('nonwovenfabrics-receiveentry/{id}/status', 'FabricNonWovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
     Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'FabricNonWovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
     Route::post('nonwovenfabrics-receiveentry/getDataList', 'FabricNonWovenReceiveEntryController@getDataList')->name('getDataList');
+
+    Route::post('nonwovenfabric/getFabricNameList', 'FabricNonWovenReceiveEntryController@getFabricNameList')->name('getFabricNameList');
+    Route::post('nonwovenfabric/getFabricNameColorList', 'FabricNonWovenReceiveEntryController@getFabricNameColorList')->name('getFabricNameColorList');
 
     Route::post('nonwovenfabrics-receiveentry/getDanaList', 'FabricNonWovenReceiveEntryController@getDanaList')->name('getDanaList');
 
