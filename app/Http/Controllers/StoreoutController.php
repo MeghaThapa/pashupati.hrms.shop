@@ -78,7 +78,8 @@ class StoreoutController extends Controller
                 foreach($storeoutItems as $storeOutItem){
                     $stock= Stock::where('item_id', $storeOutItem->item_of_storein_id)
                     ->where('department_id', $storeOutItem->storeinDepartment_id)
-                    ->where('size',$storeOutItem->size)
+                    ->where('size',$storeOutItem->size_id)
+                    ->where('unit',$storeOutItem->unit_id)
                     ->first();
                     $cat_id=ItemsOfStorein::find($storeOutItem->item_of_storein_id)->category_id;
                     if(!$stock){
@@ -95,8 +96,6 @@ class StoreoutController extends Controller
                     }
                     else{
                         $stock->quantity += $storeOutItem->quantity;
-                        $total = $stock->total_amount + $storeOutItem->total_amount;
-                        $stock->avg_price = $total / $stock->quantity;
                         $stock->total_amount  =  $stock->quantity * $stock->avg_price;
                         $stock->save();
                     }
@@ -109,18 +108,38 @@ class StoreoutController extends Controller
                 return $e;
         }
     }
+    //megha
     public function storeoutItemDelete($storeout_item_id)
     {
         try{
         DB::beginTransaction();
         $storeOutItem =StoreOutItem::find($storeout_item_id);
+
+       // return $category_id;
+
         $stock =Stock::where('item_id', $storeOutItem->item_of_storein_id)
         ->where('department_id', $storeOutItem->storeinDepartment_id)
-        ->where('size',$storeOutItem->size)
+        ->where('unit',$storeOutItem->unit_id )
+        ->where('size',$storeOutItem->size_id )
         ->first();
-        $stock->quantity += $storeOutItem->quantity;
-        $stock->total_amount = $stock->quantity*$stock->avg_price;
-        $stock->save();
+
+        if(!$stock){
+            $stock= new Stock();
+            $stock->department_id =  $storeOutItem->storeinDepartment_id;
+            $stock->category_id = $storeOutItem->itemsOfStorein->category_id;
+            $stock->item_id = $storeOutItem->item_of_storein_id;
+            $stock->quantity= $storeOutItem->quantity;
+            $stock->size = $storeOutItem->size_id;
+            $stock->unit = $storeOutItem->unit_id;
+            $stock->avg_price = $storeOutItem->rate;
+            $stock->total_amount = $storeOutItem->quantity * $storeOutItem->rate;
+            $stock->save();
+        }else{
+            $stock->quantity += $storeOutItem->quantity;
+            $stock->total_amount = $stock->quantity*$stock->avg_price;
+            $stock->save();
+        }
+
         $storeOutItem->delete();
         DB::commit();
         return true;
@@ -175,14 +194,14 @@ class StoreoutController extends Controller
     public function storeOutItems($store_out_id)
     {
         $storeOut = Storeout::find($store_out_id);
-       // $storeinDepartment =StoreinDepartment::get(['id','name']);
+        $storeinDepartment =StoreinDepartment::get(['id','name']);
         $stockCategory = DB::table('stocks')
         ->join('storein_categories','storein_categories.id','=','stocks.category_id')
         ->select('storein_categories.id as category_id','storein_categories.name as category_name')
         ->distinct('storein_categories.name')
         ->get();
         //return $stockCategory;
-        return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory'));
+        return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory','storeinDepartment'));
     }
     public function getDepartmentPlacements($dept_id)
     {
@@ -201,21 +220,46 @@ class StoreoutController extends Controller
         ->distinct('storein_categories.name')
         ->get();
     }
-    public function getDepartmentSizeUnit($items_of_storein_id){
-        $stock =Stock::with('department:id,name','unit:id,name','sizes:id,name')
-        ->where('id', $items_of_storein_id)
+
+    //for stock qty rate
+    public function getStockQtyRate(Request $request){
+       $stockRateQty = Stock::where('category_id', $request->cat_id)
+        ->where('item_id', function ($query) use ($request) {
+            $query->select('id')
+                ->from('items_of_storeins')
+                ->where('name', $request->item_id);
+        })
+        ->where('department_id', $request->dept_id)
+        ->where('size', $request->side_id)
+        ->where('unit', $request->unit_id)
+        ->get(['avg_price','quantity'])
+        ->first();
+       return $stockRateQty;
+      //  return $request;
+
+    }
+    public function getDepartmentSizeUnit($items_of_storein_name, $category_id){
+        $stocks =Stock::with('department:id,name','units:id,name','sizes:id,name')
+        ->whereIn('item_id', function ($query) use ($items_of_storein_name) {
+            $query->select('id')
+                ->from('items_of_storeins')
+                ->where('name', $items_of_storein_name);
+        })
+        ->where('category_id',$category_id)
         ->groupBy(['size','unit','department_id'])
         ->get(['size','unit','department_id']);
+        // return $stocks;
 
-        $ArrayStock =$stock->toArray();
+
+        $ArrayStock =$stocks->toArray();
 
         $unitArray = [];
         $sizeArray = [];
         $departmentArray = [];
 
-        foreach ($ArrayStock as $stock) {
-            $unit = $stock->unit;
-            $size = $stock->size;
+        foreach ($stocks as $stock) {
+            $unit = $stock->units;
+            $size = $stock->sizes;
             $department = $stock->department;
 
             if (!in_array($unit, $unitArray, true)) {
@@ -230,6 +274,7 @@ class StoreoutController extends Controller
                 $departmentArray[] = $department;
             }
         }
+
 
         return response()->json(
             [
@@ -263,36 +308,43 @@ class StoreoutController extends Controller
     {
         $request->validate([
             'storeout_id' => 'required',
-            'item_id' => 'required',
-           'size' => 'required',
+            'item_name' =>'required',
+            'size' => 'required',
             'unit' => 'required',
-            'rate' => 'required',
             'quantity' => 'required',
             'department_id' => 'required',
             'placement_id' => 'required',
             'through' => 'required',
         ]);
 
+        $stock = Stock::where('item_id', function ($query) use ($request) {
+            $query->select('id')
+            ->from('items_of_storeins')
+            ->where('department_id',$request->department_id)
+            ->where('unit_id',$request->unit)
+            ->where('size_id',$request->size)
+            ->where('name', $request->item_name);
+        })
+        ->where('department_id',$request->department_id)
+        ->where('size',$request->size)
+        ->where('unit',$request->unit)
+        ->first();
+    //    return $stock;
         try {
             DB::beginTransaction();
 
             $storeOutItem = new StoreOutItem();
-            $storeOutItem->item_of_storein_id = $request->item_id;
+            $storeOutItem->item_of_storein_id = $stock->item_id;
             $storeOutItem->storeout_id = $request->storeout_id;
             $storeOutItem->storeinDepartment_id = $request->department_id;
             $storeOutItem->placement_id = $request->placement_id;
-            $storeOutItem->unit = $request->unit;
-            $storeOutItem->size = $request->size;
+            $storeOutItem->unit_id = $request->unit;
+            $storeOutItem->size_id = $request->size;
             $storeOutItem->quantity = $request->quantity;
-            $storeOutItem->rate = $request->rate;
+            $storeOutItem->rate = $stock->avg_price;
             $storeOutItem->through = $request->through;
-            $storeOutItem->total = $storeOutItem->quantity * $storeOutItem->rate;
+            $storeOutItem->total = $storeOutItem->quantity * $stock->avg_price;
             $storeOutItem->save();
-
-            $stock = Stock::where('item_id', $request->item_id)
-            ->where('department_id', $request->department_id)
-            ->where('size',$storeOutItem->size)
-            ->first();
 
             if ($stock) {
                 if ($stock->quantity < $request->quantity) {
@@ -318,7 +370,7 @@ class StoreoutController extends Controller
             DB::commit();
             return response()->json([
                 'message' => 'Storeout Item Created Successfully.',
-                'storeOutItem' =>  Self::getStoreinItemData($storeOutItem->id),
+                'storeOutItem' =>  Self::getSingleStoreOutItemData($storeOutItem->id),
                 'stock' => $stock
             ]);
             // Both operations succeeded
@@ -328,13 +380,13 @@ class StoreoutController extends Controller
         }
     }
 
-    public function getStoreinItemData($storeOutItem_id)
+    public function getSingleStoreOutItemData($storeOutItem_id)
     {
-        return  StoreOutItem::with(['itemsOfStorein', 'placement', 'department'])->find($storeOutItem_id);
+        return  StoreOutItem::with(['itemsOfStorein','size','unit', 'placement', 'department'])->find($storeOutItem_id);
     }
     public function getStoreOutItemData($storeout_id)
     {
-        $storeout_items = StoreOutItem::with(['placement', 'itemsOfStorein', 'department'])->where('storeout_id', $storeout_id)->get();
+        $storeout_items = StoreOutItem::with(['placement', 'size','unit','itemsOfStorein', 'department'])->where('storeout_id', $storeout_id)->get();
             // return $storeout_items;
         return response()->json([
             'storeOutItem' =>  $storeout_items
