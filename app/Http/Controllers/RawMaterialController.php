@@ -59,18 +59,18 @@ class RawMaterialController extends Controller
         $receipt_no = AppHelper::getRawMaterialReceiptNo();
         $suppliers = Supplier::all();
         $storeinTypes = StoreinType::all();
-        $godamAsDept = Department::all();
+        $godams = Godam::all();
         $rawMaterial = null;
-        return view('admin.rawMaterial.create', compact('suppliers', 'storeinTypes', 'godamAsDept', 'receipt_no', 'rawMaterial'));
+        return view('admin.rawMaterial.create', compact('suppliers', 'storeinTypes', 'godams', 'receipt_no', 'rawMaterial'));
     }
     public function edit($rawMaterial_id)
     {
         $suppliers = Supplier::all();
         $storeinTypes = Setupstorein::all();
-        $godamAsDept = Department::all();
+         $godams = Godam::all();
         $rawMaterial = RawMaterial::with('storein_type', 'toGodam', 'fromGodam')->find($rawMaterial_id);
 
-        return view('admin.rawMaterial.create', compact('suppliers', 'storeinTypes', 'godamAsDept', 'rawMaterial'));
+        return view('admin.rawMaterial.create', compact('suppliers', 'storeinTypes', 'godams', 'rawMaterial'));
     }
     public function update(Request $request, $rawMaterial_id)
     {
