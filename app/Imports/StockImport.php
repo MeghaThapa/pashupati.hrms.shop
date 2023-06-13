@@ -25,6 +25,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
      */
     public function collection(Collection $rows)
     {
+        
         foreach ($rows as $row) {
             $trimDepartment = trim($row['department']);
             $trimCategory = trim($row['category']);
@@ -54,41 +55,77 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     'slug' => $code,
                     'note' => "Excel Import",
                     "status" => "1"
+                    
                 ]);
-                $size = $createSize->id;
+               
+                
+                 $size = Size::where('code',$code)->value('id');
              }
 
              if($unit == null){
                 $code = rand(0,9999);
-                $unitCreate = Unit::create([
+                $slug = Str::slug($row['unit']);
+
+                $unitCreate = Unit::firstOrCreate([
+                    'slug' => $slug
+                ], [
                     "name" => $row['unit'],
-                    "slug" => Str::slug($row['unit'].$code),
+                    "slug" => Str::slug($row['unit']),
                     "code" => $code
+                    
                 ]);
-                $unit = $unitCreate->id;
+                $unit = Unit::where('slug',$slug)->value('id');
              }
 
+             if ($category === null) {
+                 // $createcategory = StoreinCategory::create([
+                 //     'name' => $row['category'],
+                 //     'slug' => Str::slug($row['category']),
+                 //     'note' => isset($row['note'])? $row['note'] : 'N/A',
+                 //     'status' => "active"
+                 // ]);
+                 // $category = $createcategory->id;
+                 // return back()->with(['message_err'=>"Category:".$category ."Not Found"]);
+
+                 $slug = Str::slug($row['category']);
+
+                 $createcategory = StoreinCategory::firstOrCreate([
+                     'slug' => $slug
+                 ], [
+                     'name' => $row['category'],
+                     'slug' => Str::slug($row['category']),
+                     'note' => isset($row['note'])? $row['note'] : 'N/A',
+                     'status' => "active"
+                     
+                 ]);
+                 $category = StoreinCategory::where('slug',$slug)->value('id');
+             }
+
+
             if ($department === null) {
-                $createdepartment = StoreinDepartment::create([
+                // $createdepartment = StoreinDepartment::create([
+                //     'name' => $row['department'],
+                //     'slug' => Str::slug($row['department']),
+                //     'status' => "active"
+                // ]);
+                // $department = $createdepartment->id;
+                // return back()->with(['message_err'=>"Department:".$department." Not Found"]);
+                $slug = Str::slug($row['department']);
+                // dd($slug);
+
+                $createdepartment = StoreinDepartment::firstOrCreate([
+                    'slug' => $slug
+                ], [
                     'name' => $row['department'],
                     'slug' => Str::slug($row['department']),
+                    'category_id' => $category,
                     'status' => "active"
+                    
                 ]);
-                $department = $createdepartment->id;
-                // return back()->with(['message_err'=>"Department:".$department." Not Found"]);
+                $department = StoreinDepartment::where('slug',$slug)->value('id');
             }
 
-            if ($category === null) {
-                $createcategory = StoreinCategory::create([
-                    'name' => $row['category'],
-                    'slug' => Str::slug($row['category']),
-                    'note' => isset($row['note'])? $row['note'] : 'N/A',
-                    'status' => "active"
-                ]);
-                $category = $createcategory->id;
-                // return back()->with(['message_err'=>"Category:".$category ."Not Found"]);
-            }
-
+         
             if ($item === null) {
                 $createitem= ItemsOfStorein::create([
                     'name' => $row['item_name'],
@@ -101,6 +138,21 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 ]);
                 $item = $createitem->id;
                 // return back()->with(['message_err'=>"Category:".$item ."Not Found"]); }
+
+
+                // $createitem = ItemsOfStorein::firstOrCreate([
+                //     'slug' => $slug
+                // ], [
+                //     'name' => $row['item_name'],
+                //     'department_id'=> $department,
+                //     "category_id" => $category,
+                //     'status' => "1",
+                //     "unit_id" => $unit,
+                //     "size_id" => $size,
+                //     'pnumber' => isset($row['parts_number'])? $row['parts_number'] : "Any",
+                    
+                // ]);
+                // $item = ItemsOfStorein::where('slug',$slug)->value('id');
             }
 
 
@@ -116,7 +168,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 'category_id' => $category,
                 ]);
             }else{
-                dd($department, $category , $item , $size , $unit);
+                // dd($department, $category , $item , $size , $unit);
             }
         }
     }
