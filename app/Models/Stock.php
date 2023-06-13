@@ -23,13 +23,13 @@ class Stock extends Model
         if (!$stock) {
             $stock = new Stock();
             $stock->quantity = $storeinItem->quantity;
-            $stock->avg_price = $storeinItem->price;
-            $stock->total_amount = $storeinItem->total_amount;
+            $stock->avg_price = round($storeinItem->price,2);
+            $stock->total_amount = round($storeinItem->total_amount,2);
         } else {
             $stock->quantity += $storeinItem->quantity;
             $total = $stock->total_amount + $storeinItem->total_amount;
-            $stock->avg_price = $total / $stock->quantity;
-            $stock->total_amount  =  $stock->quantity * $stock->avg_price;
+            $stock->avg_price = round($total / $stock->quantity,2);
+            $stock->total_amount  =  round($stock->quantity * $stock->avg_price,2);
         }
         $stock->item_id = $storeinItem->storein_item_id;
         $stock->size = $storeinItem->size_id;
@@ -61,7 +61,7 @@ class Stock extends Model
             return true;
         }
         $stock->total_amount -= $old_item_total_amount;
-        $stock->avg_price = $stock->total_amount / $stock->quantity;
+        $stock->avg_price = round($stock->total_amount / $stock->quantity,2);
         $stock->save();
     }
     // relate stock with category,item,department

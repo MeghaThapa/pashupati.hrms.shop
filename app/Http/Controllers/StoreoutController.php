@@ -131,12 +131,12 @@ class StoreoutController extends Controller
             $stock->quantity= $storeOutItem->quantity;
             $stock->size = $storeOutItem->size_id;
             $stock->unit = $storeOutItem->unit_id;
-            $stock->avg_price = $storeOutItem->rate;
-            $stock->total_amount = $storeOutItem->quantity * $storeOutItem->rate;
+            $stock->avg_price = round($storeOutItem->rate,2);
+            $stock->total_amount = round($storeOutItem->quantity * $storeOutItem->rate,2);
             $stock->save();
         }else{
             $stock->quantity += $storeOutItem->quantity;
-            $stock->total_amount = $stock->quantity*$stock->avg_price;
+            $stock->total_amount = round($stock->quantity*$stock->avg_price,2);
             $stock->save();
         }
 
@@ -341,9 +341,9 @@ class StoreoutController extends Controller
             $storeOutItem->unit_id = $request->unit;
             $storeOutItem->size_id = $request->size;
             $storeOutItem->quantity = $request->quantity;
-            $storeOutItem->rate = $stock->avg_price;
+            $storeOutItem->rate = round($stock->avg_price,2);
             $storeOutItem->through = $request->through;
-            $storeOutItem->total = $storeOutItem->quantity * $stock->avg_price;
+            $storeOutItem->total = round($storeOutItem->quantity * $stock->avg_price,2);
             $storeOutItem->save();
 
             if ($stock) {
@@ -353,7 +353,7 @@ class StoreoutController extends Controller
                     ], 500);
                 } else {
                     $stock->quantity = $stock->quantity - $request->quantity;
-                    $stock->total_amount = $stock->quantity * $stock->avg_price;
+                    $stock->total_amount = round($stock->quantity * $stock->avg_price,2);
                     $stock->save();
                     if ($stock->quantity <= 0) {
                         $stock->delete();
@@ -396,7 +396,7 @@ class StoreoutController extends Controller
     {
         try {
             $storeout = Storeout::find($storeout_id);
-            $storeout->total_amount = $request->storeOutTotal;
+            $storeout->total_amount = round($request->storeOutTotal,2);
             $storeout->remark = $request->store_out_remark;
             $storeout->save();
             return redirect()->route('storeout.index')->withSuccess('Store Out Created Successfully!');

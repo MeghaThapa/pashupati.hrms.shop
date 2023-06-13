@@ -72,14 +72,15 @@
                         <tr>
                             <th>{{ __('S.No') }}</th>
                             <th>{{ __('Item Name') }}</th>
+                            <th>{{ __('Department') }}</th>
+                            <th>{{ __('Category') }}</th>
                             <th>{{ __('Product No') }}</th>
                             <th>{{ __('Size') }}</th>
                             <th>{{ __('Quantity') }}</th>
                             <th>{{ __('Unit') }}</th>
                             <th>{{ __('Avg Rate') }}</th>
                             <th>{{ __('Total Amt') }}</th>
-                            <th>{{ __('Department') }}</th>
-                            <th>{{ __('Category') }}</th>
+
                         </tr>
                     </thead>
 
@@ -93,14 +94,15 @@
                                 <tr>
                                     <td>{{ ++$i }}</td>
                                     <td>{{ $stock->item_name }}</td>
+                                    <td>{{ $stock->department_name }}</td>
+                                    <td>{{ $stock->category_name }}</td>
                                     <td>{{ $stock->item_num }}</td>
                                     <td>{{ $stock->size_name }}</td>
                                     <td>{{ $stock->quantity }}</td>
                                     <td>{{ $stock->unit_name }}</td>
                                     <td>{{ $stock->avg_price }}</td>
                                     <td>{{ $stock->total_amount }}</td>
-                                    <td>{{ $stock->department_name }}</td>
-                                    <td>{{ $stock->category_name }}</td>
+
                                 </tr>
                             @endforeach
                         @else
@@ -110,7 +112,10 @@
 
                             </tr>
                         @endif
-
+                            <tr>
+                                <td colspan="9">Total Amount :</td>
+                                <td>{{$TOTAL_AMOUNT ?? '00'}}</td>
+                            </tr>
                     </tbody>
                 </table>
                 @if ($stocks)
