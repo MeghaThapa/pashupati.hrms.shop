@@ -246,7 +246,7 @@
                 <p style="font-weight: bold;">Unlaminated</p>
             </div>
             <div class="card-body table-responsive" style="padding:opx !important">
-                <table class="table table-bordered" id="rawMaterialItemTable">
+                <table class="table table-bordered" id="compareunlamtable">
                     <thead>
                         <tr>
                             <th>{{ __('Sr.No') }}</th>
@@ -260,7 +260,7 @@
                         </tr>
                     </thead>
 
-                    <tbody id="rawMaterialItemTbody">
+                    <tbody id="compareunlamtbody">
                     </tbody>
 
                 </table>
@@ -273,7 +273,7 @@
                 <p style="font-weight: bold;">Laminated</p>
             </div>
             <div class="card-body table-responsive">
-                <table class="table table-bordered" id="rawMaterialItemTable">
+                <table class="table table-bordered" id="comparelamtable">
                     <thead>
                         <tr>
                             <th>{{ __('Sr.No') }}</th>
@@ -287,7 +287,7 @@
                         </tr>
                     </thead>
 
-                    <tbody id="rawMaterialItemTbody">
+                    <tbody id="comparelamtbody">
                     </tbody>
 
                 </table>
@@ -623,6 +623,7 @@
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
         callunlaminatedfabricajax();
+        comparelamandunlam();
 
         $("#toGodam").change(function(e){
             let department_id =  $(this).val();
@@ -866,9 +867,60 @@
     // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
     //     $(this).removeAttr('action');
     // });
-        $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
+    $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });
+
+    $("#sendtolaminationform").submit(function(e) {
+        e.preventDefault();
+        console.log(e);
+        $("#sendtolaminationform").submit();
+        callunlaminatedfabricajax();
+        comparelamandunlam();
+        $('#staticBackdrop1').modal('hide');
+    });
+
+
+    // let form = document.querySelector("#sendtolaminationform");
+    // form.addEventListener("submit", function(e) {
+    //     e.preventDefault();
+    //     callunlaminatedfabricajax();
+    //     comparelamandunlam();
+    //     $('#staticBackdrop1').modal('hide');
+    //     form.submit(); // Submit the form after desired actions
+    // });
+
+
+
+
+    function comparelamandunlam(){
+        $.ajax({
+            url : "{{ route('fabricSendReceive.compare.lamandunlam') }}",
+            method:"get",
+            success:function(response){
+                emptycomparelamtbody();
+                putonlamtbody(response);
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+    }
     /************************* Send for lamination **************************/
+
+    /********** put on tbodys compare *********************/
+    function emptycomparelamtbody(){
+        $("#comparelamtbody").empty();
+    }
+
+    function putonlamtbody(response){
+        let tr = $("<tr><tr>").appendTo("#comparelamtbody");
+        response.lam.forEach(element => {
+            tr.append(`<td>#</td>`);
+            tr.append(`<td>${element.fabric.name}<td>`);
+        });
+    }
+    /********** put on tbodys *********************/
+
 </script>
 @endsection
