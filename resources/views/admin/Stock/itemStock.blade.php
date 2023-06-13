@@ -39,18 +39,7 @@
         @enderror
         <form action="{{route('storeinStock.filter')}}">
         <div class="row">
-
-                <div class="col-md-4">
-                    <label for="department">Department</label>
-                    <select class="advance-select-box form-control" id="storeinDepartment" name="storein_department" >
-                                <option value="" selected disabled>{{ __('Select Department') }}</option>
-                                @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}">{{ $department->name}}
-                                    </option>
-                                @endforeach
-                        </select>
-                </div>
-                <div class="col-md-4">
+                 <div class="col-md-4">
                     <label for="category">Category</label>
                     <select class="advance-select-box form-control" id="storeinCategory" name="storein_category" >
                                 <option value="" selected disabled>{{ __('Select Category') }}</option>
@@ -60,6 +49,17 @@
                                 @endforeach
                         </select>
                 </div>
+                <div class="col-md-4">
+                    <label for="department">Department</label>
+                    <select class="advance-select-box form-control" id="storeinDepartment" name="storein_department" >
+                                {{-- <option value="" selected disabled>{{ __('Select Department') }}</option> --}}
+                                {{-- @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name}}
+                                    </option>
+                                @endforeach --}}
+                        </select>
+                </div>
+
                 <div class="col-md-4 mt-4">
                     <button class="btn btn-primary" type="submit" >Search</button>
                 </div>
@@ -72,14 +72,15 @@
                         <tr>
                             <th>{{ __('S.No') }}</th>
                             <th>{{ __('Item Name') }}</th>
+                            <th>{{ __('Department') }}</th>
+                            <th>{{ __('Category') }}</th>
                             <th>{{ __('Product No') }}</th>
                             <th>{{ __('Size') }}</th>
                             <th>{{ __('Quantity') }}</th>
                             <th>{{ __('Unit') }}</th>
                             <th>{{ __('Avg Rate') }}</th>
                             <th>{{ __('Total Amt') }}</th>
-                            <th>{{ __('Department') }}</th>
-                            <th>{{ __('Category') }}</th>
+
                         </tr>
                     </thead>
 
@@ -93,14 +94,15 @@
                                 <tr>
                                     <td>{{ ++$i }}</td>
                                     <td>{{ $stock->item_name }}</td>
+                                    <td>{{ $stock->department_name }}</td>
+                                    <td>{{ $stock->category_name }}</td>
                                     <td>{{ $stock->item_num }}</td>
                                     <td>{{ $stock->size_name }}</td>
                                     <td>{{ $stock->quantity }}</td>
                                     <td>{{ $stock->unit_name }}</td>
                                     <td>{{ $stock->avg_price }}</td>
                                     <td>{{ $stock->total_amount }}</td>
-                                    <td>{{ $stock->department_name }}</td>
-                                    <td>{{ $stock->category_name }}</td>
+
                                 </tr>
                             @endforeach
                         @else
@@ -110,7 +112,10 @@
 
                             </tr>
                         @endif
-
+                            <tr>
+                                <td colspan="9">Total Amount :</td>
+                                <td>{{$TOTAL_AMOUNT ?? '00'}}</td>
+                            </tr>
                     </tbody>
                 </table>
                 @if ($stocks)
@@ -192,6 +197,47 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 
     <script>
+
+         $('#storeinCategory').on('select2:select', function (e) {
+        let category_id = e.params.data.id;
+        // let click_by=blade;
+        getCategoryDepartment(category_id);
+    });
+
+    function getCategoryDepartment(category_id){
+         return new Promise(function(resolve, reject) {
+                    $.ajax({
+                    url: "{{ route('storeinStock.getCategoryDepartment', ['category_id' => ':Replaced']) }}".replace(
+                        ':Replaced',
+                        category_id),
+
+                    method: 'GET',
+                    success: function(response) {
+                        console.log('ajax item: ',response);
+                         let selectOptions = '';
+
+                        if(response.length==0){
+                            selectOptions += '<option disabled selected>' + 'no department found'+ '</option>';
+                        }else{
+                            selectOptions += '<option disabled selected>' + 'select department'+ '</option>';
+
+                            for (let i = 0; i < response.length; i++) {
+                            let optionText = response[i].name;
+                            let optionValue = response[i].id;
+                            let option = new Option(optionText, optionValue);
+                            selectOptions += option.outerHTML;
+                            }
+                        }
+                            $('#storeinDepartment').html(selectOptions);
+                            resolve(response);
+
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+            });
+    }
         @if(session()->has('message_err'))
           @foreach(session()->get('message_err') as $data)
 

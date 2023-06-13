@@ -120,8 +120,8 @@
                             </label>
                             <select class="advance-select-box form-control" id="fromGodam" name="from_godam_id" required>
                                 <option value="" selected disabled>{{ __('Select a godam') }}</option>
-                                @foreach ($godamAsDept as $department)
-                                    <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                @foreach ($godams as $godam)
+                                    <option value="{{ $godam->id }}">{{ $godam->name }}</option>
                                 @endforeach
                             </select>
                             @error('size_id')
@@ -166,10 +166,10 @@
                             </a>
                             <select class="advance-select-box form-control" id="toGodamId" name="to_godam_id" required>
                                 <option value="" selected disabled>{{ __('Select a type ') }}</option>
-                                @foreach ($godamAsDept as $departments)
+                                @foreach ($godams as $godam)
                                     <option
-                                        @if ($rawMaterial) {{ $rawMaterial->to_godam_id == $departments->id ? 'selected' : '' }} @endif
-                                        value="{{ $departments->id }}">{{ $departments->department }}</option>
+                                        @if ($rawMaterial) {{ $rawMaterial->to_godam_id == $godam->id ? 'selected' : '' }} @endif
+                                        value="{{ $godam->id }}">{{ $godam->name }}</option>
                                 @endforeach
                             </select>
                             @error('size_id')

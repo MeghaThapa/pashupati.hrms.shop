@@ -40,7 +40,7 @@
                             <th>#</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Processing Steps') }}</th>
-                            <th>{{__('Department')}}</th>
+                            {{-- <th>{{__('Department')}}</th> --}}
                             <th>{{ __('Status') }}</th>
                             <th>{{ __('Created') }}</th>
                             <th class="text-right">{{ __('Action') }}</th>
@@ -55,7 +55,7 @@
                                     <td>{{ $processingStep->name }} </td>
 
                                     <td>{{ $processingStep->processingSteps->name }} </td>
-                                    <td>{{$processingStep->department->department}}</td>
+                                    {{-- <td>{{$processingStep->department->department}}</td> --}}
                                     <td>
                                         @if($processingStep->isActive())
                                             <span class="badge badge-success">{{ __('Active') }}</span>

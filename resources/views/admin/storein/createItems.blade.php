@@ -95,7 +95,7 @@
                                 </a>
                                 <select class="advance-select-box form-control  @error('Category') is-invalid @enderror"
                                     id="categorySelect" name="categoryName"  required >
-                                    <option value="" selected disabled>{{ __('Select a Category') }}</option>
+                                    <option value=" " selected disabled>{{ __('Select a Category') }}</option>
                                     @foreach ($categories as $key => $category)
                                     <option value="{{ $category->id }}" {{ (old('categoryName') == $category->id  )? 'selected' : '' }}>{{ $category->name }}</option>
                                     @endforeach
@@ -1296,7 +1296,7 @@
                     $('#createStoreinItemModelPopup').modal('hide');
                      let selectItemElement = document.getElementById('ProductName');
                      let optionElement = document.createElement('option');
-                     optionElement.value=response.item.id;
+                     optionElement.value=response.item.name;
                      optionElement.text = response.item.name;
                      selectItemElement.appendChild(optionElement);
                     $('#categorySelect').focus();
@@ -1668,9 +1668,9 @@
     function fillOptionInSelect(obj,element_id){
             let selectOptions = '';
             if(obj.length==0){
-                selectOptions += '<option disabled selected>' + 'no size found'+ '</option>';
+                selectOptions += "<option value='' disabled selected>No Data found</option>";
             }else{
-                selectOptions += '<option disabled selected>' + 'select a item'+ '</option>';
+                selectOptions += "<option value='' disabled selected> select required data </option>";
                 for (let i = 0; i < obj.length; i++) {
                 let optionText = obj[i].name;
                 let optionValue = obj[i].id;
@@ -1980,6 +1980,75 @@
 
         dataRetrive();
 
+        //Validation start
+
+        function validateForm(formElement, validationRules) {
+            let isValid = true;
+
+            validationRules.forEach((rule) => {
+                const { fieldName, required, validationFunction, errorMessage } = rule;
+                const fieldValue = formElement.elements[fieldName].value.trim();
+
+                if (required && fieldValue === '') {
+                console.error(errorMessage);
+                isValid = false;
+                }
+
+                if (validationFunction && !validationFunction(fieldValue)) {
+                console.error(errorMessage);
+                isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+// Usage example
+        const validationRules = [
+        {
+            fieldName: 'size_id',
+            required: true,
+            errorMessage: 'Size ID is required.',
+        },
+        {
+            fieldName: 'categoryName',
+            required: true,
+            errorMessage: 'Category ID is required.',
+        },
+        {
+            fieldName: 'ProductName',
+            required: true,
+            errorMessage: 'Product ID is required.',
+        },
+        {
+            fieldName: 'quantities',
+            required: true,
+            validationFunction: (value) => !isNaN(value) && parseFloat(value) > 0,
+            errorMessage: 'Quantities must be a positive number.',
+        },
+        {
+            fieldName: 'unit_id',
+            required: true,
+            errorMessage: 'Unit ID is required.',
+        },
+        {
+            fieldName: 'unitPrices',
+            required: true,
+            validationFunction: (value) => !isNaN(value) && parseFloat(value) > 0,
+            errorMessage: 'Unit price must be a positive number.',
+        },
+        {
+            fieldName: 'department_id',
+            required: true,
+            errorMessage: 'Department ID is required.',
+        },
+        ];
+
+
+        //Validation end
+
+
+
 
         //Creating New Storein Item and Adding into Table
         document.getElementById('createStoreInItem').addEventListener('submit', function(event) {
@@ -1992,10 +2061,12 @@
             let unit_id = form.elements['unit_id'].value;
             let unit_price = form.elements['unitPrices'].value;
             let department_id = form.elements['department_id'].value;
-            if(!unit_id.value && !department_id.value){
-                  setMessage('storeinItemError', 'Please Fill out all fields')
-             }
-
+            // validation js
+            const isFormValid = validateForm(form, validationRules);
+            if (!isFormValid) {
+                setMessage('storeinItemError', 'Please Fill out all fields')
+                return false;
+            }
             $.ajax({
                 url: '{{ route('storein.saveStoreinItems', ['id' => $storein->id]) }}',
                 method: 'POST',

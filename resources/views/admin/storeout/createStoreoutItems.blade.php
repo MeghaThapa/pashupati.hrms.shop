@@ -130,54 +130,7 @@
                         </span>
                     @enderror
                 </div>
-                <div class="col-md-2">
-                    <label for="stock_quantity" class="col-form-label">{{ __('Stock Quantity') }}</label>
-                    <input type="number" class="form-control " id="stock_quantity" name="stock_quantity" data-ignore
-                        placeholder="{{ __('Stock Quantity') }}" readonly tabindex="-1">
-                    @error('stock_quantity')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-
-                {{-- <input type="text" class="form-control" id="size_id" name="size_id" data-ignore
-                         readonly tabindex="-1" hidden>
-                <div class="col-md-2">
-                    <label for="unit" class="col-form-label">{{ __('Unit') }}</label>
-                    <input type="text" step="any" min="0" max="99" class="form-control " id="item_unit" data-ignore
-                        data-number="1" name="unit" placeholder="{{ __('Unit') }}" readonly tabindex="-1">
-                    @error('unit')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div> --}}
-                <div class="col-md-2">
-                    <label for="rate" class="col-form-label">{{ __('Rate') }}</label>
-                    <input type="number" class="form-control " id="rate" name="rate" data-ignore
-                        placeholder="{{ __('Rate') }}" readonly tabindex="-1">
-                    @error('rate')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-                 <div class="col-md-2 gap-2">
-                    <label for="item_name" style="width:80px !important;"
-                        class="col-form-label">{{ __('Quantity') }}</label>
-                    <input type="text" class="form-control " id="quantity" data-number="1" name="quantity"
-                        placeholder="{{ __('quantity') }}">
-                    @error('quantity')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-
-            </div>
-            <div class="row mt-1">
-                 <div class="col-md-2" style="gap:3px;">
+                <div class="col-md-2" style="gap:3px;">
                     <label for="size" class="col-form-label">{{ __('Size') }}</label>
 
                     <select class="advance-select-box form-control" id="size" name="size" required>
@@ -214,7 +167,12 @@
                         </span>
                     @enderror
                 </div>
-                <div class="col-md-3" style="gap:3px;">
+
+
+            </div>
+            <div class="row mt-1">
+{{-- placement --}}
+                  <div class="col-md-3" style="gap:3px;">
                     <label for="category" class="col-form-label">{{ __('Placement') }}</label>
                     <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
                         data-target="#placementCreateModel" style="margin-top:0 !important; top:8px;float:right;">
@@ -230,6 +188,41 @@
                         </span>
                     @enderror
                 </div>
+                 {{-- stock quantity --}}
+                <div class="col-md-2">
+                    <label for="stock_quantity" class="col-form-label">{{ __('Stock Quantity') }}</label>
+                    <input type="number" class="form-control " id="stock_quantity" name="stock_quantity" data-ignore
+                        placeholder="{{ __('Stock Quantity') }}" readonly tabindex="-1">
+                    @error('stock_quantity')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                {{-- stock rate --}}
+                <div class="col-md-2">
+                    <label for="rate" class="col-form-label">{{ __('Rate') }}</label>
+                    <input type="number" class="form-control " id="rate" name="rate" data-ignore
+                        placeholder="{{ __('Rate') }}" readonly tabindex="-1">
+                    @error('rate')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                {{-- quantity --}}
+                 <div class="col-md-2 gap-2">
+                    <label for="item_name" style="width:80px !important;"
+                        class="col-form-label">{{ __('Quantity') }}</label>
+                    <input type="text" class="form-control " id="quantity" data-number="1" name="quantity"
+                        placeholder="{{ __('quantity') }}">
+                    @error('quantity')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+
                 <div class="col-md-3 " style="gap:3px;">
                     <label for="category" class="col-form-label">{{ __('Through') }}</label>
                     <input type="text" class="form-control " id="through" name="through"
@@ -349,9 +342,9 @@
                                     <select class="advance-select-box form-control @error('supplier') is-invalid @enderror"
                                         id="model_department" name="department">
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        {{-- @foreach ($storeinDepartment as $department)
+                                        @foreach ($storeinDepartment as $department)
                                             <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                     @error('department')
                                         <span class="invalid-feedback" role="alert">
@@ -581,18 +574,19 @@
             //When Page Refresh
             getStoreOutItems();
             //  checkIfTableHasData();
-            $('#items').focus();
+            $('#categorySelect').focus();
               $(document).on('select2:open', () => {
                     document.querySelector('.select2-search__field').focus();
                 });
 
             //for user accessibility
             let formDiv = document.getElementById("formdiv");
+            let currentIndex = -1;
             let focusableElements = Array.from(formDiv.querySelectorAll("input, select,button")).filter(function(element) {
             return !element.hasAttribute("data-ignore");
             });
 
-            let currentIndex = -1;
+
 
             formDiv.addEventListener("keydown", function(event) {
             // Check if the pressed key is the tab key (key code 9)
@@ -617,13 +611,7 @@
                 $('#error-container').fadeOut('fast');
             }, 3000); // 5000 milliseconds = 5 seconds
 
-            $('#departments').on('select2:select', function(e) {
-                let department_id = e.params.data.id;
-
-                getDepartmentPlacement(department_id, 'blade');
-
-            });
-            $('#departmentIdModel').on('select2:select', function(e) {
+             $('#departmentIdModel').on('select2:select', function(e) {
                 let department_id = e.params.data.id;
 
                 getDepartmentPlacement(department_id, 'model');
@@ -635,6 +623,48 @@
                     // let click_by=blade;
                     getStoreinItemAccCat(category_id);
             });
+
+            $('#departments').on('select2:select', function(e) {
+                let department_id = e.params.data.id;
+                getDepartmentPlacement(department_id, 'blade');
+                let category_id =$('#categorySelect').val();
+                let item_id =$('#items').val();
+                let side_id = $('#size').val();
+                let unit_id = $('#unit').val();
+                getStockQtyRate(department_id,category_id,item_id,side_id,unit_id);
+
+            });
+
+            function getStockQtyRate(department_id,category_id,item_id,side_id,unit_id){
+                  $.ajax({
+                url: "{{ route('storeout.getStockQtyRate') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    dept_id: department_id,
+                    cat_id: category_id,
+                    item_id: item_id,
+                    side_id: side_id,
+                    unit_id:unit_id,
+                },
+                success: function(response) {
+                    console.log('getStockQtyRate',response);
+                    $('#stock_quantity').val(response.quantity);
+                    $('#rate').val(response.avg_price);
+                    // updateTableRow(response.storeOutItem, storeOut_item_id.value);
+
+                    // totalAmountCalculation();
+
+                    // editStoreOutEvent();
+                    // deleteEventBtn();
+
+                },
+                error: function(xhr, status, error) {
+                    setMessage('edit-form-error', 'Please Fill out all fields')
+                }
+            })
+            }
+
             function getStoreinItemAccCat(category_id){
                 return new Promise(function(resolve, reject) {
 
@@ -655,7 +685,7 @@
                             selectOptions += '<option disabled selected>' +
                                 'select an item' + '</option>';
                             for (var i = 0; i < response.length; i++) {
-                                selectOptions += '<option value="' + response[i].item_id + '">' +
+                                selectOptions += '<option value="' + response[i].item_name + '">' +
                                     response[i].item_name + ' / product no:' +
                                     response[i].item_code + '</option>';
                             }
@@ -675,12 +705,16 @@
 
             $('#items').on('select2:select', function(e) {
 
-                let item_id = e.params.data.id;
+                let item_name = e.params.data.id;
+                let category_id =$('#categorySelect').val();
                 $.ajax({
-                    url: "{{ route('storeout.getDepartmentSizeUnit', ['items_of_storein_id' => ':Replaced']) }}"
+                    url: "{{ route('storeout.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced','category_id'=>':categoryId']) }}"
                         .replace(
                             ':Replaced',
-                            item_id),
+                            item_name)
+                        .replace(
+                            ':categoryId',
+                            category_id),
 
                     method: 'GET',
                     success: function(object) {
@@ -851,25 +885,22 @@
 
             let storeout_id = form.elements['store_out_id'].value;
             let item_name = form.elements['item_id'].value;
-            let size = form.elements['size_id'].value;
-
+            let size = form.elements['size'].value;
             let unit = form.elements['unit'].value;
-            let rate = form.elements['rate'].value;
             let quantity = form.elements['quantity'].value;
             let department = form.elements['department'].value;
             let placement = form.elements['placement_id'].value;
             let through = form.elements['through'].value;
-            // let remark = form.elements['remark'].value;
+
             $.ajax({
                 url: "{{ route('storeout.saveStoreoutItems') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
                     storeout_id: storeout_id,
-                    item_id: item_name,
+                    item_name: item_name,
                     size: size,
                     unit: unit,
-                    rate: rate,
                     quantity: quantity,
                     department_id: department,
                     placement_id: placement,
@@ -878,7 +909,7 @@
                     // Goes Into Request
                 },
                 success: function(response) {
-                    console.log(response);
+                   console.log('save storeout item respnse',response);
                     setIntoTable(response.storeOutItem);
                     $('#items').focus();
 
@@ -888,13 +919,11 @@
                         itemSelect.remove().trigger('change.select2');
 
                     }
-                    editStoreOutEvent();
                     deleteEventBtn();
-
                     totalAmountCalculation();
                     currentIndex = -1;
                       $('#items').focus();
-                    //   checkIfTableHasData();
+                     // checkIfTableHasData();
                 },
                 error: function(xhr, status, error) {
                     setErrorMessage(xhr.responseJSON.message);
@@ -914,9 +943,9 @@
 
             html = "<tr  id=editRow-" + res.id + "><td>" + sn +
                 "</td><td class='rowItemName'>" + res.items_of_storein.name +
-                "</td><td class='rowsize_id'>" + res.size +
+                "</td><td class='rowsize_id'>" + res.size.name +
                 "</td><td class='rowQuantity'>" + res.quantity +
-                "</td><td class='rowUnitName'>" + res.unit +
+                "</td><td class='rowUnitName'>" + res.unit.name +
                 "</td><td class='rowPrice'>" + res.rate +
                 "</td><td class='rowTotalAmount'>" + res.total +
                 "</td> <td>" +
@@ -993,7 +1022,8 @@
                                     "_method": "DELETE",
                                     "_token": "{{ csrf_token() }}",
                                 },
-                                success: function(result) {
+                                success: function(response) {
+                                    console.log(response);
                                     removeAllTableRows();
                                     getStoreOutItems();
                                     //console.log('i am here');
@@ -1006,7 +1036,7 @@
                                         type: 'success',
                                         timer: '1500'
                                     });
-                                    //  checkRowInTable();
+                                     checkRowInTable();
                                 },
                                 error: function(result) {
                                     new swal({
@@ -1026,14 +1056,14 @@
         }
 
         function clearInputFields() {
-            document.getElementById('size_id').value = "";
-            document.getElementById('item_unit').value = "";
-            document.getElementById('rate').value = "";
+            document.getElementById('size').value = "";
+           // document.getElementById('item_id').value = "";
+           // document.getElementById('rate').value = "";
             document.getElementById('quantity').value = "";
             document.getElementById('through').value = "";
             //document.getElementById('remark').value = "";
             document.getElementById('stock_quantity').value = "";
-
+             $('#unit').val($('#unit option:first').val()).change();
             $('#items').val($('#items option:first').val()).change();
             $('#departments').val($('#items option:first').val()).change();
             $('#placementSelect').val($('#items option:first').val()).change();

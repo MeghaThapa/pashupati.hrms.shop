@@ -46,6 +46,10 @@ class RawMaterialStock extends Model
     {
         return $this->belongsTo('App\Models\Department', 'department_id', "id");
     }
-    
+     public function godam()
+    {
+        return $this->belongsTo('App\Models\Godam', 'godam_id', "id");
+    }
+
 
 }
