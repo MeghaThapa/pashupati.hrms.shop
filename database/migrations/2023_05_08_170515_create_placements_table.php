@@ -16,8 +16,11 @@ return new class extends Migration
         Schema::create('placements', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('department_id')->index();
-            $table->foreign('department_id')->references('id')->on('storein_departments');
+            $table->unsignedBigInteger('storeout_dpt_id')->index();
+            $table->foreign('storeout_dpt_id')->references('id')->on('storeout_departments');
+
+            $table->unsignedBigInteger('godam_id')->index();
+            $table->foreign('godam_id')->references('id')->on('godam');
             $table->enum('status',['active','inactive']);
             $table->timestamps();
         });
