@@ -36,21 +36,21 @@ class FabricController extends Controller
         $validator = $request->validate([
             'name' => 'required|string|max:60|unique:fabrics',
             'fabricgroup_id' => 'required|integer',
-            'roll_no' => 'required|integer',
-            'loom_no' => 'required|integer',
-            'gross_wt' => 'required|integer',
-            'net_wt' => 'required|integer',
+            // 'roll_no' => 'required|integer',
+            // 'loom_no' => 'required|integer',
+            // 'gross_wt' => 'required|integer',
+            // 'net_wt' => 'required|integer',
         ]);
 
 
         // store subcategory
         $fabric = Fabric::create([
             'name' => $request['name'],
-            'roll_no' => $request['roll_no'],
-            'loom_no' => $request['loom_no'],
+            'roll_no' => '0',
+            'loom_no' => '0',
             'fabricgroup_id' => $request['fabricgroup_id'],
-            'gross_wt' => $request['gross_wt'],
-            'net_wt' => $request['net_wt'],
+            'gross_wt' => '0',
+            'net_wt' => '0',
             'meter' => $request['meter'],
             'gram' => '00',
         ]);
@@ -93,20 +93,20 @@ class FabricController extends Controller
         $validator = $request->validate([
             'name' => 'required|string|max:50|unique:fabrics,name,' . $fabric->id,
             'fabricgroup_id' => 'required|integer',
-            'roll_no' => 'required|integer',
-            'loom_no' => 'required|integer',
-            'gross_wt' => 'required|integer',
-            'net_wt' => 'required|integer',
+            // 'roll_no' => 'required|integer',
+            // 'loom_no' => 'required|integer',
+            // 'gross_wt' => 'required|integer',
+            // 'net_wt' => 'required|integer',
         ]);
 
         // update fabric
         $fabric->update([
             'name' => $request->name,
-            'roll_no' => $request['roll_no'],
-            'loom_no' => $request['loom_no'],
+            // 'roll_no' => $request['roll_no'],
+            // 'loom_no' => $request['loom_no'],
             'fabricgroup_id' => $request['fabricgroup_id'],
-            'gross_wt' => $request['gross_wt'],
-            'net_wt' => $request['net_wt'],
+            // 'gross_wt' => $request['gross_wt'],
+            // 'net_wt' => $request['net_wt'],
             'meter' => $request['meter'],
         ]);
 

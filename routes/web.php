@@ -485,7 +485,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
     Route::get('nonwovenfabrics/{id}/delete', 'FabricNonWovenController@destroy')->name('nonwovenfabrics.delete');
 
-
     Route::resource('nonwovenfabrics-receiveentry', 'FabricNonWovenReceiveEntryController', [
         'names' => [
             'index' => 'nonwovenfabrics-receiveentry.index',
