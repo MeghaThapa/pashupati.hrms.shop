@@ -86,6 +86,7 @@ class StockController extends Controller
               $stocks->where('stocks.category_id', $request->storein_category);
         }
         $stocks = $stocks->paginate($TOTAL_ROW);
+        $stocks->appends($request->only('storein_department', 'storein_category'));
 
         foreach ($stocks->items() as $stock){
             $TOTAL_AMOUNT += $stock->total_amount;

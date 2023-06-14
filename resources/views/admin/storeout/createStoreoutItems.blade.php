@@ -157,8 +157,11 @@
 
                 <div class="col-md-2" style="gap:3px;">
                     <label for="size" class="col-form-label">{{ __('Department') }}</label>
-
-                    <select class="advance-select-box form-control" id="departments" name="department" required>
+                     <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                        data-target="#storeoutDepartmentModel" style="margin-top:0 !important; top:8px;float:right;">
+                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                    </a>
+                    <select class="advance-select-box form-control" id="storeoutDepartments" name="storeout_departments" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
                     </select>
                     @error('department')
@@ -385,14 +388,14 @@
     <!--Placement Model Popup End-->
 
     {{-- department model popup --}}
-    <div class="modal fade" id="addDepartmentModel" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModel"
+    <div class="modal fade" id="storeoutDepartmentModel" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form class="form-horizontal" id="modalFormDepartment">
+                <form class="form-horizontal" id="createStoreoutDepartment">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addDepartmentModel">Add Department</h5>
+                        <h5 class="modal-title" id="addDepartmentModel">Add Storeout Department</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -409,7 +412,7 @@
                                     <label for="department" class="col-form-label">{{ __('Department Name') }}<span
                                             class="required-field">*</span></label>
                                     <input type="text" class="form-control @error('company') is-invalid @enderror"
-                                        id="department" name="department" placeholder="{{ __('Department Name') }}"
+                                        id="storeoutDptName" name="storeout_dpt_name" placeholder="{{ __('Department Name') }}"
                                         value="{{ old('department') }}" required>
                                     @error('company')
                                         <span class="invalid-feedback" role="alert">
@@ -419,7 +422,7 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for="status" class="col-form-label">{{ __('Status') }}</label>
-                                    <select class="form-control" id="status" name="status">
+                                    <select class="form-control" id="storeoutDeptStatus" name="storeout_dept_status" required>
                                         <option value="active">{{ __('Active') }}</option>
                                         <option value="inactive">{{ __('Inactive') }}</option>
                                     </select>
@@ -433,7 +436,7 @@
                     <div class="modal-footer">
 
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
-                            {{ __('Save Department') }}</button>
+                            {{ __('Save Storeout Department') }}</button>
 
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                             Close
@@ -686,8 +689,7 @@
                                 'select an item' + '</option>';
                             for (var i = 0; i < response.length; i++) {
                                 selectOptions += '<option value="' + response[i].item_name + '">' +
-                                    response[i].item_name + ' / product no:' +
-                                    response[i].item_code + '</option>';
+                                    response[i].item_name + '</option>';
                             }
                         }
 
@@ -746,6 +748,43 @@
             }
             $(element_id).html(selectOptions);
     }
+
+    //save stoeout department
+        document.getElementById('createStoreoutDepartment').addEventListener('submit', function(e){
+             e.preventDefault();
+             const form = e.target;
+             let name= form.elements['storeout_dpt_name'];
+             let status = form.elements['storeout_dept_status'];
+               $.ajax({
+                url: "{{ route('storeoutDepartment.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name.value,
+                    status: status.value,
+
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#storeoutDepartmentModel').modal('hide');
+                      setOptionInSelect(
+                        'storeoutDepartments',
+                        response.storeoutDepartment.id,
+                        response.storeoutDepartment.name);
+
+                    //updateTableRow(response.storeOutItem, storeOut_item_id.value);
+
+                    //totalAmountCalculation();
+
+                    //editStoreOutEvent();
+                   // deleteEventBtn();
+
+                },
+                error: function(xhr, status, error) {
+                    setMessage('edit-form-error', 'Please Fill out all fields')
+                }
+            })
+        })
 
         document.getElementById('updateStoreOutItem').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1104,48 +1143,48 @@
         }
 
         //department save
-        document.getElementById('modalFormDepartment').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let form = e.target;
-            let departmentName = form.elements['department'];
-            let status = form.elements['status'];
-            $.ajax({
-                url: "{{ route('department.storeDepartmentFromModel') }}",
-                method: 'POST',
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    department: departmentName.value,
-                    status: status.value
-                    // Goes Into Request
-                },
-                success: function(response) {
-                    $('#addDepartmentModel').modal('hide');
-                    departmentName.value = "";
-                    status = "";
-                    setSuccessMessage(response.message);
+        // document.getElementById('modalFormDepartment').addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     let form = e.target;
+        //     let departmentName = form.elements['department'];
+        //     let status = form.elements['status'];
+        //     $.ajax({
+        //         url: "{{ route('department.storeDepartmentFromModel') }}",
+        //         method: 'POST',
+        //         data: {
+        //             _token: "{{ csrf_token() }}",
+        //             department: departmentName.value,
+        //             status: status.value
+        //             // Goes Into Request
+        //         },
+        //         success: function(response) {
+        //             $('#addDepartmentModel').modal('hide');
+        //             departmentName.value = "";
+        //             status = "";
+        //             setSuccessMessage(response.message);
 
-                    //recent by megha
-                    setOptionInSelect(
-                        'departments',
-                        response.department.id,
-                        response.department.department);
-                    setOptionInSelect(
-                        'model_department',
-                        response.department.id,
-                        response.department.department);
-                },
-                error: function(xhr, status, error) {
+        //             //recent by megha
+        //             setOptionInSelect(
+        //                 'departments',
+        //                 response.department.id,
+        //                 response.department.department);
+        //             setOptionInSelect(
+        //                 'model_department',
+        //                 response.department.id,
+        //                 response.department.department);
+        //         },
+        //         error: function(xhr, status, error) {
 
-                    let errorMessage = xhr.responseJSON.message;
+        //             let errorMessage = xhr.responseJSON.message;
 
-                    setTimeout(function() {
-                        errorContainer.hidden = true;
-                    }, 2000); // 5000 milliseconds = 5 seconds
-                    //return error;
-                }
-            });
+        //             setTimeout(function() {
+        //                 errorContainer.hidden = true;
+        //             }, 2000); // 5000 milliseconds = 5 seconds
+        //             //return error;
+        //         }
+        //     });
 
-        });
+        // });
 
         function setErrorMessage(message) {
             let errorContainer = document.getElementById('error_msg');

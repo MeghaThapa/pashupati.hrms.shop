@@ -60,6 +60,7 @@
                             <th>{{ __('Storein Type') }}</th>
                             <th>{{ __('From Godam') }}</th>
                             <th>{{ __('To Godam') }}</th>
+                            <th>{{ __('Total Qty') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -89,19 +90,23 @@
                             data: 'receipt_no'
                         },
                         {
-                            data: 'supplier_id'
+                            data: 'supplier_name'
                         },
                         {
                             data: 'pp_no'
                         },
                         {
-                            data: 'storein_type_id'
+                            data: 'storein_type_name'
                         },
                         {
-                            data: 'from_godam_id'
+                            data: 'from_godam_name',
+                            defaultContent: 'EMPTY'
                         },
                         {
-                            data: 'to_godam_id'
+                            data: 'to_godam_name'
+                        },
+                        {
+                            data: 'raw_material_item_quantity'
                         },
 
                         {
