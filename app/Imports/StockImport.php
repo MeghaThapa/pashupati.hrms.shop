@@ -27,6 +27,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
     {
 
         foreach ($rows as $row) {
+           // dd($row);
             $trimDepartment = trim($row['department']);
             $trimCategory = trim($row['category']);
             $trimItem = trim($row['item_name']);
@@ -157,16 +158,29 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
 
             if($department && $category && $item && $size && $unit){
-                Stock::create([
-                'item_id' => $item,
-                'size' => $size,
-                'quantity' => $row['quantity'],
-                'unit' => $unit,
-                'avg_price' => $row['average_rate'],
-                'total_amount' => $row['total_amount'],
-                'department_id' => $department,
-                'category_id' => $category,
-                ]);
+                $exists = Stock::where('department_id',$department)
+                        ->where('category_id',$category)
+                        ->where('item_id',$item)
+                        ->where('size',$size)
+                        ->where('unit',$unit)
+                        ->first();
+                if($exists){
+                    Stock::where('id',$exists->id)->update([
+                        "total_amount" => $exists->total_amount + $row['total_amount']
+                    ]);
+
+                }else{
+                    Stock::create([
+                    'item_id' => $item,
+                    'size' => $size,
+                    'quantity' => $row['quantity'],
+                    'unit' => $unit,
+                    'avg_price' => $row['average_rate'],
+                    'total_amount' => $row['total_amount'],
+                    'department_id' => $department,
+                    'category_id' => $category,
+                    ]);
+                }
             }else{
                 // dd($department, $category , $item , $size , $unit);
             }

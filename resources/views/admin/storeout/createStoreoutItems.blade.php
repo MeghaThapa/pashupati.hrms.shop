@@ -649,28 +649,28 @@
                     getStoreinItemAccCat(category_id);
             });
 
-            $('#departments').on('select2:select', function(e) {
+            $('#storeoutDepartments').on('select2:select', function(e) {
                 let department_id = e.params.data.id;
                 getDepartmentPlacement(department_id, 'blade');
                 let category_id =$('#categorySelect').val();
                 let item_id =$('#items').val();
                 let side_id = $('#size').val();
                 let unit_id = $('#unit').val();
-                getStockQtyRate(department_id,category_id,item_id,side_id,unit_id);
+                getStockQtyRate(category_id,item_id,side_id,unit_id);
 
             });
 
-            function getStockQtyRate(department_id,category_id,item_id,side_id,unit_id){
+            function getStockQtyRate(category_id,item_id,side_id,unit_id){
                   $.ajax({
                 url: "{{ route('storeout.getStockQtyRate') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    dept_id: department_id,
+                   // dept_id: department_id,
                     cat_id: category_id,
                     item_id: item_id,
                     side_id: side_id,
-                    unit_id:unit_id,
+                    unit_id: unit_id,
                 },
                 success: function(response) {
                     console.log('getStockQtyRate',response);
@@ -917,10 +917,10 @@
                         let selectOptions = '';
                         if (response.length == 0) {
                             selectOptions += '<option disabled selected>' +
-                                'no items found' + '</option>';
+                                'no placement found' + '</option>';
                         } else {
                             selectOptions += '<option disabled selected>' +
-                                'select an item' + '</option>';
+                                'select a placement' + '</option>';
                             for (var i = 0; i < response.length; i++) {
                                 selectOptions += '<option value="' + response[i].id + '">' +
                                     response[i].name + '</option>';
@@ -945,11 +945,13 @@
             const form = e.target;
 
             let storeout_id = form.elements['store_out_id'].value;
+            //recent added
+            let category_id=  form.elements['categoryName'].value;
             let item_name = form.elements['item_id'].value;
             let size = form.elements['size'].value;
             let unit = form.elements['unit'].value;
             let quantity = form.elements['quantity'].value;
-            let department = form.elements['department'].value;
+            let department = form.elements['storeout_departments'].value;
             let placement = form.elements['placement_id'].value;
             let through = form.elements['through'].value;
 
@@ -958,6 +960,8 @@
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
+                    //resc added
+                    category_id:category_id,
                     storeout_id: storeout_id,
                     item_name: item_name,
                     size: size,
@@ -970,8 +974,8 @@
                     // Goes Into Request
                 },
                 success: function(response) {
-                   console.log('save storeout item respnse',response);
-                    setIntoTable(response.storeOutItem);
+                   //console.log('save storeout item respnse',response);
+                   setIntoTable(response.storeOutItem);
                     $('#items').focus();
 
                     if (response.stock.quantity <= 0) {
@@ -984,7 +988,7 @@
                     totalAmountCalculation();
                     currentIndex = -1;
                       $('#items').focus();
-                     // checkIfTableHasData();
+                     checkIfTableHasData();
                 },
                 error: function(xhr, status, error) {
                     setErrorMessage(xhr.responseJSON.message);
