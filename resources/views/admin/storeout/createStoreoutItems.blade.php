@@ -161,8 +161,12 @@
                         data-target="#storeoutDepartmentModel" style="margin-top:0 !important; top:8px;float:right;">
                         <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                     </a>
+                    {{-- megha --}}
                     <select class="advance-select-box form-control" id="storeoutDepartments" name="storeout_departments" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
+                         @foreach ($storeoutDepartment as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        @endforeach
                     </select>
                     @error('department')
                         <span class="invalid-feedback" role="alert">
@@ -327,13 +331,17 @@
 
                             </div>
                             <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <label for="name">{{ __('Placement name') }}<span
+                                 <div class="col-md-6 form-group">
+                                    <label for="department">{{ __('For') }}<span
                                             class="required-field">*</span></label>
-                                    <input type="text" class="form-control @error('placement') is-invalid @enderror"
-                                        id="placement" name="placement" placeholder="{{ __('Placement') }}"
-                                        value="{{ old('placement') }}" required>
-                                    @error('placement')
+                                    <select class="advance-select-box form-control @error('model_godam') is-invalid @enderror"
+                                        id="modelGodam" name="model_godam_id">
+                                        <option value="" selected disabled>{{ __('Select a godam') }}</option>
+                                        @foreach ($godams as $godam)
+                                            <option value="{{ $godam->id }}">{{ $godam->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('department')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -342,10 +350,10 @@
                                 <div class="col-md-6 form-group">
                                     <label for="department">{{ __('Department') }}<span
                                             class="required-field">*</span></label>
-                                    <select class="advance-select-box form-control @error('supplier') is-invalid @enderror"
-                                        id="model_department" name="department">
+                                    <select class="advance-select-box form-control @error('department') is-invalid @enderror"
+                                        id="modelDepartment" name="model_dept_id">
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($storeinDepartment as $department)
+                                        @foreach ($storeoutDepartment as $department)
                                             <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         @endforeach
                                     </select>
@@ -356,9 +364,20 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            <div class="row">
-                                <div class="col-md-12 form-group">
+                                <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="name">{{ __('Placement name') }}<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" class="form-control @error('placement') is-invalid @enderror"
+                                        id="modelPlacement" name="model_placement" placeholder="{{ __('Placement') }}"
+                                        value="{{ old('placement') }}" required>
+                                    @error('placement')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-group">
                                     <label for="status" class="col-form-label">{{ __('Status') }}</label>
                                     <select class="form-control" id="status" name="status">
                                         <option value="1">{{ __('Active') }}</option>
@@ -366,6 +385,9 @@
                                     </select>
                                 </div>
                             </div>
+                            </div>
+
+
                             <div class="row">
                                 <div class="col-sm-10">
                                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
@@ -721,7 +743,7 @@
                     method: 'GET',
                     success: function(object) {
                         console.log('item event:',object);
-                        fillOptionInSelect(object.department,'#departments');
+                       // fillOptionInSelect(object.department,'#departments');
                         fillOptionInSelect(object.size,'#size');
                         fillOptionInSelect(object.units,'#unit');
 
@@ -1224,25 +1246,28 @@
         document.getElementById('modelFormPlacement').addEventListener('submit', function(e) {
             e.preventDefault();
             let form = e.target;
-            let placementName = form.elements['placement'];
-            let department_id = form.elements['department'];
+            let placementName = form.elements['model_placement'];
+            let godam_id = form.elements['model_godam_id'];
+            let storeoutdpt_id = form.elements['model_dept_id'];
+
             let status = form.elements['status'];
             $.ajax({
                 url: "{{ route('placement.save') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    placement: placementName.value,
-                    department_id: department_id.value,
+                    name: placementName.value,
+                    storeoutdpt_id: storeoutdpt_id.value,
+                    godam_id:godam_id.value,
                     status: status.value
                     // Goes Into Request
                 },
                 success: function(response) {
                     setSuccessMessage(response.message);
                     $('#placementCreateModel').modal('hide');
-                    placementName.value = "";
-                    department_id.value = "";
-                    status = "";
+                    // placementName.value = "";
+                    // department_id.value = "";
+                    // status = "";
 
                     setOptionInSelect(
                         'placementSelect',

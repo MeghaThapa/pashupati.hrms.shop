@@ -14,6 +14,7 @@ use App\Models\Size;
 use App\Models\Stock;
 use App\Models\Godam;
 use App\Models\StoreinDepartment;
+use App\Models\StoreoutDepartment;
 use Exception;
 //use DB;
 use Illuminate\Support\Facades\DB;
@@ -194,14 +195,17 @@ class StoreoutController extends Controller
     public function storeOutItems($store_out_id)
     {
         $storeOut = Storeout::find($store_out_id);
-        $storeinDepartment =StoreinDepartment::get(['id','name']);
+        $storeoutDepartment =StoreoutDepartment::get(['id','name']);
+        $godams= Godam::get(['id','name']);
+       // return  $godam;
+       $placementforBlade=
         $stockCategory = DB::table('stocks')
         ->join('storein_categories','storein_categories.id','=','stocks.category_id')
         ->select('storein_categories.id as category_id','storein_categories.name as category_name')
         ->distinct('storein_categories.name')
         ->get();
         //return $stockCategory;
-        return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory','storeinDepartment'));
+        return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory','storeoutDepartment','godams'));
     }
     public function getDepartmentPlacements($dept_id)
     {
