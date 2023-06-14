@@ -42,7 +42,7 @@
                     @csrf
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group col-md-12">
+                            <div class="form-group col-md-6">
                                 <label for="name">{{ __('Fabric Name') }}<span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="{{ __('Fabric Name') }}" value="{{ old('name') }}" required>
                                 @error('name')
@@ -51,8 +51,22 @@
                                         </span>
                                 @enderror
                             </div>
+                            <div class="col-md-6 form-group">
+                                <label for="FabricGroup">{{ __('FabricGroup Name') }}<span class="required-field">*</span></label>
+                                <select class="advance-select-box form-control @error('FabricGroup') is-invalid @enderror" id="FabricGroup" name="fabricgroup_id"  required>
+                                    <option value="" selected disabled>{{ __('Select a FabricGroup') }}</option>
+                                    @foreach($fabricgroups as $key => $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('fabricgroup_id')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="row">
+                      {{--   <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="roll_no">{{ __('Roll No') }}<span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="roll_no" name="roll_no" placeholder="{{ __('Roll No') }}" value="{{ old('name') }}" required>
@@ -72,8 +86,8 @@
                                 @enderror
                             </div>
                             
-                        </div>
-                        <div class="row">
+                        </div> --}}
+                       {{--  <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="gross_wt">{{ __('Gross Weight') }}<span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="gross_wt" name="gross_wt" placeholder="{{ __('Gross Weight') }}" value="{{ old('name') }}" required>
@@ -93,43 +107,31 @@
                                 @enderror
                             </div>
                             
-                        </div>
+                        </div> --}}
                         <div class="row">
-                            <div class="form-group col-md-6 mt-3">
-                                <label for="meter">{{ __('Meter') }}<span class="required-field">*</span></label>
+                            <div class="form-group col-md-6">
+                                <label for="meter" class="col-form-label">{{ __('Meter') }} <span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('meter') is-invalid @enderror" id="meter" name="meter" placeholder="{{ __('Meter') }}" value="{{ old('name') }}" required>
                                 @error('meter')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
-                            </div>
-                            <div class="col-md-6 form-group mt-3">
-                                <label for="FabricGroup">{{ __('FabricGroup Name') }}<span class="required-field">*</span></label>
-                                <select class="advance-select-box form-control @error('FabricGroup') is-invalid @enderror" id="FabricGroup" name="fabricgroup_id"  required>
-                                    <option value="" selected disabled>{{ __('Select a FabricGroup') }}</option>
-                                    @foreach($fabricgroups as $key => $group)
-                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('fabricgroup_id')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
                             </div> 
-                             
-                        </div>
-                        
-                        <div class="row">
-                            
-                            <div class="form-group col-md-12">
+                            <div class="form-group col-md-6">
                                 <label for="status" class="col-form-label">{{ __('Status') }}</label>
                                 <select class="form-control" id="status" name="status" >
                                     <option value="1">{{ __('Active') }}</option>
                                     <option value="0">{{ __('Inactive') }}</option>
                                 </select>
                             </div>
+                             
+                             
+                        </div>
+                        
+                        <div class="row">
+                            
+                            
                         </div>
                         <div class="row">
                             <div class="col-sm-10">

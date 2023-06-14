@@ -55,7 +55,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="row">
+                       {{--  <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="roll_no">{{ __('Roll No') }}<span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="roll_no" name="roll_no" placeholder="{{ __('Roll No') }}" value="{{ $fabrics->roll_no }}" required>
@@ -75,8 +75,8 @@
                                 @enderror
                             </div>
                             
-                        </div>
-                        <div class="row">
+                        </div> --}}
+                        {{-- <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="gross_wt">{{ __('Gross Weight') }}<span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="gross_wt" name="gross_wt" placeholder="{{ __('Gross Weight') }}" value="{{ $fabrics->gross_wt }}" required>
@@ -96,7 +96,7 @@
                                 @enderror
                             </div>
                             
-                        </div>
+                        </div> --}}
 
                         <div class="row">
                             <div class="form-group col-md-6 mt-3">

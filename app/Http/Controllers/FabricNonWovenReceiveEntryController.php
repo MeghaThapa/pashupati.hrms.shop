@@ -34,11 +34,14 @@ class FabricNonWovenReceiveEntryController extends Controller
         $departments = Department::get();
         $shifts = Shift::get();
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
+
+        $getnetweight = FabricNonWovenReciveEntry::sum('net_weight');
+        // dd($getsumnetweight);
       
         // dd($nonwovenfabrics);
         $receipt_no = "NFE"."-".getNepaliDate(date('Y-m-d'));
         // dd($date);
-        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics','receipt_no'));
+        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics','receipt_no','getnetweight'));
     }
 
     public function store(Request $request)
