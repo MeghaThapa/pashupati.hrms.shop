@@ -14,16 +14,16 @@ class RawMaterialItemController extends Controller
 {
     public function store(Request $request)
     {
+        $request->validate([
+            'rawMaterial_id' => 'required',
+            'lorry_no' => 'required',
+            'dana_group_id' => 'required',
+            'dana_name_id' => 'required',
+            'quantity_in_kg' => 'required',
+        ]);
+
         try {
             DB::beginTransaction();
-            $validator = $request->validate([
-                'rawMaterial_id' => 'required',
-                'lorry_no' => 'required',
-                'dana_group_id' => 'required',
-                'dana_name_id' => 'required',
-                'quantity_in_kg' => 'required',
-            ]);
-
             $rawMaterialItem = new RawMaterialItem();
             $rawMaterialItem->raw_material_id = $request->rawMaterial_id;
             $rawMaterialItem->lorry_no = $request->lorry_no;
@@ -32,15 +32,13 @@ class RawMaterialItemController extends Controller
             $rawMaterialItem->quantity = $request->quantity_in_kg;
             $rawMaterialItem->save();
 
-            $department_id =RawMaterial::find($request->rawMaterial_id)->to_godam_id;
-
-            RawMaterialStock::createRawMaterialStock($rawMaterialItem->id,$department_id);
+            $godam_id =RawMaterial::find($request->rawMaterial_id)->to_godam_id;
+            RawMaterialStock::createRawMaterialStock($rawMaterialItem->id,$godam_id);
 
             $rawMaterialItem = RawMaterialItem::with('danaName', 'danaGroup')->find($rawMaterialItem->id);
             DB::commit();
             return response()->json([
                 'message' => 'RawMaterial created successfully ',
-                'test_department'=>$department_id,
                 'rawMaterialItem' => $rawMaterialItem
             ], 200);
         } catch (Exception $e) {

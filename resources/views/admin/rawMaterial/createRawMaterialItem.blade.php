@@ -515,17 +515,14 @@
 
                 var html = "";
 
-                html = "<tr  id=editRow-" + res.id + "><td>" + sn +
-                    "</td><td class='rowDanaGroupName'>" + res.dana_group.name +
-                    "</td><td class='rowDanaName'>" + res.dana_name.name +
-                    "</td><td class='rowQuantity'>" + res.quantity +
-                    "</td><td class='rowLorryNo'>" + res.lorry_no +
-                    "</td><td>" +
-                    "<button class='btn btn-success editRawMaterialBtn' data-id=" +
-                    res.id + "><i class='fas fa-edit'></i></button>" +
-                    "  " +
-                    "<button class='btn btn-danger dltRawMaterialItem' data-id=" +
-                    res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
+                    html = "<tr  id=editRow-" + res.id + "><td>" + sn +
+                        "</td><td class='rowDanaGroupName'>" + res.dana_group.name +
+                        "</td><td class='rowDanaName'>" + res.dana_name.name +
+                        "</td><td class='rowQuantity'>" + res.quantity +
+                        "</td><td class='rowLorryNo'>" + res.lorry_no +
+                        "</td><td>"+
+                        "<button class='btn btn-danger dltRawMaterialItem' data-id=" +
+                        res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
 
                 document.getElementById('rawMaterialItemTbody').innerHTML += html;
                 sn++;
