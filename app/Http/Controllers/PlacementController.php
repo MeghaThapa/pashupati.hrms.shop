@@ -10,13 +10,16 @@ class PlacementController extends Controller
     public function save(Request $request)
     {
         $validator = $request->validate([
-            'placement' => 'required|string|max:50|unique:placements,name',
-            'department_id' => 'required',
+
+            'name' => 'required|string|max:50|unique:placements,name',
+            'godam_id' =>'required',
+            'storeoutdpt_id' => 'required',
             'status' => 'required',
         ]);
         $placement = new Placement();
-        $placement->name = $request->placement;
-        $placement->department_id = $request->department_id;
+        $placement->name = $request->name;
+        $placement->storeout_dpt_id  = $request->storeoutdpt_id;
+        $placement->godam_id = $request->godam_id;
         $placement->status = $request->status;
         $placement->save();
         return response()->json([
