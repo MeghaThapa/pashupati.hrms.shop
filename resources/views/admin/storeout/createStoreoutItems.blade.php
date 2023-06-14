@@ -784,13 +784,16 @@
                     _token: "{{ csrf_token() }}",
                     name: name.value,
                     status: status.value,
-
                 },
                 success: function(response) {
                     console.log(response);
                     $('#storeoutDepartmentModel').modal('hide');
                       setOptionInSelect(
                         'storeoutDepartments',
+                        response.storeoutDepartment.id,
+                        response.storeoutDepartment.name);
+                        setOptionInSelect(
+                        'modelDepartment',
                         response.storeoutDepartment.id,
                         response.storeoutDepartment.name);
 
