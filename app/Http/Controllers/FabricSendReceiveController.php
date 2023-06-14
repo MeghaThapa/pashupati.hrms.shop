@@ -139,33 +139,33 @@ class FabricSendReceiveController extends Controller
     }
 
     public function sendunlaminateddelete(Request $request,$id){
-        if($request->ajax()){
-           try{
-                DB::beginTransaction();
-                $count = UnlaminatedFabric::where('id',$id)->get();
-                $unlaminatedStock = UnlaminatedFabricStock::where('id',$id)->get();
-                if(count($count) > 0 && count($unlaminatedStock) > 0 ){
-                    UnlaminatedFabric::where('id',$id)->delete();
-                    UnlaminatedFabricStock::where('id',$id)->delete();
-                    DB::commit();
-                    return response([
-                        'response'=> "200",
-                    ]);
+        // if($request->ajax()){
+        //    try{
+        //         DB::beginTransaction();
+        //         $count = UnlaminatedFabric::where('id',$id)->get();
+        //         $unlaminatedStock = UnlaminatedFabricStock::where('id',$id)->get();
+        //         if(count($count) > 0 && count($unlaminatedStock) > 0 ){
+        //             UnlaminatedFabric::where('id',$id)->delete();
+        //             UnlaminatedFabricStock::where('id',$id)->delete();
+        //             DB::commit();
+        //             return response([
+        //                 'response'=> "200",
+        //             ]);
                 
-                }else{
-                    DB::rollBack();
-                    return response([
-                        'response'=> "400",
-                    ]);
-                }
+        //         }else{
+        //             DB::rollBack();
+        //             return response([
+        //                 'response'=> "400",
+        //             ]);
+        //         }
                 
-           }catch(Exception $e){
-                DB::rollBack();
-                return response([
-                    "message" => "Something went wrong!'{$e->getMessage()}'"
-                ]);
-           }
-        }
+        //    }catch(Exception $e){
+        //         DB::rollBack();
+        //         return response([
+        //             "message" => "Something went wrong!'{$e->getMessage()}'"
+        //         ]);
+        //    }
+        // }
     }
     public function storelaminated(Request $request){
         // return   $request;
@@ -173,7 +173,7 @@ class FabricSendReceiveController extends Controller
         try{
 
             $idoffabricforsendtolamination = $request->idoffabricforsendtolamination;
-            $fabric =  UnlaminatedFabricStock::with('fabricstock')->first(); //where('id',$idoffabricforsendtolamination)->
+            $fabric =  UnlaminatedFabricStock::with('fabric')->first(); //where('id',$idoffabricforsendtolamination)->
             $fabric_id = $fabric->fabric_id;
             $department_id = $fabric->department_id;
             $planttype_id = $fabric->planttype_id;
@@ -260,11 +260,12 @@ class FabricSendReceiveController extends Controller
                     "plantname_id" => $plantname_id
                 ]);
 
-                UnlaminatedFabricStock::where('id',$idoffabricforsendtolamination)->delete();
-                UnlaminatedFabric::where('id',$idoffabricforsendtolamination)->delete();
-                Fabric::where('id',$fabric_id)->delete();
+                // UnlaminatedFabricStock::where('id',$idoffabricforsendtolamination)->delete();
+                // UnlaminatedFabric::where('id',$idoffabricforsendtolamination)->delete();
+                // FabricStock::where('id',$fabric_id)->delete();
                 
            DB::commit();
+           return "DOne";
         }
         catch(Exception $e){
             DB::rollback();
@@ -328,5 +329,17 @@ class FabricSendReceiveController extends Controller
             "laminated_gram_3" => $request->laminated_gram_3,
         ]);
         ****************************/
+    }
+
+    
+    public function comparelamandunlam(Request $request){
+        if($request->ajax()){
+            $unlam = UnlaminatedFabric::with('fabric')->get();
+            $lam = LaminatedFabric::with('fabric')->get();
+            return response([
+                "unlam" => $unlam,
+                "lam" => $lam
+            ]);
+        }
     }
 }

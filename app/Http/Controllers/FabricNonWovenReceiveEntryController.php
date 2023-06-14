@@ -52,7 +52,6 @@ class FabricNonWovenReceiveEntryController extends Controller
                                           ->where('name',$data['fabric_name'])
                                           ->where('color',$data['fabric_color'])
                                           ->value('id');
-                                          // dd($nonfabric_id);
 
                $fabricreceiveenty = FabricNonWovenReciveEntry::create([
                 'receive_date' => $data['receive_date'],

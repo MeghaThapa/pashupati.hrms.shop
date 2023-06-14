@@ -447,6 +447,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
     //sending for lamination
     // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+    //comapare lam and unlam 
+    Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
