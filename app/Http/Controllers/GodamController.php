@@ -23,14 +23,18 @@ class GodamController extends Controller
             "status" => "required"
             ]);
         $godam=new Godam();
-        $godam->name=$request->name;
+        $godam->name=trim(strtolower($request->name));
         $godam->status=$request->status;
         $godam->save();
-         return response()->json([
+        if (request()->ajax()){
+            return response()->json([
                 'message' =>'godam Created Successfully',
                 'godam' => $godam,
             ],201);
-        //return redirect()->route('godam.index')->with("success", "Godam Created Successfully");
+        }
+        else{
+            return redirect()->route('godam.index')->with("success", "Godam Created Successfully");
+        }
     }
 
     // public function edit($id){
