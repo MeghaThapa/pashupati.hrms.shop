@@ -483,7 +483,34 @@ class StoreinController extends Controller
         $storeinItem->total_amount = $totalAmt;
         $storeinItem->save();
 
-        Stock::createStock($storeinItem);
+        //Stock::createStock($storeinItem);
+        $stock = Stock::where('item_id', $storeinItem->storein_item_id )
+        ->where('category_id', $storeinItem->storein_category_id)
+        ->where('department_id', $storeinItem->department_id)
+        ->where('unit',$storeinItem->unit_id)
+        ->where('size',$storeinItem->size_id)
+        ->first();
+        //dd($stock);
+        if (!$stock) {
+          // return('here');
+            $stock = new Stock();
+            $stock->quantity = $storeinItem->quantity;
+            $stock->avg_price = round($storeinItem->price,2);
+            $stock->total_amount = round($storeinItem->total_amount,2);
+        } else {
+             //return('to add stock');
+            $stock->quantity += $storeinItem->quantity;
+           // dd($stock->quantity);
+            $total = $stock->total_amount + $storeinItem->total_amount;
+            $stock->avg_price = round($total / $stock->quantity,2);
+            $stock->total_amount  =  round($stock->quantity * $stock->avg_price,2);
+        }
+        $stock->item_id = $storeinItem->storein_item_id;
+        $stock->size = $storeinItem->size_id;
+        $stock->unit = $storeinItem->unit_id;
+        $stock->department_id = $storeinItem->department_id;
+        $stock->category_id = $storeinItem->storein_category_id;
+        $stock->save();
         DB::commit();
         return self::getStoreInById($storeinItem->id);
 
@@ -531,7 +558,7 @@ class StoreinController extends Controller
         $items = ItemsOfStorein::with('storeinCategory')->get();
         $sizes = Size::where('status', 1)->get();
         $taxes = Tax::all();
-        $units = Unit::where('status', 1)->get();
+        $units = Unit::get();
         $suppliers = Supplier::where('status', 1)->latest()->get();
         $charges = Charges::all();
         $departments = StoreinDepartment::where('status', 'active')->get();

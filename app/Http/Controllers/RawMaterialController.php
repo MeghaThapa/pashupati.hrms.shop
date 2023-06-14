@@ -15,6 +15,7 @@ use App\Models\Supplier;
 use App\Models\StoreinType;
 use Illuminate\Http\Request;
 use DateTime;
+use DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class RawMaterialController extends Controller
@@ -38,7 +39,39 @@ class RawMaterialController extends Controller
 
     public function dataTable()
     {
-        $rawMaterial = RawMaterial::get();
+        $rawMaterial = DB::table('raw_materials')
+        ->leftJoin('suppliers', 'raw_materials.supplier_id', '=', 'suppliers.id')
+        ->leftJoin('storein_types', 'raw_materials.storein_type_id', '=', 'storein_types.id')
+        ->leftJoin('godam as toGodam', 'raw_materials.to_godam_id', '=', 'toGodam.id')
+        ->leftJoin('godam as fromGodam', 'raw_materials.from_godam_id', '=', 'fromGodam.id')
+        ->leftJoin('raw_material_items', 'raw_material_items.raw_material_id', '=', 'raw_materials.id')
+        ->select(
+            'raw_materials.id',
+            'raw_materials.date',
+            'raw_materials.receipt_no',
+            'suppliers.name as supplier_name',
+            'raw_materials.pp_no',
+            'storein_types.name as storein_type_name',
+            'toGodam.name as to_godam_name',
+            'fromGodam.name as from_godam_name',
+        )
+        ->selectSub(function ($query) {
+            $query->from('raw_material_items')
+                ->selectRaw('SUM(raw_material_items.quantity)')
+                ->whereColumn('raw_material_items.raw_material_id', 'raw_materials.id');
+        }, 'raw_material_item_quantity')
+        ->groupBy(
+            'raw_materials.id',
+            'raw_materials.date',
+            'raw_materials.receipt_no',
+            'suppliers.name',
+            'raw_materials.pp_no',
+            'storein_types.name',
+            'toGodam.name',
+            'fromGodam.name'
+        )
+        ->get();
+
         return DataTables::of($rawMaterial)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {

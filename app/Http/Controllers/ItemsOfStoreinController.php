@@ -18,16 +18,23 @@ class ItemsOfStoreinController extends Controller
             'size_id' =>'required'
 
         ]);
+        //as item belongs to only one department of one category
+        $itemOfStoreins =ItemsOfStorein::where('name',$request->name)
+        ->where('category_id',$request->category_id)
+        ->first();
+        if($itemOfStoreins->department_id){
+            return response()->json([
+                'message' =>'Item can belong to only one department of particular category',
+            ],500);
+        }
 
       try{
-
         $items = new ItemsOfStorein();
-        $items->name = $request->name;
-        $items->pnumber = $request->pnumber;
+        $items->name = trim(strtolower($request->name));
+        $items->pnumber = trim(strtolower($request->pnumber));
         $items->category_id = $request->category_id;
         $items->unit_id = $request->unit_id;
         $items->size_id = $request->size_id;
-
         $items->department_id = $request->department_id;
         $items->status = $request->status;
         $items->save();

@@ -21,11 +21,13 @@ class Stock extends Model
         ->first();
 
         if (!$stock) {
+           dd('here');
             $stock = new Stock();
             $stock->quantity = $storeinItem->quantity;
             $stock->avg_price = round($storeinItem->price,2);
             $stock->total_amount = round($storeinItem->total_amount,2);
         } else {
+             dd('to add stock');
             $stock->quantity += $storeinItem->quantity;
             $total = $stock->total_amount + $storeinItem->total_amount;
             $stock->avg_price = round($total / $stock->quantity,2);

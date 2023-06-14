@@ -32,6 +32,7 @@ use App\Http\Controllers\FabricNonWovenController;
 use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\GodamController;
+use App\Http\Controllers\StoreoutDepartmentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -763,7 +764,8 @@ Route::get('setup/wastage/index',[WastageController::class,'index'])->name('setu
 Route::get('setup/wastage/create',[WastageController::class,'create'])->name('setup.wastage.create');
 Route::post('setup/wastage/store',[WastageController::class,'store'])->name('setup.wastage.store');
 /******************** wastages  end *****************************/
-
+//storeoutDepartment
+Route::post('storeoutDepartment/store', [StoreoutDepartmentController::class, 'store'])->name('storeoutDepartment.store');
 //Storeout route
 Route::get('storeout/index', [StoreoutController::class, 'index'])->name('storeout.index');
 Route::get('storeout/create', [StoreoutController::class, 'create'])->name('storeout.create');
