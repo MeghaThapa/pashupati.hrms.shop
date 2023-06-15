@@ -83,7 +83,7 @@
                 <select class="advance-select-box form-control" id="fromGodamId" name="from_godam_id" required>
                     <option value="" selected disabled>{{ __('Select From Godam') }}</option>
                     @foreach ($fromGodams as $fromGodam)
-                        <option value="{{ $fromGodam->department_id }}">{{ $fromGodam->department->department}}
+                        <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name}}
                         </option>
                     @endforeach
                 </select>
@@ -246,6 +246,7 @@
                         <div class="card-body">
                             <div class="row">
                                 {{-- recent --}}
+
                                  <div class="col-md-12 form-group">
                                     <input type="text" step="any" min="0" class="form-control calculator"
                                         data-number="1" name="autoload_item_id_model"  id="autoloadItemIdModel" min="1" >
@@ -258,7 +259,7 @@
                                     <select class="advance-select-box form-control" id="fromGodamIdModel" name="from_godam_id_model" required>
                                         <option value="" selected disabled>{{ __('Select From Godam') }}</option>
                                        @foreach ($fromGodams as $fromGodam)
-                                        <option value="{{ $fromGodam->department_id }}">{{ $fromGodam->department->department}}
+                                        <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name}}
                                         </option>
                                     @endforeach
                                     </select>

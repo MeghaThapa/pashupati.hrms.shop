@@ -77,7 +77,7 @@ class AutoloadController extends Controller
          return view('admin.autoload.createaAutoloadItems',compact('fromGodams','plantTypes','plantNames','shifts','autoload'));
     }
      public function createAutoloadItem($autoload_id){
-        $fromGodams = RawMaterialStock::with('department')->select('department_id')->distinct()->get();
+        $fromGodams = RawMaterialStock::with('godam')->select('godam_id')->distinct()->get();
         //return $fromGodams;
         $plantTypes = ProcessingStep::all();
         $plantNames = ProcessingSubcat::all();
