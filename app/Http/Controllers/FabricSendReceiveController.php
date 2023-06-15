@@ -401,8 +401,8 @@ class FabricSendReceiveController extends Controller
         if($request->ajax()){
             try{
                 UnlaminatedFabric::truncate();
-                UnlaminatedFabricStock::truncate();
-                LaminatedFabric::truncate();
+                FabricTemporaryForLam::truncate();
+                UnlaminatedFabric::truncate();
                 return response([
                     "message" => "200"
                 ]);
