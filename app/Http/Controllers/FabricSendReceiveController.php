@@ -400,7 +400,7 @@ class FabricSendReceiveController extends Controller
     public function discard(Request $request){
         if($request->ajax()){
             try{
-                UnlaminatedFabric::truncate();
+                LaminatedFabric::truncate();
                 FabricTemporaryForLam::truncate();
                 UnlaminatedFabric::truncate();
                 return response([
