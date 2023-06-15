@@ -492,13 +492,14 @@ class StoreinController extends Controller
         ->first();
         //dd($stock);
         if (!$stock) {
-          // return('here');
+        //   return('here');
             $stock = new Stock();
             $stock->quantity = $storeinItem->quantity;
             $stock->avg_price = round($storeinItem->price,2);
             $stock->total_amount = round($storeinItem->total_amount,2);
         } else {
-             //return('to add stock');
+            //  return('to add stock');
+            $stock->quantity;
             $stock->quantity += $storeinItem->quantity;
            // dd($stock->quantity);
             $total = $stock->total_amount + $storeinItem->total_amount;
