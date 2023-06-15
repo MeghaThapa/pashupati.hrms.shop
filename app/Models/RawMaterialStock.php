@@ -14,10 +14,10 @@ class RawMaterialStock extends Model
         'dana_name_id',
         'quantity'
     ];
-    public static function createRawMaterialStock($rawMaterialItemId , $department_id)
+    public static function createRawMaterialStock($rawMaterialItemId , $godam_id)
     {
         $rawMaterialItem = RawMaterialItem::find($rawMaterialItemId);
-        $rawMaterialStock = RawMaterialStock::where('department_id', $department_id)
+        $rawMaterialStock = RawMaterialStock::where('godam_id', $godam_id)
         ->where('dana_name_id', $rawMaterialItem->dana_name_id)->first();
         // return $rawMaterialStock;
         if (!$rawMaterialStock) {
@@ -25,7 +25,7 @@ class RawMaterialStock extends Model
             $rawMaterialStockItem->dana_group_id  = $rawMaterialItem->dana_group_id;
             $rawMaterialStockItem->dana_name_id  = $rawMaterialItem->dana_name_id;
             $rawMaterialStockItem->quantity = $rawMaterialItem->quantity;
-            $rawMaterialStockItem->department_id = $department_id;
+            $rawMaterialStockItem->godam_id = $godam_id;
             $rawMaterialStockItem->save();
         } else {
             $rawMaterialStock->dana_group_id  = $rawMaterialItem->dana_group_id;
@@ -42,10 +42,10 @@ class RawMaterialStock extends Model
     {
         return $this->belongsTo('App\Models\DanaGroup', 'dana_group_id', "id");
     }
-    public function department()
-    {
-        return $this->belongsTo('App\Models\Department', 'department_id', "id");
-    }
+    // public function department()
+    // {
+    //     return $this->belongsTo('App\Models\Department', 'department_id', "id");
+    // }
      public function godam()
     {
         return $this->belongsTo('App\Models\Godam', 'godam_id', "id");

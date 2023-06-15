@@ -157,9 +157,16 @@
 
                 <div class="col-md-2" style="gap:3px;">
                     <label for="size" class="col-form-label">{{ __('Department') }}</label>
-
-                    <select class="advance-select-box form-control" id="departments" name="department" required>
+                     <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                        data-target="#storeoutDepartmentModel" style="margin-top:0 !important; top:8px;float:right;">
+                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                    </a>
+                    {{-- megha --}}
+                    <select class="advance-select-box form-control" id="storeoutDepartments" name="storeout_departments" required>
                         <option value="" selected disabled>{{ __('Select a department') }}</option>
+                         @foreach ($storeoutDepartment as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        @endforeach
                     </select>
                     @error('department')
                         <span class="invalid-feedback" role="alert">
@@ -324,13 +331,17 @@
 
                             </div>
                             <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <label for="name">{{ __('Placement name') }}<span
+                                 <div class="col-md-6 form-group">
+                                    <label for="department">{{ __('For') }}<span
                                             class="required-field">*</span></label>
-                                    <input type="text" class="form-control @error('placement') is-invalid @enderror"
-                                        id="placement" name="placement" placeholder="{{ __('Placement') }}"
-                                        value="{{ old('placement') }}" required>
-                                    @error('placement')
+                                    <select class="advance-select-box form-control @error('model_godam') is-invalid @enderror"
+                                        id="modelGodam" name="model_godam_id">
+                                        <option value="" selected disabled>{{ __('Select a godam') }}</option>
+                                        @foreach ($godams as $godam)
+                                            <option value="{{ $godam->id }}">{{ $godam->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('department')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -339,10 +350,10 @@
                                 <div class="col-md-6 form-group">
                                     <label for="department">{{ __('Department') }}<span
                                             class="required-field">*</span></label>
-                                    <select class="advance-select-box form-control @error('supplier') is-invalid @enderror"
-                                        id="model_department" name="department">
+                                    <select class="advance-select-box form-control @error('department') is-invalid @enderror"
+                                        id="modelDepartment" name="model_dept_id">
                                         <option value="" selected disabled>{{ __('Select a Department') }}</option>
-                                        @foreach ($storeinDepartment as $department)
+                                        @foreach ($storeoutDepartment as $department)
                                             <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         @endforeach
                                     </select>
@@ -353,9 +364,20 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            <div class="row">
-                                <div class="col-md-12 form-group">
+                                <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="name">{{ __('Placement name') }}<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" class="form-control @error('placement') is-invalid @enderror"
+                                        id="modelPlacement" name="model_placement" placeholder="{{ __('Placement') }}"
+                                        value="{{ old('placement') }}" required>
+                                    @error('placement')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-group">
                                     <label for="status" class="col-form-label">{{ __('Status') }}</label>
                                     <select class="form-control" id="status" name="status">
                                         <option value="1">{{ __('Active') }}</option>
@@ -363,6 +385,9 @@
                                     </select>
                                 </div>
                             </div>
+                            </div>
+
+
                             <div class="row">
                                 <div class="col-sm-10">
                                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
@@ -385,14 +410,14 @@
     <!--Placement Model Popup End-->
 
     {{-- department model popup --}}
-    <div class="modal fade" id="addDepartmentModel" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModel"
+    <div class="modal fade" id="storeoutDepartmentModel" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form class="form-horizontal" id="modalFormDepartment">
+                <form class="form-horizontal" id="createStoreoutDepartment">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addDepartmentModel">Add Department</h5>
+                        <h5 class="modal-title" id="addDepartmentModel">Add Storeout Department</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -409,7 +434,7 @@
                                     <label for="department" class="col-form-label">{{ __('Department Name') }}<span
                                             class="required-field">*</span></label>
                                     <input type="text" class="form-control @error('company') is-invalid @enderror"
-                                        id="department" name="department" placeholder="{{ __('Department Name') }}"
+                                        id="storeoutDptName" name="storeout_dpt_name" placeholder="{{ __('Department Name') }}"
                                         value="{{ old('department') }}" required>
                                     @error('company')
                                         <span class="invalid-feedback" role="alert">
@@ -419,7 +444,7 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for="status" class="col-form-label">{{ __('Status') }}</label>
-                                    <select class="form-control" id="status" name="status">
+                                    <select class="form-control" id="storeoutDeptStatus" name="storeout_dept_status" required>
                                         <option value="active">{{ __('Active') }}</option>
                                         <option value="inactive">{{ __('Inactive') }}</option>
                                     </select>
@@ -433,7 +458,7 @@
                     <div class="modal-footer">
 
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
-                            {{ __('Save Department') }}</button>
+                            {{ __('Save Storeout Department') }}</button>
 
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                             Close
@@ -624,28 +649,28 @@
                     getStoreinItemAccCat(category_id);
             });
 
-            $('#departments').on('select2:select', function(e) {
+            $('#storeoutDepartments').on('select2:select', function(e) {
                 let department_id = e.params.data.id;
                 getDepartmentPlacement(department_id, 'blade');
                 let category_id =$('#categorySelect').val();
                 let item_id =$('#items').val();
                 let side_id = $('#size').val();
                 let unit_id = $('#unit').val();
-                getStockQtyRate(department_id,category_id,item_id,side_id,unit_id);
+                getStockQtyRate(category_id,item_id,side_id,unit_id);
 
             });
 
-            function getStockQtyRate(department_id,category_id,item_id,side_id,unit_id){
+            function getStockQtyRate(category_id,item_id,side_id,unit_id){
                   $.ajax({
                 url: "{{ route('storeout.getStockQtyRate') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    dept_id: department_id,
+                   // dept_id: department_id,
                     cat_id: category_id,
                     item_id: item_id,
                     side_id: side_id,
-                    unit_id:unit_id,
+                    unit_id: unit_id,
                 },
                 success: function(response) {
                     console.log('getStockQtyRate',response);
@@ -686,8 +711,7 @@
                                 'select an item' + '</option>';
                             for (var i = 0; i < response.length; i++) {
                                 selectOptions += '<option value="' + response[i].item_name + '">' +
-                                    response[i].item_name + ' / product no:' +
-                                    response[i].item_code + '</option>';
+                                    response[i].item_name + '</option>';
                             }
                         }
 
@@ -719,7 +743,7 @@
                     method: 'GET',
                     success: function(object) {
                         console.log('item event:',object);
-                        fillOptionInSelect(object.department,'#departments');
+                       // fillOptionInSelect(object.department,'#departments');
                         fillOptionInSelect(object.size,'#size');
                         fillOptionInSelect(object.units,'#unit');
 
@@ -746,6 +770,46 @@
             }
             $(element_id).html(selectOptions);
     }
+
+    //save stoeout department
+        document.getElementById('createStoreoutDepartment').addEventListener('submit', function(e){
+             e.preventDefault();
+             const form = e.target;
+             let name= form.elements['storeout_dpt_name'];
+             let status = form.elements['storeout_dept_status'];
+               $.ajax({
+                url: "{{ route('storeoutDepartment.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name.value,
+                    status: status.value,
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#storeoutDepartmentModel').modal('hide');
+                      setOptionInSelect(
+                        'storeoutDepartments',
+                        response.storeoutDepartment.id,
+                        response.storeoutDepartment.name);
+                        setOptionInSelect(
+                        'modelDepartment',
+                        response.storeoutDepartment.id,
+                        response.storeoutDepartment.name);
+
+                    //updateTableRow(response.storeOutItem, storeOut_item_id.value);
+
+                    //totalAmountCalculation();
+
+                    //editStoreOutEvent();
+                   // deleteEventBtn();
+
+                },
+                error: function(xhr, status, error) {
+                    setMessage('edit-form-error', 'Please Fill out all fields')
+                }
+            })
+        })
 
         document.getElementById('updateStoreOutItem').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -856,10 +920,10 @@
                         let selectOptions = '';
                         if (response.length == 0) {
                             selectOptions += '<option disabled selected>' +
-                                'no items found' + '</option>';
+                                'no placement found' + '</option>';
                         } else {
                             selectOptions += '<option disabled selected>' +
-                                'select an item' + '</option>';
+                                'select a placement' + '</option>';
                             for (var i = 0; i < response.length; i++) {
                                 selectOptions += '<option value="' + response[i].id + '">' +
                                     response[i].name + '</option>';
@@ -884,11 +948,13 @@
             const form = e.target;
 
             let storeout_id = form.elements['store_out_id'].value;
+            //recent added
+            let category_id=  form.elements['categoryName'].value;
             let item_name = form.elements['item_id'].value;
             let size = form.elements['size'].value;
             let unit = form.elements['unit'].value;
             let quantity = form.elements['quantity'].value;
-            let department = form.elements['department'].value;
+            let department = form.elements['storeout_departments'].value;
             let placement = form.elements['placement_id'].value;
             let through = form.elements['through'].value;
 
@@ -897,6 +963,8 @@
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
+                    //resc added
+                    category_id:category_id,
                     storeout_id: storeout_id,
                     item_name: item_name,
                     size: size,
@@ -909,8 +977,8 @@
                     // Goes Into Request
                 },
                 success: function(response) {
-                   console.log('save storeout item respnse',response);
-                    setIntoTable(response.storeOutItem);
+                   //console.log('save storeout item respnse',response);
+                   setIntoTable(response.storeOutItem);
                     $('#items').focus();
 
                     if (response.stock.quantity <= 0) {
@@ -923,7 +991,7 @@
                     totalAmountCalculation();
                     currentIndex = -1;
                       $('#items').focus();
-                     // checkIfTableHasData();
+                     checkIfTableHasData();
                 },
                 error: function(xhr, status, error) {
                     setErrorMessage(xhr.responseJSON.message);
@@ -1104,48 +1172,48 @@
         }
 
         //department save
-        document.getElementById('modalFormDepartment').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let form = e.target;
-            let departmentName = form.elements['department'];
-            let status = form.elements['status'];
-            $.ajax({
-                url: "{{ route('department.storeDepartmentFromModel') }}",
-                method: 'POST',
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    department: departmentName.value,
-                    status: status.value
-                    // Goes Into Request
-                },
-                success: function(response) {
-                    $('#addDepartmentModel').modal('hide');
-                    departmentName.value = "";
-                    status = "";
-                    setSuccessMessage(response.message);
+        // document.getElementById('modalFormDepartment').addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     let form = e.target;
+        //     let departmentName = form.elements['department'];
+        //     let status = form.elements['status'];
+        //     $.ajax({
+        //         url: "{{ route('department.storeDepartmentFromModel') }}",
+        //         method: 'POST',
+        //         data: {
+        //             _token: "{{ csrf_token() }}",
+        //             department: departmentName.value,
+        //             status: status.value
+        //             // Goes Into Request
+        //         },
+        //         success: function(response) {
+        //             $('#addDepartmentModel').modal('hide');
+        //             departmentName.value = "";
+        //             status = "";
+        //             setSuccessMessage(response.message);
 
-                    //recent by megha
-                    setOptionInSelect(
-                        'departments',
-                        response.department.id,
-                        response.department.department);
-                    setOptionInSelect(
-                        'model_department',
-                        response.department.id,
-                        response.department.department);
-                },
-                error: function(xhr, status, error) {
+        //             //recent by megha
+        //             setOptionInSelect(
+        //                 'departments',
+        //                 response.department.id,
+        //                 response.department.department);
+        //             setOptionInSelect(
+        //                 'model_department',
+        //                 response.department.id,
+        //                 response.department.department);
+        //         },
+        //         error: function(xhr, status, error) {
 
-                    let errorMessage = xhr.responseJSON.message;
+        //             let errorMessage = xhr.responseJSON.message;
 
-                    setTimeout(function() {
-                        errorContainer.hidden = true;
-                    }, 2000); // 5000 milliseconds = 5 seconds
-                    //return error;
-                }
-            });
+        //             setTimeout(function() {
+        //                 errorContainer.hidden = true;
+        //             }, 2000); // 5000 milliseconds = 5 seconds
+        //             //return error;
+        //         }
+        //     });
 
-        });
+        // });
 
         function setErrorMessage(message) {
             let errorContainer = document.getElementById('error_msg');
@@ -1185,25 +1253,28 @@
         document.getElementById('modelFormPlacement').addEventListener('submit', function(e) {
             e.preventDefault();
             let form = e.target;
-            let placementName = form.elements['placement'];
-            let department_id = form.elements['department'];
+            let placementName = form.elements['model_placement'];
+            let godam_id = form.elements['model_godam_id'];
+            let storeoutdpt_id = form.elements['model_dept_id'];
+
             let status = form.elements['status'];
             $.ajax({
                 url: "{{ route('placement.save') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    placement: placementName.value,
-                    department_id: department_id.value,
+                    name: placementName.value,
+                    storeoutdpt_id: storeoutdpt_id.value,
+                    godam_id:godam_id.value,
                     status: status.value
                     // Goes Into Request
                 },
                 success: function(response) {
                     setSuccessMessage(response.message);
                     $('#placementCreateModel').modal('hide');
-                    placementName.value = "";
-                    department_id.value = "";
-                    status = "";
+                    // placementName.value = "";
+                    // department_id.value = "";
+                    // status = "";
 
                     setOptionInSelect(
                         'placementSelect',

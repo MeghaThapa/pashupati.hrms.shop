@@ -599,7 +599,7 @@
                                                     </span>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-6 form-group mt-3">
+                                        <div class="col-md-6 form-group mt-3">
                                             <label for="supplier" class="col-form-label">
                                                 {{ __('Department') }}
                                             </label>
@@ -611,10 +611,8 @@
                                             </a>
                                             <select class="advance-select-box form-control @error('department') is-invalid @enderror"
                                                 id="departmentModel" name="department_id_model">
-                                                <option value="" selected disabled>{{ __('Select a department') }}</option>
-                                                @foreach ($departments as $department)
-                                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                                @endforeach
+                                                <option value="" selected disabled>{{ __('No department data') }}</option>
+
                                             </select>
                                             @error('department_id_model')
                                                 <span class="invalid-feedback" role="alert">
@@ -635,8 +633,8 @@
                                                 <select
                                                     class="advance-select-box form-control @error('unitName') is-invalid @enderror"
                                                     id="unitNameModel" name="unit_name_model" required>
-                                                    <option value="" selected disabled>{{ __('Select a category') }}</option>
-                                                    @foreach ($units as $key => $unit)
+                                                    <option value="" selected disabled>{{ __('Select a unit') }}</option>
+                                                    @foreach ($units as $unit)
                                                         <option value="{{ $unit->id }}">{{ $unit->name }}</option>
                                                     @endforeach
                                                 </select>

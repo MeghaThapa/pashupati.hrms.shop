@@ -25,8 +25,9 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
      */
     public function collection(Collection $rows)
     {
-        
+
         foreach ($rows as $row) {
+           // dd($row);
             $trimDepartment = trim($row['department']);
             $trimCategory = trim($row['category']);
             $trimItem = trim($row['item_name']);
@@ -55,10 +56,10 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     'slug' => $code,
                     'note' => "Excel Import",
                     "status" => "1"
-                    
+
                 ]);
-               
-                
+
+
                  $size = Size::where('code',$code)->value('id');
              }
 
@@ -72,7 +73,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     "name" => $row['unit'],
                     "slug" => Str::slug($row['unit']),
                     "code" => $code
-                    
+
                 ]);
                 $unit = Unit::where('slug',$slug)->value('id');
              }
@@ -92,11 +93,11 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                  $createcategory = StoreinCategory::firstOrCreate([
                      'slug' => $slug
                  ], [
-                     'name' => $row['category'],
-                     'slug' => Str::slug($row['category']),
+                     'name' =>  trim(strtolower($row['category'])),
+                     'slug' => strtolower(Str::slug($row['category'])),
                      'note' => isset($row['note'])? $row['note'] : 'N/A',
                      'status' => "active"
-                     
+
                  ]);
                  $category = StoreinCategory::where('slug',$slug)->value('id');
              }
@@ -116,25 +117,25 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 $createdepartment = StoreinDepartment::firstOrCreate([
                     'slug' => $slug
                 ], [
-                    'name' => $row['department'],
-                    'slug' => Str::slug($row['department']),
+                    'name' => trim(strtolower($row['department'])),
+                    'slug' => strtolower(Str::slug($row['department'])),
                     'category_id' => $category,
                     'status' => "active"
-                    
+
                 ]);
                 $department = StoreinDepartment::where('slug',$slug)->value('id');
             }
 
-         
+
             if ($item === null) {
                 $createitem= ItemsOfStorein::create([
-                    'name' => $row['item_name'],
+                    'name' =>trim(strtolower($row['item_name'])),
                     'department_id'=> $department,
                     "category_id" => $category,
                     'status' => "1",
                     "unit_id" => $unit,
                     "size_id" => $size,
-                    'pnumber' => isset($row['parts_number'])? $row['parts_number'] : "Any",
+                    'pnumber' => isset($row['parts_number'])? trim(strtolower($row['parts_number'])) : "Any",
                 ]);
                 $item = $createitem->id;
                 // return back()->with(['message_err'=>"Category:".$item ."Not Found"]); }
@@ -150,23 +151,36 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 //     "unit_id" => $unit,
                 //     "size_id" => $size,
                 //     'pnumber' => isset($row['parts_number'])? $row['parts_number'] : "Any",
-                    
+
                 // ]);
                 // $item = ItemsOfStorein::where('slug',$slug)->value('id');
             }
 
 
             if($department && $category && $item && $size && $unit){
-                Stock::create([
-                'item_id' => $item,
-                'size' => $size,
-                'quantity' => $row['quantity'],
-                'unit' => $unit,
-                'avg_price' => $row['average_rate'],
-                'total_amount' => $row['total_amount'],
-                'department_id' => $department,
-                'category_id' => $category,
-                ]);
+                $exists = Stock::where('department_id',$department)
+                        ->where('category_id',$category)
+                        ->where('item_id',$item)
+                        ->where('size',$size)
+                        ->where('unit',$unit)
+                        ->first();
+                if($exists){
+                    Stock::where('id',$exists->id)->update([
+                        "total_amount" => $exists->total_amount + $row['total_amount']
+                    ]);
+
+                }else{
+                    Stock::create([
+                    'item_id' => $item,
+                    'size' => $size,
+                    'quantity' => $row['quantity'],
+                    'unit' => $unit,
+                    'avg_price' => $row['average_rate'],
+                    'total_amount' => $row['total_amount'],
+                    'department_id' => $department,
+                    'category_id' => $category,
+                    ]);
+                }
             }else{
                 // dd($department, $category , $item , $size , $unit);
             }

@@ -32,6 +32,7 @@ use App\Http\Controllers\FabricNonWovenController;
 use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\GodamController;
+use App\Http\Controllers\StoreoutDepartmentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -485,7 +486,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
     Route::get('nonwovenfabrics/{id}/delete', 'FabricNonWovenController@destroy')->name('nonwovenfabrics.delete');
 
-
     Route::resource('nonwovenfabrics-receiveentry', 'FabricNonWovenReceiveEntryController', [
         'names' => [
             'index' => 'nonwovenfabrics-receiveentry.index',
@@ -496,11 +496,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
+    //getnonwovenreceiveentries
+    Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'FabricNonWovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
+
     Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
 
     Route::get('nonwovenfabrics-receiveentry/{id}/status', 'FabricNonWovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
     Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'FabricNonWovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
     Route::post('nonwovenfabrics-receiveentry/getDataList', 'FabricNonWovenReceiveEntryController@getDataList')->name('getDataList');
+
+    Route::post('nonwovenfabric/getFabricNameList', 'FabricNonWovenReceiveEntryController@getFabricNameList')->name('getFabricNameList');
+    Route::post('nonwovenfabric/getFabricNameColorList', 'FabricNonWovenReceiveEntryController@getFabricNameColorList')->name('getFabricNameColorList');
 
     Route::post('nonwovenfabrics-receiveentry/getDanaList', 'FabricNonWovenReceiveEntryController@getDanaList')->name('getDanaList');
 
@@ -758,7 +764,8 @@ Route::get('setup/wastage/index',[WastageController::class,'index'])->name('setu
 Route::get('setup/wastage/create',[WastageController::class,'create'])->name('setup.wastage.create');
 Route::post('setup/wastage/store',[WastageController::class,'store'])->name('setup.wastage.store');
 /******************** wastages  end *****************************/
-
+//storeoutDepartment
+Route::post('storeoutDepartment/store', [StoreoutDepartmentController::class, 'store'])->name('storeoutDepartment.store');
 //Storeout route
 Route::get('storeout/index', [StoreoutController::class, 'index'])->name('storeout.index');
 Route::get('storeout/create', [StoreoutController::class, 'create'])->name('storeout.create');

@@ -14,6 +14,7 @@ use App\Models\Size;
 use App\Models\Stock;
 use App\Models\Godam;
 use App\Models\StoreinDepartment;
+use App\Models\StoreoutDepartment;
 use Exception;
 //use DB;
 use Illuminate\Support\Facades\DB;
@@ -194,18 +195,21 @@ class StoreoutController extends Controller
     public function storeOutItems($store_out_id)
     {
         $storeOut = Storeout::find($store_out_id);
-        $storeinDepartment =StoreinDepartment::get(['id','name']);
+        $storeoutDepartment =StoreoutDepartment::get(['id','name']);
+        $godams= Godam::get(['id','name']);
+       // return  $godam;
+       $placementforBlade=
         $stockCategory = DB::table('stocks')
         ->join('storein_categories','storein_categories.id','=','stocks.category_id')
         ->select('storein_categories.id as category_id','storein_categories.name as category_name')
         ->distinct('storein_categories.name')
         ->get();
         //return $stockCategory;
-        return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory','storeinDepartment'));
+        return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory','storeoutDepartment','godams'));
     }
     public function getDepartmentPlacements($dept_id)
     {
-        return Placement::where('department_id', $dept_id)->get(['id','name']);
+        return Placement::where('storeout_dpt_id', $dept_id)->get(['id','name']);
     }
     public function getStoreinItemAccCat($category_id){
         return DB::table('stocks')
@@ -229,7 +233,7 @@ class StoreoutController extends Controller
                 ->from('items_of_storeins')
                 ->where('name', $request->item_id);
         })
-        ->where('department_id', $request->dept_id)
+        //->where('department_id', $request->dept_id)
         ->where('size', $request->side_id)
         ->where('unit', $request->unit_id)
         ->get(['avg_price','quantity'])
@@ -306,7 +310,9 @@ class StoreoutController extends Controller
 
     public function saveStoreoutItems(Request $request)
     {
+       // return $request;
         $request->validate([
+            'category_id'=> 'required',
             'storeout_id' => 'required',
             'item_name' =>'required',
             'size' => 'required',
@@ -320,12 +326,14 @@ class StoreoutController extends Controller
         $stock = Stock::where('item_id', function ($query) use ($request) {
             $query->select('id')
             ->from('items_of_storeins')
-            ->where('department_id',$request->department_id)
+           // ->where('department_id',$request->department_id)
+           ->where('category_id',$request->category_id)
             ->where('unit_id',$request->unit)
             ->where('size_id',$request->size)
             ->where('name', $request->item_name);
         })
-        ->where('department_id',$request->department_id)
+       // ->where('department_id',$request->department_id)
+       ->where('category_id',$request->category_id)
         ->where('size',$request->size)
         ->where('unit',$request->unit)
         ->first();
