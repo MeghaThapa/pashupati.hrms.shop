@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('fabrics', function (Blueprint $table) {
+        Schema::create('fabric_temporary_for_lamination', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug');
@@ -25,8 +25,8 @@ return new class extends Migration
             $table->string('meter');
             $table->string('roll_no');
             $table->string('loom_no');
+            $table->string('average_wt');
             $table->boolean('status')->nullable()->default(1);
-            $table->enum("is_laminated",["true","false"])->default("false");
             $table->timestamps();
         });
     }
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fabrics');
+        Schema::dropIfExists('fabric_temporary_for_lam');
     }
 };
