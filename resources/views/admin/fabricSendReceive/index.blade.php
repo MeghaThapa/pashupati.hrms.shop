@@ -239,8 +239,10 @@
 
     </div>
 </div>
+<hr>
+<h1 class='text-center'>Compare Lam and Unlam</h1>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <p style="font-weight: bold;">Unlaminated</p>
@@ -252,8 +254,8 @@
                             <th>{{ __('Sr.No') }}</th>
                             <th>{{ __('Fabric Name') }}</th>
                             <th>{{ __('Roll No') }}</th>
-                            <th>{{ __('G.W') }}</th>
                             <th>{{ __('N.W') }}</th>
+                            <th>{{ __('G.W') }}</th>
                             <th>{{ __('Meter') }}</th>
                             <th>{{ __('Avg') }}</th>
                             <th>{{ __('Gram') }}</th>
@@ -267,7 +269,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <p style="font-weight: bold;">Laminated</p>
@@ -279,8 +281,8 @@
                             <th>{{ __('Sr.No') }}</th>
                             <th>{{ __('Fabric Name') }}</th>
                             <th>{{ __('Roll No') }}</th>
-                            <th>{{ __('G.W') }}</th>
                             <th>{{ __('N.W') }}</th>
+                            <th>{{ __('G.W') }}</th>
                             <th>{{ __('Meter') }}</th>
                             <th>{{ __('Avg') }}</th>
                             <th>{{ __('Gram') }}</th>
@@ -294,7 +296,11 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6 float-right ml-3">
+        <button class="btn btn-danger discard">Discard</button>
+    </div>
 </div>
+<hr>
 <div class="row">
     <div class="col-md-5">
         <div class="card mt-2 p-5">
@@ -333,6 +339,18 @@
                         </button>
                     </div>
                 </div>
+                <hr>
+                {{-- <div class="col-md-12">
+                    <h4>Wsateg</h4>
+                    <form action="">
+                        <select name="" id="" class="advance-select-box">
+                            <option value="">select waste</option>
+                            <option value="">Polo</option>
+                            <option value="">Rafia</option>
+                        </select>
+                    </form>
+                </div> --}}
+
             </div>
         </div>
     </div>
@@ -804,13 +822,13 @@
 
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
 
-            tr.append(`<td>${d.id}</td>`);
+            tr.append(`<td>#</td>`);
             tr.append(`<td>${d.fabric.name}</td>`);
             tr.append(`<td>${d.roll_no}</td>`);
             tr.append(`<td>${d.gross_wt}</td>`);
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`)
-            tr.append(`<td>avg</td>`);
+            tr.append(`<td>${d.average}</td>`);
             tr.append(`<td>${d.gram}</td>`);
             tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
@@ -840,6 +858,24 @@
             }
         });
     }
+
+    $(".discard").click(function(e){
+        $.ajax({
+            url:"{{ route('discard') }}",
+            method:"get",
+            success:function(response){
+                if(response.message == "200"){
+                    location.reload(true);
+                }
+                else{
+                    alert(response.message);
+                }
+            },
+            error:function(response){
+                console.log(response);
+            }
+        });
+    });
     /************************* Other Functionalities ***********************/
 
     /************************* Send for lamination **************************/
@@ -874,23 +910,34 @@
     $("#sendtolaminationform").submit(function(e) {
         e.preventDefault();
         console.log(e);
-        $("#sendtolaminationform").submit();
-        callunlaminatedfabricajax();
-        comparelamandunlam();
-        $('#staticBackdrop1').modal('hide');
+        let action = $(this).attr('action');
+        let method = $(this).attr('method');
+        data = $("#sendtolaminationform").serialize();
+        sendtolaminationformpostsubmit(data,action,method);
     });
 
-
-    // let form = document.querySelector("#sendtolaminationform");
-    // form.addEventListener("submit", function(e) {
-    //     e.preventDefault();
-    //     callunlaminatedfabricajax();
-    //     comparelamandunlam();
-    //     $('#staticBackdrop1').modal('hide');
-    //     form.submit(); // Submit the form after desired actions
-    // });
-
-
+    function sendtolaminationformpostsubmit(formdata,formaction,formmethod){
+        $.ajax({
+            url:formaction,
+            method:formmethod,
+            data:{
+                "_token": $('meta[name="csrf-token"]').attr('content'),
+                "data" : formdata
+            },
+            beforeSend:function(){
+                console.log('sending');
+            },
+            success:function(response){
+                callunlaminatedfabricajax();
+                comparelamandunlam();
+                $('#staticBackdrop1').modal('hide');
+                console.log(response);
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+    }
 
 
     function comparelamandunlam(){
@@ -899,7 +946,9 @@
             method:"get",
             success:function(response){
                 emptycomparelamtbody();
+                emptycompareunlamtbody();
                 putonlamtbody(response);
+                $("#sendtolaminationform")[0].reset();
             },
             error:function(error){
                 console.log(error);
@@ -912,13 +961,36 @@
     function emptycomparelamtbody(){
         $("#comparelamtbody").empty();
     }
+    function emptycompareunlamtbody(){
+        $("#compareunlamtbody").empty();
+    }
 
     function putonlamtbody(response){
-        let tr = $("<tr><tr>").appendTo("#comparelamtbody");
+        console.log(response);
         response.lam.forEach(element => {
+            let tr = $("<tr></tr>").appendTo("#comparelamtbody");
             tr.append(`<td>#</td>`);
-            tr.append(`<td>${element.fabric.name}<td>`);
+            tr.append(`<td>${element.name}</td>`);
+            tr.append(`<td>${element.roll_no}</td>`);
+            tr.append(`<td>${element.net_wt}</td>`);
+            tr.append(`<td>${element.gross_wt}</td>`);
+            tr.append(`<td>${element.meter}</td>`);
+            tr.append(`<td>${element.average}</td>`);
+            tr.append(`<td>${element.gram}</td>`);
         });
+
+        response.unlam.forEach(element => {
+            let tr = $("<tr></tr>").appendTo("#compareunlamtbody");
+            tr.append(`<td>#</td>`);
+            tr.append(`<td>${element.fabric.name}</td>`);
+            tr.append(`<td>${element.roll_no}</td>`);
+            tr.append(`<td>${element.net_wt}</td>`);
+            tr.append(`<td>${element.gross_wt}</td>`);
+            tr.append(`<td>${element.meter}</td>`);
+            tr.append(`<td>${element.average}</td>`);
+            tr.append(`<td>${element.gram}</td>`);
+        });
+        
     }
     /********** put on tbodys *********************/
 
