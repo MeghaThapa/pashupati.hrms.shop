@@ -1267,7 +1267,7 @@
             let product_no =form.elements['pnumber_model'];
             let category_id =form.elements['categoryName_model'];
             let department_id=form.elements['department_id_model'];
-
+        //    console.log('dpt',department_id.value);
             let unit_id=form.elements['unit_name_model'];
             let size_id=form.elements['size_model'];
 
@@ -1291,6 +1291,7 @@
                     status:status.value,
                 },
                 success: function(response) {
+                    return ('request',response);
                     $('#createStoreinItemModelPopup').modal('hide');
                      let selectItemElement = document.getElementById('ProductName');
                      let optionElement = document.createElement('option');

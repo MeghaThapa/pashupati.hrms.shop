@@ -447,7 +447,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
     //sending for lamination
     // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
-    //comapare lam and unlam 
+    //comapare lam and unlam
     Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
 
     // fabric_group route
@@ -775,7 +775,8 @@ Route::get('storeout/getEditItemData/{storeoutItem_id}', [StoreoutController::cl
 Route::post('storeout/updateStoreOutItems', [StoreoutController::class, 'updateStoreOutItems'])->name('storeout.updateStoreOutItems');
 Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::class, 'saveEntireStoreOut'])->name('storeout.saveEntireStoreOut');
 //get item acc cat
-Route::get('storeout/getStoreinItemAccCat/{category_id}', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
+//recent by m
+Route::get('storeout/getStoreinItemAccCat', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
 //getDepartmentSizeUnit
 Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
 //getStockQtyRate
@@ -787,8 +788,8 @@ Route::delete('storeout/storeoutItemDelete/{storeout_item_id}', [StoreoutControl
 Route::get('storeout/edit/{storeout_id}', [StoreoutController::class, 'edit'])->name('storeout.edit');
 Route::post('storeout/updateStoreOut/{storeout_id}', [StoreoutController::class, 'updateStoreOut'])->name('storeout.updateStoreOut');
 
-
-Route::get('storeout/getDepartmentPlacements/{dept_id}', [StoreoutController::class, 'getDepartmentPlacements'])->name('storeout.getDepartmentPlacements');
+//recent changes
+Route::get('storeout/getDepartmentPlacements/{dept_id}/{storeout_id}', [StoreoutController::class, 'getDepartmentPlacements'])->name('storeout.getDepartmentPlacements');
 // storeoutitem save
 Route::post('storeout/saveStoreoutItems', [StoreoutController::class, 'saveStoreoutItems'])->name('storeout.saveStoreoutItems');
 Route::get('storeout/storoutYajraDatabales', [StoreoutController::class, 'storoutYajraDatabales'])->name('storeout.storoutYajraDatabales');

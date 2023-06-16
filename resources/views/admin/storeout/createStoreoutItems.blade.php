@@ -120,7 +120,7 @@
                 <div class="col-md-4">
                     <label for="item_name" style="width:80px !important;"
                         class="col-form-label">{{ __('Item Name') }}</label>
-                    <select class="advance-select-box form-control" id="items" name="item_id" required>
+                    <select class="form-control" id="items" name="item_id" required>
                         <option value="" selected disabled>{{ __('Select an item') }}</option>
 
                     </select>
@@ -598,11 +598,42 @@
         $(document).ready(function() {
             //When Page Refresh
             getStoreOutItems();
+
             //  checkIfTableHasData();
             $('#categorySelect').focus();
               $(document).on('select2:open', () => {
                     document.querySelector('.select2-search__field').focus();
                 });
+
+            $('#items').select2(
+                {
+                    theme:'bootstrap4',
+                    ajax: {
+                            method: 'GET',
+                            url: "{{route('storeout.getStoreinItemAccCat')}}",
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                let category_id =$('#categorySelect').val();
+                                return {
+                                    category_id: category_id,
+                                    query: params.term,
+                                    page: params.page || 1
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.data,
+                                    pagination: {
+                                        more: data.next_page_url ? true : false
+                                    }
+                                };
+                            }
+                        },
+                        placeholder: 'Select a user',
+                        minimumInputLength: 0
+                    });
+
 
             //for user accessibility
             let formDiv = document.getElementById("formdiv");
@@ -646,21 +677,34 @@
               $('#categorySelect').on('select2:select', function (e) {
                     let category_id = e.params.data.id;
                     // let click_by=blade;
-                    getStoreinItemAccCat(category_id);
+                   getStoreinItemAccCat(category_id);
+            });
+
+             $('#unit').on('select2:select', function(e) {
+                let unit_id = e.params.data.id;
+                 let category_id =$('#categorySelect').val();
+                let item_name =$('#items').val();
+                let side_id = $('#size').val();
+                getStockQtyRate(category_id,item_name,side_id,unit_id);
+
+                //getDepartmentPlacement(department_id, 'model');
+
             });
 
             $('#storeoutDepartments').on('select2:select', function(e) {
                 let department_id = e.params.data.id;
-                getDepartmentPlacement(department_id, 'blade');
-                let category_id =$('#categorySelect').val();
-                let item_id =$('#items').val();
-                let side_id = $('#size').val();
-                let unit_id = $('#unit').val();
-                getStockQtyRate(category_id,item_id,side_id,unit_id);
+                let storeout_id =JSON.parse(`{!! json_encode($storeOut->id) !!}`);
+
+                getDepartmentPlacement(department_id, 'blade',storeout_id);
+                // let category_id =$('#categorySelect').val();
+                // let item_name =$('#items').val();
+                // let side_id = $('#size').val();
+                // let unit_id = $('#unit').val();
+                // getStockQtyRate(category_id,item_name,side_id,unit_id);
 
             });
 
-            function getStockQtyRate(category_id,item_id,side_id,unit_id){
+            function getStockQtyRate(category_id,item_name,side_id,unit_id){
                   $.ajax({
                 url: "{{ route('storeout.getStockQtyRate') }}",
                 method: 'POST',
@@ -668,7 +712,7 @@
                     _token: "{{ csrf_token() }}",
                    // dept_id: department_id,
                     cat_id: category_id,
-                    item_id: item_id,
+                    item_name: item_name,
                     side_id: side_id,
                     unit_id: unit_id,
                 },
@@ -694,24 +738,23 @@
                 return new Promise(function(resolve, reject) {
 
                 $.ajax({
-                    url: "{{ route('storeout.getStoreinItemAccCat', ['category_id' => ':Replaced']) }}"
-                        .replace(
-                            ':Replaced',
-                            category_id),
-
+                    url: "{{ route('storeout.getStoreinItemAccCat')}}",
                     method: 'GET',
+                    data:{
+                        category_id: category_id
+                    },
                     success: function(response) {
-                        console.log(response);
+                        console.log(response.data);
                         let selectOptions = '';
-                        if (response.length == 0) {
+                        if (response.data.length == 0) {
                             selectOptions += '<option disabled selected>' +
                                 'no items found' + '</option>';
                         } else {
                             selectOptions += '<option disabled selected>' +
                                 'select an item' + '</option>';
-                            for (var i = 0; i < response.length; i++) {
-                                selectOptions += '<option value="' + response[i].item_name + '">' +
-                                    response[i].item_name + '</option>';
+                            for (var i = 0; i < response.data.length; i++) {
+                                selectOptions += '<option value="' + response.data[i].text + '">' +
+                                    response.data[i].text + '</option>';
                             }
                         }
 
@@ -905,14 +948,19 @@
             }, 2000);
         }
 
-        function getDepartmentPlacement(department_id, selectFrom) {
+        function getDepartmentPlacement(department_id, selectFrom,storeOut_id) {
             return new Promise(function(resolve, reject) {
 
                 $.ajax({
-                    url: "{{ route('storeout.getDepartmentPlacements', ['dept_id' => ':Replaced']) }}"
+                    url: "{{ route('storeout.getDepartmentPlacements', ['dept_id' => ':Replaced','storeout_id' =>':storeout_id']) }}"
                         .replace(
                             ':Replaced',
-                            department_id),
+                            department_id)
+                        .replace(
+                            ':storeout_id',
+                            storeOut_id
+                        )
+                            ,
 
                     method: 'GET',
                     success: function(response) {
@@ -991,7 +1039,7 @@
                     totalAmountCalculation();
                     currentIndex = -1;
                       $('#items').focus();
-                     checkIfTableHasData();
+                    checkRowInTable();
                 },
                 error: function(xhr, status, error) {
                     setErrorMessage(xhr.responseJSON.message);
@@ -1123,6 +1171,17 @@
             }
         }
 
+        function checkRowInTable(){
+            let tableTbody = document.querySelector("#storeOutItemTable tbody");
+            let saveStoreOutBtn = document.getElementById('saveStoreOutButton');
+            if(tableTbody.rows.length <=0){
+                saveStoreOutBtn.disabled = true;
+            }
+            else{
+                saveStoreOutBtn.disabled = false;
+            }
+        }
+
         function clearInputFields() {
             document.getElementById('size').value = "";
            // document.getElementById('item_id').value = "";
@@ -1153,6 +1212,7 @@
                 url: '{{ route('storeout.getStoreOutItemData', ['storeout_id' => $storeOut->id]) }}',
                 method: 'GET',
                 success: function(response) {
+                    console.log('table',response);
                     if (response.count <= 0) {
                         return false;
                     }
@@ -1164,6 +1224,7 @@
                     editStoreOutEvent();
                     totalAmountCalculation();
                     deleteEventBtn();
+                    checkRowInTable();
                 },
                 error: function(xhr, status, error) {
                     reject(error);

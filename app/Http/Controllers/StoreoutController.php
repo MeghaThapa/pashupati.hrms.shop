@@ -207,41 +207,53 @@ class StoreoutController extends Controller
         //return $stockCategory;
         return view('admin.storeout.createStoreoutItems', compact('storeOut','stockCategory','storeoutDepartment','godams'));
     }
-    public function getDepartmentPlacements($dept_id)
+    public function getDepartmentPlacements($dept_id,$storeout_id)
     {
-        return Placement::where('storeout_dpt_id', $dept_id)->get(['id','name']);
+        $godam_id=Storeout::find($storeout_id)->godam_id;
+        return Placement::where('storeout_dpt_id', $dept_id)
+        ->where('godam_id',$godam_id)
+        ->get(['id','name']);
     }
-    public function getStoreinItemAccCat($category_id){
-        return DB::table('stocks')
-        ->where('stocks.category_id', $category_id)
-        ->join('items_of_storeins','items_of_storeins.id','stocks.item_id')
-        ->select(
-        'items_of_storeins.id as item_id',
-        'items_of_storeins.name as item_name',
-        'items_of_storeins.pnumber as item_code',
+    public function getStoreinItemAccCat(Request $request){
 
-        )
-        ->distinct('storein_categories.name')
-        ->get();
+        $DEFAULT_OPTIONS = 50;
+        $query = $request->input('query');
+        $queryBuilder = DB::table('stocks')
+        ->where('stocks.category_id', $request->category_id)
+        ->join('items_of_storeins', 'items_of_storeins.id', 'stocks.item_id')
+        ->select('items_of_storeins.name as id', 'items_of_storeins.name as text')
+        ->distinct();
+
+        if ($query !== null) {
+            $queryBuilder->where('items_of_storeins.name', 'like', '%' . $query . '%');
+        }
+
+        $items = $queryBuilder->paginate($DEFAULT_OPTIONS);
+
+        return response()->json([
+            'data' => $items->items(),
+            'next_page_url' => $items->nextPageUrl(),
+        ]);
     }
 
     //for stock qty rate
     public function getStockQtyRate(Request $request){
-       $stockRateQty = Stock::where('category_id', $request->cat_id)
-        ->where('item_id', function ($query) use ($request) {
-            $query->select('id')
-                ->from('items_of_storeins')
-                ->where('name', $request->item_id);
-        })
-        //->where('department_id', $request->dept_id)
+
+       $item_id =  DB::table('items_of_storeins')
+       ->where('name',$request->item_name)
+       ->where('size_id', $request->side_id)
+       ->where('unit_id', $request->unit_id)
+       ->select('id')->first()->id;
+
+       $stockRateQty = DB::table('stocks')
+        ->where('category_id', $request->cat_id)
+        ->where('item_id',$item_id)
         ->where('size', $request->side_id)
         ->where('unit', $request->unit_id)
-        ->get(['avg_price','quantity'])
         ->first();
        return $stockRateQty;
-      //  return $request;
-
     }
+
     public function getDepartmentSizeUnit($items_of_storein_name, $category_id){
         $stocks =Stock::with('department:id,name','units:id,name','sizes:id,name')
         ->whereIn('item_id', function ($query) use ($items_of_storein_name) {
@@ -253,8 +265,6 @@ class StoreoutController extends Controller
         ->groupBy(['size','unit','department_id'])
         ->get(['size','unit','department_id']);
         // return $stocks;
-
-
         $ArrayStock =$stocks->toArray();
 
         $unitArray = [];
