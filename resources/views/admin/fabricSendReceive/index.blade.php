@@ -363,7 +363,7 @@
                             <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_in_mtr"
                                 data-number="1" name="total_ul_in_mtr" min="1" required>
                             @error('total_ul_in_mtr')
                             <span class="invalid-feedback" role="alert">
@@ -372,12 +372,12 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Ul Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
-                                data-number="1" name="total_ul_in_mtr" min="1" required>
-                            @error('total_ul_in_mtr')
+                            <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_net_wt"
+                                data-number="1" name="total_ul_net_wt" min="1" required>
+                            @error('total_ul_net_wt')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -386,7 +386,7 @@
                         <div>
                             <label for="size" class="col-form-label">{{ __('Polo Was:') }}<span class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="poloWaste" data-number="1"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="polo_waste" data-number="1"
                                 name="polo_waste" min="1" required>
                             @error('polo_waste')
                             <span class="invalid-feedback" role="alert">
@@ -398,7 +398,7 @@
                             <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totalDana" data-number="1"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="totl_dana" data-number="1"
                                 name="totl_dana" min="1" required>
                             @error('polo_waste')
                             <span class="invalid-feedback" role="alert">
@@ -414,7 +414,7 @@
                             <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totalLamInMtr"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_in_mtr"
                                 data-number="1" name="total_lam_in_mtr" min="1" required>
                             @error('total_lam_in_mtr')
                             <span class="invalid-feedback" role="alert">
@@ -423,12 +423,12 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Lam Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totalLamInMtr"
-                                data-number="1" name="total_lam_in_mtr" min="1" required>
-                            @error('total_lam_in_mtr')
+                            <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_net_wt"
+                                data-number="1" name="total_lam_net_wt" min="1" required>
+                            @error('total_lam_net_wt')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -438,7 +438,7 @@
                             <label for="size" class="col-form-label">{{ __('Fabric Was:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="fabricWaste"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="fabric_waste"
                                 data-number="1" name="fabric_waste" min="1" required>
                             @error('fabric_waste')
                             <span class="invalid-feedback" role="alert">
@@ -449,7 +449,7 @@
                         <div>
                             <label for="size" class="col-form-label">{{ __('Total Was:') }}<span class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totalWaste"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="total_waste"
                                 data-number="1" name="total_waste" min="1" required>
                             @error('polo_waste')
                             <span class="invalid-feedback" role="alert">
@@ -461,10 +461,10 @@
         
                     <div class="col-md-4" style="margin-top:70px;">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Dif. UL Lam NW :') }}<span
+                            <label for="size" class="col-form-label">{{ __('Diff UL Lam Meter :') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="diffUuLamLamNw"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="diff_unLam_lamNw"
                                 data-number="1" name="diff_unLam_lamNw" min="1" required>
                             @error('diff_unLam_lamNw')
                             <span class="invalid-feedback" role="alert">
@@ -473,12 +473,12 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Diff:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Diff Net Weight:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totalDiff" data-number="1"
+                            <input type="text" step="any" min="0" class="form-control calculator" id="total_diff" data-number="1"
                                 name="total_diff" min="1" required>
-                            @error('total_ul_in_mtr')
+                            @error('total_diff')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -932,6 +932,7 @@
                 comparelamandunlam();
                 $('#staticBackdrop1').modal('hide');
                 console.log(response);
+
             },
             error:function(error){
                 console.log(error);
@@ -949,6 +950,7 @@
                 emptycompareunlamtbody();
                 putonlamtbody(response);
                 $("#sendtolaminationform")[0].reset();
+                weightdiffs(response);
             },
             error:function(error){
                 console.log(error);
@@ -975,7 +977,7 @@
             tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.gross_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
-            tr.append(`<td>${element.average}</td>`);
+            tr.append(`<td>${element.average_wt}</td>`);
             tr.append(`<td>${element.gram}</td>`);
         });
 
@@ -993,6 +995,28 @@
         
     }
     /********** put on tbodys *********************/
+
+    /********************** dana consumption and wastage and weight differences ******************************/
+    function weightdiffs(response){
+        let total_ul_in_mtr = response.ul_mtr_total;
+        let total_ul_net_wt = response.ul_net_wt_total;
+        let total_lam_in_mtr = response.lam_mtr_total;
+        let total_lam_net_wt = response.lam_net_wt_total;
+
+        $("#total_ul_in_mtr").val(total_ul_in_mtr);
+        $("#total_ul_net_wt").val(total_ul_net_wt);
+        $("#total_lam_in_mtr").val(total_lam_in_mtr);
+        $("#total_lam_net_wt").val(total_lam_net_wt);
+
+        let diff_unLam_lamNw = parseFloat(total_lam_in_mtr) - parseFloat(total_ul_in_mtr);
+        diff_unLam_lamNw = diff_unLam_lamNw.toFixed(4);
+        $('#diff_unLam_lamNw').val(diff_unLam_lamNw);
+
+        let total_diff = parseFloat(total_lam_net_wt) - parseFloat(total_ul_net_wt);
+        total_diff = total_diff.toFixed(4);
+        $("#total_diff").val(total_diff);
+    }
+    /********************** dana consumption and wastage and differences ******************************/
 
 </script>
 @endsection
