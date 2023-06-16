@@ -8,7 +8,7 @@ class ItemsOfStoreinController extends Controller
 {
         public function store(Request $request)
     {
-       
+
         $validator = $request->validate([
             'name' => 'required|string|max:60',
             'pnumber' => 'required',
@@ -20,6 +20,8 @@ class ItemsOfStoreinController extends Controller
         ]);
         //as item belongs to only one department of one category
         $itemOfStoreins =ItemsOfStorein::where('name',$request->name)
+        ->where('size_id',$request->size_id)
+        ->where('unit_id',$request->unit_id)
         ->where('category_id',$request->category_id)
         ->first();
         if(isset($itemOfStoreins)){
