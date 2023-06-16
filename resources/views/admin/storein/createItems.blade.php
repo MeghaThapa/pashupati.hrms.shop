@@ -1291,7 +1291,7 @@
                     status:status.value,
                 },
                 success: function(response) {
-                    return ('request',response);
+                  
                     $('#createStoreinItemModelPopup').modal('hide');
                      let selectItemElement = document.getElementById('ProductName');
                      let optionElement = document.createElement('option');
