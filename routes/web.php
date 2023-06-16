@@ -447,7 +447,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
     //sending for lamination
     // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
-    //comapare lam and unlam
+
+    Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
+    //comapare lam and unlam 
+
     Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
 
     // fabric_group route
@@ -494,6 +497,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'update' => 'nonwovenfabrics-receiveentry.update',
         ]
     ]);
+
+    Route::post('nonwovenfabrics-receiveentry/store', 'FabricNonWovenReceiveEntryController@storeWaste')->name('storeWastage');
 
     //getnonwovenreceiveentries
     Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'FabricNonWovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');

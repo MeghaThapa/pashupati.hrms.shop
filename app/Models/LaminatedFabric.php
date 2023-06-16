@@ -9,10 +9,10 @@ use App\Models\Fabric;
 class LaminatedFabric extends Model
 {
     use HasFactory;
-    protected $table  = "laminated_fabric";
+    protected $table  = "fabric_laminated";
     protected $id ="id";
     protected $fillable = [
-        'fabric_id','roll_no','gross_wt','net_wt','meter','average','gram','created_at','updated_at',
+        'lam_fabric_id','roll_no','gross_wt','net_wt','meter','average','gram','created_at','updated_at',
         'plantname_id','department_id','planttype_id','bill_number','bill_date'
     ];
     public function fabric(){

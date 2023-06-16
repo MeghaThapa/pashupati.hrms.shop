@@ -12,6 +12,8 @@ use App\Models\Department;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use App\Models\Shift;
+use App\Models\Wastages;
+use App\Models\WasteStock;
 use Maatwebsite\Excel\Facades\Excel;
 use Response;
 
@@ -92,6 +94,26 @@ class FabricNonWovenReceiveEntryController extends Controller
             ]);
     
         }
+
+
+        return redirect()->back()->withSuccess('NonWoven created successfully!');
+    }
+
+    public function storeWaste(Request $request)
+    {
+        // dd($request->wastage);
+
+       $wastage = Wastages::create([
+        'wastage_name' => 'nonwoven',
+      
+       ]);
+
+       $wastage_stock = WasteStock::create([
+        'waste_id' => $wastage->id,
+        'department_id' => $wastage->id,
+        'quantity_in_kg' => $request->wastage,
+       
+       ]);
 
 
         return redirect()->back()->withSuccess('NonWoven created successfully!');

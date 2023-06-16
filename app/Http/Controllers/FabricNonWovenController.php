@@ -34,7 +34,7 @@ class FabricNonWovenController extends Controller
 
 
         $validator = $request->validate([
-            'name' => 'required|string|max:60|unique:non_woven_fabrics',
+            'name' => 'required|string|max:60',
             'gsm' => 'required|numeric',
             'color' => 'required',
         ]);
@@ -79,8 +79,8 @@ class FabricNonWovenController extends Controller
 
         //validate form
         $validator = $request->validate([
-            'name' => 'required|string|max:50|unique:non_woven_fabrics,name,' . $fabric->id,
-            'gsm' => 'required|numeric|unique:non_woven_fabrics',
+            'name' => 'required|string|max:50',
+            'gsm' => 'required|numeric',
             'color' => 'required',
         ]);
 
