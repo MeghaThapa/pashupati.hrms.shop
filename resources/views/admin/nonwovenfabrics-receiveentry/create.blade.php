@@ -624,7 +624,7 @@
               $('#fabric_name').append('<option value="">--Choose FabricName--</option>');
               $.each( response, function( i, val ) {
 
-                $('#fabric_name').append(`<option value="${val.name}">${val.name}</option>`);
+                $('#fabric_name').append(`<option value="${val.slug}">${val.name}</option>`);
               });
             },
             error: function(event){
