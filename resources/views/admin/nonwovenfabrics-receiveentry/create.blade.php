@@ -378,6 +378,10 @@
                     @enderror
                 </div>
 
+                <button id="getwastagesrelated" class="btn btn-primary mt-4 add_wastage">
+                    Add
+                </button>
+
             </div>
             
         </div>
@@ -524,6 +528,42 @@
     });
 </script>
 <script type="text/javascript">
+  $('.add_wastage').click(function(event){
+    var wastage = $("#wastage").val(),
+        netweight = $("#netweight").val();
+    debugger;
+    var  token = $('meta[name="csrf-token"]').attr('content');
+    $.ajax({
+      type:"POST",
+      dataType:"html",
+      url:"{{route('storeWastage')}}",
+      data:{
+        _token:token,
+        wastage: wastage,
+        netweight: netweight,
+      },
+      success: function(response){
+        $('#dana_list').append(response);
+        $('table').on('click','#cross',function(e){
+          e.preventDefault();
+          $(this).closest('tr').remove();
+        });
+        $("#dana_quanity").val(quantity);
+
+        
+
+        // $("#submit").addClass('d-none');
+        // $("#calculate").removeClass('d-none');
+        // $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
+      },
+      error:function(event){
+        alert('Error');
+        return false;
+      }
+    })
+  })
+</script>
+<script type="text/javascript">
   $('.add_more').click(function(event){
     var dana = $("#dana").val(),
         quantity = $("#quantity").val();
@@ -583,8 +623,8 @@
               $('#fabric_name').html('');
               $('#fabric_name').append('<option value="">--Choose FabricName--</option>');
               $.each( response, function( i, val ) {
-                console.log(val.name);
-                $('#fabric_name').append('<option value='+val.name+'>'+val.name+'</option>');
+
+                $('#fabric_name').append(`<option value="${val.name}">${val.name}</option>`);
               });
             },
             error: function(event){
