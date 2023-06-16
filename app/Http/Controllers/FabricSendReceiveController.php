@@ -15,7 +15,7 @@ use App\Models\Fabric;
 use App\Models\Unit;
 use App\Models\UnlaminatedFabric;
 use App\Models\UnlaminatedFabricStock;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
 use Str;
@@ -388,11 +388,33 @@ class FabricSendReceiveController extends Controller
     public function comparelamandunlam(Request $request){
         if($request->ajax()){
             $unlam = UnlaminatedFabric::with('fabric')->where('status',"sent")->get();
+            $ul_mtr_total=0;
+            $ul_net_wt_total = 0;
+            foreach($unlam as $data){
+                $ul_mtr = $data['meter'];
+                $ul_net_wt = $data['net_wt'];
+
+                $ul_mtr_total += $ul_mtr;
+                $ul_net_wt_total += $ul_net_wt;
+            }
             // $lam = LaminatedFabric::with('fabric')->get();
             $lam = FabricTemporaryForLam::all();
+            $lam_mtr_total=0;
+            $lam_net_wt_total = 0;
+            foreach($lam as $data){
+                $lam_mtr = $data['meter'];
+                $lam_net_wt = $data['net_wt'];
+
+                $lam_mtr_total += $lam_mtr;
+                $lam_net_wt_total += $lam_net_wt;
+            }
             return response([
                 "unlam" => $unlam,
-                "lam" => $lam
+                "lam" => $lam,
+                "ul_mtr_total" => $ul_mtr_total,
+                "ul_net_wt_total" => $ul_net_wt_total,
+                "lam_mtr_total" => $lam_mtr_total,
+                "lam_net_wt_total" => $lam_net_wt_total
             ]);
         }
     }
@@ -400,9 +422,13 @@ class FabricSendReceiveController extends Controller
     public function discard(Request $request){
         if($request->ajax()){
             try{
-                LaminatedFabric::truncate();
-                FabricTemporaryForLam::truncate();
-                UnlaminatedFabric::truncate();
+
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+                DB::table('fabric_unlaminated')->truncate();
+                DB::table('fabric_laminated')->truncate();
+                DB::table('fabric_temporary_for_lamination')->truncate();
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
                 return response([
                     "message" => "200"
                 ]);
