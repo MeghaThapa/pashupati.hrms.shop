@@ -51,7 +51,8 @@ class StockController extends Controller
     }
     public function filterStockAccCategory($category_id)
     {
-        $stock = Stock::with('item', 'department', 'category')->where('category_id', $category_id)->get();
+        $stock = Stock::with('item', 'department', 'category')
+        ->where('category_id', $category_id)->get();
         if ($stock) {
             return $stock;
         } else {
@@ -106,7 +107,12 @@ class StockController extends Controller
 
     //filter department acc categories
     public function getCategoryDepartment($category_id){
-        $departments= StoreinDepartment::where('category_id',$category_id)->get();
+        $departments= DB::table('stocks')
+        ->join('storein_departments','storein_departments.id','=','stocks.department_id')
+        ->where('stocks.category_id',$category_id)
+        ->select('storein_departments.id','storein_departments.name')
+        ->groupBy('storein_departments.id','storein_departments.name')
+        ->get();
         return $departments;
     }
 

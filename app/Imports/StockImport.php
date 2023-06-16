@@ -58,8 +58,6 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     "status" => "1"
 
                 ]);
-
-
                  $size = Size::where('code',$code)->value('id');
              }
 

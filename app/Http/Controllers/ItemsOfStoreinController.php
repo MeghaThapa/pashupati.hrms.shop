@@ -8,10 +8,10 @@ class ItemsOfStoreinController extends Controller
 {
         public function store(Request $request)
     {
-        // validate form
+       
         $validator = $request->validate([
             'name' => 'required|string|max:60',
-            'pnumber' => 'required|unique:items_of_storeins,pnumber',
+            'pnumber' => 'required',
             'category_id' => 'required|integer',
             'department_id' => 'required',
             'unit_id' =>'required',
@@ -22,13 +22,16 @@ class ItemsOfStoreinController extends Controller
         $itemOfStoreins =ItemsOfStorein::where('name',$request->name)
         ->where('category_id',$request->category_id)
         ->first();
-        if($itemOfStoreins->department_id){
+        if(isset($itemOfStoreins)){
+            if($itemOfStoreins->department_id){
             return response()->json([
                 'message' =>'Item can belong to only one department of particular category',
             ],500);
         }
+        }
 
       try{
+        //dd ($request);
         $items = new ItemsOfStorein();
         $items->name = trim(strtolower($request->name));
         $items->pnumber = trim(strtolower($request->pnumber));
@@ -40,6 +43,7 @@ class ItemsOfStoreinController extends Controller
         $items->save();
         return response()->json([
             'message' =>'Item Created Successfully',
+            //'request'=>$request,
             'item' => $items,
         ],201);
         }
