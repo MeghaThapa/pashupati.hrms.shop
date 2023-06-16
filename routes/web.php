@@ -495,6 +495,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
+    Route::post('nonwovenfabrics-receiveentry/store', 'FabricNonWovenReceiveEntryController@storeWaste')->name('storeWastage');
+
     //getnonwovenreceiveentries
     Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'FabricNonWovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
 
