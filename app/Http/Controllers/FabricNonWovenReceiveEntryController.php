@@ -235,10 +235,9 @@ class FabricNonWovenReceiveEntryController extends Controller
     }
 
     public function getFabricNameColorList(Request $request){
-        // dd('hh');
-        // dd($request->fabric_name);
+       
       $fabric_gsm = $request->fabric_gsm;
-      $fabric_name = $request->fabric_name;
+      $fabric_name = $request->fabric_name.'"';
       $fabric_color_list = NonWovenFabric::where('gsm',$fabric_gsm)
                                           ->where('name',$fabric_name)
                                          ->get();
