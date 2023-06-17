@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Fabric;
+use App\Models\FabricTemporaryForLam;
 
 class LaminatedFabric extends Model
 {
@@ -17,5 +18,9 @@ class LaminatedFabric extends Model
     ];
     public function fabric(){
         return $this->belongsTo(Fabric::class,"fabric_id","id");
+    }
+
+    public function lamfabric(){
+        return $this->belongsTo(FabricTemporaryForLam::class,"lam_fabric_id","id");
     }
 }

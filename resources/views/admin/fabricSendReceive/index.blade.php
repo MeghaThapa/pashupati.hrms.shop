@@ -309,8 +309,8 @@
                     <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
                         </label>
-                        <select class="advance-select-box form-control" id="danaNameId" name="fabric_name_id" required>
-                            <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
+                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
+                            <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
                             @foreach ($dana as $danaName)
                             <option value="{{ $danaName->id }}">{{ $danaName->name }}
                             </option>
@@ -325,8 +325,8 @@
                     <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Qty:') }}<span class="required-field">*</span>
                         </label>
-                        <input type="text" step="any" min="0" class="form-control calculator" id="totalUlInMtr"
-                            data-number="1" name="total_ul_in_mtr" min="1" required>
+                        <input type="number" step="any" min="0" class="form-control" id="add_dana_consumption_quantity"
+                            data-number="1" name="total_ul_in_mtr" min="1" disabled required>
                         @error('total_ul_in_mtr')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -334,21 +334,19 @@
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <button class=" form-control btn btn-primary">
+                        <button class=" form-control btn btn-primary" id='add_dana_consumption' disabled>
                             Add
                         </button>
                     </div>
                 </div>
-                <hr>
-                {{-- <div class="col-md-12">
-                    <h4>Wsateg</h4>
-                    <form action="">
-                        <select name="" id="" class="advance-select-box">
-                            <option value="">select waste</option>
-                            <option value="">Polo</option>
-                            <option value="">Rafia</option>
-                        </select>
-                    </form>
+                {{-- <hr>
+                <div class="col-md-12">
+                    <h4>wastage</h4>
+                    <select name="waste_type" id="waste_type" class="advance-select-box">
+                        <option>--select waste--</option>
+                        <option value="">Polo</option>
+                        <option value="">Rafia</option>
+                    </select>
                 </div> --}}
 
             </div>
@@ -364,7 +362,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_in_mtr"
-                                data-number="1" name="total_ul_in_mtr" min="1" required>
+                                data-number="1" name="total_ul_in_mtr" min="1" readonly required>
                             @error('total_ul_in_mtr')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -376,7 +374,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_net_wt"
-                                data-number="1" name="total_ul_net_wt" min="1" required>
+                                data-number="1" name="total_ul_net_wt" min="1" readonly required>
                             @error('total_ul_net_wt')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -398,8 +396,8 @@
                             <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="totl_dana" data-number="1"
-                                name="totl_dana" min="1" required>
+                            <input type="number" step="any" min="0" class="form-control calculator" id="totl_dana" data-number="1"
+                                name="totl_dana" min="1" readonly required>
                             @error('polo_waste')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -415,7 +413,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_in_mtr"
-                                data-number="1" name="total_lam_in_mtr" min="1" required>
+                                data-number="1" name="total_lam_in_mtr" min="1" readonly required>
                             @error('total_lam_in_mtr')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -427,7 +425,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_net_wt"
-                                data-number="1" name="total_lam_net_wt" min="1" required>
+                                data-number="1" name="total_lam_net_wt" min="1" readonly required>
                             @error('total_lam_net_wt')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -450,7 +448,7 @@
                             <label for="size" class="col-form-label">{{ __('Total Was:') }}<span class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_waste"
-                                data-number="1" name="total_waste" min="1" required>
+                                data-number="1" name="total_waste" min="1" readonly required>
                             @error('polo_waste')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -465,7 +463,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="diff_unLam_lamNw"
-                                data-number="1" name="diff_unLam_lamNw" min="1" required>
+                                data-number="1" name="diff_unLam_lamNw" min="1" readonly required>
                             @error('diff_unLam_lamNw')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -477,7 +475,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_diff" data-number="1"
-                                name="total_diff" min="1" required>
+                                name="total_diff" min="1" readonly required>
                             @error('total_diff')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -489,7 +487,8 @@
             </div>
         </div>
         <div class="card-footer">
-            <button class="btn btn-info" disabled>Update</button>
+            <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
+            <button class="btn btn-info" id="finalUpdate">Update</button>
         </div>
     </div>
 </div>
@@ -721,7 +720,7 @@
 
     function addplanttype(data){
         $("#plantType").empty();
-        $('#plantType').append(`<option value="" disabled selected>Select Planttype</option>`);
+        $('#plantType').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
         data.planttype.forEach( d => {
             $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
         });
@@ -730,7 +729,7 @@
     function addplantname(data){
         console.log(data);
         $("#plantName").empty();
-        $('#plantName').append(`<option value="" disabled selected>Select Plantname</option>`);
+        $('#plantName').append(`<option value="" disabled selected>--Select Plant Name--</option>`);
         data.plantname.forEach( d => {
             // if(d.name == '')
             $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
@@ -740,7 +739,7 @@
     function getfabrics(data){
         $('#fabricNameId').prop('disabled',false);
         $("#fabricNameId").empty();
-        $('#fabricNameId').append(`<option value="" disabled selected>Select Fabric</option>`);
+        $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
         data.fabrics.forEach(d => {
             $("#fabricNameId").append(`<option value="${d.id}">${d.name}</option>`);
         });
@@ -1016,7 +1015,107 @@
         total_diff = total_diff.toFixed(4);
         $("#total_diff").val(total_diff);
     }
+
+    $("#danaNameId").on("change",function(e){
+        $("#add_dana_consumption_quantity").prop("disabled",false);
+    });
+
+
+    $(document).on("keyup","#add_dana_consumption_quantity",function(e){
+        $("#add_dana_consumption").prop("disabled",false);
+    });
+
+    $(document).on("click","#add_dana_consumption",function(e){
+        let dana = $("#danaNameId").val();
+        let consumption = $("#add_dana_consumption_quantity").val();
+        if (consumption.trim() === '') {
+            alert("add quantity");
+        }else{
+            $("#totl_dana").val(consumption);
+
+            $("#selectedDanaID").val(dana);
+        }   
+    });
+
+    $(document).on("keyup","#fabric_waste",function(e){
+        let polo_waste = parseInt($("#polo_waste").val());
+        let fabric_waste = parseInt($("#fabric_waste").val());
+        let total_waste = polo_waste + fabric_waste;
+        $("#total_waste").val(total_waste);
+    });
     /********************** dana consumption and wastage and differences ******************************/
 
+    /************************** Check weights matches for consumption and lamination and final submit   **********************************/
+        /*******
+         * @this portion adds to fabric stock and subtraction from fabric stock
+         ********/
+
+         $(document).on("click","#finalUpdate",function(e){
+
+            let danaNameId = $("#selectedDanaID").val();
+            let consumption = $("#add_dana_consumption_quantity").val();
+            let fabric_waste = $("#fabric_waste").val();
+            let total_waste = $('#total_waste').val();
+            let selectedDanaID = $("#selectedDanaID").val();
+            let polo_waste = $("#polo_waste").val();
+
+            trimmedConsumption = consumption.trim();
+            trimmedPoloWaste = polo_waste.trim();
+            trimmedFabricWaste = fabric_waste.trim();
+            trimmedTotalWaste = total_waste.trim();
+
+            if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
+                alert('Waste and Consumption cannot be null');
+            }else{
+            // subtractformautolad(danaNameId,consumption);
+                $.ajax({
+                    url : "{{ route('final.submit.fsr') }}",
+                    method: "post",
+                    data:{
+                        "_token" : $('meta[name="csrf-token"]').attr('content'),
+                        "danaNameID" : danaNameId,
+                        "consumption" : trimmedConsumption,
+                        "fabric_waste" : trimmedFabricWaste,
+                        "polo_waste" : trimmedPoloWaste,
+                        "total_waste" : trimmedTotalWaste,
+                        "selectedDanaID" : selectedDanaID
+                    },
+                    beforeSend:function(){
+                        console.log("Before Send");
+                    },
+                    success:function(response){
+                        console.log(response);
+                        if(response == '200'){
+                            location.reload();
+                        }else{
+
+                        }
+                    },
+                    error:function(error){
+                        console.log(error);
+                    }
+                }); 
+            }
+        });
+
+    // function subtractformautolad(danaNameId,consumption){
+    //     $.ajax({
+    //         url:"{{ route('subtract.dana.from.autoloder') }}",
+    //         method: "post",
+    //         data:{
+    //             '_token' : $('meta[name="csrf-token"]').attr('content'),
+    //             "danaId" : danaNameId,
+    //             "quantity" : consumption
+    //         },
+    //         success:function(response){
+    //             console.log(response);
+    //         },
+    //         error:function(error){
+    //             console.log(error);
+    //         }
+    //     });
+    // }
+
+    /************************** Check weights matches for consumption and lamination and final submit   **********************************/
 </script>
 @endsection
