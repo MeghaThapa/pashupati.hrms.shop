@@ -60,8 +60,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                    width:150px !important;
-                                                                                                                                                } */
+                                                                                                                                                                                                                                width:150px !important;
+                                                                                                                                                                                                                            } */
     </style>
 @endsection
 
@@ -93,7 +93,6 @@
                 @csrf
 
                 <div class="row">
-
 
                     <div class="col-md-2 form-group">
                         <label for="Category" class="col-form-label">{{ __('Category Name') }}<span
@@ -128,8 +127,8 @@
                             style="margin-top:0 !important; top:8px;float:right;">
                             <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                         </a>
-                        <select class="advance-select-box form-control  @error('ProductName') is-invalid @enderror"
-                            id="ProductName" name="ProductName" required>
+                        <select class="form-control  @error('ProductName') is-invalid @enderror" id="ProductName"
+                            name="ProductName" required>
                             <option value="" selected disabled>{{ __('Select a Product') }}</option>
                         </select>
                         @error('ProductName')
@@ -171,7 +170,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex  mt-3" style="gap:10px">
+                <div class="row" style="gap:10px">
                     {{-- size --}}
                     <div class="col-md-2">
                         <label for="qunatities" class="col-form-label">{{ __('Size') }}<span
@@ -231,7 +230,7 @@
                                     <span class="input-group-text" id="basic-addon1">Rs.</span>
                                 </div>
                                 <input type="text" id="singleTotal" tabindex="-1" name="singleTotal"
-                                    style="height: 37px!important" class="form-control" data-ignore readonly
+                                    style="height: 37px!important;padding:5px;" class="form-control" data-ignore readonly
                                     placeholder="Total" aria-label="Total" aria-describedby="basic-addon1">
                             </div>
                         </div>
@@ -1055,6 +1054,7 @@
 
             checkRowInTable();
 
+
             function checkRowInTable() {
                 let tableTbody = document.querySelector("#storeInItemTable tbody");
                 let saveStoreInBtn = document.getElementById('saveStoreInBtn');
@@ -1083,7 +1083,6 @@
             function calculateTotalAmount(qty, unitPrice) {
                 document.getElementById("singleTotal").value = parseFloat(qty) * parseFloat(unitPrice);
             }
-
 
             let formDiv = document.getElementById("formdiv");
             let focusableElements = Array.from(formDiv.querySelectorAll("input, select,button")).filter(function(
@@ -1365,12 +1364,9 @@
             setChargesFields();
 
             var chargeFieldsIndex = 1;
-            let discountPercentage = document.getElementById('discount_percent');
-
-            let discountAmt = document.getElementById('discount_amount');
             let netTotal = 0;
 
-            discountPercentage.addEventListener('change', function(event) {
+            document.getElementById('discount_percent').addEventListener('change', function(event) {
                 let discountValue = event.target.value;
                 updateDiscountPercent(discountValue)
                 updateTaxAmount();
@@ -1378,6 +1374,7 @@
             });
 
             function updateDiscountPercent(discountValue) {
+                let discountAmt = document.getElementById('discount_amount');
                 if (discountValue) {
                     discountAmt.disabled = true;
                     let total = document.getElementById('totalStoreIn').value;
@@ -1390,13 +1387,14 @@
                     document.getElementById('net_total').value = document.getElementById('totalStoreIn').value;
                 }
             }
-            discountAmt.addEventListener('change', function(event) {
+            document.getElementById('discount_amount').addEventListener('change', function(event) {
                 let discountValue = event.target.value;
                 updateDiscountAmount(discountValue);
                 updateTaxAmount();
             });
 
             function updateDiscountAmount(discountValue) {
+                let discountPercentage = document.getElementById('discount_percent');
                 if (discountValue) {
                     discountPercentage.disabled = true;
                     let total = document.getElementById('totalStoreIn').value;
@@ -1669,6 +1667,37 @@
                 getItemsDepartment(product_id);
 
             });
+
+            $('#ProductName').select2({
+                theme: 'bootstrap4',
+                ajax: {
+                    method: 'GET',
+                    url: "{{ route('storein.getcategoryItems') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        let category_id = $('#categorySelect').val();
+                        return {
+                            category_id: category_id,
+                            query: params.term,
+                            page: params.page || 1
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.data,
+                            pagination: {
+                                more: data.next_page_url ? true : false
+                            }
+                        };
+                    }
+                },
+                placeholder: 'Select a user',
+                minimumInputLength: 0
+            });
+
+
+
             $('#categorySelect').on('select2:select', function(e) {
                 let category_id = e.params.data.id;
                 getCategoryItems(category_id, 'blade');
@@ -1679,7 +1708,6 @@
                 let category_id = $('#categorySelect').val();
 
                 let object = await getDepartmentSizeUnit(item_name, category_id);
-                console.log('backend:', object);
                 fillOptionInSelect(object.department, '#departmentId');
                 fillOptionInSelect(object.size, '#SizeId');
                 fillOptionInSelect(object.units, '#unitId');
@@ -1763,7 +1791,6 @@
                         method: 'GET',
                         success: function(response) {
                             //only unit found
-                            console.log('ajax size: ', response);
                             let selectOptions = '';
 
                             if (response.length == 0) {
@@ -1834,26 +1861,23 @@
                 return new Promise(function(resolve, reject) {
 
                     $.ajax({
-                        url: "{{ route('storein.getcategoryItems', ['category_id' => ':Replaced']) }}"
-                            .replace(
-                                ':Replaced',
-                                category_id),
-
                         method: 'GET',
+                        url: "{{ route('storein.getcategoryItems') }}",
+                        data: {
+                            category_id: category_id,
+                        },
                         success: function(response) {
-                            console.log('ajax item: ', response);
                             let selectOptions = '';
-
-                            if (response.length == 0) {
+                            if (response.data.length == 0) {
                                 selectOptions += '<option disabled selected>' +
                                     'no items found' + '</option>';
                             } else {
                                 selectOptions += '<option disabled selected>' +
                                     'select an item' + '</option>';
 
-                                for (let i = 0; i < response.length; i++) {
-                                    let optionText = response[i].name;
-                                    let optionValue = response[i].name;
+                                for (let i = 0; i < response.data.length; i++) {
+                                    let optionText = response.data[i].name;
+                                    let optionValue = response.data[i].name;
                                     let option = new Option(optionText, optionValue);
                                     selectOptions += option.outerHTML;
                                 }
@@ -1875,509 +1899,510 @@
                     });
                 });
             }
-            $(document).ready(function() {
-                let sn = 1;
-                let selectedPercentage = 0;
-                // setTimeout(loadWhenPageLoad, 2000);
 
-                function loadWhenPageLoad() {
-                    let transport_cost = document.getElementById('transport_cost').value;
-                    // check whether transport cost is empty or not
-                    triggerTransport(transport_cost);
-                }
+            let sn = 1;
+            let selectedPercentage = 0;
+            // setTimeout(loadWhenPageLoad, 2000);
+
+            function loadWhenPageLoad() {
+                let transport_cost = document.getElementById('transport_cost').value;
+                // check whether transport cost is empty or not
+                triggerTransport(transport_cost);
+            }
 
 
-                //Edit
-                document.getElementById('editStoreinItem').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    const form = event.target;
-                    let storeinItem_id = form.elements['storeInItem_id'].value;
-                    let category_id = form.elements['category_id'].value;
-                    let product_id = form.elements['item_id'].value;
-                    let quantities = form.elements['quantity'].value;
-                    let unit_id = form.elements['unit_id'].value;
-                    let unit_price = form.elements['unitPrice'].value;
+            //Edit
+            document.getElementById('editStoreinItem').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const form = event.target;
+                let storeinItem_id = form.elements['storeInItem_id'].value;
+                let category_id = form.elements['category_id'].value;
+                let product_id = form.elements['item_id'].value;
+                let quantities = form.elements['quantity'].value;
+                let unit_id = form.elements['unit_id'].value;
+                let unit_price = form.elements['unitPrice'].value;
 
-                    $.ajax({
-                        url: "{{ route('storein.EditItemStoreData') }}",
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            storein_item_id: storeinItem_id,
-                            category_id: category_id,
-                            product_id: product_id,
-                            quantity: quantities,
-                            unit_id: unit_id,
-                            unit_price: unit_price,
-                            // Goes Into Request
-                        },
-                        success: function(response) {
+                $.ajax({
+                    url: "{{ route('storein.EditItemStoreData') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        storein_item_id: storeinItem_id,
+                        category_id: category_id,
+                        product_id: product_id,
+                        quantity: quantities,
+                        unit_id: unit_id,
+                        unit_price: unit_price,
+                        // Goes Into Request
+                    },
+                    success: function(response) {
 
-                            $('#editItemModal').modal('hide');
-                            // Updating changes into table row
-                            updateTableRow(response, storeinItem_id);
-                            // after data is updated calculation of total amt
-                            totalAmountCalculation();
-                        },
-                        error: function(xhr, status, error) {
-                            // handle error response here
-                        }
-                    });
+                        $('#editItemModal').modal('hide');
+                        // Updating changes into table row
+                        updateTableRow(response, storeinItem_id);
+                        // after data is updated calculation of total amt
+                        totalAmountCalculation();
+                    },
+                    error: function(xhr, status, error) {
+                        // handle error response here
+                    }
                 });
-                // trigger transport cost input field
-                $('#transport_cost').on('blur', function(event) {
+            });
+            // trigger transport cost input field
+            $('#transport_cost').on('blur', function(event) {
 
-                    let transport_cost = $(this).val();
-                    triggerTransport(transport_cost);
-                });
+                let transport_cost = $(this).val();
+                triggerTransport(transport_cost);
+            });
 
-                function triggerTransport(transport_cost) {
-                    if (transport_cost == null || transport_cost == '') {
-                        calculateVatAmount();
-                        return false;
-                    }
-                    let selectTax = document.getElementById("tax");
-                    let grandTotal = document.getElementById('grand_total').value;
-                    let discountedTotal = document.getElementById('discountedTotal').value;
-                    let dueAmount = document.getElementById('due_amount');
-
-
-                    // when vat and transport cost is selected
-                    if (selectTax.selectedIndex > 0 && transport_cost) {
-                        calculateVatAmount();
-                    }
-                    //tax not selected and transport cost is selected
-                    else if (selectTax.selectedIndex == 0 && transport_cost) {
-                        let total_amount = parseInt(discountedTotal) + parseInt(transport_cost);
-                        document.getElementById('grand_total').value = total_amount;
-                        dueAmount.value = total_amount;
-                    }
-                }
-
-                // trigger event when total paid is there
-                $('#totalPayment').on('blur', function(event) {
-                    let total_Paid = $(this).val();
-                    calculateTotalPayment(total_Paid);
-                });
-
-                function calculateTotalPayment(total_Paid) {
-                    let grand_total = document.getElementById('grand_total').value;
-                    let due_amount = parseInt(grand_total) - parseInt(total_Paid);
-                    if (due_amount < 0) {
-                        alert('You Cannot pay more than grand total amount');
-                        return false;
-                    }
-                    document.getElementById('due_amount').value = due_amount;
-                }
-
-
-                // recent
-                $('#tax').on('change', async function() {
+            function triggerTransport(transport_cost) {
+                if (transport_cost == null || transport_cost == '') {
                     calculateVatAmount();
-                });
+                    return false;
+                }
+                let selectTax = document.getElementById("tax");
+                let grandTotal = document.getElementById('grand_total').value;
+                let discountedTotal = document.getElementById('discountedTotal').value;
+                let dueAmount = document.getElementById('due_amount');
 
-                async function calculateVatAmount() {
-                    slugVal = document.getElementById('tax').value;
 
-                    // when $slugVal is not assign
-                    if (slugVal == null || !slugVal) {
-                        $discount_total = document.getElementById('discountedTotal').value;
-                        document.getElementById('grand_total').value = $discount_total;
-                        return false;
-                    }
-                    let taxPercent = await getVatPercentage(slugVal);
-                    let discountTotal = document.getElementById('discountedTotal').value;
-                    let taxAmount = (parseInt(discountTotal) * parseInt(taxPercent)) / 100;
-                    let dueAmount = document.getElementById('due_amount');
+                // when vat and transport cost is selected
+                if (selectTax.selectedIndex > 0 && transport_cost) {
+                    calculateVatAmount();
+                }
+                //tax not selected and transport cost is selected
+                else if (selectTax.selectedIndex == 0 && transport_cost) {
+                    let total_amount = parseInt(discountedTotal) + parseInt(transport_cost);
+                    document.getElementById('grand_total').value = total_amount;
+                    dueAmount.value = total_amount;
+                }
+            }
 
-                    let transport_cost = document.getElementById('transport_cost').value;
-                    if (transport_cost == '' || transport_cost == null) {
-                        let amount = parseInt(discountTotal) + parseInt(taxAmount);
-                        document.getElementById('grand_total').value = amount;
-                        dueAmount.value = amount;
-                    } else {
-                        let amount = parseInt(discountTotal) + parseInt(taxAmount) + parseInt(
-                            transport_cost);
-                        document.getElementById('grand_total').value = amount;
-                        dueAmount.value = amount;
-                    }
+            // trigger event when total paid is there
+            $('#totalPayment').on('blur', function(event) {
+                let total_Paid = $(this).val();
+                calculateTotalPayment(total_Paid);
+            });
 
-                    let totalPayment = document.getElementById('totalPayment').value;
-                    calculateTotalPayment(totalPayment);
+            function calculateTotalPayment(total_Paid) {
+                let grand_total = document.getElementById('grand_total').value;
+                let due_amount = parseInt(grand_total) - parseInt(total_Paid);
+                if (due_amount < 0) {
+                    alert('You Cannot pay more than grand total amount');
+                    return false;
+                }
+                document.getElementById('due_amount').value = due_amount;
+            }
+
+
+            // recent
+            $('#tax').on('change', async function() {
+                calculateVatAmount();
+            });
+
+            async function calculateVatAmount() {
+                slugVal = document.getElementById('tax').value;
+
+                // when $slugVal is not assign
+                if (slugVal == null || !slugVal) {
+                    $discount_total = document.getElementById('discountedTotal').value;
+                    document.getElementById('grand_total').value = $discount_total;
+                    return false;
+                }
+                let taxPercent = await getVatPercentage(slugVal);
+                let discountTotal = document.getElementById('discountedTotal').value;
+                let taxAmount = (parseInt(discountTotal) * parseInt(taxPercent)) / 100;
+                let dueAmount = document.getElementById('due_amount');
+
+                let transport_cost = document.getElementById('transport_cost').value;
+                if (transport_cost == '' || transport_cost == null) {
+                    let amount = parseInt(discountTotal) + parseInt(taxAmount);
+                    document.getElementById('grand_total').value = amount;
+                    dueAmount.value = amount;
+                } else {
+                    let amount = parseInt(discountTotal) + parseInt(taxAmount) + parseInt(
+                        transport_cost);
+                    document.getElementById('grand_total').value = amount;
+                    dueAmount.value = amount;
                 }
 
-                async function getVatPercentage(slug) {
-                    return new Promise(function(resolve, reject) {
-                        $.ajax({
-                            url: "{{ route('tax.getPercentageBySlug', ['slug' => ':toBeReplaced']) }}"
-                                .replace(
-                                    ':toBeReplaced',
-                                    slug),
-                            method: 'GET',
-                            success: function(response) {
-                                resolve(response.percentage);
-                            },
-                            error: function(xhr, status, error) {
-                                reject(error);
-                            }
-                        });
-                    });
+                let totalPayment = document.getElementById('totalPayment').value;
+                calculateTotalPayment(totalPayment);
+            }
 
-                }
-
-                function totalAmountCalculation() {
-                    const myTable = document.getElementById("storeInItemTable");
-
-                    // Get the tbody element of the table
-                    const tbody = myTable.querySelector("tbody");
-
-                    // Get all the tr elements in the tbody
-                    const rows = tbody.querySelectorAll("tr");
-
-                    // Loop through the rows and do something with them
-                    let eachTotalAmount = 0;
-
-                    rows.forEach(row => {
-                        eachTotalAmount += parseInt(row.querySelector('td.rowTotalAmount')
-                            .innerHTML);
-                    });
-
-
-
-                    document.getElementById('totalStoreIn').value = eachTotalAmount;
-                }
-
-
-                // Updating Table tr td value when something changed or updated
-                function updateTableRow(response, storeinItem_id) {
-                    // triggering table tr by storeinItem_id
-                    let row = document.getElementById('editRow-' + storeinItem_id);
-
-                    //Updating tds
-                    row.querySelector('td.rowQuantity').innerHTML = response.quantity;
-                    row.querySelector('td.rowsize_id').innerHTML = response.size_id;
-                    row.querySelector('td.rowItemName').innerHTML = response.item.item;
-                    row.querySelector('td.rowUnitName').innerHTML = response.unit.name;
-                    row.querySelector('td.rowPrice').innerHTML = response.price;
-                    row.querySelector('td.rowTotalAmount').innerHTML = response.total_amount;
-
-                }
-
-                dataRetrive();
-
-                //Validation start
-
-                function validateForm(formElement, validationRules) {
-                    let isValid = true;
-
-                    validationRules.forEach((rule) => {
-                        const {
-                            fieldName,
-                            required,
-                            validationFunction,
-                            errorMessage
-                        } = rule;
-                        const fieldValue = formElement.elements[fieldName].value.trim();
-
-                        if (required && fieldValue === '') {
-                            console.error(errorMessage);
-                            isValid = false;
-                        }
-
-                        if (validationFunction && !validationFunction(fieldValue)) {
-                            console.error(errorMessage);
-                            isValid = false;
-                        }
-                    });
-
-                    return isValid;
-                }
-
-                // Usage example
-                const validationRules = [{
-                        fieldName: 'size_id',
-                        required: true,
-                        errorMessage: 'Size ID is required.',
-                    },
-                    {
-                        fieldName: 'categoryName',
-                        required: true,
-                        errorMessage: 'Category ID is required.',
-                    },
-                    {
-                        fieldName: 'ProductName',
-                        required: true,
-                        errorMessage: 'Product ID is required.',
-                    },
-                    {
-                        fieldName: 'quantities',
-                        required: true,
-                        validationFunction: (value) => !isNaN(value) && parseFloat(value) > 0,
-                        errorMessage: 'Quantities must be a positive number.',
-                    },
-                    {
-                        fieldName: 'unit_id',
-                        required: true,
-                        errorMessage: 'Unit ID is required.',
-                    },
-                    {
-                        fieldName: 'unitPrices',
-                        required: true,
-                        validationFunction: (value) => !isNaN(value) && parseFloat(value) > 0,
-                        errorMessage: 'Unit price must be a positive number.',
-                    },
-                    {
-                        fieldName: 'department_id',
-                        required: true,
-                        errorMessage: 'Department ID is required.',
-                    },
-                ];
-
-
-                //Validation end
-
-
-
-
-                //Creating New Storein Item and Adding into Table
-                document.getElementById('createStoreInItem').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    const form = event.target;
-                    let size_id = form.elements['size_id'].value;
-                    let category_id = form.elements['categoryName'].value;
-                    let product_id = form.elements['ProductName'].value;
-                    let quantities = form.elements['quantities'].value;
-                    let unit_id = form.elements['unit_id'].value;
-                    let unit_price = form.elements['unitPrices'].value;
-                    let department_id = form.elements['department_id'].value;
-                    // validation js
-                    const isFormValid = validateForm(form, validationRules);
-                    if (!isFormValid) {
-                        setMessage('storeinItemError', 'Please Fill out all fields')
-                        return false;
-                    }
+            async function getVatPercentage(slug) {
+                return new Promise(function(resolve, reject) {
                     $.ajax({
-                        url: '{{ route('storein.saveStoreinItems', ['id' => $storein->id]) }}',
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            category_id: category_id,
-                            item_id: product_id,
-                            quantity: quantities,
-                            unit_id: unit_id,
-                            unit_price: unit_price,
-                            size_id: size_id,
-                            department_id: department_id
-
-                            // Goes Into Request
-                        },
-                        success: function(response) {
-                            console.log('table item', response);
-                            setIntoTable(response);
-                            // calculate total amount
-                            totalAmountCalculation();
-
-                            document.getElementById('net_total').value = document
-                                .getElementById('totalStoreIn').value;
-                            // Add Edit Event Listener
-                            editEventBtn();
-                            // Add Delete Event Listener
-                            deleteEventBtn();
-                            checkRowInTable();
-
-
-
-
-                        },
-                        error: function(xhr, status, error) {
-                            // handle error response here
-                        }
-                    });
-                });
-
-                // function for creating a new row in table
-                function setIntoTable(res) {
-
-                    var html = "";
-
-                    html = "<tr id=editRow-" + res.id + "><td>" + sn +
-                        "</td><td class='rowItemName'>" + res.items_of_storein.name +
-                        "</td><td class='rowDepartmentName'>" + res.storein_department.name +
-                        "</td><td class='rowsize_id'>" + res.size.name +
-                        "</td><td class='rowQuantity'>" + res.quantity +
-                        "</td><td class='rowUnitName'>" + res.unit.name +
-                        "</td><td class='rowPrice'>" + res.price +
-                        "</td><td class='rowTotalAmount'>" + res.total_amount +
-                        "</td> <td>" +
-                        // "<button class='btn btn-success editItemBtn' data-id=" +
-                        // res.id + "><i class='fas fa-edit'></i></button>" +
-                        // "  " +
-                        "<button class='btn btn-danger dltstoreinItem' data-id=" +
-                        res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
-
-                    document.getElementById('result').innerHTML += html;
-                    sn++;
-                    // Clearing the input fields
-                    clearInputFields();
-                }
-
-                function clearInputFields() {
-                    document.getElementById('categorySelect').value = "";
-                    document.getElementById('ProductName').value = "";
-                    document.getElementById('qunatities').value = "";
-                    document.getElementById('unitPrices').value = "";
-                    document.getElementById('singleTotal').value = "";
-                }
-
-                function removeAllTableRows() {
-                    // Reseting SN
-                    sn = 1;
-                    let tbody = document.querySelector("#storeInItemTable tbody");
-                    for (var i = tbody.rows.length - 1; i >= 0; i--) {
-                        tbody.deleteRow(i);
-                    }
-                }
-
-                // when page is refressed
-                function dataRetrive() {
-                    removeAllTableRows();
-                    $.ajax({
-                        url: '{{ route('storein.storeInItemsRetrive', ['storein_id' => $storein->id]) }}',
+                        url: "{{ route('tax.getPercentageBySlug', ['slug' => ':toBeReplaced']) }}"
+                            .replace(
+                                ':toBeReplaced',
+                                slug),
                         method: 'GET',
                         success: function(response) {
-                            console.log('table item', response);
-                            if (response.storein_items.length <= 0) {
-                                return false;
-                            }
-                            response.storein_items.forEach(itemsRow => {
-                                setIntoTable(itemsRow);
-                            });
-                            if (response.storein_items.length > 0) {
-                                // alert('fghjk');
-                                editEventBtn();
-                                deleteEventBtn();
-
-                            }
-                            totalAmountCalculation();
-
-                            document.getElementById('net_total').value = document
-                                .getElementById('totalStoreIn').value;
-                            //Megha
-                            if (discountAmt.value) {
-                                updateDiscountAmount(discountAmt.value);
-                            } else if (discountPercentage.value) {
-                                updateDiscountPercent(discountPercentage.value);
-                            }
-                            updateTaxAmount();
-                            checkRowInTable();
-
-
-
-                            // console.log(response);
+                            resolve(response.percentage);
                         },
                         error: function(xhr, status, error) {
-                            // handle error response here
+                            reject(error);
                         }
                     });
-                }
+                });
 
-                function deleteEventBtn() {
-                    let deleteButtons = document.getElementsByClassName('dltstoreinItem');
-                    //console.log(deleteButtons);
-                    for (var i = 0; i < deleteButtons.length; i++) {
-                        deleteButtons[i].addEventListener('click', function(event) {
-                            let itemId = this.getAttribute('data-id');
-                            // console.log(itemId);
-                            new swal({
-                                    title: "Are you sure?",
-                                    text: "Do you want to delete Item.",
-                                    icon: "warning",
-                                    buttons: true,
-                                    dangerMode: true,
-                                    closeOnClickOutside: false,
-                                })
-                                .then((willDelete) => {
-                                    if (willDelete) {
-                                        $.ajax({
-                                            url: '{{ route('storein.storeinItemDelete', ['id' => ':lol']) }}'
-                                                .replace(':lol', itemId),
-                                            type: "DELETE",
-                                            data: {
-                                                "_method": "DELETE",
-                                                "_token": "{{ csrf_token() }}",
-                                            },
-                                            success: function(result) {
+            }
+
+            function totalAmountCalculation() {
+                const myTable = document.getElementById("storeInItemTable");
+
+                // Get the tbody element of the table
+                const tbody = myTable.querySelector("tbody");
+
+                // Get all the tr elements in the tbody
+                const rows = tbody.querySelectorAll("tr");
+
+                // Loop through the rows and do something with them
+                let eachTotalAmount = 0;
+
+                rows.forEach(row => {
+                    eachTotalAmount += parseInt(row.querySelector('td.rowTotalAmount')
+                        .innerHTML);
+                });
 
 
-                                                dataRetrive();
-                                                totalAmountCalculation();
-                                                new swal({
-                                                    title: "Success",
-                                                    text: "Data deleted",
-                                                    type: 'success',
-                                                    timer: '1500'
-                                                });
-                                                checkRowInTable();
-                                            },
-                                            error: function(result) {
-                                                new swal({
-                                                    title: "Error",
-                                                    text: "something went wrong",
-                                                    type: 'error',
-                                                    timer: '1500'
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
 
-                        });
+                document.getElementById('totalStoreIn').value = eachTotalAmount;
+            }
+
+
+            // Updating Table tr td value when something changed or updated
+            function updateTableRow(response, storeinItem_id) {
+                // triggering table tr by storeinItem_id
+                let row = document.getElementById('editRow-' + storeinItem_id);
+
+                //Updating tds
+                row.querySelector('td.rowQuantity').innerHTML = response.quantity;
+                row.querySelector('td.rowsize_id').innerHTML = response.size_id;
+                row.querySelector('td.rowItemName').innerHTML = response.item.item;
+                row.querySelector('td.rowUnitName').innerHTML = response.unit.name;
+                row.querySelector('td.rowPrice').innerHTML = response.price;
+                row.querySelector('td.rowTotalAmount').innerHTML = response.total_amount;
+
+            }
+
+            dataRetrive();
+
+            //Validation start
+
+            function validateForm(formElement, validationRules) {
+                let isValid = true;
+
+                validationRules.forEach((rule) => {
+                    const {
+                        fieldName,
+                        required,
+                        validationFunction,
+                        errorMessage
+                    } = rule;
+                    const fieldValue = formElement.elements[fieldName].value.trim();
+
+                    if (required && fieldValue === '') {
+                        console.error(errorMessage);
+                        isValid = false;
                     }
+
+                    if (validationFunction && !validationFunction(fieldValue)) {
+                        console.error(errorMessage);
+                        isValid = false;
+                    }
+                });
+
+                return isValid;
+            }
+
+            // Usage example
+            const validationRules = [{
+                    fieldName: 'size_id',
+                    required: true,
+                    errorMessage: 'Size ID is required.',
+                },
+                {
+                    fieldName: 'categoryName',
+                    required: true,
+                    errorMessage: 'Category ID is required.',
+                },
+                {
+                    fieldName: 'ProductName',
+                    required: true,
+                    errorMessage: 'Product ID is required.',
+                },
+                {
+                    fieldName: 'quantities',
+                    required: true,
+                    validationFunction: (value) => !isNaN(value) && parseFloat(value) > 0,
+                    errorMessage: 'Quantities must be a positive number.',
+                },
+                {
+                    fieldName: 'unit_id',
+                    required: true,
+                    errorMessage: 'Unit ID is required.',
+                },
+                {
+                    fieldName: 'unitPrices',
+                    required: true,
+                    validationFunction: (value) => !isNaN(value) && parseFloat(value) > 0,
+                    errorMessage: 'Unit price must be a positive number.',
+                },
+                {
+                    fieldName: 'department_id',
+                    required: true,
+                    errorMessage: 'Department ID is required.',
+                },
+            ];
+
+
+            //Validation end
+
+
+
+
+            //Creating New Storein Item and Adding into Table
+            document.getElementById('createStoreInItem').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const form = event.target;
+                let size_id = form.elements['size_id'].value;
+                let category_id = form.elements['categoryName'].value;
+                let product_id = form.elements['ProductName'].value;
+                let quantities = form.elements['quantities'].value;
+                let unit_id = form.elements['unit_id'].value;
+                let unit_price = form.elements['unitPrices'].value;
+                let department_id = form.elements['department_id'].value;
+                // validation js
+                const isFormValid = validateForm(form, validationRules);
+                if (!isFormValid) {
+                    setMessage('storeinItemError', 'Please Fill out all fields')
+                    return false;
                 }
+                $.ajax({
+                    url: '{{ route('storein.saveStoreinItems', ['id' => $storein->id]) }}',
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        category_id: category_id,
+                        item_id: product_id,
+                        quantity: quantities,
+                        unit_id: unit_id,
+                        unit_price: unit_price,
+                        size_id: size_id,
+                        department_id: department_id
 
-                function editEventBtn() {
-                    // Assign event listener to buttons with class 'editItemBtn'
-                    let editButtons = document.getElementsByClassName('editItemBtn');
-                    for (var i = 0; i < editButtons.length; i++) {
-                        editButtons[i].addEventListener('click', function(event) {
-                            let itemId = this.getAttribute('data-id');
-                            //console.log('select id item =',itemId);
-                            $.ajax({
-                                url: '{{ route('storein.getEditItemData', ['storeinItem_id' => ':lol']) }}'
-                                    .replace(':lol', itemId),
-                                method: 'GET',
-                                success: async function(response) {
+                        // Goes Into Request
+                    },
+                    success: function(response) {
+                        console.log('table item', response);
+                        setIntoTable(response);
+                        // calculate total amount
+                        totalAmountCalculation();
 
-                                    $('#storein_id').val(response.storein_id);
-                                    $('#storeinItem_id').val(response.id);
-                                    $('#quantity').val(response.quantity);
-                                    $('#unit_id').val(response.unit_id);
-                                    $('#price').val(response.price);
-                                    //console.log('category',response.category_id)
-                                    $('#categoryitem_id').val(response
-                                        .storein_category_id).trigger('change');
-                                    let category = await getCategoryItems(response
-                                        .storein_category_id, 'model');
+                        document.getElementById('net_total').value = document
+                            .getElementById('totalStoreIn').value;
+                        // Add Edit Event Listener
+                        editEventBtn();
+                        // Add Delete Event Listener
+                        deleteEventBtn();
+                        checkRowInTable();
 
-                                    $('#item_id').val(response.storein_item_id).trigger(
-                                        'change');
-                                    $('#editItemModal').modal('show');
 
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error('Error:', error);
+
+
+                    },
+                    error: function(xhr, status, error) {
+                        // handle error response here
+                    }
+                });
+            });
+
+            // function for creating a new row in table
+            function setIntoTable(res) {
+
+                var html = "";
+
+                html = "<tr id=editRow-" + res.id + "><td>" + sn +
+                    "</td><td class='rowItemName'>" + res.items_of_storein.name +
+                    "</td><td class='rowDepartmentName'>" + res.storein_department.name +
+                    "</td><td class='rowsize_id'>" + res.size.name +
+                    "</td><td class='rowQuantity'>" + res.quantity +
+                    "</td><td class='rowUnitName'>" + res.unit.name +
+                    "</td><td class='rowPrice'>" + res.price +
+                    "</td><td class='rowTotalAmount'>" + res.total_amount +
+                    "</td> <td>" +
+                    // "<button class='btn btn-success editItemBtn' data-id=" +
+                    // res.id + "><i class='fas fa-edit'></i></button>" +
+                    // "  " +
+                    "<button class='btn btn-danger dltstoreinItem' data-id=" +
+                    res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
+
+                document.getElementById('result').innerHTML += html;
+                sn++;
+                // Clearing the input fields
+                clearInputFields();
+            }
+
+            function clearInputFields() {
+                document.getElementById('categorySelect').value = "";
+                document.getElementById('ProductName').value = "";
+                document.getElementById('qunatities').value = "";
+                document.getElementById('unitPrices').value = "";
+                document.getElementById('singleTotal').value = "";
+            }
+
+            function removeAllTableRows() {
+                // Reseting SN
+                sn = 1;
+                let tbody = document.querySelector("#storeInItemTable tbody");
+                for (var i = tbody.rows.length - 1; i >= 0; i--) {
+                    tbody.deleteRow(i);
+                }
+            }
+
+            // when page is refressed
+            function dataRetrive() {
+                removeAllTableRows();
+                $.ajax({
+                    url: '{{ route('storein.storeInItemsRetrive', ['storein_id' => $storein->id]) }}',
+                    method: 'GET',
+                    success: function(response) {
+                        console.log('table item', response);
+                        if (response.storein_items.length <= 0) {
+                            return false;
+                        }
+                        response.storein_items.forEach(itemsRow => {
+                            setIntoTable(itemsRow);
+                        });
+                        if (response.storein_items.length > 0) {
+                            // alert('fghjk');
+                            editEventBtn();
+                            deleteEventBtn();
+
+                        }
+                        totalAmountCalculation();
+
+                        document.getElementById('net_total').value = document
+                            .getElementById('totalStoreIn').value;
+                        //Megha
+                        let discountAmt = document.getElementById('discount_amount');
+                        let discountPercentage = document.getElementById('discount_percent');
+                        if (discountAmt.value) {
+                            updateDiscountAmount(discountAmt.value);
+                        } else if (discountPercentage.value) {
+                            updateDiscountPercent(discountPercentage.value);
+                        }
+                        updateTaxAmount();
+                        checkRowInTable();
+
+
+
+                        // console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // handle error response here
+                    }
+                });
+            }
+
+            function deleteEventBtn() {
+                let deleteButtons = document.getElementsByClassName('dltstoreinItem');
+                //console.log(deleteButtons);
+                for (var i = 0; i < deleteButtons.length; i++) {
+                    deleteButtons[i].addEventListener('click', function(event) {
+                        let itemId = this.getAttribute('data-id');
+                        // console.log(itemId);
+                        new swal({
+                                title: "Are you sure?",
+                                text: "Do you want to delete Item.",
+                                icon: "warning",
+                                buttons: true,
+                                dangerMode: true,
+                                closeOnClickOutside: false,
+                            })
+                            .then((willDelete) => {
+                                if (willDelete) {
+                                    $.ajax({
+                                        url: '{{ route('storein.storeinItemDelete', ['id' => ':lol']) }}'
+                                            .replace(':lol', itemId),
+                                        type: "DELETE",
+                                        data: {
+                                            "_method": "DELETE",
+                                            "_token": "{{ csrf_token() }}",
+                                        },
+                                        success: function(result) {
+
+
+                                            dataRetrive();
+                                            totalAmountCalculation();
+                                            new swal({
+                                                title: "Success",
+                                                text: "Data deleted",
+                                                type: 'success',
+                                                timer: '1500'
+                                            });
+                                            checkRowInTable();
+                                        },
+                                        error: function(result) {
+                                            new swal({
+                                                title: "Error",
+                                                text: "something went wrong",
+                                                type: 'error',
+                                                timer: '1500'
+                                            });
+                                        }
+                                    });
                                 }
                             });
 
-
-                        });
-                    }
+                    });
                 }
-            });
+            }
+
+            function editEventBtn() {
+                // Assign event listener to buttons with class 'editItemBtn'
+                let editButtons = document.getElementsByClassName('editItemBtn');
+                for (var i = 0; i < editButtons.length; i++) {
+                    editButtons[i].addEventListener('click', function(event) {
+                        let itemId = this.getAttribute('data-id');
+                        //console.log('select id item =',itemId);
+                        $.ajax({
+                            url: '{{ route('storein.getEditItemData', ['storeinItem_id' => ':lol']) }}'
+                                .replace(':lol', itemId),
+                            method: 'GET',
+                            success: async function(response) {
+
+                                $('#storein_id').val(response.storein_id);
+                                $('#storeinItem_id').val(response.id);
+                                $('#quantity').val(response.quantity);
+                                $('#unit_id').val(response.unit_id);
+                                $('#price').val(response.price);
+                                //console.log('category',response.category_id)
+                                $('#categoryitem_id').val(response
+                                    .storein_category_id).trigger('change');
+                                let category = await getCategoryItems(response
+                                    .storein_category_id, 'model');
+
+                                $('#item_id').val(response.storein_item_id).trigger(
+                                    'change');
+                                $('#editItemModal').modal('show');
+
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+
+
+                    });
+                }
+            }
+
             setTimeout(function() {
                 $('#error-container').fadeOut('fast');
             }, 3000); // 5000 milliseconds = 5 seconds
-
         });
     </script>
 @endsection

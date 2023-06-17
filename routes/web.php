@@ -687,7 +687,8 @@ Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('stor
 Route::post('storein/saveStorein', 'StoreinController@saveStorein')->name('storein.saveStorein');
 Route::get('storein/createItems/{id}', 'StoreinController@createItems')->name('storein.createItems');
 Route::post('storein/saveStoreinItems/{id}', 'StoreinController@saveStoreinItems')->name('storein.saveStoreinItems');
-Route::get('storein/getcategoryItems/{category_id}', 'StoreinController@getcategoryItems')->name('storein.getcategoryItems');
+//recent here m
+Route::get('storein/getcategoryItems', 'StoreinController@getcategoryItems')->name('storein.getcategoryItems');
 Route::get('storein/storeInItemsRetrive/{storein_id}', 'StoreinController@storeInItemsRetrive')->name('storein.storeInItemsRetrive');
 Route::get('storein/getEditItemData/{storeinItem_id}', 'StoreinController@getEditItemData')->name('storein.getEditItemData');
 Route::post('storein/EditItemStoreData', 'StoreinController@EditItemStoreData')->name('storein.EditItemStoreData');
