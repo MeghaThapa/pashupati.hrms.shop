@@ -461,18 +461,18 @@ class FabricSendReceiveController extends Controller
                 DB::beginTransaction();
 
                 //deduction
-                    // $stock = AutoLoadItemStock::where('dana_id',$selectedDanaID)->first();
-                    // $presentQuantity = $stock->quantity;
-                    // $deduction = $presentQuantity - $consumption;
+                    $stock = AutoLoadItemStock::where('dana_id',$selectedDanaID)->first();
+                    $presentQuantity = $stock->quantity;
+                    $deduction = $presentQuantity - $consumption;
 
-                    // if($deduction == 0){
-                    //     $stock->delete();
-                    // }
-                    // else{
-                    //     $stock->update([
-                    //         "quantity" => $deduction
-                    //     ]);
-                    // }
+                    if($deduction == 0){
+                        $stock->delete();
+                    }
+                    else{
+                        $stock->update([
+                            "quantity" => $deduction
+                        ]);
+                    }
                 
                 //fabric stock creation
                     UnlaminatedFabric::where('status','sent')->delete();
