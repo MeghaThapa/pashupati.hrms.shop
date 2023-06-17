@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AutoLoadItemStock;
 use App\Models\DanaName;
 use App\Models\Department;
+use App\Models\FabricLaminatedSentFSR;
 use App\Models\FabricStock;
 use App\Models\FabricTemporaryForLam;
 use App\Models\LaminatedFabric;
@@ -15,6 +17,8 @@ use App\Models\Fabric;
 use App\Models\Unit;
 use App\Models\UnlaminatedFabric;
 use App\Models\UnlaminatedFabricStock;
+use App\Models\Wastages;
+use App\Models\WasteStock;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
@@ -160,8 +164,6 @@ class FabricSendReceiveController extends Controller
 
             $data = [];
             parse_str($request->data,$data);
-
-          
             
             $idoffabricforsendtolamination = $data['idoffabricforsendtolamination'];
 
@@ -422,13 +424,7 @@ class FabricSendReceiveController extends Controller
     public function discard(Request $request){
         if($request->ajax()){
             try{
-
-                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-                DB::table('fabric_unlaminated')->truncate();
-                DB::table('fabric_laminated')->truncate();
-                DB::table('fabric_temporary_for_lamination')->truncate();
-                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
+                $this->discardDelete();
                 return response([
                     "message" => "200"
                 ]);
@@ -438,6 +434,144 @@ class FabricSendReceiveController extends Controller
                     "message" => "{$e->getMessage()}"
                 ]);
             }
+        }
+    }
+
+    function discardDelete(){
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('fabric_unlaminated')->truncate();
+        DB::table('fabric_laminated')->truncate();
+        DB::table('fabric_temporary_for_lamination')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+    }
+
+    public function finalsubmitfsr(Request $request){
+        if($request->ajax()){
+            $consumption = $request->consumption;
+            $danaNameID = $request->danaNameID;
+            $fabric_waste = $request->fabric_waste;
+            $polo_waste = $request->polo_waste;
+            $selectedDanaID = $request->selectedDanaID;
+            $total_waste  = $request->total_waste;
+            $lamFabricToDelete = [];
+            $lamFabricTempToDelete = [];
+            $department = [];
+
+            try{
+                DB::beginTransaction();
+
+                //deduction
+                    // $stock = AutoLoadItemStock::where('dana_id',$selectedDanaID)->first();
+                    // $presentQuantity = $stock->quantity;
+                    // $deduction = $presentQuantity - $consumption;
+
+                    // if($deduction == 0){
+                    //     $stock->delete();
+                    // }
+                    // else{
+                    //     $stock->update([
+                    //         "quantity" => $deduction
+                    //     ]);
+                    // }
+                
+                //fabric stock creation
+                    UnlaminatedFabric::where('status','sent')->delete();
+                    $lamFabric = LaminatedFabric::with('lamfabric')->get();
+                    foreach($lamFabric as $data){
+                        Fabric::create([
+                            'name' => $data->lamfabric->name, 
+                            'slug' => $data->lamfabric->slug, 
+                            'fabricgroup_id' => $data->lamfabric->fabricgroup_id, 
+                            'status' => $data->lamfabric->status,
+                            'gram' => $data->gram,
+                            'gross_wt' => $data->gross_wt,
+                            'net_wt' => $data->net_wt,
+                            'meter' => $data->meter,
+                            'roll_no' => $data->roll_no,
+                            'loom_no' => $data->lamfabric->loom_no,
+                            "is_laminated" => "true"
+                        ]);
+
+                        FabricStock::create([
+                            'name' => $data->lamfabric->name, 
+                            'slug' => $data->lamfabric->slug, 
+                            'fabricgroup_id' => $data->lamfabric->fabricgroup_id, 
+                            'status' => $data->lamfabric->status,
+                            'gram' => $data->gram,
+                            'gross_wt' => $data->gross_wt,
+                            'net_wt' => $data->net_wt,
+                            'meter' => $data->meter,
+                            'roll_no' => $data->roll_no,
+                            'loom_no' => $data->lamfabric->loom_no,
+                            "is_laminated" => "true"
+                        ]);
+
+                        FabricLaminatedSentFSR::create([
+                            'name'=> $data->lamfabric->name, 
+                            'slug' => $data->lamfabric->slug, 
+                            'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
+                            'roll_no' => $data->roll_no,
+                            "loom_no" => $data->lamfabric->loom_no,
+                            'gross_wt' => $data->gross_wt,
+                            'net_wt' => $data->net_wt ,
+                            'meter' => $data->meter,
+                            'average' => $data->average,
+                            'gram' => $data->gram,
+                            'plantname_id' => $data->plantname_id,
+                            'department_id' => $data->department_id,
+                            'planttype_id' => $data->planttype_id,
+                            'bill_number' => $data->bill_number,
+                            'bill_date' => $data->bill_date
+                        ]);
+
+                        $lamFabricToDelete[] = $data->id;
+                        $lamFabricTempToDelete[] = $data->lamfabric->id;
+
+                        if (!in_array($data->department_id, $department)) {
+                            $department[] = $data->department_id;
+                        }
+                        
+                    }
+
+                    WasteStock::create([
+                        'department_id' => $department[0],
+                        'waste_id' => '1',
+                        'quantity_in_kg' => $total_waste,
+                    ]);
+
+                    LaminatedFabric::whereIn('id', $lamFabricToDelete)->delete();
+
+                    FabricTemporaryForLam::whereIn('id',$lamFabricTempToDelete)->delete();
+
+                DB::commit();
+
+                return response(200);
+            }catch(Exception $e){
+                DB::rollBack();
+                return response([
+                    "exception" => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    public function subtractdanafromautoloder(Request $request){
+        if($request->ajax()){
+            $dana = $request->danaId;
+            $quantity = $request->quantity;
+
+            // try{
+            //     AutoLoadItemStock::where("dana_name_id",$dana)->delete();
+            // }catch(Exception $e){
+            //     $e->getMessage();
+            // }
+
+            return response([
+                "data" => [
+                    "dana"=> $dana,
+                    "quantity" => $quantity
+                ]
+            ],200);
         }
     }
 }
