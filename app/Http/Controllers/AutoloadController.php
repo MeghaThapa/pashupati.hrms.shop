@@ -70,7 +70,7 @@ class AutoloadController extends Controller
         $autoload=AutoLoad::find($request->autoload_id_model);
         $autoload->transfer_date = $request->transfer_date_model;
         $autoload->save();
-        $fromGodams = RawMaterialStock::with('department')->select('department_id')->distinct()->get();
+        $fromGodams = RawMaterialStock::with('godam')->select('godam_id')->distinct()->get();
         $plantTypes = ProcessingStep::all();
         $plantNames = ProcessingSubcat::all();
         $shifts= Shift::where('status','active')->get();

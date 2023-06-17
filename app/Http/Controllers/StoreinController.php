@@ -303,15 +303,30 @@ class StoreinController extends Controller
         // return $charges;
         return view('admin.storein.viewStorein', compact('storein', 'charges'));
     }
-    // not in use
-    public function getcategoryItems($category_id)
-    {
-       return ItemsOfStorein::where('category_id', $category_id)
-    ->select('name')
-    ->distinct()
-    ->get();
 
+    public function getcategoryItems(Request $request)
+    {
+        $PAGINATE_NO=50;
+        $query = $request->input('query');
+        $category_id =$request->input('category_id');
+
+        $queryBuilder =DB::table('items_of_storeins')
+        ->join('storein_categories','storein_categories.id','=','items_of_storeins.category_id')
+        ->where('items_of_storeins.category_id',$request->category_id)
+        ->select('items_of_storeins.name as id', 'items_of_storeins.name as text')
+        ->distinct();
+
+        if ($query !== null) {
+            $queryBuilder->where('items_of_storeins.name', 'like', '%' . $query . '%');
+        }
+        $items = $queryBuilder->paginate($PAGINATE_NO);
+
+         return response()->json([
+            'data' => $items->items(),
+            'next_page_url' => $items->nextPageUrl(),
+        ]);
     }
+
     public function getDepartmentSizeUnit($items_of_storein_name,$category_id){
 
         $items_of_storein =ItemsOfStorein::with('storeinDepartment:id,name','unit:id,name','size:id,name')
@@ -467,8 +482,14 @@ class StoreinController extends Controller
             'unit_id'   => 'required',
             'department_id'   => 'required',
         ]);
-      //  name comes here instead of item id so converting name to id
-        $itemofstorein_id=ItemsOfStorein::where('name',$request->item_id)->first()->id;
+       //  name comes here instead of item id so converting name to id
+        $itemofstorein_id=ItemsOfStorein::where('name',$request->item_id)
+        ->where('unit_id',$request->unit_id)
+        ->where('category_id',$request->category_id)
+        ->where('department_id',$request->department_id)
+        ->where('size_id',$request->size_id)
+        ->first()->id;
+
         $totalAmt = ($request->quantity * $request->unit_price);
 
         $storeinItem = new StoreinItem();
