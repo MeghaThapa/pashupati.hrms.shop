@@ -37,16 +37,11 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             /*******trims spaces in between**********/
             $department = StoreinDepartment::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimDepartment)])->value('id');
             $category = StoreinCategory::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimCategory)])->value('id');
-            $rowitem = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])->value('id');
             $size = Size::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimSize)])->value('id');
             $unit = Unit::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimUnit)])->value('id');
             /******* end trims spaces in between**********/
 
-            if($department && $category && $rowitem && $size && $unit){
-                $item = $rowitem;
-            }else{
-                $item = null;
-            }
+
 
             if($size == null) {
                 $code = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)), 0, 10);
@@ -124,6 +119,15 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 $department = StoreinDepartment::where('slug',$slug)->value('id');
             }
 
+            $rowitem = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])
+            ->where('size_id',$size)
+            ->where('unit_id',$unit)
+            ->value('id');
+            if($department && $category && $rowitem && $size && $unit){
+                $item = $rowitem;
+            }else{
+                $item = null;
+            }
 
             if ($item === null) {
                 $createitem= ItemsOfStorein::create([
@@ -136,22 +140,6 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     'pnumber' => isset($row['parts_number'])? trim(strtolower($row['parts_number'])) : "Any",
                 ]);
                 $item = $createitem->id;
-                // return back()->with(['message_err'=>"Category:".$item ."Not Found"]); }
-
-
-                // $createitem = ItemsOfStorein::firstOrCreate([
-                //     'slug' => $slug
-                // ], [
-                //     'name' => $row['item_name'],
-                //     'department_id'=> $department,
-                //     "category_id" => $category,
-                //     'status' => "1",
-                //     "unit_id" => $unit,
-                //     "size_id" => $size,
-                //     'pnumber' => isset($row['parts_number'])? $row['parts_number'] : "Any",
-
-                // ]);
-                // $item = ItemsOfStorein::where('slug',$slug)->value('id');
             }
 
 

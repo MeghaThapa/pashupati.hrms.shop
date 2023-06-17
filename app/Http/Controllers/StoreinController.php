@@ -467,8 +467,14 @@ class StoreinController extends Controller
             'unit_id'   => 'required',
             'department_id'   => 'required',
         ]);
-      //  name comes here instead of item id so converting name to id
-        $itemofstorein_id=ItemsOfStorein::where('name',$request->item_id)->first()->id;
+       //  name comes here instead of item id so converting name to id
+        $itemofstorein_id=ItemsOfStorein::where('name',$request->item_id)
+        ->where('unit_id',$request->unit_id)
+        ->where('category_id',$request->category_id)
+        ->where('department_id',$request->department_id)
+        ->where('size_id',$request->size_id)
+        ->first()->id;
+
         $totalAmt = ($request->quantity * $request->unit_price);
 
         $storeinItem = new StoreinItem();

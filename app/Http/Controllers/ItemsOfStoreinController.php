@@ -45,7 +45,6 @@ class ItemsOfStoreinController extends Controller
         $items->save();
         return response()->json([
             'message' =>'Item Created Successfully',
-            //'request'=>$request,
             'item' => $items,
         ],201);
         }
