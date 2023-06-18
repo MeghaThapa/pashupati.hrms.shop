@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Fabric;
 use App\Models\FabricGroup;
+use App\Models\Godam;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FabricImport;
 
@@ -20,13 +21,16 @@ class FabricController extends Controller
         }
         $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
 
-        return view('admin.fabric.index', compact('fabrics'));
+         $departments = Godam::get();
+
+        return view('admin.fabric.index', compact('fabrics','departments'));
     }
 
    
      public function create()
     {
         $fabricgroups = FabricGroup::get();
+       
         return view('admin.fabric.create',compact('fabricgroups'));
     }
 
@@ -58,12 +62,12 @@ class FabricController extends Controller
     }
 
     public function import(Request $request){
-        // dd('lol');
+        // dd($request);
         $request->validate([
             "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
         ]);
         $file = $request->file('file');
-        $import = Excel::import(new FabricImport, $file );
+        $import = Excel::import(new FabricImport($request->department_id), $file);
         if($import){
             return back()->with(["message"=>"Data imported successfully!"]);
         }else{

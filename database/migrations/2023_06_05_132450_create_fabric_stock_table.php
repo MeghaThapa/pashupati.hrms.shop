@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('slug');
             $table->bigInteger('fabricgroup_id')->unsigned()->index();
             $table->foreign('fabricgroup_id')->references('id')->on('fabric_groups')->onDelete('cascade');
+            $table->unsignedBigInteger('godam_id');
+            $table->foreign('godam_id')->references('id')->on("godam")->onDelete('cascade');
             $table->string('gram');
             $table->string('gross_wt');
             $table->string('net_wt');
