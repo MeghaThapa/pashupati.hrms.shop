@@ -51,11 +51,20 @@
                 </div>
                 <div class="col-lg-3 col-md-7 col-6">
                     <div class="card-tools text-md-right">
-                  
-
 
                         <form action="{{ route('import.fabric') }}" method="POST" enctype="multipart/form-data">
                           @csrf
+                          <div class=" form-group">
+                              <label for="size" class="col-form-label">{{ __('To Department') }}
+                              </label>
+                              <select class="advance-select-box form-control" id="department_id" name="department_id" required>
+                                  <option value="" selected disabled>{{ __('Select Department Name') }}</option>
+                                 @foreach ($departments as $data)
+                                      <option value="{{ $data->id }}">{{ $data->name }}
+                                  </option>
+                                  @endforeach
+                              </select>
+                          </div>
                           <div class="form-group mb-2" style="max-width: 500px; margin: 0 auto;">
                               <div class="custom-file text-left">
                                   <input type="file" name="file" class="custom-file-input" id="customFile" class="d-none" >

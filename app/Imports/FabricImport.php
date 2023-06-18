@@ -13,6 +13,13 @@ use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 
 class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 {
+
+    public $department_id;
+
+    public function __construct($department_id)
+    {
+        $this->department_id = $department_id;
+    }
   
    public function collection(Collection $rows)
    {
@@ -42,6 +49,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                'net_wt' => $row['net_wt'],
                'meter' => $row['meter'],
                'gram' => $row['grams'],
+               'godam_id' => $this->department_id,
                
            ]);
 
@@ -54,6 +62,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             'net_wt' => $row['net_wt'],
             'meter' => $row['meter'],
             'gram' => $row['grams'],
+            'godam_id' => $this->department_id,
         ]);
        }
    }

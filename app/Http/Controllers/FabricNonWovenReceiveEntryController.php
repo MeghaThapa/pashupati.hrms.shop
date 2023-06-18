@@ -54,9 +54,10 @@ class FabricNonWovenReceiveEntryController extends Controller
             parse_str($request->data,$data);
             // dd($data);
             $nonfabric_id = NonWovenFabric::where('gsm',$data['fabric_gsm'])
-                                          ->where('name',$data['fabric_name'])
+                                          ->where('slug',$data['fabric_name'])
                                           ->where('color',$data['fabric_color'])
                                           ->value('id');
+                                          // dd($nonfabric_id);
 
                $fabricreceiveenty = FabricNonWovenReciveEntry::create([
                 'receive_date' => $data['receive_date'],
@@ -101,16 +102,17 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function storeWaste(Request $request)
     {
-        // dd($request->wastage);
+        // dd($request->godam_id);
 
        $wastage = Wastages::create([
-        'wastage_name' => 'nonwoven',
+        'name' => 'nonwoven',
       
        ]);
+       // dd($wastage);
 
        $wastage_stock = WasteStock::create([
         'waste_id' => $wastage->id,
-        'department_id' => $wastage->id,
+        'department_id' => $request->godam_id,
         'quantity_in_kg' => $request->wastage,
        
        ]);

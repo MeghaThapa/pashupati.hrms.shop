@@ -541,6 +541,7 @@
         _token:token,
         wastage: wastage,
         netweight: netweight,
+        godam_id: '1',
       },
       success: function(response){
         $('#dana_list').append(response);
@@ -577,6 +578,7 @@
         _token:token,
         dana: dana,
         quantity: quantity,
+       
       },
       success: function(response){
         $('#dana_list').append(response);
