@@ -452,9 +452,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
 
     Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
-    //comapare lam and unlam
 
     Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
+    Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
+    Route::post('final/submit/fsr',[FabricSendReceiveController::class,'finalsubmitfsr'])->name("final.submit.fsr");
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
