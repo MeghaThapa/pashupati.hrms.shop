@@ -53,7 +53,7 @@ class FabricSendReceiveController extends Controller
     public function getplanttype(Request $request){
         if($request->ajax()){
             $department_id =  $request->id;
-            $planttype = ProcessingStep::where('department_id',$department_id)->get();
+            $planttype = ProcessingStep::where('department_id',$department_id)->where("name","like","lam"."%")->get();
             return response([
                 'planttype' => $planttype
             ]);
@@ -470,7 +470,7 @@ class FabricSendReceiveController extends Controller
                     }
                     else{
                         $stock->update([
-                            "quantity" => $deduction
+                            "quantity" => $deduction    
                         ]);
                     }
                 

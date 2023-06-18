@@ -63,6 +63,7 @@ class TapeEntryController extends Controller
 
     public function create($id){
         // $department = AutoLoadItemStock::with('fromGodam')->get();
+        // $department = Department::where("name","like","tape"."%")->get();   
 
         // return $department = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
 
@@ -102,7 +103,7 @@ class TapeEntryController extends Controller
     public function ajaxrequestplanttype(Request $request){
         if($request->ajax()){
             // return $request->department_id;
-            $planttype =  ProcessingStep::where("status",'1')->where('department_id',$request->department_id)->get();
+            $planttype =  ProcessingStep::where("status",'1')->where('department_id',$request->department_id)->where("name","like","tape"."%")->get();
             return response([
                 'planttype' => $planttype
             ]);
