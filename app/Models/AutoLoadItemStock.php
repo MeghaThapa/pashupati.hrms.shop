@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AutoLoadItemStock extends Model
 {
     use HasFactory;
-    protected $table = 'auto_load_item_stocks';
+    protected $table = 'autoload_items_stock';
 
       public function danaName()
     {
@@ -20,7 +20,7 @@ class AutoLoadItemStock extends Model
     }
       public function fromGodam()
     {
-        return $this->belongsTo('App\Models\Department', 'from_godam_id', 'id');
+        return $this->belongsTo('App\Models\Godam', 'from_godam_id', 'id');
     }
     public function shift()
     {

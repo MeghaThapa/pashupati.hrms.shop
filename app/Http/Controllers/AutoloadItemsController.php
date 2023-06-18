@@ -38,6 +38,7 @@ class AutoloadItemsController extends Controller
      */
     public function store(Request $request)
     {
+
          try {
             DB::beginTransaction();
         //return $request;
@@ -62,7 +63,7 @@ class AutoloadItemsController extends Controller
         $autoloadItem->quantity = $request->quantity;
         $autoloadItem->autoload_id =$request->autoload_id;
         $autoloadItem->save();
-
+        // dd($autoloadItem);
         //For autoload item stock
         //$AutoLoadItemStock=AutoLoadItemStock::with('autoloadItems');
         $autoLoadItemStocks=AutoLoadItemStock::where('from_godam_id',$autoloadItem->from_godam_id)
@@ -89,7 +90,7 @@ class AutoloadItemsController extends Controller
         //deduct loaded items from the raw material item socks
         $autoloadItems=AutoLoadItems::with('autoload','plantName','plantType','shift','fromGodam','danaGroup','danaName')->find($autoloadItem->id);
 
-        $rawMaterialStock=RawMaterialStock::where('department_id',$autoloadItems->from_godam_id)
+        $rawMaterialStock=RawMaterialStock::where('godam_id',$autoloadItems->from_godam_id)
         ->where('dana_group_id',$autoloadItems->dana_group_id)
         ->where('dana_name_id',$autoloadItems->dana_name_id)
         ->first();

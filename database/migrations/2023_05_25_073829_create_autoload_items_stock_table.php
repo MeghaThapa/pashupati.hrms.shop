@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('autoload_items_stock', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('from_godam_id')->index();
-            $table->foreign('from_godam_id')->references('id')->on('department');
+            $table->foreign('from_godam_id')->references('id')->on('godam');
             $table->unsignedBigInteger('plant_type_id')->index();
             $table->foreign('plant_type_id')->references('id')->on('processing_steps');
             $table->unsignedBigInteger('plant_name_id')->index();
@@ -28,8 +28,8 @@ return new class extends Migration
             $table->unsignedBigInteger('dana_name_id')->index();
             $table->foreign('dana_name_id')->references('id')->on('dana_names');
             $table->string('quantity');
-            $table->unsignedBigInteger('autoload_id')->index();
-            $table->foreign('autoload_id')->references('id')->on('auto_loads');
+            // $table->unsignedBigInteger('autoload_id')->index();
+            // $table->foreign('autoload_id')->references('id')->on('auto_loads');
             $table->timestamps();
         });
     }

@@ -53,54 +53,52 @@
             <!-- /.card-header -->
             <div class="card-body p-0">
                 <form class="form-horizontal"
-                @if ($processingSubCat)
-                action="{{ route('processing-subcat.update',['processingSubCatId'=>$processingSubCat->id]) }}"
+                    @if ($processingSubCat) action="{{ route('processing-subcat.update', ['processingSubCatId' => $processingSubCat->id]) }}"
                 @else
-                action="{{ route('processing-subcat.store') }}"
-                @endif
-                method="post" enctype="multipart/form-data">
+                action="{{ route('processing-subcat.store') }}" @endif
+                    method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4 form-group">
-                                <label for="name">{{ __('Processing Subcategory Name') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="{{ __('Processing Subcat Name') }}"
-                                @if ($processingSubCat)
-                                    value="{{$processingSubCat->name}}"
-                                @endif
-                                required>
+                                <label for="name">{{ __('Processing Subcategory Name') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    id="name" name="name" placeholder="{{ __('Processing Subcat Name') }}"
+                                    @if ($processingSubCat) value="{{ $processingSubCat->name }}" @endif
+                                    required>
                                 @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="name">{{ __('Select Department') }}<span class="required-field">*</span></label>
+                                <label for="name">{{ __('Select Godam') }}<span class="required-field">*</span></label>
                                 <select
-                                    class="advance-select-box select-2 form-control @error('department_id') is-invalid @enderror"
-                                    id="departmentId"  required> {{-- name="department_id" --}}
+                                    class="advance-select-box select-2 form-control @error('godam_id') is-invalid @enderror"
+                                    id="godamId" required> {{-- name="department_id" --}}
                                     <option value="" selected disabled>{{ __('Select Processing Steps') }}</option>
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}"
-                                            @if ($processingSubCat)
-                                           {{$department->id == $processingSubCat->department_id ? 'selected':''}}
-                                        @endif
-                                            >{{ $department->department }}</option>
+                                    @foreach ($godams as $godam)
+                                        <option value="{{ $godam->id }}"
+                                            @if ($processingSubCat) {{ $godam->id == $processingSubCat->department_id ? 'selected' : '' }} @endif>
+                                            {{ $godam->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('department_id')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
                             </div>
                             <div class="col-md-4 form-group">
                                 <label for="processingSteps">{{ __('Processing Steps') }}<span
                                         class="required-field">*</span>
                                 </label>
-                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" data-target="#exampleModal" style="margin-top:0 !important; top:0;float:right;">
-                                    <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                    data-target="#exampleModal" style="margin-top:0 !important; top:0;float:right;">
+                                    <i class="fas fa-plus"
+                                        style="display:flex;align-items: center;justify-content: center;"></i>
                                 </a>
                                 <select
                                     class="advance-select-box select-2 form-control @error('department') is-invalid @enderror"
@@ -109,9 +107,9 @@
 
                                 </select>
                                 @error('department')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                 </span>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
 
                             </div>
@@ -138,7 +136,13 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-10">
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> @if ($processingSubCat) {{ __('Update Processing Subcategory') }} @else {{ __('Save Processing Subcategory') }} @endif</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                    @if ($processingSubCat)
+                                        {{ __('Update Processing Subcategory') }}
+                                    @else
+                                        {{ __('Save Processing Subcategory') }}
+                                    @endif
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -154,31 +158,31 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/storein.js') }}"></script>
     <script>
-$(document).ready(function(){
+        $(document).ready(function() {
 
-        let processingSubCatObj =JSON.parse(`{!! json_encode($processingSubCat) !!}`);
+            let processingSubCatObj = JSON.parse(`{!! json_encode($processingSubCat) !!}`);
 
-        if(processingSubCatObj){
-            update();
-        }
-        async function update(){
-            await getProcessingStepsAccDept(processingSubCatObj.department_id);
-            $('#processingStepsId').val(processingSubCatObj.processing_steps_id).trigger('change');
-        }
+            if (processingSubCatObj) {
+                update();
+            }
+            async function update() {
+                await getProcessingStepsAccDept(processingSubCatObj.department_id);
+                $('#processingStepsId').val(processingSubCatObj.processing_steps_id).trigger('change');
+            }
 
-        $('#departmentId').on('select2:select',function(e){
-           let department_id= e.params.data.id;
-            getProcessingStepsAccDept(department_id);
-        });
+            $('#godamId').on('select2:select', function(e) {
+                let godam_id = e.params.data.id;
+                getProcessingStepsAccDept(godam_id);
+            });
 
 
-        function getProcessingStepsAccDept(department_id){
-            return new Promise(function(resolve, reject) {
-            $.ajax({
-                url:"{{route('processing-subcat.getProcessingStepsAccDept',['department_id'=>':dpt_id'])}}"
-                .replace(':dpt_id',department_id),
-                method:"GET",
-                 success:  function(response) {
+            function getProcessingStepsAccDept(godam_id) {
+                return new Promise(function(resolve, reject) {
+                    $.ajax({
+                        url: "{{ route('processing-subcat.getProcessingStepsAccDept', ['godam_id' => ':godam_id']) }}"
+                            .replace(':godam_id', godam_id),
+                        method: "GET",
+                        success: function(response) {
                             let selectOptions = '';
                             if (response.processingSteps.length == 0) {
                                 selectOptions +=
@@ -198,13 +202,10 @@ $(document).ready(function(){
                             $('#processingStepsId').html(selectOptions);
                             resolve(response)
                         }
-            });
+                    });
+                });
+
+            }
         });
-
-        }
-});
-
     </script>
 @endsection
-
-

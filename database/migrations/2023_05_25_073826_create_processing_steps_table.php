@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateProcessingStepsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('processing_categories_and_subcategories', function (Blueprint $table) {
+        Schema::create('processing_steps', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->unsignedBigInteger('godam_id');
+            $table->foreign('godam_id')->references("id")->on('godam')->onDelete('cascade')->onUpdate('cascade');
             $table->string('slug');
-            $table->enum('status',['active','inactive'])->default('active');
+            $table->string('code');
+            $table->text('note')->nullable();
+            $table->boolean('status')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('processing_categories_and_subcategories');
+        Schema::dropIfExists('processing_steps');
     }
-};
+}
