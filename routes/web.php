@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FabricTransferEntryForBagController;
 use App\Http\Controllers\InstallHelperController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LanguageController;
@@ -813,3 +814,9 @@ Route::post('placement/save', [PlacementController::class, 'save'])->name('place
 
 
 Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name('theme-settings');
+
+/******************** Bag  ************************/
+Route::get('fabric/transfer/entry/for/bag/index',[FabricTransferEntryForBagController::class,"index"])->name('fabric.transfer.entry.for.bag');
+Route::get('fabric/transfer/entry/for/bag/create',[FabricTransferEntryForBagController::class,"create"])->name('fabric.transfer.entry.for.bag.create');
+Route::post('fabric/transfer/entry/for/bag/store',[FabricTransferEntryForBagController::class,"store"])->name('fabric.transfer.entry.for.bag.store');
+/******************** Bag  ************************/

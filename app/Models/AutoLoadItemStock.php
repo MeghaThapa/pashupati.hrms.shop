@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class AutoLoadItemStock extends Model
 {
     use HasFactory;
+
     protected $table = 'autoload_items_stock';
+
 
       public function danaName()
     {
