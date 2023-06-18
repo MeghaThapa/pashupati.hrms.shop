@@ -198,6 +198,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('autoloadStock/filterAccGodam', 'AutoLoadStockController@filterAccGodam')->name('autoloadStock.filterAccGodam');
 
     //RawMaterial
+    //recent
+    Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
+
     Route::get('rawMaterial/index', 'RawMaterialController@index')->name('rawMaterial.index');
     Route::get('rawMaterial/create', 'RawMaterialController@create')->name('rawMaterial.create');
     Route::post('rawMaterial/store', 'RawMaterialController@store')->name('rawMaterial.store');
@@ -266,14 +269,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('processing-steps/{slug}/delete', 'ProcessingStepController@destroy')->name('processing-steps.delete');
 
      //Autoloader
-  Route::get('autoload/index',[AutoloadController::class,'index'])->name('autoload.index');
+    Route::get('autoload/index',[AutoloadController::class,'index'])->name('autoload.index');
     Route::get('autoload/create',[AutoloadController::class,'create'])->name('autoload.create');
     Route::get('autoload/getReceiptNo',[AutoloadController::class,'getReceiptNo'])->name('autoLoad.getReceiptNo');
     Route::get('autoload/createAutoloadItem/{autoload_id}',[AutoloadController::class,'createAutoloadItem'])->name('autoLoad.createAutoloadItem');
     Route::post('autoload/store',[AutoloadController::class,'store'])->name('autoLoad.store');
     Route::get('autoload/getPlantTypePlantName/{plantType_id}',[AutoloadController::class,'getPlantTypePlantName'])->name('autoload.getPlantTypePlantName');
     Route::get('autoload/getDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getDanaGroupDanaName'])->name('autoload.getDanaGroupDanaName');
-    Route::get('autoload/getPlantTypeAccGodam/{department_id}',[AutoloadController::class,'getPlantTypeAccGodam'])->name('autoload.getPlantTypeAccGodam');
+    Route::get('autoload/getPlantTypeAccGodam/{godam_id}',[AutoloadController::class,'getPlantTypeAccGodam'])->name('autoload.getPlantTypeAccGodam');
 
     Route::get('autoload/getEditDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getEditDanaGroupAccToGodam'])->name('autoLoad.getEditDanaGroupAccToGodam');
     Route::get('autoload/getEditDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getEditDanaGroupDanaName'])->name('autoLoad.getEditDanaGroupDanaName');
@@ -293,7 +296,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
 
-    Route::get('autoloadItem/getDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getDanaGroupAccToGodam'])->name('autoload.getDanaGroupAccToGodam');
+    Route::get('autoloadItem/getDanaGroupAccToGodam/{godam_id}',[AutoloadController::class,'getDanaGroupAccToGodam'])->name('autoload.getDanaGroupAccToGodam');
 
 
 
@@ -309,7 +312,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
    Route::get('processing-subcat/edit/{processingSubCatId}','ProcessingSubcatController@edit')->name('processing-subcat.edit');
     Route::get('processing-subcat/{slug}/staus', 'ProcessingSubcatController@changeStatus')->name('processing-subcat.status');
     Route::get('processing-subcat/{slug}/delete', 'ProcessingSubcatController@destroy')->name('processing-subcat.delete');
-    Route::get('processing-subcat/getProcessingStepsAccDept/{department_id}', 'ProcessingSubcatController@getProcessingStepsAccDept')->name('processing-subcat.getProcessingStepsAccDept');
+    Route::get('processing-subcat/getProcessingStepsAccDept/{godam_id}', 'ProcessingSubcatController@getProcessingStepsAccDept')->name('processing-subcat.getProcessingStepsAccDept');
     Route::post('processing-subcat/update/{processingSubCatId}', 'ProcessingSubcatController@update')->name('processing-subcat.update');
 
     // showrooms routes
@@ -450,7 +453,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
 
     Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
-    //comapare lam and unlam 
+
     Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
     Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
     Route::post('final/submit/fsr',[FabricSendReceiveController::class,'finalsubmitfsr'])->name("final.submit.fsr");
@@ -689,7 +692,8 @@ Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('stor
 Route::post('storein/saveStorein', 'StoreinController@saveStorein')->name('storein.saveStorein');
 Route::get('storein/createItems/{id}', 'StoreinController@createItems')->name('storein.createItems');
 Route::post('storein/saveStoreinItems/{id}', 'StoreinController@saveStoreinItems')->name('storein.saveStoreinItems');
-Route::get('storein/getcategoryItems/{category_id}', 'StoreinController@getcategoryItems')->name('storein.getcategoryItems');
+//recent here m
+Route::get('storein/getcategoryItems', 'StoreinController@getcategoryItems')->name('storein.getcategoryItems');
 Route::get('storein/storeInItemsRetrive/{storein_id}', 'StoreinController@storeInItemsRetrive')->name('storein.storeInItemsRetrive');
 Route::get('storein/getEditItemData/{storeinItem_id}', 'StoreinController@getEditItemData')->name('storein.getEditItemData');
 Route::post('storein/EditItemStoreData', 'StoreinController@EditItemStoreData')->name('storein.EditItemStoreData');

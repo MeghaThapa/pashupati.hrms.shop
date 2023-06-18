@@ -61,7 +61,7 @@ class ProcessingSubcat extends Model
         }
         return $this->note;
     }
-    public function department() {
-        return $this->belongsTo(Department::class,'department_id','id');
+    public function godam() {
+        return $this->belongsTo(Godam::class,'godam_id','id');
     }
 }

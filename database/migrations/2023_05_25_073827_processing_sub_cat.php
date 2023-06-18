@@ -15,8 +15,10 @@ return new class extends Migration
     {
      Schema::create('processing_subcats', function (Blueprint $table) {
             $table->id();
-             $table->unsignedBigInteger('processing_steps_id')->index();
+            $table->unsignedBigInteger('processing_steps_id')->index();
             $table->foreign('processing_steps_id')->references('id')->on('processing_steps');
+            //   $table->unsignedBigInteger('godam_id');
+            // $table->foreign('godam_id')->references("id")->on('godam')->onDelete('cascade')->onUpdate('cascade');
             $table->string('name');
             $table->string('slug');
             $table->enum('status',['active','inactive']);

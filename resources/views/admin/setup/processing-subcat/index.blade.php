@@ -36,69 +36,78 @@
                 <div class="p-0 table-responsive table-custom my-3">
                     <table class="table">
                         <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>{{ __('Name') }}</th>
-                            <th>{{ __('Processing Steps') }}</th>
-                            {{-- <th>{{__('Department')}}</th> --}}
-                            <th>{{ __('Status') }}</th>
-                            <th>{{ __('Created') }}</th>
-                            <th class="text-right">{{ __('Action') }}</th>
-                        </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>{{ __('Name') }}</th>
+                                <th>{{ __('Processing Steps') }}</th>
+                                <th>{{ __('Godam') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Created') }}</th>
+                                <th class="text-right">{{ __('Action') }}</th>
+                            </tr>
                         </thead>
                         <tbody>
 
-                        @if($processingSteps->total() > 0)
-                            @foreach ($processingSteps as $key => $processingStep)
-                                <tr>
-                                    <td>{{ ++$key  }}</td>
-                                    <td>{{ $processingStep->name }} </td>
+                            @if ($processingSteps->total() > 0)
+                                @foreach ($processingSteps as $key => $processingStep)
+                                    <tr>
+                                        <td>{{ ++$key }}</td>
+                                        <td>{{ $processingStep->name }} </td>
 
-                                    <td>{{ $processingStep->processingSteps->name }} </td>
-<<<<<<< HEAD
-                                    <td>{{$processingStep->processingSteps->department->department}}</td>
-=======
-                                    {{-- <td>{{$processingStep->department->department}}</td> --}}
->>>>>>> origin/laxmi
-                                    <td>
-                                        @if($processingStep->isActive())
-                                            <span class="badge badge-success">{{ __('Active') }}</span>
-                                        @else
-                                            <span class="badge badge-warning">{{ __('Inactive') }}</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($processingStep->created_at)->format('d-M-Y') }}</td>
-                                    <td class="text-right">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle action-dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                @if($processingStep->isActive())
-                                                    <a href="{{ route('processing-subcat.status', $processingStep->slug)  }}" class="dropdown-item"><i class="fas fa-window-close"></i> {{ __('Inactive') }}</a>
-                                                @else
-                                                    <a href="{{ route('processing-subcat.status', $processingStep->slug)  }}" class="dropdown-item"><i class="fas fa-check-square"></i> {{ __('Active') }}</a>
-                                                @endif
-                                                <a href="{{ route('processing-subcat.edit',$processingStep->id) }}" class="dropdown-item"><i class="fas fa-edit"></i> {{ __('Edit') }}</a>
-                                                <a href="{{ route('processing-subcat.delete', $processingStep->slug)  }}" class="dropdown-item delete-btn" data-msg="{{ __('Are you sure you want to delete this processing step?') }}"><i class="fas fa-trash"></i> {{ __('Delete') }}</a>
+                                        <td>{{ $processingStep->processingSteps->name }} </td>
+                                        <td>{{ $processingStep->processingSteps->godam->name }}</td>
+                                        <td>
+                                            @if ($processingStep->isActive())
+                                                <span class="badge badge-success">{{ __('Active') }}</span>
+                                            @else
+                                                <span class="badge badge-warning">{{ __('Inactive') }}</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($processingStep->created_at)->format('d-M-Y') }}</td>
+                                        <td class="text-right">
+                                            <div class="btn-group">
+                                                <button type="button"
+                                                    class="btn btn-secondary dropdown-toggle action-dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    @if ($processingStep->isActive())
+                                                        <a href="{{ route('processing-subcat.status', $processingStep->slug) }}"
+                                                            class="dropdown-item"><i class="fas fa-window-close"></i>
+                                                            {{ __('Inactive') }}</a>
+                                                    @else
+                                                        <a href="{{ route('processing-subcat.status', $processingStep->slug) }}"
+                                                            class="dropdown-item"><i class="fas fa-check-square"></i>
+                                                            {{ __('Active') }}</a>
+                                                    @endif
+                                                    <a href="{{ route('processing-subcat.edit', $processingStep->id) }}"
+                                                        class="dropdown-item"><i class="fas fa-edit"></i>
+                                                        {{ __('Edit') }}</a>
+                                                    <a href="{{ route('processing-subcat.delete', $processingStep->slug) }}"
+                                                        class="dropdown-item delete-btn"
+                                                        data-msg="{{ __('Are you sure you want to delete this processing step?') }}"><i
+                                                            class="fas fa-trash"></i> {{ __('Delete') }}</a>
+                                                </div>
                                             </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="10">
+                                        <div class="data_empty">
+                                            <img src="{{ asset('img/result-not-found.svg') }}" alt=""
+                                                title="">
+                                            <p>{{ __('Sorry, no processing subcategory found in the database. Create your very first processing subcategory.') }}
+                                            </p>
+                                            <a href="{{ route('processing-subcat.create') }}" class="btn btn-primary">
+                                                {{ __('Add Subcat') }} <i class="fas fa-plus-circle"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="10">
-                                    <div class="data_empty">
-                                        <img src="{{ asset('img/result-not-found.svg') }}" alt="" title="">
-                                        <p>{{ __('Sorry, no processing subcategory found in the database. Create your very first processing subcategory.') }}</p>
-                                        <a href="{{ route('processing-subcat.create') }}" class="btn btn-primary">
-                                            {{ __('Add Subcat') }} <i class="fas fa-plus-circle"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endif
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -111,4 +120,3 @@
     </div>
     <!-- /.content -->
 @endsection
-

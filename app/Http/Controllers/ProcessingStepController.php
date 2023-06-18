@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\ProcessingStep;
 use App\Models\Department;
+use App\Models\Godam;
 use Illuminate\Http\Request;
 
 class ProcessingStepController extends Controller
@@ -14,7 +15,7 @@ class ProcessingStepController extends Controller
      */
     public function index()
     {
-        $processingSteps = ProcessingStep::with('department')->latest()->paginate(15);
+        $processingSteps = ProcessingStep::with('godam')->latest()->paginate(15);
         return view('admin.setup.processing-steps.index', compact('processingSteps'));
     }
 
@@ -25,8 +26,10 @@ class ProcessingStepController extends Controller
      */
     public function create()
     {
-        $department = Department::all();
-        return view('admin.setup.processing-steps.create', compact('department'));
+
+       $godams=Godam::all()->where('status','active');
+       //return $godams;
+       return view('admin.setup.processing-steps.create', compact('godams'));
     }
 
     /**
@@ -39,16 +42,16 @@ class ProcessingStepController extends Controller
     {
         // validate form
         $validator = $request->validate([
-            'name' => 'required|string|max:30|unique:processing_steps,name,NULL,id,department_id,' . request('department'),
+            'name' => 'required|string|max:30|unique:processing_steps,name,NULL,id,godam_id,' . request('godam_id'),
             'processingStepCode' => 'required|string|max:30|unique:processing_steps,code',
-            "department" => "required",
+            "godam_id" => "required",
             'note' => 'nullable|string|max:255',
         ]);
 
         // store processing step
-        $size = ProcessingStep::create([
+        $processingStep = ProcessingStep::create([
             'name' => $request->name,
-            'department_id' => $request->department,
+            'godam_id' => $request->godam_id,
             'code' => $request->processingStepCode,
             'note' => clean($request->note),
             'status' => $request->status
