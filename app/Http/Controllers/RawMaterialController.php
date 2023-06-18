@@ -8,6 +8,7 @@ use App\Models\DanaName;
 use App\Models\Godam;
 use App\Models\RawMaterialStock;
 use App\Models\RawMaterial;
+use App\Models\RawMaterialItem;
 use App\Models\Setupstorein;
 use App\Models\Department;
 use App\Models\Storein;
@@ -76,14 +77,47 @@ class RawMaterialController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $actionBtn = '
-                <a class="btnEdit" href="' . route('rawMaterial.edit', ["rawMaterial_id" => $row->id]) . '" >
+                <a class="btn btn-sm btn-primary btnEdit" href="' . route('rawMaterial.edit', ["rawMaterial_id" => $row->id]) . '" >
                 <i class="fas fa-edit fa-lg"></i>
-                </a>';
+                </a>
+                 <button type="button" id="rawMaterialDeleteBtn" class="btnEdit btn btn-sm btn-danger"  data-id="'.$row->id.'">
+                <i class="fas fa-trash fa-lg"></i>
+                </button>
+                ';
 
                 return $actionBtn;
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+    public function delete($rawMaterial_id){
+         try{
+         DB::beginTransaction();
+        $rawMaterial = RawMaterial::find($rawMaterial_id);
+        $rawMaterialItems = RawMaterialItem::where('raw_material_id',$rawMaterial_id)->get();
+        if($rawMaterialItems && count($rawMaterialItems) !=0){
+            foreach($rawMaterialItems as $item){
+                $stock=RawMaterialStock::where('godam_id',$rawMaterial->to_godam_id)
+                ->where('dana_group_id',$item->dana_group_id)
+                ->where('dana_name_id',$item->dana_name_id)
+                ->first();
+                $stock->quantity -= $item->quantity;
+                if($stock->quantity <=0){
+                    $stock->delete();
+                }
+                else{
+                    $stock->save();
+                }
+
+            }
+        }
+        $rawMaterial->delete();
+       DB::commit();
+         }catch(Exception $e){
+                DB::rollBack();
+                return $e;
+        }
+
     }
 
     public function create()

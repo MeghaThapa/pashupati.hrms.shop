@@ -43,59 +43,69 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body p-0">
-                <form class="form-horizontal" action="{{ route('processing-steps.store') }}" method="post" enctype="multipart/form-data">
+                <form class="form-horizontal" action="{{ route('processing-steps.store') }}" method="post"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4 form-group">
-                                <label for="name">{{ __('Processing Step Name') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="{{ __('Processing Step Name') }}" value="{{ old('name') }}" required>
+                                <label for="name">{{ __('Processing Step Name') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    id="name" name="name" placeholder="{{ __('Processing Step Name') }}"
+                                    value="{{ old('name') }}" required>
                                 @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="processingStepCode">{{ __('Processing Step Code') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('processingStepCode') is-invalid @enderror" id="processingStepCode" name="processingStepCode" placeholder="{{ __('Processing Step Code') }}" value="{{ old('processingStepCode') }}" required>
+                                <label for="processingStepCode">{{ __('Processing Step Code') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('processingStepCode') is-invalid @enderror"
+                                    id="processingStepCode" name="processingStepCode"
+                                    placeholder="{{ __('Processing Step Code') }}" value="{{ old('processingStepCode') }}"
+                                    required>
                                 @error('processingStepCode')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="supplier">{{ __('Department') }}<span
-                                        class="required-field">*</span>
+                                <label for="supplier">{{ __('Godam') }}<span class="required-field">*</span>
                                 </label>
-                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" data-target="#exampleModal" style="margin-top:0 !important; top:0;float:right;">
-                                    <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                    data-target="#exampleModal" style="margin-top:0 !important; top:0;float:right;">
+                                    <i class="fas fa-plus"
+                                        style="display:flex;align-items: center;justify-content: center;"></i>
                                 </a>
                                 <select
                                     class="advance-select-box select-2 form-control @error('department') is-invalid @enderror"
-                                    id="department" name="department" required>
+                                    id="godamId" name="godam_id" required>
                                     <option value="" selected disabled>{{ __('Select a department') }}</option>
-                                    @foreach($department as $d)
-                                        <option value="{{ $d->id }}">{{ $d->department }}</option>
+                                    @foreach ($godams as $godam)
+                                        <option value="{{ $godam->id }}">{{ $godam->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('department')
-                                <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
-                                
+
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <label for="note" class="col-form-label">{{ __('Processing Step Note') }}</label>
-                                <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note" placeholder="{{ __('Processing Step Note') }}">{{ old('note') }}</textarea>
+                                <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
+                                    placeholder="{{ __('Processing Step Note') }}">{{ old('note') }}</textarea>
                                 @error('note')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                 @enderror
                             </div>
                         </div>
@@ -110,7 +120,8 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-10">
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('Save Processing Step') }}</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                    {{ __('Save Processing Step') }}</button>
                             </div>
                         </div>
                     </div>
@@ -122,5 +133,6 @@
     </div>
     <!-- /.content -->
 @endsection
-
-
+@section('extra-script')
+    <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+@endsection

@@ -71,50 +71,93 @@
         @endsection
         @section('extra-script')
             <script>
-                var table = $('#rawMaterialTable').DataTable({
-                    lengthMenu: [
-                        [30, 40, 50, -1],
-                        ['30 rows', '40 rows', '50 rows', 'Show all']
-                    ],
-                    style: 'bootstrap4',
-                    processing: true,
-                    serverSide: true,
-                    ajax: "{{ route('rawMaterial.dataTable') }}",
-                    columns: [{
-                            data: 'DT_RowIndex'
-                        },
-                        {
-                            data: 'date'
-                        },
-                        {
-                            data: 'receipt_no'
-                        },
-                        {
-                            data: 'supplier_name'
-                        },
-                        {
-                            data: 'pp_no'
-                        },
-                        {
-                            data: 'storein_type_name'
-                        },
-                        {
-                            data: 'from_godam_name',
-                            defaultContent: 'EMPTY'
-                        },
-                        {
-                            data: 'to_godam_name'
-                        },
-                        {
-                            data: 'raw_material_item_quantity'
-                        },
+                $('document').ready(function() {
+                    var table = $('#rawMaterialTable').DataTable({
+                        lengthMenu: [
+                            [30, 40, 50, -1],
+                            ['30 rows', '40 rows', '50 rows', 'Show all']
+                        ],
+                        style: 'bootstrap4',
+                        processing: true,
+                        serverSide: true,
+                        ajax: "{{ route('rawMaterial.dataTable') }}",
+                        columns: [{
+                                data: 'DT_RowIndex'
+                            },
+                            {
+                                data: 'date'
+                            },
+                            {
+                                data: 'receipt_no'
+                            },
+                            {
+                                data: 'supplier_name'
+                            },
+                            {
+                                data: 'pp_no'
+                            },
+                            {
+                                data: 'storein_type_name'
+                            },
+                            {
+                                data: 'from_godam_name',
+                                defaultContent: 'EMPTY'
+                            },
+                            {
+                                data: 'to_godam_name'
+                            },
+                            {
+                                data: 'raw_material_item_quantity'
+                            },
 
-                        {
-                            data: 'action',
-                            orderable: true,
-                            searchable: true,
-                        },
-                    ]
+                            {
+                                data: 'action',
+                                orderable: true,
+                                searchable: true,
+                            },
+                        ]
+                    });
+                    $('body').on('click', '#rawMaterialDeleteBtn', function(e) {
+                        let rawMaterial_id = this.getAttribute('data-id');
+                        console.log('js', rawMaterial_id);
+                        new swal({
+                            title: "Are you sure?",
+                            text: "Once deleted, data will deleted completely!!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, delete it!',
+                            cancelButtonText: 'No, cancel!',
+                            reverseButtons: true
+
+                        }).then((willDelete) => {
+                            if (willDelete.isConfirmed) {
+
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "{{ route('rawMaterial.delete', ['rawMaterial_id' => ':id']) }}"
+                                        .replace(':id', rawMaterial_id),
+                                    data: {
+                                        '_token': $('meta[name=csrf-token]').attr("content"),
+                                    },
+                                    success: function(data) {
+                                        console.log('controller:', data);
+                                        new swal
+                                            ({
+                                                text: "Poof! Your data has been deleted!",
+                                                title: "Deleted",
+                                                icon: "success",
+                                            });
+                                        location.reload();
+                                    },
+                                    error: function(xhr) {
+                                        console.log(xhr.responseJSON.message);
+                                    }
+                                })
+
+                            }
+                        })
+                    });
+
                 });
             </script>
         @endsection

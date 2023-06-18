@@ -15,7 +15,7 @@ class ProcessingStep extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'department_id' ,'slug', 'code', 'note', 'status'
+        'name', 'godam_id' ,'slug', 'code', 'note', 'status'
     ];
 
     /**
@@ -54,8 +54,9 @@ class ProcessingStep extends Model
         }
         return $this->note;
     }
-    
-    public function department() {
-        return $this->belongsTo(Department::class);
+
+    public function godam() {
+        return $this->belongsTo(Godam::class, "godam_id", "id");
     }
+
 }
