@@ -11,7 +11,7 @@ class AutoLoadStockController extends Controller
     public function index(){
          $helper= new AppHelper();
          $settings= $helper->getGeneralSettigns();
-          $autoloadStocks= DB::table('auto_load_item_stocks AS stock')
+          $autoloadStocks= DB::table('autoload_items_stock AS stock')
           ->join('processing_steps AS plantType', 'stock.plant_type_id', '=', 'plantType.id')
           ->join('processing_subcats AS plantName', 'stock.plant_name_id', '=', 'plantName.id')
           ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
