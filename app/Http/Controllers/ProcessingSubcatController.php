@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\ProcessingSubcat;
 use App\Models\Department;
+use App\Models\Godam;
 use App\Models\ProcessingStep;
 use Illuminate\Http\Request;
 
@@ -15,12 +16,12 @@ class ProcessingSubcatController extends Controller
      */
     public function index()
     {
-        $processingSteps = ProcessingSubcat::with('processingSteps','department')->latest()->paginate(15);
+        $processingSteps = ProcessingSubcat::with('processingSteps','godam')->latest()->paginate(15);
         return view('admin.setup.processing-subcat.index', compact('processingSteps'));
     }
 
-    public function getProcessingStepsAccDept($department_id){
-        $ProcessingSteps = ProcessingStep::where('department_id',$department_id)->get();
+    public function getProcessingStepsAccDept($godam_id){
+        $ProcessingSteps = ProcessingStep::where('godam_id',$godam_id)->get();
          return response()->json(
             [
                 'processingSteps' => $ProcessingSteps
@@ -37,14 +38,15 @@ class ProcessingSubcatController extends Controller
     public function create()
     {
        $processingSubCat =null;
-        $departments = Department::all();
-        return view('admin.setup.processing-subcat.create', compact('departments','processingSubCat'));
+        $godams=Godam::all()->where('status','active');
+       // return $godams;
+        return view('admin.setup.processing-subcat.create', compact('godams','processingSubCat'));
     }
     public function edit($processingSubCatId){
         $processingSubCat =Processingsubcat::find($processingSubCatId);
        // return $processingSubCat;
-        $departments = Department::all();
-        return view('admin.setup.processing-subcat.create', compact('departments','processingSubCat'));
+         $godams = Godam::all()->where('status','active');
+        return view('admin.setup.processing-subcat.create', compact('godams','processingSubCat'));
     }
 
     /**

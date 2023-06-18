@@ -86,13 +86,13 @@ class AutoloadController extends Controller
         return view('admin.autoload.createaAutoloadItems',compact('fromGodams','plantTypes','plantNames','shifts','autoload'));
     }
     // create
-    public function getDanaGroupAccToGodam($department_id){
-        return RawMaterialStock::with('danaGroup')->where('department_id',$department_id)->select('dana_group_id')->distinct()->get();
+    public function getDanaGroupAccToGodam($godam_id){
+        return RawMaterialStock::with('danaGroup')->where('godam_id',$godam_id)->select('dana_group_id')->distinct()->get();
     }
     //  public function getDanaGroupDanaName($danaGroup_id,$fromGodam_id)
      public function getDanaGroupDanaName($danaGroup_id,$fromGodam_id)
     {
-        return RawMaterialStock::with('danaName')->where('department_id',$fromGodam_id)->where('dana_group_id',$danaGroup_id)->get();
+        return RawMaterialStock::with('danaName')->where('godam_id',$fromGodam_id)->where('dana_group_id',$danaGroup_id)->get();
     }
 
     //for Edit
@@ -110,8 +110,9 @@ class AutoloadController extends Controller
         $plantNames=ProcessingSubcat::where('processing_steps_id',$plantType_id)->get();
         return $plantNames;
     }
-    public function getPlantTypeAccGodam($department_id){
-        $processingSteps=ProcessingStep::where('department_id',$department_id)->get(['id','name']);
+    public function getPlantTypeAccGodam($godam_id){
+
+        $processingSteps=ProcessingStep::where('godam_id',$godam_id)->get(['id','name']);
         return $processingSteps;
     }
 
