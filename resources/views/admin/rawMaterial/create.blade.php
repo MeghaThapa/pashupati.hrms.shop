@@ -43,7 +43,7 @@
                             </label>
                             <input type="date" step="any" min="0" class="form-control calculator"
                                 id="date" data-number="1" name="date" placeholder="{{ __('date') }}"
-                                @if ($rawMaterial) value="{{ $rawMaterial->date }}" @endif min="1"
+                                @if ($rawMaterial) value="{{ $rawMaterial->date }}" @else value="<?php echo date('Y-m-d'); ?>" @endif min="1"
                                 required>
                             @error('date')
                                 <span class="invalid-feedback" role="alert">

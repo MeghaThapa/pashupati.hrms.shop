@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('autoload_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('from_godam_id')->index();
-            $table->foreign('from_godam_id')->references('id')->on('department');
+            $table->foreign('from_godam_id')->references('id')->on('godam');
             $table->unsignedBigInteger('plant_type_id')->index();
             $table->foreign('plant_type_id')->references('id')->on('processing_steps');
             $table->unsignedBigInteger('plant_name_id')->index();
