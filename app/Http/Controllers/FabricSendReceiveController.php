@@ -143,33 +143,33 @@ class FabricSendReceiveController extends Controller
     }
 
     public function sendunlaminateddelete(Request $request,$id){
-        // if($request->ajax()){
-        //    try{
-        //         DB::beginTransaction();
-        //         $count = UnlaminatedFabric::where('id',$id)->get();
-        //         $unlaminatedStock = UnlaminatedFabricStock::where('id',$id)->get();
-        //         if(count($count) > 0 && count($unlaminatedStock) > 0 ){
-        //             UnlaminatedFabric::where('id',$id)->delete();
-        //             UnlaminatedFabricStock::where('id',$id)->delete();
-        //             DB::commit();
-        //             return response([
-        //                 'response'=> "200",
-        //             ]);
+        if($request->ajax()){
+           try{
+                DB::beginTransaction();
+                $count = UnlaminatedFabric::where('id',$id)->get();
+                $unlaminatedStock = UnlaminatedFabric::where('id',$id)->get();
+                if(count($count) > 0 && count($unlaminatedStock) > 0 ){
+                    UnlaminatedFabric::where('id',$id)->delete();
+                    // UnlaminatedFabricStock::where('id',$id)->delete();
+                    DB::commit();
+                    return response([
+                        'response'=> "200",
+                    ]);
                 
-        //         }else{
-        //             DB::rollBack();
-        //             return response([
-        //                 'response'=> "400",
-        //             ]);
-        //         }
+                }else{
+                    DB::rollBack();
+                    return response([
+                        'response'=> "400",
+                    ]);
+                }
                 
-        //    }catch(Exception $e){
-        //         DB::rollBack();
-        //         return response([
-        //             "message" => "Something went wrong!'{$e->getMessage()}'"
-        //         ]);
-        //    }
-        // }
+           }catch(Exception $e){
+                DB::rollBack();
+                return response([
+                    "message" => "Something went wrong!'{$e->getMessage()}'"
+                ]);
+           }
+        }
     }
     public function storelaminated(Request $request){
         try{
