@@ -56,6 +56,12 @@ class ProcessingStepController extends Controller
             'note' => clean($request->note),
             'status' => $request->status
         ]);
+        if (request()->ajax()){
+            return response()->json([
+                'message' =>'Processing Steps Created Successfully',
+                'processingStep' => $processingStep,
+            ],201);
+        }
         return redirect()->route('processing-steps.index')->withSuccess('Processing step added successfully!');
     }
 

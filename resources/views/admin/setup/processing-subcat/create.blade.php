@@ -54,8 +54,8 @@
             <div class="card-body p-0">
                 <form class="form-horizontal"
                     @if ($processingSubCat) action="{{ route('processing-subcat.update', ['processingSubCatId' => $processingSubCat->id]) }}"
-                @else
-                action="{{ route('processing-subcat.store') }}" @endif
+                    @else
+                    action="{{ route('processing-subcat.store') }}" @endif
                     method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
