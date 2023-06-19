@@ -12,7 +12,7 @@ class FabricTemporaryForLam extends Model
     protected $id = "id";
     
     protected $fillable = [
-        'name', 'slug', 'fabricgroup_id', 'status','gram','gross_wt','average_wt','net_wt','meter','roll_no','loom_no'
+        'name', 'slug', 'fabricgroup_id', 'status','gram','gross_wt','average_wt','net_wt','meter','roll_no','loom_no','godam_id'
     ];
 
     public function fabric(){
