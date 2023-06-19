@@ -133,7 +133,7 @@
                                 @endforeach --}}
                                 
                                 @foreach($department as $data)
-                                    <option value="{{ $data->id }}">{{ $data->department }}</option>
+                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
                                 @endforeach
                             </select>
                         </div>

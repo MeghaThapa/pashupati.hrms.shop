@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\TapeEntryStockModel;
 use App\Models\Wastages;
 use App\Models\WasteStock;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use App\Models\DanaName;
 use App\Models\AutoLoadItemStock;
+use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\TapeEntry;
 
@@ -65,18 +68,29 @@ class TapeEntryController extends Controller
         // $department = AutoLoadItemStock::with('fromGodam')->get();
         // $department = Department::where("name","like","tape"."%")->get();   
 
-        // return $department = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
+        $departments = [];
 
-        $departments = AutoLoadItemStock::with('fromGodam')
-            ->whereHas('fromGodam', function ($query) {
-                $query->where('slug', '<>', 'bsw');
-            })
-            ->distinct('from_godam_id')
-            ->get(['from_godam_id']);
+        $getdepartment = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
+        foreach($getdepartment as $data){
+            $id = $data->from_godam_id;
+            if(!in_array($id,$departments)){
+                $departments[] = $id;
+            }
+        }
 
-        $departmentIds = $departments->pluck('from_godam_id')->toArray();
 
-        $department = Department::whereIn('id', $departmentIds)->get();
+        $department = Godam::whereIn("id",$departments)->get();
+
+        // $departments = AutoLoadItemStock::with('fromGodam')
+        //     ->whereHas('fromGodam', function ($query) {
+        //         $query->where('slug', '<>', 'bsw');
+        //     })
+        //     ->distinct('from_godam_id')
+        //     ->get(['from_godam_id']);
+
+        // $departmentIds = $departments->pluck('from_godam_id')->toArray();
+
+        // $department = Department::whereIn('id', $departmentIds)->get();
 
 
         $shift = AutoLoadItemStock::with('shift')->get();
@@ -103,7 +117,7 @@ class TapeEntryController extends Controller
     public function ajaxrequestplanttype(Request $request){
         if($request->ajax()){
             // return $request->department_id;
-            $planttype =  ProcessingStep::where("status",'1')->where('department_id',$request->department_id)->where("name","like","tape"."%")->get();
+            $planttype =  ProcessingStep::where("status",'1')->where('godam_id',$request->department_id)->where("name","like","tape"."%")->get();
             return response([
                 'planttype' => $planttype
             ]);
@@ -172,41 +186,45 @@ class TapeEntryController extends Controller
 
     public function tapeentrystockstore(Request $request){
         // return $request;
-        $tape_entry_id = $request->tape_entry_id;
-        $shift = $request->shift;
-        $plantname = $request->plantname;
-        $planttype = $request->planttype;
-        $department = $request->togodam;
-        $tapetype = $request->tapetype;
-        $tape_qty_in_kg = $request->tape_qty_in_kg;
-        $total_in_kg = $request->total_in_kg;
-        $loading = $request->loading;
-        $running = $request->running;
-        $bypass_wast = $request->bypass_wast;
-        $dana_in_kg = $request->dana_in_kg;
-        $wastetype = $request->wastetype ;
+        try{
 
-        $totalwaste = $dana_in_kg - $total_in_kg;
-        if($totalwaste > 0){
-            $this->wastemgmt($totalwaste,$department,$wastetype);
-        }
-
-        $tesm = TapeEntryStockModel::create([
-            'tape_entry_id'=>$tape_entry_id,
-            'togodam_id'=>$department,
-            'planttype_id'=>$planttype,
-            'plantname_id'=>$plantname,
-            'shift_id'=>$shift,
-            'tape_type'=>$tapetype,
-            'tape_qty_in_kg'=>$tape_qty_in_kg,
-            'total_in_kg'=>$total_in_kg,
-            'loading'=>$loading,
-            'running'=>$running,
-            'bypass_wast'=>$bypass_wast,
-            'dana_in_kg'=>$dana_in_kg,
-        ]);
-
-        if($tesm){
+            DB::beginTransaction();
+            
+            $tape_entry_id = $request->tape_entry_id;
+            $shift = $request->shift;
+            $plantname = $request->plantname;
+            $planttype = $request->planttype;
+            $department = $request->togodam;
+            $tapetype = $request->tapetype;
+            $tape_qty_in_kg = $request->tape_qty_in_kg;
+            $total_in_kg = $request->total_in_kg;
+            $loading = $request->loading;
+            $running = $request->running;
+            $bypass_wast = $request->bypass_wast;
+            $dana_in_kg = $request->dana_in_kg;
+            $wastetype = $request->wastetype ;
+    
+            $totalwaste = $dana_in_kg - $total_in_kg;
+            if($totalwaste > 0){
+                $this->wastemgmt($totalwaste,$department,$wastetype);
+            }
+    
+            $tesm = TapeEntryStockModel::create([
+                'tape_entry_id'=>$tape_entry_id,
+                'toGodam_id'=>$department,
+                'planttype_id'=>$planttype,
+                'plantname_id'=>$plantname,
+                'shift_id'=>$shift,
+                'tape_type'=>$tapetype,
+                'tape_qty_in_kg'=>$tape_qty_in_kg,
+                'total_in_kg'=>$total_in_kg,
+                'loading'=>$loading,
+                'running'=>$running,
+                'bypass_wast'=>$bypass_wast,
+                'dana_in_kg'=>$dana_in_kg,
+            ]);
+    
+            
             TapeEntry::where('id',$tape_entry_id)->update([
                 'status' => "created",
             ]);
@@ -216,13 +234,20 @@ class TapeEntryController extends Controller
                 ->where('shift_id',$shift)
                 ->get();
 
-        foreach($danaid as $data){
-            AutoLoadItemStock::where('id',$data->id)->delete();
-        }
-
+            foreach($danaid as $data){
+                AutoLoadItemStock::where('id',$data->id)->delete();
+            }
+            
+            DB::commit();
         return $this->index()->with(['message'=>"Tape Receive Entry Successful"]);
+            
         }
+        catch(Exception $e){
+            DB::rollBack();
+            return "exception :".$e->getMessage();
+        }     
     }
+
     function wastemgmt($totalwaste,$department,$wastetype){
         WasteStock::create([
             'department_id' => $department,
