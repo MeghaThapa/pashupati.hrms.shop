@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('gram');
             $table->enum("status",['pending',"sent"])->default("pending");
             $table->unsignedBigInteger('department_id');
-            $table->foreign('department_id')->references('id')->on("department")->onDelete('cascade');
+            $table->foreign('department_id')->references('id')->on("godam")->onDelete('cascade');
             $table->unsignedBigInteger('planttype_id');
             $table->foreign('planttype_id')->references('id')->on('processing_steps')->onDelete('cascade');
             $table->unsignedBigInteger('plantname_id');

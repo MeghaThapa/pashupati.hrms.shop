@@ -104,7 +104,7 @@
                 <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
                     @foreach ($department as $data)
-                    <option value="{{ $data->id }}">{{ $data->department }}
+                    <option value="{{ $data->id }}">{{ $data->name }}
                     </option>
                     @endforeach
                 </select>
@@ -764,6 +764,7 @@
                 console.log('sending form');
             },
             success:function(response){
+                console.log(response);
                 emptytable();
                 callunlaminatedfabricajax();
                 emptyform();
@@ -1017,6 +1018,10 @@
     }
 
     $("#danaNameId").on("change",function(e){
+        let id = $(this).val();
+        // $.ajax({
+
+        // });
         $("#add_dana_consumption_quantity").prop("disabled",false);
     });
 
