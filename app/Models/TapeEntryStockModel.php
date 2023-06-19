@@ -13,7 +13,7 @@ class TapeEntryStockModel extends Model
     protected $table = 'tape_entry_stock';
     protected $id = "id";
     protected $fillable = [
-        'id','tape_entry_id','togodam_id','planttype_id','plantname_id',
+        'id','tape_entry_id','toGodam_id','planttype_id','plantname_id',
         'shift_id','tape_type','tape_qty_in_kg','total_in_kg',
         'loading','running','bypass_wast','dana_in_kg',
         'created_at','updated_at'

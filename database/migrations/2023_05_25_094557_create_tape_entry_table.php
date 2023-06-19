@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('tape_entry_date');
             $table->string('receipt_number');
+            $table->enum('status',['pending','created'])->default('pending');
             $table->timestamps();
         });
     }
