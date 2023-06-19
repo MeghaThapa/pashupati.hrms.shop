@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string("receipt_number");
             $table->string('receipt_date');
             $table->string('receipt_date_np');
+            $table->enum("status",["completed","pending"])->default("pending");
             $table->timestamps();
         });
     }

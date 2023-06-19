@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class FabricTransferEntryForBag extends Model
 {
     use HasFactory;
+    protected $table = "bag_fabric_entry";
+    protected $fillable = [
+        "receipt_number" , "receipt_date", "status","receipt_date_np"
+    ];
 }

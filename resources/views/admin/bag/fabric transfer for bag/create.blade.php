@@ -10,14 +10,14 @@
 <div class="content-header mb-4">
     <div class="row align-items-center">
         <div class="col-sm-6">
-            <h1 class="m-0 text-dark">{{ __('Categories') }}</h1>
+            <h1 class="m-0 text-dark">{{ __('fabric transfer for bag receipts') }}</h1>
         </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item">
                     <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                 </li>
-                <li class="breadcrumb-item active">{{ __('fabric transfer for bag') }}</li>
+                <li class="breadcrumb-item active">{{ __('fabric transfer for bag receipts') }}</li>
             </ol>
         </div>
     </div>
@@ -39,14 +39,21 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="receipt_number"> Receipt Number</label>
-                                <input type="text" step="any" min="0" class="form-control" name="receipt_number"
+                                <input type="text" step="any" min="0" value="{{ $bill_no }}" class="form-control" name="receipt_number"
                                     id="receipt-number" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="receipt_date"> Receipt Date</label>
-                                <input type="text" step="any" min="0" class="form-control" name="receipt_date"
+                                <input type="date" value="{{ date('Y-m-d') }}" step="any" min="0" class="form-control" name="receipt_date"
+                                    id="receipt_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="receipt_date">Date NP</label>
+                            <input type="text" value="{{ $date_np }}" step="any" min="0" class="form-control" name="date_np"
                                     id="receipt_date" required>
                             </div>
                         </div>
