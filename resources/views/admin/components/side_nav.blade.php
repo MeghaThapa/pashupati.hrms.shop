@@ -252,7 +252,7 @@
                     <li class="nav-header text-bold">{{ __('Bags') }}</li>
                     <li class="nav-item">
                         <a href="{{ route('fabric.transfer.entry.for.bag') }}"
-                            class="nav-link {{ request()->is('fabric.transfer.entry.for.bag') ? 'active' : '' }}">
+                            class="nav-link {{ request()->routeIs('fabric.transfer.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chart-area"></i>
                             <p>{{ __('Entry For Fabric Tnasfer For Bag') }}</p>
                         </a>

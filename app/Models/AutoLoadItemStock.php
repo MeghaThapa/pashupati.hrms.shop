@@ -22,7 +22,7 @@ class AutoLoadItemStock extends Model
     }
       public function fromGodam()
     {
-        return $this->belongsTo('App\Models\Godam', 'from_godam_id', 'id');
+        return $this->belongsTo('App\Models\Department', 'from_godam_id', 'id');
     }
     public function shift()
     {
