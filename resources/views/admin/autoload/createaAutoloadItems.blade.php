@@ -58,7 +58,7 @@
         .content-wrapper {
             padding-top: 0px !important;
         }
-        }
+
 
         */
     </style>
@@ -80,10 +80,10 @@
                         hidden>
                     <label for="size" class="col-form-label">{{ __('From Godam') }}
                     </label>
-                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                    {{-- <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
                         data-target="#addDanaNameModel" style="margin-top:0 !important; top:0;float:right;">
                         <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                    </a>
+                    </a> --}}
                     <select class="advance-select-box form-control" id="fromGodamId" name="from_godam_id" required>
                         <option value="" selected disabled>{{ __('Select From Godam') }}</option>
                         @foreach ($fromGodams as $fromGodam)
@@ -101,7 +101,7 @@
                     <label for="size" class="col-form-label">{{ __('Plant Type') }}
                     </label>
                     <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                        data-target="#addDanaNameModel" style="margin-top:0 !important; top:0;float:right;">
+                        data-target="#addPlantTypeModel" style="margin-top:8px !important; top:0;float:right;">
                         <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                     </a>
                     <select class="advance-select-box form-control" id="plantTypeId" name="plant_type_id" required>
@@ -117,6 +117,10 @@
                 <div class="col-md-3 form-group">
                     <label for="size" class="col-form-label">{{ __('Plant Name') }}
                     </label>
+                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                        data-target="#addPlantNameModel" style="margin-top:8px !important; top:0;float:right;">
+                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                    </a>
                     <select class="advance-select-box form-control" id="plantNameId" name="plant_name_id" required>
                         <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
 
@@ -149,21 +153,10 @@
                 <div class="col-md-3 form-group">
                     <label for="size" class="col-form-label">{{ __('Dana Group') }}
                     </label>
-                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                        data-target="#addDanaGroupModel" style="margin-top:0 !important; top:0;float:right;">
-                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                    </a>
-                    {{-- <select class="advance-select-box form-control" id="danaGroup" name="dana_group" required>
-                    <option value="" selected disabled>{{ __('Select dana Group') }}</option>
-                    @foreach ($danaGroups as $danaGroup)
-                        <option value="{{ $danaGroup->id }}">{{ $danaGroup->name }}
-                        </option>
-                    @endforeach
-                </select> --}}
                     <select class="advance-select-box form-control" id="danaGroupId" name="dana_group_id" required>
                         <option value="" selected disabled>{{ __('Select dana Group') }}</option>
                     </select>
-                    @error('Receipt_no')
+                    @error('dana_group_id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -172,14 +165,10 @@
                 <div class="col-md-3 form-group">
                     <label for="size" class="col-form-label">{{ __('Dana Name') }}
                     </label>
-                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                        data-target="#addDanaNameModel" style="margin-top:0 !important; top:0;float:right;">
-                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                    </a>
                     <select class="advance-select-box form-control" id="danaName" name="dana_name_id" required>
                         <option value="" selected disabled>{{ __('Select dana Name') }}</option>
                     </select>
-                    @error('gp_no')
+                    @error('dana_name_id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -188,9 +177,9 @@
                 <div class="col-md-2 form-group">
                     <label for="size" class="col-form-label">{{ __('Qty in Kg') }}
                     </label>
-                    <input type="text" step="any" min="0" class="form-control calculator"
-                        id="quantityInKg" data-number="1" name="quantity_in_kg" placeholder="{{ __('Quantity') }}"
-                        min="1" required>
+                    <input type="text" step="any" min="0" class="form-control calculator" id="quantityInKg"
+                        data-number="1" name="quantity_in_kg" placeholder="{{ __('Quantity') }}" min="1"
+                        required>
                     @error('gp_no')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -284,7 +273,7 @@
                                         </label>
                                         <a href="#" class="col-md-1 btn btn-primary dynamic-btn"
                                             data-toggle="modal" data-target="#addDanaNameModel"
-                                            style="margin-top:0 !important; top:0;float:right;">
+                                            style="margin-top:8 !important; top:0;float:right;">
                                             <i class="fas fa-plus"
                                                 style="display:flex;align-items: center;justify-content: center;"></i>
                                         </a>
@@ -412,6 +401,203 @@
         </div>
 
     </div>
+    <!--Plant Type popup-->
+    <div class="modal fade" id="addPlantTypeModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModaltax">Add Plant Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form class="form-horizontal" id="createPlantTypeModel">
+                    <div class="modal-body">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="name">{{ __('Plant Type') }}<span
+                                            class="required-field">*</span></label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                        id="name" name="name" placeholder="{{ __('Name') }}"
+                                        value="{{ old('name') }}" required>
+                                    @error('name')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="processingStepCode">{{ __('Code') }}<span
+                                            class="required-field">*</span></label>
+                                    <input type="text"
+                                        class="form-control @error('processingStepCode') is-invalid @enderror"
+                                        id="processingStepCode" name="processingStepCode"
+                                        placeholder="{{ __('Code') }}" value="{{ old('processingStepCode') }}"
+                                        required>
+                                    @error('processingStepCode')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label for="supplier">{{ __('Godam') }}<span class="required-field">*</span>
+                                    </label>
+                                    {{-- <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                        data-target="#exampleModal" style="margin-top:0 !important; top:0;float:right;">
+                                        <i class="fas fa-plus"
+                                            style="display:flex;align-items: center;justify-content: center;"></i>
+                                    </a> --}}
+                                    <select class="advance-select-box form-control" id="fromGodamIdModel"
+                                        name="from_godam_id_model" required>
+                                        <option value="" selected disabled>{{ __('Select From Godam') }}</option>
+                                        @foreach ($fromGodams as $fromGodam)
+                                            <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('department')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="note" class="col-form-label">{{ __('Processing Step Note') }}</label>
+                                    <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
+                                        placeholder="{{ __('Note') }}">{{ old('note') }}</textarea>
+                                    @error('note')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="status" class="col-form-label">{{ __('Status') }}</label>
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="1">{{ __('Active') }}</option>
+                                        <option value="0">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                            {{ __('Save Processing Step') }}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--Plant Type Popup End-->
+    <!--Plant Name popup-->
+    <div class="modal fade" id="addPlantNameModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModaltax">Add Plant Name</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form class="form-horizontal" id="createProcessingSubcatModel">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label for="name">{{ __('Name') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    id="name" name="name" placeholder="{{ __('Processing Subcat Name') }}"
+                                    required>
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label for="name">{{ __('Select Godam') }}<span
+                                        class="required-field">*</span></label>
+                                <select class="advance-select-box form-control" id="fromGodamIdPNModel"
+                                    name="from_godamIdPN_model" required>
+                                    <option value="" selected disabled>{{ __('Select From Godam') }}</option>
+                                    @foreach ($fromGodams as $fromGodam)
+                                        <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="processingSteps">{{ __('Processing Steps') }}<span
+                                        class="required-field">*</span>
+                                </label>
+                                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                    data-target="#exampleModal" style="margin-top:0 !important; top:0;float:right;">
+                                    <i class="fas fa-plus"
+                                        style="display:flex;align-items: center;justify-content: center;"></i>
+                                </a>
+                                <select
+                                    class="advance-select-box select-2 form-control @error('department') is-invalid @enderror"
+                                    id="processingStepsId" name="processing_steps_id_pn" required>
+                                    <option value="" selected disabled>{{ __('Select Processing Steps') }}</option>
+
+                                </select>
+                                @error('department')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="status" class="col-form-label">{{ __('Status') }}</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="active">{{ __('Active') }}</option>
+                                    <option value="inactive">{{ __('Inactive') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                            {{ __('Save Plant Name') }}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                    <!-- /.card-body -->
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--Plant Name Popup End-->
 @endsection
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
@@ -420,7 +606,85 @@
         $(document).ready(function() {
             getAutoloadItemsData();
             //create raw material
+            $('#fromGodamIdPNModel').on('select2:select', function(e) {
+                let godam_id = e.params.data.id;
+                getProcessingStepsAccDept(godam_id);
+            });
 
+
+
+            function getProcessingStepsAccDept(godam_id) {
+                return new Promise(function(resolve, reject) {
+                    $.ajax({
+                        url: "{{ route('processing-subcat.getProcessingStepsAccDept', ['godam_id' => ':godam_id']) }}"
+                            .replace(':godam_id', godam_id),
+                        method: "GET",
+                        success: function(response) {
+                            let selectOptions = '';
+                            if (response.processingSteps.length == 0) {
+                                selectOptions +=
+                                    '<option disabled selected>' +
+                                    'no processing step found' + '</option>';
+                            } else {
+                                selectOptions +=
+                                    '<option disabled selected>' +
+                                    'select a processing step' + '</option>';
+                                for (var i = 0; i < response.processingSteps.length; i++) {
+                                    selectOptions += '<option value="' +
+                                        response.processingSteps[i].id +
+                                        '">' +
+                                        response.processingSteps[i].name + '</option>';
+                                }
+                            }
+                            $('#processingStepsId').html(selectOptions);
+                            resolve(response)
+                        }
+                    });
+                });
+
+            }
+
+            document.getElementById('createProcessingSubcatModel').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = event.target;
+                let name = form.elements['name'];
+                let processing_steps_id = form.elements['processing_steps_id_pn'];
+                // console.log(processing_steps_id);
+                // return false;
+                let status = form.elements['status'];
+                $.ajax({
+                    url: "{{ route('processing-subcat.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: name.value,
+                        processing_steps_id: processing_steps_id.value,
+                        status: status.value,
+
+                    },
+                    success: function(response) {
+                        setSuccessMessage(response.message);
+                        console.log(response);
+                        $('#addPlantNameModel').modal('hide');
+                        let selectElement = $('#plantNameId');
+                        let newOption = $('<option>');
+                        newOption.val(response.processingSubcat.id);
+                        newOption.text(response.processingSubcat.name);
+                        selectElement.append(newOption);
+                        name.value = '';
+                        $('#processingStepsId').val($('#processingStepsId option:first').val())
+                            .change();
+                        $('#fromGodamIdPNModel').val($('#fromGodamIdPNModel option:first')
+                        .val()).change();
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMessage(xhr.responseJSON.message);
+                    }
+                });
+
+
+
+            })
             document.getElementById('createAutoLoadItem').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const form = event.target;
@@ -462,6 +726,40 @@
                     }
                 });
 
+
+            });
+            document.getElementById('createPlantTypeModel').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const form = event.target;
+                let name = form.elements['name'];
+                let code = form.elements['processingStepCode'];
+                let godam_id = form.elements['from_godam_id_model'];
+                let note = form.elements['note'];
+                let status = form.elements['status'];
+                $.ajax({
+                    url: "{{ route('processing-steps.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: name.value,
+                        processingStepCode: code.value,
+                        godam_id: godam_id.value,
+                        note: note.value,
+                        status: status.value,
+                    },
+                    success: function(response) {
+                        $('#addPlantTypeModel').modal('hide');
+                        //console.log(response);
+                        let selectElement = $('#plantTypeId');
+                        let newOption = $('<option>');
+                        newOption.val(response.processingStep.id);
+                        newOption.text(response.processingStep.name);
+                        selectElement.append(newOption);
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMessage(xhr.responseJSON.message);
+                    }
+                });
 
             });
             document.getElementById('editAutoloadItemModelUpdate').addEventListener('submit', function(e) {
@@ -636,7 +934,7 @@
                                 $('#autoloadItemIdModel').val(autoloadItem_id);
 
                                 await getPlantName(response.autoLoadItem.plant_type_id,
-                                'model');
+                                    'model');
                                 $('#plantNameIdModel').val(response.autoLoadItem.plant_name_id)
                                     .trigger('change');
 
