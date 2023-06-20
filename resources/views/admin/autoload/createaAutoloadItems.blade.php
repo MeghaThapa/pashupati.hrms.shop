@@ -675,7 +675,7 @@
                         $('#processingStepsId').val($('#processingStepsId option:first').val())
                             .change();
                         $('#fromGodamIdPNModel').val($('#fromGodamIdPNModel option:first')
-                        .val()).change();
+                            .val()).change();
                     },
                     error: function(xhr, status, error) {
                         setErrorMessage(xhr.responseJSON.message);
@@ -853,7 +853,7 @@
                 var html = "";
 
                 html = "<tr  id=editRowId-" + res.id + "><td>" + sn +
-                    "</td><td class='rowFromGodam'>" + res.from_godam.department +
+                    "</td><td class='rowFromGodam'>" + res.from_godam.name +
                     "</td><td class='rowPlantType'>" + res.plant_type.name +
                     "</td><td class='rowPlantName'>" + res.plant_name.name +
                     "</td><td class='rowShift'>" + res.shift.name +

@@ -66,7 +66,7 @@ class TapeEntryController extends Controller
 
     public function create($id){
         // $department = AutoLoadItemStock::with('fromGodam')->get();
-        // $department = Department::where("name","like","tape"."%")->get();   
+        // $department = Department::where("name","like","tape"."%")->get();
 
         $departments = [];
 
@@ -79,7 +79,7 @@ class TapeEntryController extends Controller
         }
 
 
-        $department = Godam::whereIn("id",$departments)->get();
+       $department = Godam::whereIn("id",$departments)->get();
 
         // $departments = AutoLoadItemStock::with('fromGodam')
         //     ->whereHas('fromGodam', function ($query) {
@@ -103,7 +103,7 @@ class TapeEntryController extends Controller
 
     public function view($id){
         return TapeEntryStockModel::where('tape_entry_id',$id)->get();
-        
+
     }
 
     public function deleteTape(Request $request){
@@ -189,7 +189,7 @@ class TapeEntryController extends Controller
         try{
 
             DB::beginTransaction();
-            
+
             $tape_entry_id = $request->tape_entry_id;
             $shift = $request->shift;
             $plantname = $request->plantname;
@@ -203,12 +203,12 @@ class TapeEntryController extends Controller
             $bypass_wast = $request->bypass_wast;
             $dana_in_kg = $request->dana_in_kg;
             $wastetype = $request->wastetype ;
-    
+
             $totalwaste = $dana_in_kg - $total_in_kg;
             if($totalwaste > 0){
                 $this->wastemgmt($totalwaste,$department,$wastetype);
             }
-    
+
             $tesm = TapeEntryStockModel::create([
                 'tape_entry_id'=>$tape_entry_id,
                 'toGodam_id'=>$department,
@@ -223,8 +223,8 @@ class TapeEntryController extends Controller
                 'bypass_wast'=>$bypass_wast,
                 'dana_in_kg'=>$dana_in_kg,
             ]);
-    
-            
+
+
             TapeEntry::where('id',$tape_entry_id)->update([
                 'status' => "created",
             ]);
@@ -237,15 +237,15 @@ class TapeEntryController extends Controller
             foreach($danaid as $data){
                 AutoLoadItemStock::where('id',$data->id)->delete();
             }
-            
+
             DB::commit();
         return $this->index()->with(['message'=>"Tape Receive Entry Successful"]);
-            
+
         }
         catch(Exception $e){
             DB::rollBack();
             return "exception :".$e->getMessage();
-        }     
+        }
     }
 
     function wastemgmt($totalwaste,$department,$wastetype){
