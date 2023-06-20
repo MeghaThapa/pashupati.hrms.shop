@@ -190,38 +190,38 @@ class RawMaterialController extends Controller
 
     public function store(Request $request)
     {
-        // return $request;
+        $requestStoreinTypeName = self::getTypeNameFromId($request->Type_id);
         $validator = $request->validate([
             'supplier_id' => 'required',
             'date' => 'required|date',
-            'pp_no' => 'required',
             'Type_id' => 'required',
             'to_godam_id' => 'required',
             'Receipt_no' => 'required',
-
+            'from_godam_id' => $requestStoreinTypeName === 'Godam' ? 'required' : '',
+            'challan_no' => $requestStoreinTypeName === 'Godam' ? 'required' : '',
+            'gp_no' => $requestStoreinTypeName === 'Godam' ? 'required' : '',
+            'bill_no' => $requestStoreinTypeName === 'local' ? 'required' : '',
+            'pp_no' => $requestStoreinTypeName === 'import' ? 'required' : '',
         ]);
-        $requestStoreinTypeName = self::getTypeNameFromId($request->Type_id);
-        if ($requestStoreinTypeName == "Godam") {
-            $request->validate([
-                'from_godam_id' => 'required',
-                'challan_no' => 'required',
-                'gp_no' => 'required',
-            ]);
+       //return $requestStoreinTypeName;
+        if (strtolower($requestStoreinTypeName) === 'godam' && $request->to_godam_id === $request->from_godam_id) {
+            return back()->withErrors('From Godam and To Godam cannot be similar');
         }
+
         $rawMaterial = new RawMaterial();
         $rawMaterial->supplier_id = $request->supplier_id;
         $rawMaterial->date = $request->date;
-        $rawMaterial->pp_no = $request->pp_no;
+        $rawMaterial->pp_no = $request->pp_no?? null;
+        $rawMaterial->bill_no = $request->bill_no?? null;
         $rawMaterial->storein_type_id = $request->Type_id;
-        $rawMaterial->from_godam_id = $request->from_godam_id ? $request->from_godam_id : null;
-        $rawMaterial->challan_no = $request->challan_no ? $request->challan_no : null;
-        $rawMaterial->gp_no = $request->gp_no ? $request->gp_no : null;
+        $rawMaterial->from_godam_id = $request->from_godam_id?? null;
+        $rawMaterial->challan_no = $request->challan_no ?? null;
+        $rawMaterial->gp_no = $request->gp_no ?? null;
         $rawMaterial->to_godam_id = $request->to_godam_id;
         $rawMaterial->remark = $request->remarks;
         $rawMaterial->receipt_no = $request->Receipt_no;
         $rawMaterial->status = 'pending';
         $rawMaterial->save();
-        //return $rawMaterial;
         return redirect()->route('rawMaterial.createRawMaterialItems', ['rawMaterial_id' => $rawMaterial->id]);
     }
     public function createRawMaterialItems($rawMaterial_id)

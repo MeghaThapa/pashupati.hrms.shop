@@ -5,12 +5,14 @@
 @endsection
 @section('content')
     @if ($errors->any())
-        <div id="error-container" class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+        <div id="error-container">
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
     @endif
     <div class="card-body p-0 m-0">
@@ -32,46 +34,32 @@
                     </button>
                 </a> --}}
 
-                <form  @if ($rawMaterial) action="{{ route('rawMaterial.update',['rawMaterial_id'=>$rawMaterial->id]) }}"
-                    @else action="{{ route('rawMaterial.store') }}"@endif
+                <form
+                    @if ($rawMaterial) action="{{ route('rawMaterial.update', ['rawMaterial_id' => $rawMaterial->id]) }}"
+                    @else action="{{ route('rawMaterial.store') }}" @endif
                     method="POST">
                     @csrf
                     <div class="row p-2">
-                        <div class="col-md-3 form-group">
+                        <div class="col-md-2 form-group">
                             <label for="Category" class="col-form-label">{{ __('Date') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="date" step="any" min="0" class="form-control calculator"
                                 id="date" data-number="1" name="date" placeholder="{{ __('date') }}"
-                                @if ($rawMaterial) value="{{ $rawMaterial->date }}" @else value="<?php echo date('Y-m-d'); ?>" @endif min="1"
-                                required>
+                                @if ($rawMaterial) value="{{ $rawMaterial->date }}" @else value="<?php echo date('Y-m-d'); ?>" @endif
+                                min="1" required>
                             @error('date')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
                         </div>
-                        {{-- item --}}
+                        {{-- supplier --}}
                         <div class="col-md-4 form-group">
-                            <label for="products" class="col-form-label">{{ __('PP No') }}<span
-                                    class="required-field">*</span>
-                            </label>
-                            <input type="text" step="any" min="0" class="form-control calculator"
-                                id="pp_no" data-number="1" name="pp_no" placeholder="{{ __('PP No') }}"
-                                @if ($rawMaterial) value="{{ $rawMaterial->pp_no }}" @endif min="1"
-                                required>
-                            @error('pp_no')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        {{-- size --}}
-                        <div class="col-md-5 form-group">
                             <label for="size" class="col-form-label">{{ __('Party Name') }}<span
                                     class="required-field">*</span>
                             </label>
-                              {{-- <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
+                            {{-- <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
                                         data-target="#addSupplierModel" style="margin-top:0 !important; top:8px;float:right;">
                                         <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                             </a> --}}
@@ -90,18 +78,17 @@
                                 </span>
                             @enderror
                         </div>
-
-                    </div>
-                    <div class="row">
-
+                        {{-- storein type --}}
                         <div class="col-md-3 form-group">
                             <label for="size" class="col-form-label">{{ __('Storein Type') }}<span
                                     class="required-field">*</span>
                             </label>
-                             <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
-                                        data-target="#storeinTypeModel" style="margin-top:0 !important; top:8px;float:right;">
-                                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
-                                    </a>
+                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                tabindex="-1" data-target="#storeinTypeModel"
+                                style="margin-top:0 !important; top:8px;float:right;">
+                                <i class="fas fa-plus"
+                                    style="display:flex;align-items: center;justify-content: center;"></i>
+                            </a>
                             <select class="advance-select-box form-control" id="Type_id" name="Type_id" required>
                                 <option value="" selected disabled>{{ __('Select a type ') }}</option>
                                 @foreach ($storeinTypes as $storeinType)
@@ -110,6 +97,42 @@
                             </select>
 
                             @error('size_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        {{-- ppno --}}
+                        <div class="col-md-3 form-group">
+                            <label for="products" class="col-form-label">{{ __('PP No') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator"
+                                id="ppNo" data-number="1" name="pp_no" placeholder="{{ __('PP No') }}"
+                                @if ($rawMaterial) value="{{ $rawMaterial->pp_no }}" @endif min="1"
+                                required>
+                            @error('pp_no')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+
+
+
+                    </div>
+                    <div class="row">
+                        {{-- bill no --}}
+                        <div class="col-md-3 form-group">
+                            <label for="products" class="col-form-label">{{ __('Bill No') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator"
+                                id="billNo" data-number="1" name="bill_no" placeholder="{{ __('Bill No') }}"
+                                @if ($rawMaterial) value="{{ $rawMaterial->bill_no }}" @endif min="1"
+                                required>
+                            @error('bill_no')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -160,9 +183,11 @@
                             <label for="size" class="col-form-label">{{ __('To Godam') }}<span
                                     class="required-field">*</span>
                             </label>
-                             <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal" tabindex="-1"
-                                        data-target="#godamModel" style="margin-top:0 !important; top:8px;float:right;">
-                                        <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                tabindex="-1" data-target="#godamModel"
+                                style="margin-top:0 !important; top:8px;float:right;">
+                                <i class="fas fa-plus"
+                                    style="display:flex;align-items: center;justify-content: center;"></i>
                             </a>
                             <select class="advance-select-box form-control" id="toGodamId" name="to_godam_id" required>
                                 <option value="" selected disabled>{{ __('Select a type ') }}</option>
@@ -221,12 +246,7 @@
                 </form>
             </div>
         </div>
-
     </div>
-
-
-
-
     <!--Storein Type  Model popup-->
     <div class="modal fade" id="storeinTypeModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
         aria-hidden="true">
@@ -238,8 +258,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                 <form id="modelFormStoreinType">
-                       @csrf
+                <form id="modelFormStoreinType">
+                    @csrf
                     <div class="modal-body">
                         <div class="card-body">
                             <div id="storeinTypeError" class="alert alert-danger" hidden>
@@ -270,11 +290,10 @@
                                     @enderror
                                 </div>
                             </div>
-                             <div class="row">
+                            <div class="row">
                                 <div class="form-group col-md-12">
                                     <label for="note">{{ __('Notes') }}</label>
-                                    <textarea class="form-control @error('address') is-invalid @enderror" id="note" name="note"
-                                       >{{ old('note') }}</textarea>
+                                    <textarea class="form-control @error('address') is-invalid @enderror" id="note" name="note">{{ old('note') }}</textarea>
                                     @error('note')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -295,15 +314,15 @@
                         </div>
                         <!-- /.card-body -->
 
-                </div>
-                <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
-                                        {{ __('Save Storein Type') }}</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        Close
-                    </button>
-                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                            {{ __('Save Storein Type') }}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            Close
+                        </button>
+                        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                    </div>
                 </form>
             </div>
         </div>
@@ -320,58 +339,55 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                 <form id="modelFormGodam">
-                       @csrf
+                <form id="modelFormGodam">
+                    @csrf
                     <div class="modal-body">
                         <div class="card-body">
                             <div id="godamError" class="alert alert-danger" hidden>
                             </div>
                             <div class="row">
-                                    <label for="name">{{ __('name') }}<span
-                                            class="required-field">*</span></label>
-                                    <input type="text" class="form-control @error('placement') is-invalid @enderror"
-                                        id="godamName" name="godam_name" placeholder="{{ __('godam name') }}"
-                                        value="{{ old('name') }}" required>
-                                    @error('name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                <label for="name">{{ __('name') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('placement') is-invalid @enderror"
+                                    id="godamName" name="godam_name" placeholder="{{ __('godam name') }}"
+                                    value="{{ old('name') }}" required>
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                             <div class="row">
-                                    <label for="status" class="col-form-label">{{ __('Status') }}</label>
-                                    <select class="form-control" id="godamStatus" name="godam_status">
-                                        <option value="active">{{ __('Active') }}</option>
-                                        <option value="inactive">{{ __('Inactive') }}</option>
-                                    </select>
+                                <label for="status" class="col-form-label">{{ __('Status') }}</label>
+                                <select class="form-control" id="godamStatus" name="godam_status">
+                                    <option value="active">{{ __('Active') }}</option>
+                                    <option value="inactive">{{ __('Inactive') }}</option>
+                                </select>
                             </div>
 
                         </div>
                         <!-- /.card-body -->
 
-                </div>
-                <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
-                                        {{ __('Save Storein Type') }}</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        Close
-                    </button>
-                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                            {{ __('Save Storein Type') }}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            Close
+                        </button>
+                        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                    </div>
                 </form>
             </div>
         </div>
     </div>
     <!--Godam Popup End-->
-     {{-- supplier model popup --}}
-     {{-- addSupplierModel --}}
-     {{-- id="supplierCreateModel" --}}
+
     {{-- supplier model popup --}}
     <div class="modal fade" id="addSupplierModel" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form class="form-horizontal" id="supplierCreateModel" >
+                <form class="form-horizontal" id="supplierCreateModel">
 
                     <div class="modal-header">
                         <h5 class="modal-title" id="addDepartmentModel">Add Supplier</h5>
@@ -383,7 +399,7 @@
                     <div class="modal-body">
 
                         <div class="card-body">
-                             <div id="supplierError" class="alert alert-danger" hidden></div>
+                            <div id="supplierError" class="alert alert-danger" hidden></div>
                             <div class="row">
 
                                 <div class="form-group col-md-12">
@@ -468,7 +484,8 @@
                                         <input type="file"
                                             class="custom-file-input @error('profilePic') is-invalid @enderror"
                                             id="attached-image" name="profilePic">
-                                        <label class="custom-file-label" for="customFile">{{ __('Choose file') }}</label>
+                                        <label class="custom-file-label"
+                                            for="customFile">{{ __('Choose file') }}</label>
                                         @error('profilePic')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -519,25 +536,33 @@
     <script>
         $(document).ready(function() {
 
-            let from_godam = document.getElementById('fromGodam');
-            let challan_no = document.getElementById('challanNo');
-            let gp_no = document.getElementById('gpNo');
-            from_godam.disabled = true;
-            challan_no.disabled = true;
-            gp_no.disabled = true;
+            refreshRawMaterial();
 
-            let rawMaterial = JSON.parse(`{!! json_encode($rawMaterial) !!}`);
+            function refreshRawMaterial() {
+                disableFields();
+                updateData();
+            }
 
-            if (rawMaterial) {
-                $('#Type_id').val(rawMaterial.storein_type_id).change();
-                if (rawMaterial.storein_type.name.toLowerCase() == 'godam') {
-                    $('#fromGodam').val(rawMaterial.from_godam_id).change();
-                    $('#challanNo').val(rawMaterial.challan_no);
-                    $('#gpNo').val(rawMaterial.gp_no);
-
-                    toggleInputsByStoreInType(rawMaterial.storein_type.name);
+            function updateData() {
+                let rawMaterial = JSON.parse(`{!! json_encode($rawMaterial) !!}`);
+                if (!rawMaterial) {
+                    return false;
                 }
+                toggleInputsByStoreInType(rawMaterial.storein_type.name, rawMaterial);
+            }
 
+            function disableFields() {
+                let from_godam = document.getElementById('fromGodam');
+                let challan_no = document.getElementById('challanNo');
+                let gp_no = document.getElementById('gpNo');
+                let bill_no = document.getElementById('billNo');
+                let pp_no = document.getElementById('ppNo');
+
+                pp_no.disabled = true;
+                bill_no.disabled = true;
+                from_godam.disabled = true;
+                challan_no.disabled = true;
+                gp_no.disabled = true;
             }
 
             $('#Type_id').on('select2:select', function(e) {
@@ -545,34 +570,77 @@
                 toggleInputsByStoreInType(selectedName);
             });
 
-            function toggleInputsByStoreInType(selectedName) {
+            function toggleInputsByStoreInType(selectedName = '', rawMaterial = null) {
+                let from_godam = document.getElementById('fromGodam');
+                let challan_no = document.getElementById('challanNo');
+                let gp_no = document.getElementById('gpNo');
+                let pp_no = document.getElementById('ppNo');
+                let bill_no = document.getElementById('billNo');
+
                 if (selectedName.toLowerCase() == 'godam') {
                     from_godam.disabled = false;
-                    //ppno_input.value = "";
+                    pp_no.disabled = true;
                     challan_no.disabled = false;
                     gp_no.disabled = false;
+                    bill_no.disabled = true;
+
                     from_godam.required = true;
                     challan_no.required = true;
                     gp_no.required = true;
-                } else {
+                    pp_no.required = false;
+                    bill_no.required = false;
+                    if (rawMaterial) {
+                        $('#fromGodam').val(rawMaterial.from_godam_id).change();
+                        challan_no.value = rawMaterial.challan_no;
+                        gpNo.value = rawMaterial.gp_no;
+                    }
+
+                } else if (selectedName.toLowerCase() == 'local') {
                     from_godam.disabled = true;
                     challan_no.disabled = true;
                     gp_no.disabled = true;
+                    pp_no.disabled = true;
+                    bill_no.disabled = false;
+
                     from_godam.required = false;
                     challan_no.required = false;
                     gp_no.required = false;
+                    pp_no.required = false;
+                    bill_no.required = true;
+                    if (rawMaterial) {
+                        $('#fromGodam').val(rawMaterial.from_godam_id).change();
+                        bill_no.value = rawMaterial.bill_no;
+                    }
+
+                } else if (selectedName.toLowerCase() == 'import') {
+                    from_godam.disabled = true;
+                    challan_no.disabled = true;
+                    gp_no.disabled = true;
+                    pp_no.disabled = false;
+                    bill_no.disabled = true;
+
+                    from_godam.required = false;
+                    challan_no.required = false;
+                    gp_no.required = false;
+                    pp_no.required = true;
+                    bill_no.required = false;
+                    if (rawMaterial) {
+                        $('#fromGodam').val(rawMaterial.from_godam_id).change();
+                        pp_no.value = rawMaterial.pp_no;
+                    }
                 }
             }
+
             function setMessage(element_id, message) {
-                    let errorContainer = document.getElementById(element_id);
-                    errorContainer.hidden = false;
-                    errorContainer.innerHTML = message;
-                    setTimeout(function() {
-                        errorContainer.hidden = true;
-                    }, 2000);
-                }
+                let errorContainer = document.getElementById(element_id);
+                errorContainer.hidden = false;
+                errorContainer.innerHTML = message;
+                setTimeout(function() {
+                    errorContainer.hidden = true;
+                }, 2000);
+            }
             //supplier save
-            document.getElementById('supplierCreateModel').addEventListener('submit', function(e){
+            document.getElementById('supplierCreateModel').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const form = e.target;
                 let name = form.elements['name'];
@@ -583,127 +651,120 @@
                 let address = form.elements['address'];
                 //let profilePic = null;
                 let status = form.elements['status'];
-                if (!name.value &&!status.value && !email.value && !phone.value&& !designation.value) {
-                            setMessage('supplierError', 'Please Fill out all fields')
-                            return false;
-                        }
-                     $.ajax({
-                        url: "{{ route('suppliers.store') }}",
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            name: name.value,
-                            email: email.value,
-                            phone: phone.value,
-                            company :company.value,
-                            designation: designation.value,
-                            address: address.value,
-                           // profilePic:profilePic.value,
-                            status: status.value,
-                        },
-                        success: function(response) {
-                            $('#addSupplierModel').modal('hide');
-                            name.value='';
-                            let selectElement=document.getElementById('supplierId');
-                            let option = document.createElement('option');
-                            option.value=response.godam.id;
-                            option.text=response.godam.name;
-                            selectElement.append(option);
-                        },
-                        error:function(xhr, status, error){
-                            setMessage('supplierError',xhr.responseJSON.message);
-                        }
+                if (!name.value && !status.value && !email.value && !phone.value && !designation.value) {
+                    setMessage('supplierError', 'Please Fill out all fields')
+                    return false;
+                }
+                $.ajax({
+                    url: "{{ route('suppliers.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: name.value,
+                        email: email.value,
+                        phone: phone.value,
+                        company: company.value,
+                        designation: designation.value,
+                        address: address.value,
+                        // profilePic:profilePic.value,
+                        status: status.value,
+                    },
+                    success: function(response) {
+                        $('#addSupplierModel').modal('hide');
+                        name.value = '';
+                        let selectElement = document.getElementById('supplierId');
+                        let option = document.createElement('option');
+                        option.value = response.godam.id;
+                        option.text = response.godam.name;
+                        selectElement.append(option);
+                    },
+                    error: function(xhr, status, error) {
+                        setMessage('supplierError', xhr.responseJSON.message);
+                    }
 
-                    });
+                });
             });
             //Godam save
-            document.getElementById('modelFormGodam').addEventListener('submit', function(e){
-                    e.preventDefault();
-                    const form = e.target;
-                    let name = form.elements['godam_name'];
-                    let status = form.elements['godam_status'];
-                    if (!name.value &&
-                            !status.value) {
-                            setMessage('godamError', 'Please Fill out all fields')
-                            return false;
-                        }
-                    $.ajax({
-                        url: "{{ route('godam.store') }}",
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            name: name.value,
-                            status: status.value,
-                        },
-                        success: function(response) {
-                            $('#godamModel').modal('hide');
-                            name.value='';
-                            let selectElement=document.getElementById('toGodamId');
-                            let option = document.createElement('option');
-                            option.value=response.godam.id;
-                            option.text=response.godam.name;
-                            selectElement.append(option);
-                        },
-                        error:function(xhr, status, error){
-                            setMessage('storeinTypeError',xhr.responseJSON.message);
-                        }
-
-                    });
-            })
-
-        //storein type save
-            document.getElementById('modelFormStoreinType').addEventListener('submit', function(e){
+            document.getElementById('modelFormGodam').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const form = e.target;
-                let name= form.elements['storein_type_name'];
-                let code= form.elements['code'];
-                let note= form.elements['note'];
+                let name = form.elements['godam_name'];
+                let status = form.elements['godam_status'];
+                if (!name.value &&
+                    !status.value) {
+                    setMessage('godamError', 'Please Fill out all fields')
+                    return false;
+                }
+                $.ajax({
+                    url: "{{ route('godam.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: name.value,
+                        status: status.value,
+                    },
+                    success: function(response) {
+                        $('#godamModel').modal('hide');
+                        name.value = '';
+                        let selectElement = document.getElementById('toGodamId');
+                        let option = document.createElement('option');
+                        option.value = response.godam.id;
+                        option.text = response.godam.name;
+                        selectElement.append(option);
+                    },
+                    error: function(xhr, status, error) {
+                        setMessage('storeinTypeError', xhr.responseJSON.message);
+                    }
+
+                });
+            })
+
+            //storein type save
+            document.getElementById('modelFormStoreinType').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = e.target;
+                let name = form.elements['storein_type_name'];
+                let code = form.elements['code'];
+                let note = form.elements['note'];
                 let status = form.elements['status'];
                 if (!name.value &&
-                        !status.value && !code.value && !note.value) {
-                        setMessage('storeinTypeError', 'Please Fill out all fields')
-                        return false;
-                    }
+                    !status.value && !code.value && !note.value) {
+                    setMessage('storeinTypeError', 'Please Fill out all fields')
+                    return false;
+                }
                 $.ajax({
-                        url: "{{ route('storeinType.store') }}",
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            name: name.value,
-                            code: code.value,
-                            note: note.value,
-                            status: status.value,
-                        },
-                        success: function(response) {
+                    url: "{{ route('storeinType.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: name.value,
+                        code: code.value,
+                        note: note.value,
+                        status: status.value,
+                    },
+                    success: function(response) {
 
-                            $('#storeinTypeModel').modal('hide');
+                        $('#storeinTypeModel').modal('hide');
 
-                            name.value='';
-                            code.value='';
-                            note.value='';
-                            let selectElement=document.getElementById('Type_id');
-                            let option = document.createElement('option');
-                            option.value=response.storeinType.id;
-                            option.text=response.storeinType.name;
-                            selectElement.append(option);
-                        },
-                        error:function(xhr, status, error){
-                            setMessage('storeinTypeError',xhr.responseJSON.message);
-                        }
+                        name.value = '';
+                        code.value = '';
+                        note.value = '';
+                        let selectElement = document.getElementById('Type_id');
+                        let option = document.createElement('option');
+                        option.value = response.storeinType.id;
+                        option.text = response.storeinType.name;
+                        selectElement.append(option);
+                    },
+                    error: function(xhr, status, error) {
+                        setMessage('storeinTypeError', xhr.responseJSON.message);
+                    }
 
-                    });
+                });
 
-    });
-});
-    </script>
-@endsection
-@section('extra-script')
-    <script>
-        $(document).ready(function() {
-            // Hide the error message after 5 seconds
+            });
             setTimeout(function() {
                 $('#error-container').fadeOut('fast');
-            }, 3000); // 5000 milliseconds = 5 seconds
+            }, 1000);
         });
     </script>
 @endsection
