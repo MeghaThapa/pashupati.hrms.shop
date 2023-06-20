@@ -33,6 +33,7 @@ use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\GodamController;
 use App\Http\Controllers\StoreoutDepartmentController;
+use App\Http\Controllers\Tripal\TripalController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -471,6 +472,24 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
 
+    //tripal
+    Route::resource('tripal', 'Tripal\TripalController', [
+        'names' => [
+            'index' => 'tripal.index',
+            'create' => 'tripal.create',
+            'store' => 'tripal.store',
+            'edit' => 'tripal.edit',
+            'update' => 'tripal.update',
+        ]
+    ]);
+    Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
+    Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');
+
+    //get fabricdata in tripal
+
+    Route::get('tripal/getFabric/List', 'Tripal\TripalController@getfabrics')->name('tripal.getFabric');
+
+    Route::post('tripal/store', 'Tripal\TripalController@store')->name('tripal.store');
 
 
     //fabric send and receive

@@ -70,6 +70,8 @@
     .col-md-6 {
         padding: 0px 2px !important;
     }
+
+
 </style>
 @endsection
 
@@ -175,7 +177,7 @@
                 </label>
                 <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id"
                     required>
-                    <option value="" selected>{{ __('Select Fabric Name') }}</option>
+                    <option value="">{{ __('Select Fabric Name') }}</option>
                     @foreach ($fabrics as $fabric)
                     <option value="{{ $fabric->id }}">{{ $fabric->name }}
                     </option>
@@ -216,7 +218,7 @@
 <div class="row">
     <div class="Ajaxdata col-md-12">
         <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable">
+            <table class="table" id="rawMaterialItemTable" >
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -240,8 +242,8 @@
     </div>
 </div>
 <hr>
-<h1 class='text-center'>Compare Lam and Unlam</h1>
-<div class="row">
+{{-- <h1 class='text-center'>Compare Lam and Unlam</h1> --}}
+{{-- <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -299,9 +301,9 @@
     <div class="col-md-6 float-right ml-3">
         <button class="btn btn-danger discard">Discard</button>
     </div>
-</div>
+</div> --}}
 <hr>
-<div class="row">
+{{-- <div class="row">
     <div class="col-md-5">
         <div class="card mt-2 p-5">
             <div class="card-body">
@@ -339,15 +341,7 @@
                         </button>
                     </div>
                 </div>
-                {{-- <hr>
-                <div class="col-md-12">
-                    <h4>wastage</h4>
-                    <select name="waste_type" id="waste_type" class="advance-select-box">
-                        <option>--select waste--</option>
-                        <option value="">Polo</option>
-                        <option value="">Rafia</option>
-                    </select>
-                </div> --}}
+            
 
             </div>
         </div>
@@ -491,7 +485,7 @@
             <button class="btn btn-info" id="finalUpdate">Update</button>
         </div>
     </div>
-</div>
+</div> --}}
 
 
 <!-- Modal -->
@@ -504,7 +498,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id='sendtolaminationform' action='{{ route("fabricSendReceive.store.laminated") }}' method="post">
+                <form id='sendtolaminationform' action='{{ route("tripal.store") }}' method="post">
                     @csrf
                     <div class="card">
                         <div class="card-body">
@@ -526,6 +520,7 @@
                                 </div>
                             </div>
                             <hr>
+                            
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
                                     <label for="">Roll</label>
@@ -639,7 +634,7 @@
 <script>
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
-        callunlaminatedfabricajax();
+        // callunlaminatedfabricajax();
         comparelamandunlam();
 
         $("#toGodam").change(function(e){
@@ -677,22 +672,6 @@
             });
         });
 
-        $("#shiftName").change(function(e){
-            let department_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.fabrics') }}";
-            $.ajax({
-                url:geturl.replace(':id',department_id),
-                beforeSend:function(){
-                    console.log('Getting Fabrics');
-                },
-                success:function(response){
-                    getfabrics(response);
-                },
-                error:function(error){
-                    console.log(error);
-                }
-            });
-        });
         /**************************** Ajax Calls End **************************/
     });
 
@@ -700,13 +679,14 @@
 
     function callunlaminatedfabricajax(){
         $.ajax({
-            url : "{{ route('fabricSendReceive.get.unlaminated') }}",
+            url : "{{ route('tripal.getFabric') }}",
             method: 'get',
             beforeSend:function(){
                 console.log('getting unlaminated fabric');
             },
             success:function(response){
                 emptytable();
+                console.log(response);
                 if(response.response != '404'){
                     filltable(response);
                 }else{
@@ -754,6 +734,8 @@
             let action = $(this).attr('action');
             let method = $(this).attr('method');
             let formData = $(this).serialize();
+            // console.log(action);
+            debugger;
            $.ajax({
             url:action,
             method : method,
@@ -814,23 +796,24 @@
     });
 
     function filltable(data){
-        // console.log(data);
+        // console.log(data.response);
         data.response.forEach(d => {
-            let title = d.fabric.name;
+            console.log(d.name);
+            let title = d.name;
             let group = d.gram.split('-')[0];
             let result = parseFloat(title) * parseFloat(group);
 
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
 
             tr.append(`<td>#</td>`);
-            tr.append(`<td>${d.fabric.name}</td>`);
+            tr.append(`<td>${d.name}</td>`);
             tr.append(`<td>${d.roll_no}</td>`);
             tr.append(`<td>${d.gross_wt}</td>`);
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`)
-            tr.append(`<td>${d.average}</td>`);
+            tr.append(`<td>${d.meter}</td>`);
             tr.append(`<td>${d.gram}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 

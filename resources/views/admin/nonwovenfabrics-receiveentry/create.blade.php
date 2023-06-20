@@ -253,11 +253,10 @@
                     </label>
                     <select class="advance-select-box form-control" id="dana" name="dana" required>
                         <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                        <option value="1">hi</option>
-                        {{-- @foreach ($danaNames as $danaName)
+                        @foreach ($dana as $danaName)
                         <option value="{{ $danaName->id }}">{{ $danaName->name }}
                         </option>
-                        @endforeach --}}
+                        @endforeach
                     </select>
                     @error('total_ul_in_mtr')
                     <span class="invalid-feedback" role="alert">
@@ -379,14 +378,14 @@
                 </div>
 
                 <button id="getwastagesrelated" class="btn btn-primary mt-4 add_wastage">
-                    Add
+                    Update
                 </button>
 
             </div>
             
         </div>
     </div>
-    <div class="col-md-7" style="height: 100%;">
+    {{-- <div class="col-md-7" style="height: 100%;">
         <div class="row">
             <div class="col-md-6 form-group">
 
@@ -411,12 +410,12 @@
 
             
         </div>
-    </div>
+    </div> --}}
 </div>
 
   
   <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+ {{--  <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content">
         <div class="modal-header">
@@ -458,7 +457,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> --}}
 
 
 @endsection
@@ -530,7 +529,9 @@
 <script type="text/javascript">
   $('.add_wastage').click(function(event){
     var wastage = $("#wastage").val(),
-        netweight = $("#netweight").val();
+        netweight = $("#netweight").val(),
+        danaquantity = $("#dana_quanity").val(),
+        dana = $("#dana").val();
     debugger;
     var  token = $('meta[name="csrf-token"]').attr('content');
     $.ajax({
@@ -542,6 +543,8 @@
         wastage: wastage,
         netweight: netweight,
         godam_id: '1',
+        danaquantity: danaquantity,
+        dana: dana,
       },
       success: function(response){
         $('#dana_list').append(response);

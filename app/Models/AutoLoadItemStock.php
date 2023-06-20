@@ -10,6 +10,10 @@ class AutoLoadItemStock extends Model
     use HasFactory;
     protected $table = 'autoload_items_stock';
 
+    protected $fillable = [
+        'quantity'
+    ];
+
       public function danaName()
     {
         return $this->belongsTo('App\Models\DanaName', 'dana_name_id', "id");

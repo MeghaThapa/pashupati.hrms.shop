@@ -99,6 +99,15 @@
                     </a>
                 </li>
 
+                <li class="nav-header text-bold">{{ __('TRIPAL') }}</li>
+                <li class="nav-item">
+                    <a href="{{ route('tripal.index') }}"
+                        class="nav-link {{ request()->is('admin/tripal*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>{{ __('TRIPAL') }}</p>
+                    </a>
+                </li>
+
                 <li class="nav-header text-bold">{{ __('PRODUCT') }}</li>
                 <li class="nav-item">
                     <a href="{{ route('items.index') }}"

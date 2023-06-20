@@ -68,7 +68,7 @@ class TapeEntryController extends Controller
 
         $departments = AutoLoadItemStock::with('fromGodam')
             ->whereHas('fromGodam', function ($query) {
-                $query->where('slug', '<>', 'bsw');
+                $query->where('name', '<>', 'bsw');
             })
             ->distinct('from_godam_id')
             ->get(['from_godam_id']);

@@ -30,8 +30,9 @@ class FabricController extends Controller
      public function create()
     {
         $fabricgroups = FabricGroup::get();
+         $godams = Godam::get();
        
-        return view('admin.fabric.create',compact('fabricgroups'));
+        return view('admin.fabric.create',compact('fabricgroups','godams'));
     }
 
     public function store(Request $request)
@@ -53,6 +54,7 @@ class FabricController extends Controller
             'roll_no' => '0',
             'loom_no' => '0',
             'fabricgroup_id' => $request['fabricgroup_id'],
+            'godam_id' => $request['godam_id'],
             'gross_wt' => '0',
             'net_wt' => '0',
             'meter' => $request['meter'],
@@ -79,7 +81,8 @@ class FabricController extends Controller
     {
         $fabrics = Fabric::where('slug', $slug)->first();
         $fabricgroups = FabricGroup::get();
-        return view('admin.fabric.edit', compact('fabrics','fabricgroups'));
+        $godams = Godam::get();
+        return view('admin.fabric.edit', compact('fabrics','fabricgroups','godams'));
     }
 
     /**
@@ -109,6 +112,7 @@ class FabricController extends Controller
             // 'roll_no' => $request['roll_no'],
             // 'loom_no' => $request['loom_no'],
             'fabricgroup_id' => $request['fabricgroup_id'],
+            'godam_id' => $request['godam_id'],
             // 'gross_wt' => $request['gross_wt'],
             // 'net_wt' => $request['net_wt'],
             'meter' => $request['meter'],

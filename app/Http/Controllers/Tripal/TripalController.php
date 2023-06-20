@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tripal;
 
+use App\Http\Controllers\Controller;
 use App\Models\AutoLoadItemStock;
 use App\Models\DanaName;
 use App\Models\Department;
@@ -24,21 +25,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Str;
 
-class FabricSendReceiveController extends Controller
+class TripalController extends Controller
 {
-    /************* aile baki xa **************/
-    // public function create(){
-    //     return $bill_no = getNepaliDate(date('Y-m-d'));
-    //     return view('admin.fabricSendReceive.create');
-    // }
-
-    // public function store(Request $request){
-    //     $request->validate([
-    //         "bill_no" => "required",
-    //         'billdate' => "required" 
-    //     ]);
-    // }
-    /************* aile baki xa **************/
     public function index()
     {
         $id = UnlaminatedFabric::latest()->value('id');
@@ -50,7 +38,7 @@ class FabricSendReceiveController extends Controller
         $dana = DanaName::where('status','active')->get();
         $fabrics = Fabric::get();
         // dd($fabrics);
-        return view('admin.fabricSendReceive.index',compact('department','planttype','plantname','shifts','bill_no',"dana",'fabrics'));
+        return view('admin.tripal.index',compact('department','planttype','plantname','shifts','bill_no',"dana",'fabrics'));
     }
     public function getplanttype(Request $request){
         if($request->ajax()){
@@ -72,16 +60,18 @@ class FabricSendReceiveController extends Controller
     }
 
     public function getfabrics(Request $request){
+        // dd($request);
         if($request->ajax()){
-            $fabrics = FabricStock::where('status','1')->get();
-            return response([
-                'fabrics' => $fabrics
-            ]);
+            $fabrics = Fabric::where('status','1')->get();
+            // dd($fabrics);
+            return response(['response'=>$fabrics]);
+            // return response([
+            //     'fabrics' => $fabrics
+            // ]);
         }
     }
 
     public function sendunlaminated(Request $request){
-        // dd('lol');
         if($request->ajax()){
             // return $request->data;
             $data = [];
@@ -162,9 +152,9 @@ class FabricSendReceiveController extends Controller
         //    }
         // }
     }
-    public function storelaminated(Request $request){
+    public function store(Request $request){
         try{
-            // dd('lol');
+            dd('lol');
 
             $data = [];
             parse_str($request->data,$data);
