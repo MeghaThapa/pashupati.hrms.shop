@@ -958,12 +958,13 @@
             //clear input fields
             function clearInputFields() {
                 document.getElementById('quantityInKg').value = "";
-                $('#fromGodamId').val($('#fromGodamId option:first').val()).change();
-                $('#plantTypeId').val($('#plantTypeId option:first').val()).change();
-                $('#plantNameId').val($('#plantNameId option:first').val()).change();
-                $('#shiftId').val($('#shiftId option:first').val()).change();
+               // $('#fromGodamId').val($('#fromGodamId option:first').val()).change();
+               // $('#plantTypeId').val($('#plantTypeId option:first').val()).change();
+                //$('#plantNameId').val($('#plantNameId option:first').val()).change();
+                //$('#shiftId').val($('#shiftId option:first').val()).change();
                 $('#danaGroupId').val($('#danaGroupId option:first').val()).change();
                 $('#danaName').val($('#danaName option:first').val()).change();
+                
             }
 
 
