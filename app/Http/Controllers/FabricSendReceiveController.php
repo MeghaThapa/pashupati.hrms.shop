@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
 use Str;
+use App\Models\Godam;
 
 class FabricSendReceiveController extends Controller
 {
@@ -41,10 +42,21 @@ class FabricSendReceiveController extends Controller
     /************* aile baki xa **************/
     public function index()
     {
+        $departments = [];
+        // $department = Department::where('status','active')->get();
+        $getdepartment = AutoLoadItemStock::with('fromGodam')->get();
+        foreach($getdepartment as $data){
+            $id = $data->from_godam_id;
+            if(!in_array($id,$departments)){
+                $departments[] = $id;
+            }
+        }
+
+        $department = Godam::whereIn('id',$departments)->get();
+
         $id = UnlaminatedFabric::latest()->value('id');
         $bill_no = "FSR"."-".getNepaliDate(date('Y-m-d'))."-".$id+1;
         $shifts = Shift::where('status','active')->get();
-        $department = Department::where('status','active')->get();
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = DanaName::where('status','active')->get();
@@ -55,7 +67,8 @@ class FabricSendReceiveController extends Controller
     public function getplanttype(Request $request){
         if($request->ajax()){
             $department_id =  $request->id;
-            $planttype = ProcessingStep::where('godam_id',$department_id)->get();
+
+            $planttype = ProcessingStep::where('godam_id',$department_id)->where("name","like","lam"."%")->get();
             return response([
                 'planttype' => $planttype
             ]);
@@ -134,33 +147,33 @@ class FabricSendReceiveController extends Controller
     }
 
     public function sendunlaminateddelete(Request $request,$id){
-        // if($request->ajax()){
-        //    try{
-        //         DB::beginTransaction();
-        //         $count = UnlaminatedFabric::where('id',$id)->get();
-        //         $unlaminatedStock = UnlaminatedFabricStock::where('id',$id)->get();
-        //         if(count($count) > 0 && count($unlaminatedStock) > 0 ){
-        //             UnlaminatedFabric::where('id',$id)->delete();
-        //             UnlaminatedFabricStock::where('id',$id)->delete();
-        //             DB::commit();
-        //             return response([
-        //                 'response'=> "200",
-        //             ]);
+        if($request->ajax()){
+           try{
+                DB::beginTransaction();
+                $count = UnlaminatedFabric::where('id',$id)->get();
+                $unlaminatedStock = UnlaminatedFabric::where('id',$id)->get();
+                if(count($count) > 0 && count($unlaminatedStock) > 0 ){
+                    UnlaminatedFabric::where('id',$id)->delete();
+                    // UnlaminatedFabricStock::where('id',$id)->delete();
+                    DB::commit();
+                    return response([
+                        'response'=> "200",
+                    ]);
                 
-        //         }else{
-        //             DB::rollBack();
-        //             return response([
-        //                 'response'=> "400",
-        //             ]);
-        //         }
+                }else{
+                    DB::rollBack();
+                    return response([
+                        'response'=> "400",
+                    ]);
+                }
                 
-        //    }catch(Exception $e){
-        //         DB::rollBack();
-        //         return response([
-        //             "message" => "Something went wrong!'{$e->getMessage()}'"
-        //         ]);
-        //    }
-        // }
+           }catch(Exception $e){
+                DB::rollBack();
+                return response([
+                    "message" => "Something went wrong!'{$e->getMessage()}'"
+                ]);
+           }
+        }
     }
     public function storelaminated(Request $request){
         try{
@@ -474,7 +487,7 @@ class FabricSendReceiveController extends Controller
                     }
                     else{
                         $stock->update([
-                            "quantity" => $deduction
+                            "quantity" => $deduction    
                         ]);
                     }
                 

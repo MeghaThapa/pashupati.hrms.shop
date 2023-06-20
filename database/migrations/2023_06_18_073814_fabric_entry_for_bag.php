@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('tape_entry', function (Blueprint $table) {
-            $table->enum('status',['pending','created'])->default('pending')->after('receipt_number');
+        Schema::create('bag_fabric_entry', function (Blueprint $table) {
+            $table->id();
+            $table->string("receipt_number");
+            $table->string('receipt_date');
+            $table->string('receipt_date_np');
+            $table->enum("status",["completed","pending"])->default("pending");
+            $table->timestamps();
         });
     }
 
@@ -25,8 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('tape_entry', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

@@ -409,7 +409,7 @@
                 <!--<button type="button" class="btn btn-primary">Save changes</button>-->
             </div>
         </div>
-    </div>
+      </div>
     </div>
     <!--Placement Model Popup End-->
 
@@ -895,7 +895,7 @@
                     through: through.value,
                 },
                 success: function(response) {
-                    console.log(response);
+                  //  console.log(response);
                     $('#editStoreoutModel').modal('hide');
 
                     updateTableRow(response.storeOutItem, storeOut_item_id.value);

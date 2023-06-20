@@ -66,14 +66,20 @@ class ProcessingSubcatController extends Controller
             // 'department_id'=>'required'
         ]);
 
-        // store processing step
-        $size = Processingsubcat::create([
+        // store processing subcat
+        $processingSubcat = Processingsubcat::create([
             'name' => $request->name,
             'processing_steps_id' =>$request->processing_steps_id,
             'slug' =>$request->name,
             'status' => $request->status,
             // 'department_id' => $request->department_id,
         ]);
+        if (request()->ajax()){
+            return response()->json([
+                'message' =>'Processing subcat Created Successfully',
+                'processingSubcat' => $processingSubcat,
+            ],201);
+        }
         return redirect()->route('processing-subcat.index')->withSuccess('Processing step added successfully!');
     }
 

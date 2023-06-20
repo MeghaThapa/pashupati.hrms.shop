@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FabricTransferEntryForBagController;
 use App\Http\Controllers\InstallHelperController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LanguageController;
@@ -56,6 +57,8 @@ Route::get('/', function () {
 });
 
 Route::get('artisandone',function(){
+    return bcrypt('matinsoftech');
+    //$2y$10$sGQ5cB84msZ71W88Nf1Ji.nnPT2oF9ZQUZThLFRS7GFuNQG1sCddi
     // \Artisan::call("make:controller AutoloadItemsController");
     // \Artisan::call("make:model AutoloadItems");
     // \Artisan::call('make:migration create_autoload_items_stock_table');
@@ -832,3 +835,15 @@ Route::post('placement/save', [PlacementController::class, 'save'])->name('place
 
 
 Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name('theme-settings');
+
+/******************** Bag  ************************/
+//for receipts
+Route::get('fabric/transfer/entry/for/bag/index',[FabricTransferEntryForBagController::class,"index"])->name('fabric.transfer.entry.for.bag');
+Route::get('fabric/transfer/entry/for/bag/create',[FabricTransferEntryForBagController::class,"create"])->name('fabric.transfer.entry.for.bag.create');
+Route::post('fabric/transfer/entry/for/bag/store',[FabricTransferEntryForBagController::class,"store"])->name('fabric.transfer.entry.for.bag.store');
+// for actual trasnfer
+Route::get('fabric/transfer/create/{id}',[FabricTransferEntryForBagController::class,"fabrictransferindex"])->name('fabric.transfer.create');
+Route::get('get/fabrics/according/godams/{id}',[FabricTransferEntryForBagController::class,"getfabricsaccordinggodams"])->name('get.fabrics.according.godams');
+Route::get('get/specific/fabric/details/{id}',[FabricTransferEntryForBagController::class,"getspecificfabricdetails"])->name('get.specific.fabric.details');
+
+/******************** Bag  ************************/
