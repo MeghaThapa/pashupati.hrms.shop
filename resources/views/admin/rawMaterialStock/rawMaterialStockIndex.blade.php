@@ -30,7 +30,7 @@
                 <option value="" selected disabled>{{ __('Select Godam') }}</option>
                 <option value="all">All Stocks</option>
                 @foreach ($godams as $godam)
-                    <option value="{{ $godam->id }}">{{ $godam->department }}</option>
+                    <option value="{{ $godam->id }}">{{ $godam->name }}</option>
                 @endforeach
             </select>
             <button class="btn btn-primary" style="width:200px" type="submit">Show Report</button>
