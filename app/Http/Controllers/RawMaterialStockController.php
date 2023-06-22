@@ -21,9 +21,11 @@ class RawMaterialStockController extends Controller
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
        $rawMaterialStocks= DB::table('raw_material_stocks AS stock')
+       ->join('godam','godam.id','=','stock.godam_id')
        ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
        ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
        ->select(
+              'godam.name as godamName',
               'danaGroup.name as danaGroup',
               'danaName.name as danaName',
               'stock.quantity as quantity'

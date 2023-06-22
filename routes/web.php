@@ -202,6 +202,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //RawMaterial
     //recent
     Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
+//for gana name from rawmaterial stock
+    Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
+
+    Route::get('rawMaterial/getDanaGroupDanaNameFromRawMStock/{danaGroup_id}/{godam_id}', 'RawMaterialController@getDanaGroupDanaNameFromRawMStock')->name('rawMaterial.getDanaGroupDanaNameFromRawMStock');
 
     Route::get('rawMaterial/index', 'RawMaterialController@index')->name('rawMaterial.index');
     Route::get('rawMaterial/create', 'RawMaterialController@create')->name('rawMaterial.create');

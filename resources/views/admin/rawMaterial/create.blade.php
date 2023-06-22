@@ -54,6 +54,32 @@
                                 </span>
                             @enderror
                         </div>
+                        {{-- storein type --}}
+                        <div class="col-md-3 form-group">
+                            <label for="size" class="col-form-label">{{ __('Storein Type') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                tabindex="-1" data-target="#storeinTypeModel"
+                                style="margin-top:0 !important; top:8px;float:right;">
+                                <i class="fas fa-plus"
+                                    style="display:flex;align-items: center;justify-content: center;"></i>
+                            </a>
+                            <select class="advance-select-box form-control" id="Type_id" name="Type_id" required>
+                                <option value="" selected disabled>{{ __('Select a type ') }}</option>
+                                @foreach ($storeinTypes as $storeinType)
+                                    <option
+                                        @if ($rawMaterial) {{ $storeinType->id == $rawMaterial->storein_type_id ? 'selected' : '' }} @endif
+                                        value="{{ $storeinType->id }}">{{ $storeinType->name }}</option>
+                                @endforeach
+                            </select>
+
+                            @error('Type_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                         {{-- supplier --}}
                         <div class="col-md-4 form-group">
                             <label for="size" class="col-form-label">{{ __('Party Name') }}<span
@@ -72,36 +98,13 @@
                                         value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                 @endforeach
                             </select>
-                            @error('size_id')
+                            @error('supplier_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
                         </div>
-                        {{-- storein type --}}
-                        <div class="col-md-3 form-group">
-                            <label for="size" class="col-form-label">{{ __('Storein Type') }}<span
-                                    class="required-field">*</span>
-                            </label>
-                            <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                tabindex="-1" data-target="#storeinTypeModel"
-                                style="margin-top:0 !important; top:8px;float:right;">
-                                <i class="fas fa-plus"
-                                    style="display:flex;align-items: center;justify-content: center;"></i>
-                            </a>
-                            <select class="advance-select-box form-control" id="Type_id" name="Type_id" required>
-                                <option value="" selected disabled>{{ __('Select a type ') }}</option>
-                                @foreach ($storeinTypes as $storeinType)
-                                    <option value="{{ $storeinType->id }}">{{ $storeinType->name }}</option>
-                                @endforeach
-                            </select>
 
-                            @error('size_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
                         {{-- ppno --}}
                         <div class="col-md-3 form-group">
                             <label for="products" class="col-form-label">{{ __('PP No') }}<span
@@ -143,11 +146,11 @@
                             </label>
                             <select class="advance-select-box form-control" id="fromGodam" name="from_godam_id" required>
                                 <option value="" selected disabled>{{ __('Select a godam') }}</option>
-                                @foreach ($godams as $godam)
-                                    <option value="{{ $godam->id }}">{{ $godam->name }}</option>
+                                @foreach ($fromGodams as $fromGodam)
+                                    <option value="{{ $fromGodam->id }}">{{ $fromGodam->name }}</option>
                                 @endforeach
                             </select>
-                            @error('size_id')
+                            @error('from_godam_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -159,7 +162,7 @@
                             <input type="text" step="any" min="0" class="form-control calculator"
                                 id="challanNo" data-number="1" name="challan_no" placeholder="{{ __('Challan No') }}"
                                 min="1" required>
-                            @error('size_id')
+                            @error('challan_no')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -197,7 +200,7 @@
                                         value="{{ $godam->id }}">{{ $godam->name }}</option>
                                 @endforeach
                             </select>
-                            @error('size_id')
+                            @error('to_godam_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -224,7 +227,7 @@
                                 id="remarks" data-number="1" name="remarks"
                                 @if ($rawMaterial) value="{{ $rawMaterial->remark }}" @endif
                                 placeholder="{{ __('Remarks') }}" min="1">
-                            @error('gp_no')
+                            @error('remarks')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -239,7 +242,6 @@
                                 @else
                                     Create
                                 @endif
-
                             </button>
                         </center>
                     </div>
@@ -350,7 +352,7 @@
                                 <input type="text" class="form-control @error('placement') is-invalid @enderror"
                                     id="godamName" name="godam_name" placeholder="{{ __('godam name') }}"
                                     value="{{ old('name') }}" required>
-                                @error('name')
+                                @error('godam_name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -557,12 +559,18 @@
                 let gp_no = document.getElementById('gpNo');
                 let bill_no = document.getElementById('billNo');
                 let pp_no = document.getElementById('ppNo');
+                let supplier_id = document.getElementById('supplierId');
 
                 pp_no.disabled = true;
                 bill_no.disabled = true;
                 from_godam.disabled = true;
                 challan_no.disabled = true;
                 gp_no.disabled = true;
+                supplier_id.disabled = true;
+                // pp_no.value = '';
+                // bill_no.value = '';
+                // challan_no.value = '';
+                // gp_no.value = '';
             }
 
             $('#Type_id').on('select2:select', function(e) {
@@ -576,6 +584,7 @@
                 let gp_no = document.getElementById('gpNo');
                 let pp_no = document.getElementById('ppNo');
                 let bill_no = document.getElementById('billNo');
+                let supplier_id = document.getElementById('supplierId');
 
                 if (selectedName.toLowerCase() == 'godam') {
                     from_godam.disabled = false;
@@ -583,12 +592,18 @@
                     challan_no.disabled = false;
                     gp_no.disabled = false;
                     bill_no.disabled = true;
+                    bill_no.value = '';
+                    pp_no.value = '';
+                    $('#supplierId').val($('#supplierId option:first').val())
+                        .change();
+                    supplier_id.disabled = true;
 
                     from_godam.required = true;
                     challan_no.required = true;
                     gp_no.required = true;
                     pp_no.required = false;
                     bill_no.required = false;
+                    supplier_id.required = false;
                     if (rawMaterial) {
                         $('#fromGodam').val(rawMaterial.from_godam_id).change();
                         challan_no.value = rawMaterial.challan_no;
@@ -601,12 +616,15 @@
                     gp_no.disabled = true;
                     pp_no.disabled = true;
                     bill_no.disabled = false;
+                    supplier_id.disabled = false;
 
                     from_godam.required = false;
                     challan_no.required = false;
                     gp_no.required = false;
                     pp_no.required = false;
                     bill_no.required = true;
+                    supplier_id.required = true;
+
                     if (rawMaterial) {
                         $('#fromGodam').val(rawMaterial.from_godam_id).change();
                         bill_no.value = rawMaterial.bill_no;
@@ -618,12 +636,14 @@
                     gp_no.disabled = true;
                     pp_no.disabled = false;
                     bill_no.disabled = true;
+                    supplier_id.disabled = false;
 
                     from_godam.required = false;
                     challan_no.required = false;
                     gp_no.required = false;
                     pp_no.required = true;
                     bill_no.required = false;
+                    supplier_id.required = true;
                     if (rawMaterial) {
                         $('#fromGodam').val(rawMaterial.from_godam_id).change();
                         pp_no.value = rawMaterial.pp_no;
