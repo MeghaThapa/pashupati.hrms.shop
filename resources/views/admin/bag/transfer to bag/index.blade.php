@@ -179,7 +179,7 @@
         </div>
 
         <div class="p-0 table-responsive table-custom my-3 table-hover" style="min-height:400px;max-height:500px;overflow-y:scroll">
-            <table class="table">
+            <table class="table" id="lower_table">
                 <thead>
                     <tr>
                         <th>{{ __('SN') }}</th>
@@ -190,11 +190,19 @@
                         <th>{{__('Meter')}}</th>
                         <th>{{__('Average')}}</th>
                         <th>{{__('Gram')}}</th>
-                        <th>{{__('Action')}}</th>
+                        {{-- <th>{{__('Action')}}</th> --}}
                     </tr>
                 </thead>
                 <tbody id="tbody_1">
                 </tbody>
+                <tfoot id="tfoot" class="d-none">
+                    <tr>
+                        <td>
+                            <button class="btn btn-danger discard">discard</button>
+                            <button class="btn btn-primary">Save</button>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 
@@ -214,7 +222,11 @@
 </script>
 @endif
 <script>
+    let arr = [];
     $(document).ready(function(){
+
+        calldetailstolowerfabrictable();
+
         $("#from_godam").on("change",function(e){
             let godam_id = $(this).val();
 
@@ -247,13 +259,44 @@
         $(document).on("click",".sendFabLower",function(e){
             e.preventDefault();
             let id = $(this).data("id");
-            alert(id)
+            arr = [id];
+            $.ajax({
+                url : `{{ route('send.fabric.to.lower',["id"=>":id"]) }}`.replace(":id",id),
+                method : "get",
+                beforeSend:function(){
+                    console.log("ajax fired");
+                },
+                success:function(response){
+                    sendFabToLower(response);
+                },
+                error:function(error){
+                    console.log("error:"+error);
+                }
+            });
         });
 
     });
 
+    $(document).on('click',".discard",function(e){
+        alert("clicked");
+        $.ajax({
+            url : "{{ route('discard.temporary.table') }}",
+            method : "post",
+            data:{
+                "_token" :  $('meta[name="csrf-token"]').attr('content'),
+            },
+            success:function(response){
+                location.reload();
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+    });
+
     function putfabricsonplace(data){
         $("#fabric_name").empty();
+        $("<option disbled>--Select Fabric--</option>").appendTo("#fabric_name")
         data.forEach(d => {
             let option = $("<option></option>").appendTo("#fabric_name");
             option.text(`${d.name}`);
@@ -264,6 +307,9 @@
     function putfabricsontable(data){
         $("#tbody").empty();
         data.data.forEach(d => {
+            
+            let average = (d.meter/ d.net_wt).toFixed(4);
+
             let tr = $('<tr><tr>').appendTo("#tbody");
             tr.append(`<td>#</td>`);
             tr.append(`<td>${d.name}</td>`);
@@ -271,11 +317,63 @@
             tr.append(`<td>${d.gross_wt}</td>`);
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`);
-            tr.append(`<td>${d.average}</td>`);
+            tr.append(`<td>${average}</td>`);
             tr.append(`<td>${d.gram}</td>`);
             tr.append(`<a class="btn btn-primary sendFabLower" href="${d.id}" data-id="${d.id}">send</a>`);
         });
     }
+
+    function sendFabToLower(data){
+        console.log(data);
+        if(data.status == '200'){
+            console.log(data);
+        }else{
+            alert(data);
+        }
+
+        calldetailstolowerfabrictable();
+    }
+
+    function calldetailstolowerfabrictable(){
+        $("#tbody_1").empty();
+
+        $.ajax({
+            url : "{{ route('call.details.to.lower.fabric.table') }}",
+            method : "get",
+            beforeSend: function(){
+                console.log('ajax fired');
+            },
+            success:function(response){
+                putdatatolowertable(response);
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+    }
+
+    function putdatatolowertable(data){
+        if(data.data.length > 0){
+            $("#tfoot").removeClass("d-none");
+        }
+
+        data.data.forEach(d=>{
+
+            let average = (d.meter/ d.net_wt).toFixed(4);
+
+            let tr = $("<tr></tr>").appendTo("#tbody_1");
+            tr.append(`<td>#</td>`);
+            tr.append(`<td>${d.fabric.name}</td>`);
+            tr.append(`<td>${d.roll_no}</td>`);
+            tr.append(`<td>${d.gross_wt}</td>`);
+            tr.append(`<td>${d.net_wt}</td>`);
+            tr.append(`<td>${d.meter}</td>`);
+            tr.append(`<td>${average}</td>`);
+            tr.append(`<td>${d.gram}</td>`);
+        });
+    }
+
+
 </script>
 
 @endsection
