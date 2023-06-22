@@ -71,6 +71,7 @@ class RawMaterialController extends Controller
             'toGodam.name',
             'fromGodam.name'
         )
+        ->orderBy('raw_materials.created_at','DESC')
         ->get();
 
         return DataTables::of($rawMaterial)
@@ -95,19 +96,44 @@ class RawMaterialController extends Controller
          DB::beginTransaction();
         $rawMaterial = RawMaterial::find($rawMaterial_id);
         $rawMaterialItems = RawMaterialItem::where('raw_material_id',$rawMaterial_id)->get();
+        $fromGodamCheckBool = $rawMaterial->from_godam_id?true:false;
+
         if($rawMaterialItems && count($rawMaterialItems) !=0){
             foreach($rawMaterialItems as $item){
-                $stock=RawMaterialStock::where('godam_id',$rawMaterial->to_godam_id)
+                $toGodamStock=RawMaterialStock::where('godam_id',$rawMaterial->to_godam_id)
                 ->where('dana_group_id',$item->dana_group_id)
                 ->where('dana_name_id',$item->dana_name_id)
                 ->first();
-                $stock->quantity -= $item->quantity;
-                if($stock->quantity <=0){
-                    $stock->delete();
+                if(!$toGodamStock){
+                    return response()->json([
+                        'message'=>'some items of this raw material have already been transfered '
+                    ],500);
                 }
-                else{
-                    $stock->save();
+
+                if($fromGodamCheckBool && $fromGodamCheckBool===true){
+                    $fromGodamStock=RawMaterialStock::where('godam_id',$rawMaterial->from_godam_id)
+                    ->where('dana_group_id',$item->dana_group_id)
+                    ->where('dana_name_id',$item->dana_name_id)
+                    ->first();
+                    if($fromGodamStock){
+                        $fromGodamStock->quantity += $item->quantity;
+                        $fromGodamStock->save();
+                    }
+                    else{
+                        $newGodamStock= new RawMaterialStock();
+                        $newGodamStock->godam_id =$rawMaterial->from_godam_id;
+                        $newGodamStock->dana_group_id =$item->dana_group_id;
+                        $newGodamStock->dana_name_id =$item->dana_name_id;
+                        $newGodamStock->quantity =$item->quantity;
+                        $newGodamStock->save();
+                    }
                 }
+                    $toGodamStock->quantity -= $item->quantity;
+                    if($toGodamStock->quantity <=0){
+                        $toGodamStock->delete();
+                    }else{
+                        $toGodamStock->save();
+                    }
 
             }
         }
@@ -122,42 +148,55 @@ class RawMaterialController extends Controller
 
     public function create()
     {
-
         $receipt_no = AppHelper::getRawMaterialReceiptNo();
-        $suppliers = Supplier::all();
-        $storeinTypes = StoreinType::all();
-        $godams = Godam::all();
+        $suppliers = Supplier::get(['id','name']);
+        $storeinTypes = StoreinType::get(['id','name']);
+
+        $fromGodams = DB::table('raw_material_stocks')
+        ->join('godam','godam.id','=','raw_material_stocks.godam_id')
+        ->select('godam.id','godam.name')
+        ->distinct('godam.name','godam.id')
+        ->get();
+
+        $godams = Godam::get(['id','name']);
         $rawMaterial = null;
-        return view('admin.rawMaterial.create', compact('suppliers', 'storeinTypes', 'godams', 'receipt_no', 'rawMaterial'));
+        return view('admin.rawMaterial.create', compact('suppliers','fromGodams','storeinTypes', 'godams', 'receipt_no', 'rawMaterial'));
     }
     public function edit($rawMaterial_id)
     {
-        $suppliers = Supplier::all();
-        $storeinTypes = Setupstorein::all();
-         $godams = Godam::all();
-        $rawMaterial = RawMaterial::with('storein_type', 'toGodam', 'fromGodam')->find($rawMaterial_id);
+        // $suppliers = Supplier::get(['id','name']);
+        // $storeinTypes = StoreinType::get(['id','name']);
+        // $godams = Godam::get(['id','name']);
 
-        return view('admin.rawMaterial.create', compact('suppliers', 'storeinTypes', 'godams', 'rawMaterial'));
+        // $fromGodams = DB::table('raw_material_stocks')
+        // ->join('godam','godam.id','=','raw_material_stocks.godam_id')
+        // ->select('godam.id','godam.name')
+        // ->distinct('godam.name','godam.id')
+        // ->get();
+
+        // return view('admin.rawMaterial.create', compact('suppliers','fromGodams', 'storeinTypes', 'godams', 'rawMaterial'));
+        $rawMaterial = RawMaterial::find($rawMaterial_id);
+        return redirect()->route('rawMaterial.createRawMaterialItems', ['rawMaterial_id' => $rawMaterial->id]);
     }
     public function update(Request $request, $rawMaterial_id)
     {
-        // return $request;
-        $request->validate([
-            'supplier_id' => 'required',
-            'date' => 'required|date',
-            'pp_no' => 'required',
-            'Type_id' => 'required',
-            'to_godam_id' => 'required',
-            'Receipt_no' => 'required',
-
-        ]);
         $requestStoreinTypeName = self::getTypeNameFromId($request->Type_id);
-        if ($requestStoreinTypeName == "Godam") {
-            $request->validate([
-                'from_godam_id' => 'required',
-                'challan_no' => 'required',
-                'gp_no' => 'required',
-            ]);
+       // return $requestStoreinTypeName;
+       $validator = $request->validate([
+        'supplier_id' => $requestStoreinTypeName === 'local' || $requestStoreinTypeName === 'import'  ? 'required' : '',
+        'date' => 'required|date',
+        'Type_id' => 'required',
+        'to_godam_id' => 'required',
+        'Receipt_no' => $requestStoreinTypeName === 'local' ?'required':'',
+        'from_godam_id' => $requestStoreinTypeName === 'godam' ? 'required' : '',
+        'challan_no' => $requestStoreinTypeName === 'godam' ? 'required' : '',
+        'gp_no' => $requestStoreinTypeName === 'godam' ? 'required' : '',
+        'bill_no' => $requestStoreinTypeName === 'local' ? 'required' : '',
+        'pp_no' => $requestStoreinTypeName === 'import' ? 'required' : '',
+        ]);
+       //return $requestStoreinTypeName;
+        if (strtolower($requestStoreinTypeName) === 'godam' && $request->to_godam_id === $request->from_godam_id) {
+            return back()->withErrors('From Godam and To Godam cannot be similar');
         }
         $rawMaterial = RawMaterial::find($rawMaterial_id);
         $rawMaterial->supplier_id = $request->supplier_id;
@@ -190,19 +229,21 @@ class RawMaterialController extends Controller
 
     public function store(Request $request)
     {
+
         $requestStoreinTypeName = self::getTypeNameFromId($request->Type_id);
         $validator = $request->validate([
-            'supplier_id' => 'required',
+            'supplier_id' => $requestStoreinTypeName === 'local' || $requestStoreinTypeName === 'import'  ? 'required' : '',
             'date' => 'required|date',
             'Type_id' => 'required',
             'to_godam_id' => 'required',
-            'Receipt_no' => 'required',
-            'from_godam_id' => $requestStoreinTypeName === 'Godam' ? 'required' : '',
-            'challan_no' => $requestStoreinTypeName === 'Godam' ? 'required' : '',
-            'gp_no' => $requestStoreinTypeName === 'Godam' ? 'required' : '',
+            'Receipt_no' => $requestStoreinTypeName === 'local' ?'required':'',
+            'from_godam_id' => $requestStoreinTypeName === 'godam' ? 'required' : '',
+            'challan_no' => $requestStoreinTypeName === 'godam' ? 'required' : '',
+            'gp_no' => $requestStoreinTypeName === 'godam' ? 'required' : '',
             'bill_no' => $requestStoreinTypeName === 'local' ? 'required' : '',
             'pp_no' => $requestStoreinTypeName === 'import' ? 'required' : '',
         ]);
+
        //return $requestStoreinTypeName;
         if (strtolower($requestStoreinTypeName) === 'godam' && $request->to_godam_id === $request->from_godam_id) {
             return back()->withErrors('From Godam and To Godam cannot be similar');
@@ -222,24 +263,51 @@ class RawMaterialController extends Controller
         $rawMaterial->receipt_no = $request->Receipt_no;
         $rawMaterial->status = 'pending';
         $rawMaterial->save();
+
         return redirect()->route('rawMaterial.createRawMaterialItems', ['rawMaterial_id' => $rawMaterial->id]);
     }
+
+
     public function createRawMaterialItems($rawMaterial_id)
     {
-        $storeinTypes = Setupstorein::all();
-        $godams = Department::all();
-        $danaGroups = DanaGroup::all();
-        $danaNames = DanaName::all();
-        $rawMaterial = RawMaterial::find($rawMaterial_id);
-        return view('admin.rawMaterial.createRawMaterialItem', compact('rawMaterial', 'storeinTypes', 'godams', 'danaGroups', 'danaNames'));
+        $rawMaterial = RawMaterial::with('storein_type', 'toGodam', 'fromGodam','supplier')->find($rawMaterial_id);
+
+
+        if($rawMaterial && $rawMaterial->from_godam_id ){
+            // From  Raw Material Stock
+            $danaGroups = DB::table('raw_material_stocks')
+                ->join('dana_groups','dana_groups.id','=','raw_material_stocks.dana_group_id')
+                ->where('raw_material_stocks.godam_id',$rawMaterial->from_godam_id)
+                ->select('dana_groups.name','dana_groups.id')
+                ->distinct('dana_groups.name','dana_groups.id')
+                ->get();
+            $fromRawMaterialStock=true;
+         }else{
+             $fromRawMaterialStock=false;
+            $danaGroups = DanaGroup::get(['id','name']);
+         }
+
+        return view('admin.rawMaterial.createRawMaterialItem', compact('rawMaterial', 'danaGroups','fromRawMaterialStock'));
     }
 
+        public function getStock(Request $request){
+            return DB::table('raw_material_stocks')
+            ->where('godam_id',$request->godam_id)
+            ->where('dana_group_id',$request->dana_group_id)
+            ->where('dana_name_id',$request->danaName_id)
+            ->first()->quantity;
+        }
+    public function getDanaGroupDanaNameFromRawMStock($danaGroup_id,$godam_id){
+            return DB::table('raw_material_stocks')
+            ->join('dana_names','dana_names.id','=','raw_material_stocks.dana_name_id')
+            ->where('raw_material_stocks.godam_id',$godam_id)
+            ->where('raw_material_stocks.dana_group_id',$danaGroup_id)
+            ->select('dana_names.id','dana_names.name')
+            ->get();
+    }
     public function getDanaGroupDanaName($danaGroup_id)
     {
-       // $rawMaterialStockDanaName=RawMaterialStock::with('danaName')->where('department_id',$fromGodam_id)->where('dana_group_id',$danaGroup_id)->get();
-        return DanaName::where('dana_group_id', $danaGroup_id)->get();
-       // return $rawMaterialStockDanaName;
-
+        return DanaName::where('dana_group_id', $danaGroup_id)->get(['id','name']);
     }
     /**
      * Display the specified resource.

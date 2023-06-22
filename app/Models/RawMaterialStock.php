@@ -14,12 +14,12 @@ class RawMaterialStock extends Model
         'dana_name_id',
         'quantity'
     ];
-    public static function createRawMaterialStock($rawMaterialItemId , $godam_id)
+    public static function createRawMaterialStock($rawMaterialItem , $godam_id)
     {
-        $rawMaterialItem = RawMaterialItem::find($rawMaterialItemId);
         $rawMaterialStock = RawMaterialStock::where('godam_id', $godam_id)
-        ->where('dana_name_id', $rawMaterialItem->dana_name_id)->first();
-        // return $rawMaterialStock;
+        ->where('dana_group_id',$rawMaterialItem->dana_group_id)
+        ->where('dana_name_id', $rawMaterialItem->dana_name_id)
+        ->first();
         if (!$rawMaterialStock) {
             $rawMaterialStockItem = new RawMaterialStock();
             $rawMaterialStockItem->dana_group_id  = $rawMaterialItem->dana_group_id;
@@ -53,3 +53,4 @@ class RawMaterialStock extends Model
 
 
 }
+

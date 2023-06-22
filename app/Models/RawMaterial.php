@@ -16,11 +16,15 @@ class RawMaterial extends Model
     }
     public function toGodam()
     {
-        return $this->belongsTo('App\Models\Department', 'to_godam_id', 'id');
+        return $this->belongsTo('App\Models\Godam', 'to_godam_id', 'id');
     }
     public function fromGodam()
     {
-        return $this->belongsTo('App\Models\Department', 'from_godam_id', 'id');
+        return $this->belongsTo('App\Models\Godam', 'from_godam_id', 'id');
+    }
+     public function supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier', 'supplier_id', 'id');
     }
 
 }
