@@ -8,6 +8,7 @@ use App\Models\RawMaterialStock;
 use App\Models\DanaName;
 use App\Models\DanaGroup;
 use App\Models\Department;
+use App\Models\Godam;
 use DB;
 class RawMaterialStockController extends Controller
 {
@@ -31,18 +32,23 @@ class RawMaterialStockController extends Controller
               'stock.quantity as quantity'
           )
           ->paginate(35);
-        $godams=Department::where('status','active')->get(['id','department']);
+        $godams=Godam::where('status','active')->get(['id','name']);
         return view('admin.rawMaterialStock.rawMaterialStockIndex',compact('settings','rawMaterialStocks','godams'));
 
     }
     public function filterAccGodam(Request $request){
+        //return $request;
+        $rawMaterialStocks=RawMaterialStock::where('godam_id',$request->godam_id);
+        // return $rawMaterialStocks;
         $rawMaterialStocks=DB::table('raw_material_stocks AS stock')
          ->when($request->godam_id != 'all', function ($query) use ($request) {
-                return $query->where('stock.department_id', $request->godam_id);
+                return $query->where('stock.godam_id', $request->godam_id);
             })
+            ->join('godam AS godam', 'stock.godam_id', '=', 'godam.id')
             ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
             ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
             ->select(
+                'godam.name as godamName',
               'danaGroup.name as danaGroup',
               'danaName.name as danaName',
               'stock.quantity as quantity'
@@ -50,7 +56,7 @@ class RawMaterialStockController extends Controller
           ->paginate(35);
         $helper= new AppHelper();
         $settings= $helper->getGeneralSettigns();
-        $godams=Department::where('status','active')->get(['id','department']);
+        $godams=Godam::where('status','active')->get(['id','name']);
         return view('admin.rawMaterialStock.rawMaterialStockIndex',compact('settings','rawMaterialStocks','godams'));
     }
     Public function danaGroupFilter(){
