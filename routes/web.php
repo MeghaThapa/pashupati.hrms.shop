@@ -831,5 +831,7 @@ Route::get('get/specific/fabric/details/{id}',[FabricTransferEntryForBagControll
 Route::get('send/fabric/to/lower/{id}',[FabricTransferEntryForBagController::class,"sendfabrictolower"])->name('send.fabric.to.lower');
 Route::get("call/details/to/lower/fabric/table",[FabricTransferEntryForBagController::class,"gettemporaryfabricforbag"])->name('call.details.to.lower.fabric.table');
 Route::post("discard/temporary/table",[FabricTransferEntryForBagController::class,"discard"])->name('discard.temporary.table');
+Route::post("delete/from/lower/table",[FabricTransferEntryForBagController::class,"deletefromlowertable"])->name('delete.from.lower.table');
+Route::post("final/save",[FabricTransferEntryForBagController::class,"finalsave"])->name('final.save');
 
 /******************** Bag  ************************/

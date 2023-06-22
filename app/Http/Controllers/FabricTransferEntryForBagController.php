@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BagFabricReceiveItemSent;
+use App\Models\BagFabricReceiveItemSentStock;
 use App\Models\BagTemporaryFabricReceive;
 use App\Models\Category;
 use App\Models\Fabric;
@@ -113,5 +115,73 @@ class FabricTransferEntryForBagController extends Controller
       BagTemporaryFabricReceive::truncate();
     }
   }
+
+  public function deletefromlowertable(Request $request){
+    if($request->ajax()){
+        $request->validate([
+          "id" => "required"
+        ]);
+
+        try{
+          BagTemporaryFabricReceive::where('id',$request->id)->delete();
+          return response([
+            "message" => "ok"
+          ],200);
+        }
+        catch(Exception $e){
+          DB::rollBack();
+          return response([
+            "message" => $e->getMessage()
+          ],400);
+        }
+    }
+  }
+
+  public function finalsave(Request $request){
+    if($request->ajax()){
+      $id = [];
+      $data = BagTemporaryFabricReceive::all();
+      try{
+        DB::beginTransaction();
+
+        foreach($data as $d){
+          BagFabricReceiveItemSent::create([
+            // BagTemporaryFabricReceive::create
+            "fabric_id" => $d->fabric_id,
+            "gram" => $d->gram,
+            "gross_wt" => $d->gross_wt,
+            "net_wt" => $d->net_wt,
+            "meter" => $d->meter,
+            "roll_no" => $d->roll_no,
+            "loom_no" => $d->loom_no
+          ]);
+
+          BagFabricReceiveItemSentStock::create([
+            "fabric_id" => $d->fabric_id,
+            "gram" => $d->gram,
+            "gross_wt" => $d->gross_wt,
+            "net_wt" => $d->net_wt,
+            "meter" => $d->meter,
+            "roll_no" => $d->roll_no,
+            "loom_no" => $d->loom_no
+          ]);
+
+          $id[] = $d->id;
+
+        }
+
+        BagTemporaryFabricReceive::whereIn("id",$id)->delete();
+
+        DB::commit();
+        return response([
+          "message" => "ok" 
+        ],200);
+      }
+      catch(Exception $e){
+        DB::rollback();
+        return $e->getMessage();
+      }
+    }
+  } 
 
 }
