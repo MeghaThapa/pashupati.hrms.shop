@@ -831,4 +831,13 @@ Route::get('fabric/transfer/create/{id}',[FabricTransferEntryForBagController::c
 Route::get('get/fabrics/according/godams/{id}',[FabricTransferEntryForBagController::class,"getfabricsaccordinggodams"])->name('get.fabrics.according.godams');
 Route::get('get/specific/fabric/details/{id}',[FabricTransferEntryForBagController::class,"getspecificfabricdetails"])->name('get.specific.fabric.details');
 
+
 /******************** Bag  ************************/
+=======
+// sending to lower
+Route::get('send/fabric/to/lower/{id}',[FabricTransferEntryForBagController::class,"sendfabrictolower"])->name('send.fabric.to.lower');
+Route::get("call/details/to/lower/fabric/table",[FabricTransferEntryForBagController::class,"gettemporaryfabricforbag"])->name('call.details.to.lower.fabric.table');
+Route::post("discard/temporary/table",[FabricTransferEntryForBagController::class,"discard"])->name('discard.temporary.table');
+
+/******************** Bag  ************************/
+

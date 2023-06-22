@@ -60,7 +60,7 @@
                                     <td>
                                     <div class="btn-group">
                                         @if($d->status == "pending")
-                                            <a href="{{ route('fabric.transfer.create',['id'=>$d->id]) }}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                            <a href="{{ route('fabric.transfer.create',['id'=>$d->id]) }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
                                             <a href="javascript:void(0)" class='btn btn-danger'><i class="fa fa-trash"></i></a>
                                         @elseif($d->status == "completed")
                                             <a href="javascript:void(0)" class='btn btn-secondary'><i class="fa fa-eye"></i></a>
