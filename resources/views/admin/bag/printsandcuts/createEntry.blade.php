@@ -17,7 +17,8 @@
                 <li class="breadcrumb-item">
                     <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                 </li>
-                <li class="breadcrumb-item active">{{ __('Prints and cuts') }}</li>
+                <li class="breadcrumb-item">{{ __('Prints and cuts') }}</li>
+                <li class="breadcrumb-item active">{{ __('Create Entry') }}</li>
             </ol>
         </div>
     </div>
@@ -27,24 +28,29 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                    <a href="{{ route('prints.and.cuts.create.entry') }}" class='btn btn-primary'>Create Cuts and rolls</a>
+                    <a class='go-back btn btn-primary'>Go Back</a>
             </div>
             <div class="table-custom card-body table-responsive">
-                <table class="table table-bordered table-hover ">
-                    <thead>
-                        <tr>
-                            <th>SN</th>
-                            <th>Receipt Number</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            
-                        </tr>
-                    </tbody>
-                </table>
+                <form action="{{ route('prints.and.cuts.store.entry') }}" method="post">
+                    @csrf
+                    <div class="row">
+                    <div class="col-md-6">
+                        <label for="receipt_number">Receipt Number</label>
+                        <input type="text" name="receipt_number" class="form-control" id="receipt_number">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="receipt_number">Date</label>
+                        <input type="text" name="date" class="form-control" id="date">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="receipt_number">Date Np</label>
+                        <input type="text" name="date_np" class="form-control" id="date_np">
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <button class="btn btn-primary" type="submit">Create</button>
+                    </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
