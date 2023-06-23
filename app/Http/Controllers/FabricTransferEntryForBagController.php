@@ -13,6 +13,7 @@ use App\Models\Godam;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
+use Symfony\Component\Mime\Encoder\Rfc2231Encoder;
 
 class FabricTransferEntryForBagController extends Controller
 {
@@ -46,13 +47,19 @@ class FabricTransferEntryForBagController extends Controller
   }
   /***********  For Receipts end ************/
 
+  /********* For Revewing what was sent --report *********/
+  public function viewSentItem($id){
+    return BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+  }
+    /********* For Revewing what was sent --report end*********/
+
 
   /****** For Transfer *********/
   public function fabrictransferindex($id)
   {
     $godam = Godam::where("status", "active")->get();
     $data = FabricTransferEntryForBag::where('id', $id)->first();
-    return view("admin.bag.transfer to bag.index", compact("data", "godam"));
+    return view("admin.bag.transfer to bag.index", compact("data", "godam","id"));
   }
 
   public function getfabricsaccordinggodams(Request $request, $id)
@@ -75,12 +82,16 @@ class FabricTransferEntryForBagController extends Controller
   public function sendfabrictolower(Request $request, $id)
   {
     if ($request->ajax()) {
+
+      $fabric_bag_entry_id = $request->fabric_bag_entry_id;
+      
       $fabricDetails = FabricStock::where("id", $id)->get();
       try {
         DB::beginTransaction();
 
         foreach ($fabricDetails as $data) {
           BagTemporaryFabricReceive::create([
+            "fabric_bag_entry_id" => $fabric_bag_entry_id,
             "fabric_id" => $id,
             "gram" => $data->gram,
             "gross_wt" => $data->gross_wt,
@@ -140,6 +151,7 @@ class FabricTransferEntryForBagController extends Controller
   public function finalsave(Request $request){
     if($request->ajax()){
       $id = [];
+      $fabric_entry_id = $request->fabric_id;
       $data = BagTemporaryFabricReceive::all();
       try{
         DB::beginTransaction();
@@ -147,6 +159,7 @@ class FabricTransferEntryForBagController extends Controller
         foreach($data as $d){
           BagFabricReceiveItemSent::create([
             // BagTemporaryFabricReceive::create
+            "fabric_bag_entry_id" => $fabric_entry_id,
             "fabric_id" => $d->fabric_id,
             "gram" => $d->gram,
             "gross_wt" => $d->gross_wt,
@@ -157,6 +170,7 @@ class FabricTransferEntryForBagController extends Controller
           ]);
 
           BagFabricReceiveItemSentStock::create([
+            "fabric_bag_entry_id" => $fabric_entry_id,
             "fabric_id" => $d->fabric_id,
             "gram" => $d->gram,
             "gross_wt" => $d->gross_wt,
@@ -165,6 +179,8 @@ class FabricTransferEntryForBagController extends Controller
             "roll_no" => $d->roll_no,
             "loom_no" => $d->loom_no
           ]);
+
+          $this->updateFabricTransferEntryForBag($fabric_entry_id);
 
           $id[] = $d->id;
 
@@ -183,5 +199,11 @@ class FabricTransferEntryForBagController extends Controller
       }
     }
   } 
+
+  public function updateFabricTransferEntryForBag($id){
+    FabricTransferEntryForBag::where('id',$id)->update([
+      "status" => "completed"
+    ]);
+  }
 
 }

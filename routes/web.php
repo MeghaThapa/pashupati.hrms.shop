@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FabricTransferEntryForBagController;
 use App\Http\Controllers\InstallHelperController;
+use App\Http\Controllers\PrintsAndCutsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ThemeSettingsContoller;
@@ -818,20 +819,26 @@ Route::post('placement/save', [PlacementController::class, 'save'])->name('place
 Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name('theme-settings');
 
 /******************** Bag  ************************/
-//for receipts
-Route::get('fabric/transfer/entry/for/bag/index',[FabricTransferEntryForBagController::class,"index"])->name('fabric.transfer.entry.for.bag');
-Route::get('fabric/transfer/entry/for/bag/create',[FabricTransferEntryForBagController::class,"create"])->name('fabric.transfer.entry.for.bag.create');
-Route::post('fabric/transfer/entry/for/bag/store',[FabricTransferEntryForBagController::class,"store"])->name('fabric.transfer.entry.for.bag.store');
-// for actual trasnfer
-Route::get('fabric/transfer/create/{id}',[FabricTransferEntryForBagController::class,"fabrictransferindex"])->name('fabric.transfer.create');
-Route::get('get/fabrics/according/godams/{id}',[FabricTransferEntryForBagController::class,"getfabricsaccordinggodams"])->name('get.fabrics.according.godams');
-Route::get('get/specific/fabric/details/{id}',[FabricTransferEntryForBagController::class,"getspecificfabricdetails"])->name('get.specific.fabric.details');
+        //for receipts
+    Route::get('fabric/transfer/entry/for/bag/index',[FabricTransferEntryForBagController::class,"index"])->name('fabric.transfer.entry.for.bag');
+    Route::get('fabric/transfer/entry/for/bag/create',[FabricTransferEntryForBagController::class,"create"])->name('fabric.transfer.entry.for.bag.create');
+    Route::post('fabric/transfer/entry/for/bag/store',[FabricTransferEntryForBagController::class,"store"])->name('fabric.transfer.entry.for.bag.store');
+    
+        // for actual trasnfer
+    Route::get('fabric/transfer/create/{id}',[FabricTransferEntryForBagController::class,"fabrictransferindex"])->name('fabric.transfer.create');
+    Route::get('get/fabrics/according/godams/{id}',[FabricTransferEntryForBagController::class,"getfabricsaccordinggodams"])->name('get.fabrics.according.godams');
+    Route::get('get/specific/fabric/details/{id}',[FabricTransferEntryForBagController::class,"getspecificfabricdetails"])->name('get.specific.fabric.details');
 
-// sending to lower
-Route::get('send/fabric/to/lower/{id}',[FabricTransferEntryForBagController::class,"sendfabrictolower"])->name('send.fabric.to.lower');
-Route::get("call/details/to/lower/fabric/table",[FabricTransferEntryForBagController::class,"gettemporaryfabricforbag"])->name('call.details.to.lower.fabric.table');
-Route::post("discard/temporary/table",[FabricTransferEntryForBagController::class,"discard"])->name('discard.temporary.table');
-Route::post("delete/from/lower/table",[FabricTransferEntryForBagController::class,"deletefromlowertable"])->name('delete.from.lower.table');
-Route::post("final/save",[FabricTransferEntryForBagController::class,"finalsave"])->name('final.save');
+        // sending to lower
+    Route::get('send/fabric/to/lower/{id}',[FabricTransferEntryForBagController::class,"sendfabrictolower"])->name('send.fabric.to.lower');
+    Route::get("call/details/to/lower/fabric/table",[FabricTransferEntryForBagController::class,"gettemporaryfabricforbag"])->name('call.details.to.lower.fabric.table');
+    Route::post("discard/temporary/table",[FabricTransferEntryForBagController::class,"discard"])->name('discard.temporary.table');
+    Route::post("delete/from/lower/table",[FabricTransferEntryForBagController::class,"deletefromlowertable"])->name('delete.from.lower.table');
+    Route::post("final/save",[FabricTransferEntryForBagController::class,"finalsave"])->name('final.save');
+        //for report what was sent
+    Route::get("view/sent/fabric/bag/{id}",[FabricTransferEntryForBagController::class,"viewSentItem"])->name('view.sent.fabric.bag');
 
-/******************** Bag  ************************/
+        //prints and cuts starts
+    Route::get("prints/and/cuts/index",[PrintsAndCutsController::class,"index"])->name('prints.and.cuts.index');
+
+/******************** Bag  End ************************/

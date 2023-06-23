@@ -148,7 +148,7 @@
                     <div class="form-group">
                         <label for="Fabric Name">Roll No</label>
                         <input type="text" class="form-control" name="roll_no" id="roll_no" />
-                        <input type="text" id="entry_id" value="{{ $data->id }}" data-id='{{ $data->id }}'>
+                        <input type="hidden" id="entry_id" value="{{ $id }}" data-id='{{ $id }}'>
                     </div>
                 </div>
                 {{-- <div class="col-md-2">
@@ -258,9 +258,13 @@
         $(document).on("click",".sendFabLower",function(e){
             e.preventDefault();
             let id = $(this).data("id");
+            let fabric_bag_entry_id = $("#entry_id").val();
             $.ajax({
                 url : `{{ route('send.fabric.to.lower',["id"=>":id"]) }}`.replace(":id",id),
                 method : "get",
+                data : {
+                    "fabric_bag_entry_id" : fabric_bag_entry_id
+                },
                 beforeSend:function(){
                     console.log("ajax fired");
                 },
@@ -402,11 +406,15 @@
 
     $(document).on("click",".finalsave",function(e){
         e.preventDefault();
+
+        let fabric_entry_id = $("#entry_id").val();
+
         $.ajax({
             url : "{{ route('final.save') }}",
             method : "post",
             data : {
                 "_token" : $('meta[name="csrf-token"]').attr('content'),
+                "fabric_id" : fabric_entry_id
             },
             beforeSend:function(){
                 console.log("ajax fired");
@@ -414,7 +422,10 @@
             success:function(response){
                 console.log(response);
                 if(response.message == "ok"){
-                    location.reload();
+                    location.href = "{{ route('fabric.transfer.entry.for.bag')}}";
+                }
+                else{
+                    alert("Something went wrong! check console");
                 }
             },
             error:function(error){

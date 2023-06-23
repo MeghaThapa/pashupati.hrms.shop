@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('bag_temporary_fabric_receive', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger("fabric_bag_entry_id");
+            $table-> foreign("fabric_bag_entry_id")->references("id")->on('bag_fabric_entry')->onDelete('cascade');
             $table->unsignedBigInteger('fabric_id');
             $table->foreign("fabric_id")->references("id")->on('fabrics')->onDelete("cascade");
             $table->string('gram');
