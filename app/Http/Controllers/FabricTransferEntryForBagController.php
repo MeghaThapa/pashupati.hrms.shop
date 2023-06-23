@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BagFabricReceiveItemSent;
+use App\Models\BagFabricReceiveItemSentStock;
 use App\Models\BagTemporaryFabricReceive;
 use App\Models\Category;
 use App\Models\Fabric;
@@ -11,6 +13,7 @@ use App\Models\Godam;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
+use Symfony\Component\Mime\Encoder\Rfc2231Encoder;
 
 class FabricTransferEntryForBagController extends Controller
 {
@@ -44,13 +47,19 @@ class FabricTransferEntryForBagController extends Controller
   }
   /***********  For Receipts end ************/
 
+  /********* For Revewing what was sent --report *********/
+  public function viewSentItem($id){
+    return BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+  }
+    /********* For Revewing what was sent --report end*********/
+
 
   /****** For Transfer *********/
   public function fabrictransferindex($id)
   {
     $godam = Godam::where("status", "active")->get();
     $data = FabricTransferEntryForBag::where('id', $id)->first();
-    return view("admin.bag.transfer to bag.index", compact("data", "godam"));
+    return view("admin.bag.transfer to bag.index", compact("data", "godam","id"));
   }
 
   public function getfabricsaccordinggodams(Request $request, $id)
@@ -73,12 +82,16 @@ class FabricTransferEntryForBagController extends Controller
   public function sendfabrictolower(Request $request, $id)
   {
     if ($request->ajax()) {
+
+      $fabric_bag_entry_id = $request->fabric_bag_entry_id;
+      
       $fabricDetails = FabricStock::where("id", $id)->get();
       try {
         DB::beginTransaction();
 
         foreach ($fabricDetails as $data) {
           BagTemporaryFabricReceive::create([
+            "fabric_bag_entry_id" => $fabric_bag_entry_id,
             "fabric_id" => $id,
             "gram" => $data->gram,
             "gross_wt" => $data->gross_wt,
@@ -112,6 +125,85 @@ class FabricTransferEntryForBagController extends Controller
     if($request->ajax()){
       BagTemporaryFabricReceive::truncate();
     }
+  }
+
+  public function deletefromlowertable(Request $request){
+    if($request->ajax()){
+        $request->validate([
+          "id" => "required"
+        ]);
+
+        try{
+          BagTemporaryFabricReceive::where('id',$request->id)->delete();
+          return response([
+            "message" => "ok"
+          ],200);
+        }
+        catch(Exception $e){
+          DB::rollBack();
+          return response([
+            "message" => $e->getMessage()
+          ],400);
+        }
+    }
+  }
+
+  public function finalsave(Request $request){
+    if($request->ajax()){
+      $id = [];
+      $fabric_entry_id = $request->fabric_id;
+      $data = BagTemporaryFabricReceive::all();
+      try{
+        DB::beginTransaction();
+
+        foreach($data as $d){
+          BagFabricReceiveItemSent::create([
+            // BagTemporaryFabricReceive::create
+            "fabric_bag_entry_id" => $fabric_entry_id,
+            "fabric_id" => $d->fabric_id,
+            "gram" => $d->gram,
+            "gross_wt" => $d->gross_wt,
+            "net_wt" => $d->net_wt,
+            "meter" => $d->meter,
+            "roll_no" => $d->roll_no,
+            "loom_no" => $d->loom_no
+          ]);
+
+          BagFabricReceiveItemSentStock::create([
+            "fabric_bag_entry_id" => $fabric_entry_id,
+            "fabric_id" => $d->fabric_id,
+            "gram" => $d->gram,
+            "gross_wt" => $d->gross_wt,
+            "net_wt" => $d->net_wt,
+            "meter" => $d->meter,
+            "roll_no" => $d->roll_no,
+            "loom_no" => $d->loom_no
+          ]);
+
+          $this->updateFabricTransferEntryForBag($fabric_entry_id);
+
+          $id[] = $d->id;
+
+        }
+
+        BagTemporaryFabricReceive::whereIn("id",$id)->delete();
+
+        DB::commit();
+        return response([
+          "message" => "ok" 
+        ],200);
+      }
+      catch(Exception $e){
+        DB::rollback();
+        return $e->getMessage();
+      }
+    }
+  } 
+
+  public function updateFabricTransferEntryForBag($id){
+    FabricTransferEntryForBag::where('id',$id)->update([
+      "status" => "completed"
+    ]);
   }
 
 }

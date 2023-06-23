@@ -58,12 +58,15 @@
                                     <td>{{ $d->receipt_date }}</td>
                                     <td>{{ $d->receipt_date_np}}</td>
                                     <td>
+                                        @if($d->status == "completed")
+                                            <span class="badge badge-success">Completed</span>
+                                        @endif
                                     <div class="btn-group">
                                         @if($d->status == "pending")
                                             <a href="{{ route('fabric.transfer.create',['id'=>$d->id]) }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
                                             <a href="javascript:void(0)" class='btn btn-danger'><i class="fa fa-trash"></i></a>
                                         @elseif($d->status == "completed")
-                                            <a href="javascript:void(0)" class='btn btn-secondary'><i class="fa fa-eye"></i></a>
+                                            <a href="{{ route('view.sent.fabric.bag',['id'=> $d->id]) }}" class='btn btn-secondary'><i class="fa fa-eye"></i></a>
                                         @endif
                                     </div>
                                     </td>

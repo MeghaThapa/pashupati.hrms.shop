@@ -257,10 +257,16 @@
                             <p>{{ __('Entry For Fabric Tnasfer For Bag') }}</p>
                         </a>
                     </li>
-                    <!-------------  Bag --------------------------->
-                
 
-                <li class="nav-header text-bold">{{ __('REPORT') }}</li>
+                    <li class="nav-item">
+                        <a href="{{ route('prints.and.cuts.index') }}"
+                            class="nav-link {{ request()->routeIs('prints.and.cuts.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('Prints and Cuts(Rolls)') }}</p>
+                        </a>
+                    </li>
+                    <!-------------  Bag --------------------------->
+                    <li class="nav-header text-bold">{{ __('Purchase Reports') }}</li>
                 <li class="nav-item">
                     <a href="{{ route('purchase.report') }}"
                         class="nav-link {{ request()->is('admin/purchase-report') ? 'active' : '' }}">
