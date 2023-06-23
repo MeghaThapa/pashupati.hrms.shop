@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('raw_materials', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('supplier_id')->index();
+            $table->unsignedBigInteger('supplier_id')->nullable()->index();
             $table->foreign('supplier_id')->references('id')->on('suppliers');
 
             $table->unsignedBigInteger('storein_type_id')->index();
             $table->foreign('storein_type_id')->references('id')->on('storein_types');
-            
+
 
             $table->unsignedBigInteger('to_godam_id')->index();
             $table->foreign('to_godam_id')->references('id')->on('godam');
@@ -40,7 +40,7 @@ return new class extends Migration
 
             $table->enum('status', ['pending', 'complete', 'cancel']);
 
-            $table->string('remark')->nullble();
+            $table->string('remark')->nullable();
             $table->timestamps();
         });
     }

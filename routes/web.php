@@ -203,6 +203,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //RawMaterial
     //recent
     Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
+//for gana name from rawmaterial stock
+    Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
+
+    Route::get('rawMaterial/getDanaGroupDanaNameFromRawMStock/{danaGroup_id}/{godam_id}', 'RawMaterialController@getDanaGroupDanaNameFromRawMStock')->name('rawMaterial.getDanaGroupDanaNameFromRawMStock');
 
     Route::get('rawMaterial/index', 'RawMaterialController@index')->name('rawMaterial.index');
     Route::get('rawMaterial/create', 'RawMaterialController@create')->name('rawMaterial.create');
@@ -819,6 +823,7 @@ Route::post('placement/save', [PlacementController::class, 'save'])->name('place
 Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name('theme-settings');
 
 /******************** Bag  ************************/
+
         //for receipts
     Route::get('fabric/transfer/entry/for/bag/index',[FabricTransferEntryForBagController::class,"index"])->name('fabric.transfer.entry.for.bag');
     Route::get('fabric/transfer/entry/for/bag/create',[FabricTransferEntryForBagController::class,"create"])->name('fabric.transfer.entry.for.bag.create');
@@ -842,3 +847,6 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
     Route::get("prints/and/cuts/index",[PrintsAndCutsController::class,"index"])->name('prints.and.cuts.index');
 
 /******************** Bag  End ************************/
+
+
+

@@ -24,6 +24,7 @@
             <div class="col-md-12">
                 @include('admin.includes.alert')
             </div>
+            <div id="RawMaterialError" class="alert alert-danger" hidden></div>
             <div class="row">
                 <div class="col-lg-3 col-md-5 col-6 mb-2">
                     <form action="{{ route('storein.index') }}" method="GET" role="search">
@@ -150,13 +151,24 @@
                                         location.reload();
                                     },
                                     error: function(xhr) {
-                                        console.log(xhr.responseJSON.message);
+                                        setMessage('RawMaterialError', xhr.responseJSON.message)
+
+                                        //console.log(xhr.responseJSON.message);
                                     }
                                 })
 
                             }
                         })
                     });
+
+                    function setMessage(element_id, message) {
+                        let errorContainer = document.getElementById(element_id);
+                        errorContainer.hidden = false;
+                        errorContainer.innerHTML = message;
+                        setTimeout(function() {
+                            errorContainer.hidden = true;
+                        }, 2000);
+                    }
 
                 });
             </script>

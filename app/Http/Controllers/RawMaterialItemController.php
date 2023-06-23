@@ -14,7 +14,7 @@ class RawMaterialItemController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
+            $request->validate([
             'rawMaterial_id' => 'required',
             'lorry_no' => 'required',
             'dana_group_id' => 'required',
@@ -32,9 +32,28 @@ class RawMaterialItemController extends Controller
             $rawMaterialItem->quantity = $request->quantity_in_kg;
             $rawMaterialItem->save();
 
-            $godam_id =RawMaterial::find($request->rawMaterial_id)->to_godam_id;
-            RawMaterialStock::createRawMaterialStock($rawMaterialItem->id,$godam_id);
 
+            $rawMaterial =RawMaterial::find($request->rawMaterial_id);
+
+            if($request && json_decode($request->fromStockBool) === true){
+                $rawMaterialStock= RawMaterialStock::where('godam_id', $rawMaterial->from_godam_id)
+                ->where('dana_name_id', $rawMaterialItem->dana_name_id)
+                ->where('dana_group_id',$rawMaterialItem->dana_group_id)
+                ->first();
+                if($rawMaterialStock->quantity- $request->quantity_in_kg !=0){
+                     return response()->json([
+                        'message'=>'you should transfer entire raw material items to anothe godam'
+                    ],500);
+                }
+                $rawMaterialStock->quantity =   $rawMaterialStock->quantity - $rawMaterialItem->quantity;
+                if($rawMaterialStock->quantity <=0){
+                    $rawMaterialStock->delete();
+                }
+                else{
+                    $rawMaterialStock->save();
+                }
+            }
+            RawMaterialStock::createRawMaterialStock($rawMaterialItem,$rawMaterial->to_godam_id);
             $rawMaterialItem = RawMaterialItem::with('danaName', 'danaGroup')->find($rawMaterialItem->id);
             DB::commit();
             return response()->json([
@@ -46,7 +65,7 @@ class RawMaterialItemController extends Controller
             return response()->json($e, 400);
         }
     }
-    public function delete($rawMaterialItem_id)
+    public function delete(Request $request,$rawMaterialItem_id)
     {
         if (!$rawMaterialItem_id) {
             return response()->json(
@@ -56,23 +75,53 @@ class RawMaterialItemController extends Controller
                 400
             );
         }
+        try {
+            DB::beginTransaction();
 
         $rawMaterialItem = RawMaterialItem::find($rawMaterialItem_id);
-        $rawMaterialStock = RawMaterialStock::where('dana_name_id', $rawMaterialItem->dana_name_id)->first();
-        $rawMaterialStock->quantity -= $rawMaterialItem->quantity;
+        $rawMaterial=RawMaterial::find($request->rawMaterial_id);
 
+        $rawMaterialStock = RawMaterialStock::where('godam_id', $rawMaterial->to_godam_id)
+        ->where('dana_group_id',$rawMaterialItem->dana_group_id)
+        ->where('dana_name_id', $rawMaterialItem->dana_name_id)
+        ->first();
+        $rawMaterialStock->quantity -= $rawMaterialItem->quantity;
         if ($rawMaterialStock->quantity == 0) {
             $rawMaterialStock->delete();
         } else {
             $rawMaterialStock->save();
         }
+
+        if(json_decode($request->fromRawMaterialStock)===true){
+            $rawMaterialStockFrom =RawMaterialStock::where('godam_id', $rawMaterial->from_godam_id)
+            ->where('dana_group_id',$rawMaterialItem->dana_group_id)
+            ->where('dana_name_id', $rawMaterialItem->dana_name_id)
+            ->first();
+            if($rawMaterialStockFrom &&$rawMaterialStockFrom !=null){
+                $rawMaterialStockFrom->quantity += $rawMaterialItem->quantity;
+                $rawMaterialStockFrom->save();
+            }
+            else{
+                $newRawMaterialStock = new RawMaterialStock();
+                $newRawMaterialStock->godam_id = $rawMaterial->from_godam_id;
+                $newRawMaterialStock->dana_group_id =$rawMaterialItem->dana_group_id;
+                $newRawMaterialStock->dana_name_id = $rawMaterialItem->dana_name_id;
+                $newRawMaterialStock->quantity =$rawMaterialItem->quantity;
+                $newRawMaterialStock->save();
+            }
+        }
         $rawMaterialItem->delete();
+        DB::commit();
         return response()->json(
             [
                 'message' => 'Raw Material Item and its stock deleted successfully'
             ],
             200
         );
+    } catch (Exception $e) {
+        DB::rollback();
+        return response()->json($e, 400);
+    }
     }
     public function update(Request $request)
     {

@@ -59,11 +59,7 @@
             padding-top: 0px !important;
         }
 
-
-
-        /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        } */
+        */
     </style>
 @endsection
 @section('content')
@@ -72,24 +68,38 @@
     </div>
     <div id="error_msg" class="alert alert-danger mt-2" hidden>
     </div>
+    <div id="RawMaterialItemsError" class="alert alert-danger" hidden></div>
+    <div style="display: flex; flex-direction:column;margin:10px;">
+        <div style="display: flex; justify-content:space-between;">
+            <p>Date : {{ $rawMaterial->date }}</p>
+            <p>Storein Type: {{ $rawMaterial->storein_type ? $rawMaterial->storein_type->name : 'EMPTY' }}</p>
+            <p>Supplier : {{ $rawMaterial->supplier ? $rawMaterial->supplier->name : 'EMPTY' }}</p>
+            <p>From Godam : {{ $rawMaterial->fromGodam ? $rawMaterial->fromGodam->name : 'EMPTY' }}</p>
+            <p>To Godam : {{ $rawMaterial->toGodam ? $rawMaterial->toGodam->name : 'EMPTY' }}</p>
+
+        </div>
+        <div style="display: flex; justify-content:space-between;">
+            <p>GP No : {{ $rawMaterial->gp_no ?? 'EMPTY' }}</p>
+            <p>Bill : {{ $rawMaterial->bill_no ?? 'EMPTY' }}</p>
+            <p>PP No : {{ $rawMaterial->pp_no ?? 'EMPTY' }}</p>
+            <p>Challan No : {{ $rawMaterial->challan_no ?? 'EMPTY' }}</p>
+            <p>Receipt No : {{ $rawMaterial->receipt_no }}</p>
+
+        </div>
+    </div>
 
     <div class="card-body p-0 m-0">
         <form id="createRawMaterial">
             @csrf
-
             <div class="row">
-                <div class="col-md-3 form-group">
+                <div class="col-md-2 form-group">
                     <input type="text" step="any" min="0" class="form-control calculator" id="rawMaterialId"
-                        data-number="1" name="rawMaterial_id" value="{{ $rawMaterial->id }}" min="1" required hidden>
+                        data-number="1" name="rawMaterial_id" value="{{ $rawMaterial->id }}" min="1" required
+                        hidden>
                     <label for="size" class="col-form-label">{{ __('Lorry No') }}<span class="required-field">*</span>
                     </label>
                     <input type="text" step="any" min="0" class="form-control calculator" id="lorryNo"
-                        data-number="1" name="lorry_no" placeholder="{{ __('Remarks') }}" min="1" required>
-                    @error('size_id')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
+                        data-number="1" name="lorry_no" placeholder="{{ __('Lorry No') }}" min="1" required>
                 </div>
 
                 <div class="col-md-3 form-group">
@@ -106,12 +116,6 @@
                             </option>
                         @endforeach
                     </select>
-
-                    @error('Receipt_no')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
                 </div>
                 <div class="col-md-3 form-group">
                     <label for="size" class="col-form-label">{{ __('Dana Name') }}
@@ -120,31 +124,24 @@
                         data-target="#addDanaNameModel" style="margin-top:0 !important; top:0;float:right;">
                         <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
                     </a>
-                    {{-- <input type="text" step="any" min="0" class="form-control calculator" id="remarks"
-                    data-number="1" name="remarks" placeholder="{{ __('Remarks') }}" min="1" required> --}}
+
                     <select class="advance-select-box form-control" id="danaName" name="dana_name_id" required>
                         <option value="" selected disabled>{{ __('Select dana Name') }}</option>
-                        @foreach ($danaNames as $danaName)
-                            <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                            </option>
-                        @endforeach
                     </select>
-                    @error('gp_no')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
                 </div>
+                @if ($rawMaterial && $rawMaterial->from_godam_id)
+                    <div class="col-md-2 form-group">
+                        <label for="size" class="col-form-label">{{ __('Stock Qty') }}
+                        </label>
+                        <input type="text" step="any" min="0" class="form-control calculator" id="stockQty"
+                            data-number="1" name="stock_qty" placeholder="{{ __('Stock QTY') }}" min="1" readonly>
+                    </div>
+                @endif
                 <div class="col-md-2 form-group">
                     <label for="size" class="col-form-label">{{ __('Qty in Kg') }}
                     </label>
                     <input type="text" step="any" min="0" class="form-control calculator" id="quantityInKg"
                         data-number="1" name="quantity_in_kg" placeholder="{{ __('Remarks') }}" min="1" required>
-                    @error('gp_no')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
                 </div>
                 <div>
                     <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
@@ -156,109 +153,6 @@
         </form>
     </div>
     {{-- <button class="btn btn-primary" data-toggle="modal" data-target="#tryModel">Open Modal</button> --}}
-
-    <!-- Modal -->
-    <div class="modal fade" id="editRawMaterialItemModel" tabindex="-1" role="dialog" aria-labelledby="tryModelLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tryModelLabel">Modal Title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="editRawMaterialItemModelUpdate">
-                    <div class="modal-body">
-                        @csrf
-                        <div class="card-body">
-                            <div class="row">
-                                {{-- recent --}}
-                                <div class="col-md-12 form-group">
-                                    <label for="lorryNo" class="col-form-label">{{ __('Lorry Number') }}
-                                    </label>
-                                    <input type="text" step="any" min="0" class="form-control calculator"
-                                        id="lorryNoModel" data-number="1" name="lorry_no_model"
-                                        placeholder="{{ __('Lorry No') }}" min="1" required>
-                                    @error('lorry_no')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-12 form-group">
-                                    <input type="text" step="any" min="0" class="form-control calculator"
-                                        id="rawMaterialItemIdModel" data-number="1" name="rawMaterial_item_id_model"
-                                        min="1" required hidden>
-                                    <label for="size" class="col-form-label">{{ __('Dana Group') }}
-                                    </label>
-                                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                        data-target="#addDanaGroupModel"
-                                        style="margin-top:0 !important; top:0;float:right;">
-                                        <i class="fas fa-plus"
-                                            style="display:flex;align-items: center;justify-content: center;"></i>
-                                    </a>
-                                    <select class="advance-select-box form-control" id="danaGroupIdModel"
-                                        name="dana_group_id_model" required>
-                                        <option value="" selected disabled>{{ __('Select dana Group') }}</option>
-                                        @foreach ($danaGroups as $danaGroup)
-                                            <option value="{{ $danaGroup->id }}">{{ $danaGroup->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    @error('Receipt_no')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-12 form-group">
-                                    <label for="size" class="col-form-label">{{ __('Dana Name') }}
-                                    </label>
-                                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                                        data-target="#addDanaNameModel"
-                                        style="margin-top:0 !important; top:0;float:right;">
-                                        <i class="fas fa-plus"
-                                            style="display:flex;align-items: center;justify-content: center;"></i>
-                                    </a>
-                                    {{-- <input type="text" step="any" min="0" class="form-control calculator" id="remarks"
-                                    data-number="1" name="remarks" placeholder="{{ __('Remarks') }}" min="1" required> --}}
-                                    <select class="advance-select-box form-control" id="danaNameModel"
-                                        name="dana_name_id_model" required>
-                                        <option value="" selected disabled>{{ __('Select dana Name') }}</option>
-                                    </select>
-                                    @error('gp_no')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-12 form-group">
-                                    <label for="size" class="col-form-label">{{ __('Qty in Kg') }}
-                                    </label>
-                                    <input type="text" step="any" min="0" class="form-control calculator"
-                                        id="quantityInKgModel" data-number="1" name="quantity_in_kg_model"
-                                        placeholder="{{ __('Remarks') }}" min="1" required>
-                                    @error('gp_no')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <div class="row">
         <div class="Ajaxdata col-md-12">
@@ -286,6 +180,11 @@
             </div>
 
         </div>
+    </div>
+    <div class="row">
+        <a href="{{ route('rawMaterial.index') }}">
+            <button class="btn btn-primary">Back</button>
+        </a>
     </div>
     <!--Dana Name popup-->
     <div class="modal fade" id="addDanaNameModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
@@ -515,56 +414,23 @@
 
                 var html = "";
 
-                    html = "<tr  id=editRow-" + res.id + "><td>" + sn +
-                        "</td><td class='rowDanaGroupName'>" + res.dana_group.name +
-                        "</td><td class='rowDanaName'>" + res.dana_name.name +
-                        "</td><td class='rowQuantity'>" + res.quantity +
-                        "</td><td class='rowLorryNo'>" + res.lorry_no +
-                        "</td><td>"+
-                        "<button class='btn btn-danger dltRawMaterialItem' data-id=" +
-                        res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
+                html = "<tr  id=editRow-" + res.id + "><td>" + sn +
+                    "</td><td class='rowDanaGroupName'>" + res.dana_group.name +
+                    "</td><td class='rowDanaName'>" + res.dana_name.name +
+                    "</td><td class='rowQuantity'>" + res.quantity +
+                    "</td><td class='rowLorryNo'>" + res.lorry_no +
+                    "</td><td>" +
+                    "<button class='btn btn-danger dltRawMaterialItem' data-id=" +
+                    res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
 
                 document.getElementById('rawMaterialItemTbody').innerHTML += html;
                 sn++;
                 // Clearing the input fields
                 clearInputFields();
-                editEventBtn();
-                deleteEventBtn()
+                deleteEventBtn();
             }
 
-            //update Edited rawMaterial Item
-            document.getElementById('editRawMaterialItemModelUpdate').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const form = event.target;
-                let danaGroup_Name_id = form.elements['dana_group_id_model'].value;
-                let dana_name_id = form.elements['dana_name_id_model'].value;
-                let quantity = form.elements['quantity_in_kg_model'].value;
-                let lorryNumber = form.elements['lorry_no_model'].value;
-                let raw_material_item_id = form.elements['rawMaterial_item_id_model'].value;
 
-                $.ajax({
-                    url: "{{ route('rawMaterialItem.update') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        danaGroup_Name_id: danaGroup_Name_id,
-                        dana_name_id: dana_name_id,
-                        quantity: quantity,
-                        lorryNumber: lorryNumber,
-                        raw_material_item_id: raw_material_item_id,
-
-                        // Goes Into Request
-                    },
-                    success: function(response) {
-                        // console.log('megha', response);
-                        $('#editRawMaterialItemModel').modal('hide');
-                        // Updating changes into table row
-                        updateTableRow(response, raw_material_item_id);
-                        // after data is updated calculation of total qty
-                        calculateTotalQuantity();
-                    },
-                });
-            });
             // Updating Table tr td value when something changed or updated
             function updateTableRow(response, raw_material_item_id) {
                 // triggering table tr by storeinItem_id
@@ -582,6 +448,8 @@
 
             function deleteEventBtn() {
                 let dltButtons = document.getElementsByClassName('dltRawMaterialItem');
+                let fromRawMaterialStock = JSON.parse(`{!! json_encode($fromRawMaterialStock) !!}`);
+                let rawMaterial = JSON.parse(`{!! json_encode($rawMaterial) !!}`);
                 for (var i = 0; i < dltButtons.length; i++) {
                     dltButtons[i].addEventListener('click', function(event) {
                         let RawMaterialItemId = this.getAttribute('data-id');
@@ -601,13 +469,13 @@
                                     data: {
                                         "_method": "DELETE",
                                         "_token": "{{ csrf_token() }}",
+                                        'fromRawMaterialStock': fromRawMaterialStock,
+                                        "rawMaterial_id": rawMaterial.id
                                     },
                                     success: function(result) {
-
+                                        console.log('delete :', result);
                                         getRawMaterialItemsData();
-
                                         calculateTotalQuantity();
-
                                     },
                                     error: function(xhr, status, error) {
                                         setErrorMessage('error_msg', xhr.responseJSON
@@ -630,47 +498,6 @@
                 }
             }
 
-            function editEventBtn() {
-                // Assign event listener to buttons with class 'editItemBtn'
-                let editButtons = document.getElementsByClassName('editRawMaterialBtn');
-                for (var i = 0; i < editButtons.length; i++) {
-                    editButtons[i].addEventListener('click', function(event) {
-                        let itemId = this.getAttribute('data-id');
-
-                        $.ajax({
-                            url: '{{ route('rawMaterialItem.getEditRawMaterialItemData', ['rawMaterialItem_id' => ':lol']) }}'
-                                .replace(':lol', itemId),
-                            method: 'GET',
-                            success: async function(response) {
-
-                                //await new Promise(resolve => setTimeout(resolve, 500));
-                                $('#danaGroupIdModel').val(response
-                                    .rawMaterialItemData
-                                    .dana_group_id).trigger('change');
-                                $('#quantityInKgModel').val(response
-                                    .rawMaterialItemData
-                                    .quantity);
-                                $('#rawMaterialItemIdModel').val(response
-                                    .rawMaterialItemData
-                                    .id);
-                                $('#lorryNoModel').val(response
-                                    .rawMaterialItemData.lorry_no);
-                                await getDanaName(response
-                                    .rawMaterialItemData.dana_group_id,
-                                    'model')
-
-                                $('#danaNameModel').val(response
-                                    .rawMaterialItemData
-                                    .dana_name_id).trigger('change');
-
-                                $('#editRawMaterialItemModel').modal(
-                                    'show');
-                            }
-                        });
-
-                    })
-                }
-            }
 
             //Set raMaterialItem data when page refreshed
             function getRawMaterialItemsData() {
@@ -694,8 +521,7 @@
             }
 
             //create raw material
-            document.getElementById('createRawMaterial').addEventListener('submit', function(
-                e) {
+            document.getElementById('createRawMaterial').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const form = event.target;
                 let rawMaterial_id = form.elements['rawMaterial_id'];
@@ -703,6 +529,8 @@
                 let dana_group_id = form.elements['dana_group'];
                 let dana_name_id = form.elements['dana_name_id'];
                 let quantity_in_kg = form.elements['quantity_in_kg'];
+                let fromStockBool = JSON.parse(`{!! json_encode($fromRawMaterialStock) !!}`);
+                console.log('js :', fromStockBool);
                 $.ajax({
                     url: "{{ route('rawMaterialItem.store') }}",
                     method: 'POST',
@@ -713,15 +541,20 @@
                         dana_name_id: dana_name_id.value,
                         quantity_in_kg: quantity_in_kg.value,
                         rawMaterial_id: rawMaterial_id.value,
+                        fromStockBool: fromStockBool
                     },
                     success: function(response) {
                         console.log(response);
                         setSuccessMessage(response.message);
                         clearInputFields();
                         setIntoTable(response.rawMaterialItem);
-
                         calculateTotalQuantity();
                     },
+                    error: function(xhr) {
+                        setMessage('RawMaterialItemsError', xhr.responseJSON.message)
+
+                        //console.log(xhr.responseJSON.message);
+                    }
                 });
             });
 
@@ -856,29 +689,61 @@
 
             //to get dana name according to dana group
             $('#danaGroup').on('select2:select', function(e) {
-                let danaGroup_id = e.params.data.id;
-                //getDanaName
-                getDanaName(danaGroup_id, 'blade');
-
-            });
-            $('#danaGroupIdModel').on('select2:select', function(e) {
-                let danaGroup_id = e.params.data.id;
-                getDanaName(danaGroup_id, 'model');
-
+                let danaGroup_id = e.target.value;
+                let godam_id = JSON.parse(`{!! json_encode($rawMaterial->from_godam_id) !!}`);
+                let fromStockBool = JSON.parse(`{!! json_encode($fromRawMaterialStock) !!}`);
+                getDanaName(danaGroup_id, fromStockBool, godam_id);
             });
 
+            $('#danaName').on('select2:select', function(e) {
+                let fromStockBool = JSON.parse(`{!! json_encode($fromRawMaterialStock) !!}`);
+                if (!fromStockBool) {
+                    return false;
+                }
+                let danaName_id = e.target.value;
+                let danaGroup_id = $('#danaGroup').val();
+                let godam_id = JSON.parse(`{!! json_encode($rawMaterial->from_godam_id) !!}`);
+                if (danaName_id && danaGroup_id && godam_id) {
+                    getStockDanaName(danaGroup_id, godam_id, danaName_id);
+                }
 
-            function getDanaName(danaGroup_id, selectFrom) {
+            });
+
+            function getStockDanaName(danaGroup_id, godam_id, danaName_id) {
+                $.ajax({
+                    url: "{{ route('rawMaterial.getStock') }}",
+                    data: {
+                        'dana_group_id': danaGroup_id,
+                        'godam_id': godam_id,
+                        'danaName_id': danaName_id
+                    },
+                    method: 'GET',
+                    success: function(quantity) {
+                        $('#stockQty').val(quantity);
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMessage('error_msg', error);
+                    }
+                });
+            }
+
+            function getDanaName(danaGroup_id, fromStockBool, godam_id = null) {
                 return new Promise(function(resolve, reject) {
+                    let url = '';
+                    if (fromStockBool && godam_id) {
+                        url =
+                            "{{ route('rawMaterial.getDanaGroupDanaNameFromRawMStock', ['danaGroup_id' => ':danaGroup', 'godam_id' => ':godam_id']) }}"
+                            .replace(':danaGroup', danaGroup_id).replace(':godam_id', godam_id);
+                    } else {
+                        url =
+                            "{{ route('rawMaterial.getDanaGroupDanaName', ['danaGroup_id' => ':Replaced']) }}"
+                            .replace(':Replaced', danaGroup_id);
+                    }
 
                     $.ajax({
-                        url: "{{ route('rawMaterial.getDanaGroupDanaName', ['danaGroup_id' => ':Replaced']) }}"
-                            .replace(
-                                ':Replaced',
-                                danaGroup_id),
+                        url: url,
                         method: 'GET',
                         success: function(response) {
-                            // console.log(response);
                             let selectOptions = '';
                             if (response.length == 0) {
                                 selectOptions +=
@@ -895,14 +760,8 @@
                                         response[i].name + '</option>';
                                 }
                             }
-                            if (selectFrom == 'blade') {
-                                $('#danaName').html(selectOptions);
-                                resolve(response);
-                            } else {
-                                $('#danaNameModel').html(selectOptions);
-                                resolve(response);
-                            }
-
+                            $('#danaName').html(selectOptions);
+                            resolve(response);
                         },
                         error: function(xhr, status, error) {
                             reject(error);
@@ -927,6 +786,14 @@
                 $('#' + elementId).val(optionId).trigger('change.select2');
             }
 
+            function setMessage(element_id, message) {
+                let errorContainer = document.getElementById(element_id);
+                errorContainer.hidden = false;
+                errorContainer.innerHTML = message;
+                setTimeout(function() {
+                    errorContainer.hidden = true;
+                }, 2000);
+            }
 
         });
     </script>
