@@ -3,7 +3,6 @@
 use App\Http\Controllers\FabricTransferEntryForBagController;
 use App\Http\Controllers\InstallHelperController;
 use App\Http\Controllers\PrintedAndCuttedRollsController;
-use App\Http\Controllers\PrintsAndCutsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ThemeSettingsContoller;
@@ -849,5 +848,7 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
     Route::get("prints/and/cuts/index",[PrintedAndCuttedRollsController::class,"index"])->name('prints.and.cuts.index');
     Route::get("prints/and/cuts/create/entry",[PrintedAndCuttedRollsController::class,"createEntry"])->name('prints.and.cuts.create.entry');
     Route::post("prints/and/cuts/store/entry",[PrintedAndCuttedRollsController::class,"storeEntry"])->name('prints.and.cuts.store.entry');
+
+    Route::get("prints/and/cuts/creacreatePrintedRolls/{id}",[PrintedAndCuttedRollsController::class,"createPrintedRolls"])->name('prints.and.cuts.createPrintedRolls');
 
 /******************** Bag  End ************************/

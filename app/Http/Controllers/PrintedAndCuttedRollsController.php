@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\PrintedAndCuttedRolls;
+use App\Models\PrintedAndCuttedRollsEntry;
 use Illuminate\Http\Request;
 
 class PrintedAndCuttedRollsController extends Controller
 {
     /*************** For Entry *********/
     public function index(){
-        // $data = 
-        return view("admin.bag.printsandcuts.index");
+        $data = PrintedAndCuttedRollsEntry::all();
+        return view("admin.bag.printsandcuts.index",compact("data"));
     }
     public function createEntry(){
         return view("admin.bag.printsandcuts.createEntry");
@@ -23,7 +24,7 @@ class PrintedAndCuttedRollsController extends Controller
         "date_np" => "required"
        ]);
 
-       PrintedAndCuttedRolls::create([
+       PrintedAndCuttedRollsEntry::create([
             "receipt_number" => $request->receipt_number,
             "date" => $request->date,
             "date_np" => $request->date_np
@@ -32,7 +33,10 @@ class PrintedAndCuttedRollsController extends Controller
        return $this->index();
     }
     /*************** For Entry *********/
-    public function createPrintedRolls(){
-        return "here"; 
+    public function createPrintedRolls($id){
+        $data = PrintedAndCuttedRollsEntry::where('id',$id)->get(); 
+        return view("admin.bag.printsandcuts.create")->with([
+            "data" => $data
+        ]);
     }
 }
