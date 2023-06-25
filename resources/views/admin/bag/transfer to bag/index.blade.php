@@ -148,6 +148,7 @@
                     <div class="form-group">
                         <label for="Fabric Name">Roll No</label>
                         <input type="text" class="form-control" name="roll_no" id="roll_no" />
+                        <input type="hidden" id="entry_id" value="{{ $id }}" data-id='{{ $id }}'>
                     </div>
                 </div>
                 {{-- <div class="col-md-2">
@@ -179,33 +180,32 @@
         </div>
 
         <div class="p-0 table-responsive table-custom my-3 table-hover" style="min-height:400px;max-height:500px;overflow-y:scroll">
-            <table class="table" id="lower_table">
-                <thead>
-                    <tr>
-                        <th>{{ __('SN') }}</th>
-                        <th scope="10">{{ __('Fabric Name') }}</th>
-                        <th>{{ __('Roll No') }}</th>
-                        <th>{{__('Gross Weight')}}</th>
-                        <th>{{ __('Net Weight') }}</th>
-                        <th>{{__('Meter')}}</th>
-                        <th>{{__('Average')}}</th>
-                        <th>{{__('Gram')}}</th>
-                        {{-- <th>{{__('Action')}}</th> --}}
-                    </tr>
-                </thead>
-                <tbody id="tbody_1">
-                </tbody>
-                <tfoot id="tfoot" class="d-none">
-                    <tr>
-                        <td>
-                            <button class="btn btn-danger discard">discard</button>
-                            <button class="btn btn-primary">Save</button>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered" id="lower_table">
+                        <thead>
+                            <tr>
+                                <th>{{ __('SN') }}</th>
+                                <th scope="10">{{ __('Fabric Name') }}</th>
+                                <th>{{ __('Roll No') }}</th>
+                                <th>{{__('Gross Weight')}}</th>
+                                <th>{{ __('Net Weight') }}</th>
+                                <th>{{__('Meter')}}</th>
+                                <th>{{__('Average')}}</th>
+                                <th>{{__('Gram')}}</th>
+                                <th>{{__('Action')}}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_1">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-none text-center" id="tfoot">
+                    <button class="btn btn-danger discard">discard</button>
+                    <button class="btn btn-primary finalsave">Save</button>
+                </div>
+            </div>
         </div>
-
     </div>
 </div>
 @endsection
@@ -222,7 +222,6 @@
 </script>
 @endif
 <script>
-    let arr = [];
     $(document).ready(function(){
 
         calldetailstolowerfabrictable();
@@ -259,14 +258,18 @@
         $(document).on("click",".sendFabLower",function(e){
             e.preventDefault();
             let id = $(this).data("id");
-            arr = [id];
+            let fabric_bag_entry_id = $("#entry_id").val();
             $.ajax({
                 url : `{{ route('send.fabric.to.lower',["id"=>":id"]) }}`.replace(":id",id),
                 method : "get",
+                data : {
+                    "fabric_bag_entry_id" : fabric_bag_entry_id
+                },
                 beforeSend:function(){
                     console.log("ajax fired");
                 },
                 success:function(response){
+                    console.log(response);
                     sendFabToLower(response);
                 },
                 error:function(error){
@@ -299,7 +302,7 @@
         $("<option disbled>--Select Fabric--</option>").appendTo("#fabric_name")
         data.forEach(d => {
             let option = $("<option></option>").appendTo("#fabric_name");
-            option.text(`${d.name}`);
+            option.text(`${d.name} -> ${d.id}`);
             option.val(`${d.id}`);
         });
     }
@@ -311,7 +314,7 @@
             let average = (d.meter/ d.net_wt).toFixed(4);
 
             let tr = $('<tr><tr>').appendTo("#tbody");
-            tr.append(`<td>#</td>`);
+            tr.append(`<td>${d.id}</td>`);
             tr.append(`<td>${d.name}</td>`);
             tr.append(`<td>${d.roll_no}</td>`);
             tr.append(`<td>${d.gross_wt}</td>`);
@@ -344,6 +347,7 @@
                 console.log('ajax fired');
             },
             success:function(response){
+                console.log(response);
                 putdatatolowertable(response);
             },
             error:function(error){
@@ -370,10 +374,65 @@
             tr.append(`<td>${d.meter}</td>`);
             tr.append(`<td>${average}</td>`);
             tr.append(`<td>${d.gram}</td>`);
+            tr.append(`<a class="btn btn-danger lowerData" href="${d.id}" data-id="${d.id}">delete</a>`);
         });
     }
 
+    $(document).on("click",".lowerData",function(e){
+        e.preventDefault();
+        let id = $(this).data('id');
+        $.ajax({
+            url : "{{ route('delete.from.lower.table') }} ",
+            method : "post",
+            data : {
+                "_token": $('meta[name="csrf-token"]').attr('content'),
+                "id" : id
+            },
+            beforeSend:function(){
+                console.log('Ajax Fired');
+            },
+            success:function(response){
+                console.log(response);
+                if(response.message == "ok"){
+                    calldetailstolowerfabrictable();
+                }
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+    });
 
+
+    $(document).on("click",".finalsave",function(e){
+        e.preventDefault();
+
+        let fabric_entry_id = $("#entry_id").val();
+
+        $.ajax({
+            url : "{{ route('final.save') }}",
+            method : "post",
+            data : {
+                "_token" : $('meta[name="csrf-token"]').attr('content'),
+                "fabric_id" : fabric_entry_id
+            },
+            beforeSend:function(){
+                console.log("ajax fired");
+            },
+            success:function(response){
+                console.log(response);
+                if(response.message == "ok"){
+                    location.href = "{{ route('fabric.transfer.entry.for.bag')}}";
+                }
+                else{
+                    alert("Something went wrong! check console");
+                }
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+    })
 </script>
 
 @endsection

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bag_temporary_fabric_receive', function (Blueprint $table) {
+        Schema::create('bag_fabric_receive_item_sent_stock', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("fabric_bag_entry_id");
             $table-> foreign("fabric_bag_entry_id")->references("id")->on('bag_fabric_entry')->onDelete('cascade');
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fabric_receive_for_bag_temporary');
+        Schema::dropIfExists('bag_fabric_receive_item_sent_stock');
     }
 };

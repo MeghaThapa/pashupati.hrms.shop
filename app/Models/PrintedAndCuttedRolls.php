@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FabricTransferEntryForBag extends Model
+class PrintedAndCuttedRolls extends Model
 {
     use HasFactory;
-    protected $table = "bag_fabric_entry";
+    protected $table = "printed_and_cutted_rolls";
     protected $fillable = [
-        "receipt_number" , "receipt_date", "status","receipt_date_np","status"
+        "receipt_number" ,"date", "date_np" , "status"
     ];
 }

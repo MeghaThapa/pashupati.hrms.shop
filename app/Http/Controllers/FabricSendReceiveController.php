@@ -60,12 +60,17 @@ class FabricSendReceiveController extends Controller
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = DanaName::where('status','active')->get();
-        return view('admin.fabricSendReceive.index',compact('department','planttype','plantname','shifts','bill_no',"dana"));
+        $fabrics = Fabric::get();
+        // dd($fabrics);
+        return view('admin.fabricSendReceive.index',compact('department','planttype','plantname','shifts','bill_no',"dana",'fabrics'));
     }
     public function getplanttype(Request $request){
         if($request->ajax()){
             $department_id =  $request->id;
-            $planttype = ProcessingStep::where('godam_id',$department_id)->where("name","like","lam"."%")->get();
+
+            $planttype = ProcessingStep::where('godam_id',$department_id)->get();
+            // $planttype = ProcessingStep::where('godam_id',$department_id)->where("name","like","lam"."%")->get();
+            // dd($planttype);
             return response([
                 'planttype' => $planttype
             ]);
@@ -91,6 +96,7 @@ class FabricSendReceiveController extends Controller
     }
 
     public function sendunlaminated(Request $request){
+        // dd('lol');
         if($request->ajax()){
             // return $request->data;
             $data = [];
@@ -173,6 +179,7 @@ class FabricSendReceiveController extends Controller
     }
     public function storelaminated(Request $request){
         try{
+            // dd('lol');
 
             $data = [];
             parse_str($request->data,$data);

@@ -70,6 +70,14 @@ class TapeEntryController extends Controller
 
         $departments = [];
 
+<<<<<<< HEAD
+        $departments = AutoLoadItemStock::with('fromGodam')
+            ->whereHas('fromGodam', function ($query) {
+                $query->where('name', '<>', 'bsw');
+            })
+            ->distinct('from_godam_id')
+            ->get(['from_godam_id']);
+=======
         $getdepartment = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
         foreach($getdepartment as $data){
             $id = $data->from_godam_id;
@@ -87,6 +95,7 @@ class TapeEntryController extends Controller
         //     })
         //     ->distinct('from_godam_id')
         //     ->get(['from_godam_id']);
+>>>>>>> f07d6e471e00bbf9db2e7b3b2e60ac7c947d8a08
 
         // $departmentIds = $departments->pluck('from_godam_id')->toArray();
 
