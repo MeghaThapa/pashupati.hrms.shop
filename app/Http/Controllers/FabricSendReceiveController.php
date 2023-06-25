@@ -68,7 +68,9 @@ class FabricSendReceiveController extends Controller
         if($request->ajax()){
             $department_id =  $request->id;
 
-            $planttype = ProcessingStep::where('godam_id',$department_id)->where("name","like","lam"."%")->get();
+            $planttype = ProcessingStep::where('godam_id',$department_id)->get();
+            // $planttype = ProcessingStep::where('godam_id',$department_id)->where("name","like","lam"."%")->get();
+            // dd($planttype);
             return response([
                 'planttype' => $planttype
             ]);

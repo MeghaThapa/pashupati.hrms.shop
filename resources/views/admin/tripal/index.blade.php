@@ -91,7 +91,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ date('Y-m-d') }}" step="any" min="0" class="form-control calculator"
+                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
                     id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
 
                 @error('bill_date')
@@ -243,7 +243,7 @@
 </div>
 <hr>
 {{-- <h1 class='text-center'>Compare Lam and Unlam</h1> --}}
-{{-- <div class="row">
+<div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -274,7 +274,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <p style="font-weight: bold;">Laminated</p>
+                <p style="font-weight: bold;">Single Laminated</p>
             </div>
             <div class="card-body table-responsive">
                 <table class="table table-bordered" id="comparelamtable">
@@ -301,9 +301,9 @@
     <div class="col-md-6 float-right ml-3">
         <button class="btn btn-danger discard">Discard</button>
     </div>
-</div> --}}
+</div>
 <hr>
-{{-- <div class="row">
+<div class="row">
     <div class="col-md-5">
         <div class="card mt-2 p-5">
             <div class="card-body">
@@ -403,7 +403,7 @@
         
                     <div class="col-md-4 form-group">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total SingleLam Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_in_mtr"
@@ -415,7 +415,7 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Lam Net Wt:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total SingleLam Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_net_wt"
@@ -477,6 +477,7 @@
                             @enderror
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -485,7 +486,7 @@
             <button class="btn btn-info" id="finalUpdate">Update</button>
         </div>
     </div>
-</div> --}}
+</div>
 
 
 <!-- Modal -->
@@ -500,6 +501,11 @@
             <div class="modal-body">
                 <form id='sendtolaminationform' action='{{ route("tripal.store") }}' method="post">
                     @csrf
+                    <input type="text" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                    <input type="text" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+                    <input type="text" name="godam_id" id="godam_ids">
+                    <input type="text" name="planttype_id" id="planttype_id">
+                    <input type="text" name="plantname_id" id="plantname_id">
                     <div class="card">
                         <div class="card-body">
                             <div class="row m-2 p-3">
@@ -609,8 +615,8 @@
                                 <div class="col-md-6">
                                     <button type='submit' class="btn btn-info">Update</button>
                                 </div>
-                                <input type="hidden" name="idoffabricforsendtolamination"
-                                    id="idoffabricforsendtolamination">
+                                <input type="hidden" name="fabricsid"
+                                    id="fabricsid">
                             </div>
                         </div>
                     </div>
@@ -637,10 +643,41 @@
         // callunlaminatedfabricajax();
         comparelamandunlam();
 
+        $("body").on("submit","#wastesubmit", function(event){
+            // Pace.start();
+            var fabric_name = $('#fabric_name').val(),
+            fabric_gsm = $('#fabric_gsm').val(),
+            token = $('meta[name="csrf-token"]').attr('content');
+              // $('#idcardShift').val(godam_id);
+            $.ajax({
+              type:"POST",
+              dataType:"JSON",
+              url:"{{route('getFabricNameColorList')}}",
+              data:{
+                _token: token,
+                fabric_name: fabric_name,
+                fabric_gsm: fabric_gsm
+            },
+            success: function(response){
+                console.log(response);
+                $('#fabric_color').html('');
+                $('#fabric_color').append('<option value="">--Choose FabricName--</option>');
+                $.each( response, function( i, val ) {
+                  $('#fabric_color').append('<option value='+val.color+'>'+val.color+'</option>');
+              });
+            },
+            error: function(event){
+                alert("Sorry");
+            }
+        });
+        });
+
         $("#toGodam").change(function(e){
 
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
+            $("#godam_ids").val(department_id);
+            // debugger;
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -658,6 +695,7 @@
         $("#plantType").change(function(e){
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.plantname',['id'=>':id']) }}";
+            $("#planttype_id").val(department_id);
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -670,6 +708,12 @@
                     console.log(error);
                 }
             });
+        });
+
+        $("#plantName").change(function(e){
+            let department_id =  $(this).val();
+            $("#plantname_id").val(department_id);
+        
         });
 
         /**************************** Ajax Calls End **************************/
@@ -714,6 +758,8 @@
         data.plantname.forEach( d => {
             // if(d.name == '')
             $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
+
+
         });
     }
 
@@ -869,13 +915,13 @@
             let titleold = $('#staticBackdropLabel').text('');
             let title = $(this).attr('data-title');
             let id = $(this).attr('data-id');
-            $("#laminated_fabric_name").val(title+"(Lam)");
+            $("#laminated_fabric_name").val(title+"(SingleLam)");
             let laminated_fabric_group = $(this).attr('data-group');
             $("#laminated_fabric_group").val(laminated_fabric_group);
             let standard_weight_gram = $(this).attr('data-standard');
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
-            $("#idoffabricforsendtolamination").val(id);
+            $("#fabricsid").val(id);
             // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
             // $('#sendtolaminationform').attr('action',action);
             // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
@@ -926,7 +972,7 @@
 
     function comparelamandunlam(){
         $.ajax({
-            url : "{{ route('fabricSendReceive.compare.lamandunlam') }}",
+            url : "{{ route('tripal.getUnlamSingleLam') }}",
             method:"get",
             success:function(response){
                 emptycomparelamtbody();
@@ -1048,12 +1094,14 @@
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
+            // debugger;
+
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');
             }else{
             // subtractformautolad(danaNameId,consumption);
                 $.ajax({
-                    url : "{{ route('final.submit.fsr') }}",
+                    url : "{{ route('tripal.wastage.submit') }}",
                     method: "post",
                     data:{
                         "_token" : $('meta[name="csrf-token"]').attr('content'),

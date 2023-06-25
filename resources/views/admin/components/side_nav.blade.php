@@ -108,6 +108,14 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('doubletripal.index') }}"
+                        class="nav-link {{ request()->is('admin/doubletripal*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>{{ __('DOUBLETRIPAL') }}</p>
+                    </a>
+                </li>
+
                 <li class="nav-header text-bold">{{ __('PRODUCT') }}</li>
                 <li class="nav-item">
                     <a href="{{ route('items.index') }}"

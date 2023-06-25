@@ -494,6 +494,36 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('tripal/store', 'Tripal\TripalController@store')->name('tripal.store');
 
+    Route::get('tripal/getUnlamSingleLam/List','Tripal\TripalController@getUnlamSingleLam')->name('tripal.getUnlamSingleLam');
+
+    Route::post('tripal/wastage/submit','Tripal\TripalController@getWastageStore')->name("tripal.wastage.submit");
+
+
+
+    //double laminated tripal
+
+    Route::resource('doubletripal', 'Tripal\DoubleTripalController', [
+        'names' => [
+            'index' => 'doubletripal.index',
+            'create' => 'doubletripal.create',
+            'store' => 'doubletripal.store',
+            'edit' => 'doubletripal.edit',
+            'update' => 'doubletripal.update',
+        ]
+    ]);
+
+
+    Route::get('doubletripal/getSingleLaminatedFabric/List','Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
+    
+    Route::get('doubletripals/{id}/status', 'Tripal\DoubleTripalController@changeStatus')->name('doubletripal.status');
+    Route::get('doubletripals/{id}/delete', 'Tripal\DoubleTripalController@destroy')->name('doubletripal.delete');
+
+    Route::get('doubletripals/getUnlamSingleDoubleLam/List', 'Tripal\DoubleTripalController@getUnlamSingleDoubleLam')->name('doubletripal.getUnlamSingleDoubleLam');
+
+
+    Route::post('doubletripal/wastage/submit','Tripal\DoubleTripalController@getWastageStore')->name("doubletripal.wastage.submit");
+
+
 
     //fabric send and receive
 

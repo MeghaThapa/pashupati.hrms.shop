@@ -638,11 +638,11 @@
           });
       });
 
-          $("body").on("change","#fabric_name", function(event){
+        $("body").on("change","#fabric_name", function(event){
             // Pace.start();
             var fabric_name = $('#fabric_name').val(),
-                fabric_gsm = $('#fabric_gsm').val(),
-                token = $('meta[name="csrf-token"]').attr('content');
+            fabric_gsm = $('#fabric_gsm').val(),
+            token = $('meta[name="csrf-token"]').attr('content');
               // $('#idcardShift').val(godam_id);
             $.ajax({
               type:"POST",
@@ -652,19 +652,19 @@
                 _token: token,
                 fabric_name: fabric_name,
                 fabric_gsm: fabric_gsm
-              },
-              success: function(response){
+            },
+            success: function(response){
                 console.log(response);
                 $('#fabric_color').html('');
                 $('#fabric_color').append('<option value="">--Choose FabricName--</option>');
                 $.each( response, function( i, val ) {
                   $('#fabric_color').append('<option value='+val.color+'>'+val.color+'</option>');
-                });
-              },
-              error: function(event){
+              });
+            },
+            error: function(event){
                 alert("Sorry");
-              }
-            });
+            }
+        });
         });
 
 
