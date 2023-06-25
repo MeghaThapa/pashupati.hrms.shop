@@ -35,16 +35,12 @@ class RawMaterialItemController extends Controller
 
             $rawMaterial =RawMaterial::find($request->rawMaterial_id);
 
-            if($request && json_decode($request->fromStockBool) === true){
+            if(json_decode($request->fromStockBool) === true){
                 $rawMaterialStock= RawMaterialStock::where('godam_id', $rawMaterial->from_godam_id)
                 ->where('dana_name_id', $rawMaterialItem->dana_name_id)
                 ->where('dana_group_id',$rawMaterialItem->dana_group_id)
                 ->first();
-                if($rawMaterialStock->quantity- $request->quantity_in_kg !=0){
-                     return response()->json([
-                        'message'=>'you should transfer entire raw material items to anothe godam'
-                    ],500);
-                }
+                
                 $rawMaterialStock->quantity =   $rawMaterialStock->quantity - $rawMaterialItem->quantity;
                 if($rawMaterialStock->quantity <=0){
                     $rawMaterialStock->delete();

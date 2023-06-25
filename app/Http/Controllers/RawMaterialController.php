@@ -55,6 +55,7 @@ class RawMaterialController extends Controller
             'storein_types.name as storein_type_name',
             'toGodam.name as to_godam_name',
             'fromGodam.name as from_godam_name',
+            'raw_materials.status'
         )
         ->selectSub(function ($query) {
             $query->from('raw_material_items')
@@ -69,7 +70,9 @@ class RawMaterialController extends Controller
             'raw_materials.pp_no',
             'storein_types.name',
             'toGodam.name',
-            'fromGodam.name'
+            'fromGodam.name',
+            'raw_materials.status'
+
         )
         ->orderBy('raw_materials.created_at','DESC')
         ->get();
@@ -77,6 +80,10 @@ class RawMaterialController extends Controller
         return DataTables::of($rawMaterial)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
+
+                if($row->status=="complete"){
+                    return '<span class="badge badge-success">COMPLETED</span>';
+                }
                 $actionBtn = '
                 <a class="btn btn-sm btn-primary btnEdit" href="' . route('rawMaterial.edit', ["rawMaterial_id" => $row->id]) . '" >
                 <i class="fas fa-edit fa-lg"></i>
@@ -86,10 +93,19 @@ class RawMaterialController extends Controller
                 </button>
                 ';
 
+
                 return $actionBtn;
+
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+
+    public function saveEntireRawMaterial($rawMaterial_id){
+        $rawMaterial=RawMaterial::find($rawMaterial_id);
+        $rawMaterial->status ='complete';
+        $rawMaterial->save();
+        return redirect()->route('rawMaterial.index');
     }
     public function delete($rawMaterial_id){
          try{
@@ -104,11 +120,7 @@ class RawMaterialController extends Controller
                 ->where('dana_group_id',$item->dana_group_id)
                 ->where('dana_name_id',$item->dana_name_id)
                 ->first();
-                if(!$toGodamStock){
-                    return response()->json([
-                        'message'=>'some items of this raw material have already been transfered '
-                    ],500);
-                }
+
 
                 if($fromGodamCheckBool && $fromGodamCheckBool===true){
                     $fromGodamStock=RawMaterialStock::where('godam_id',$rawMaterial->from_godam_id)

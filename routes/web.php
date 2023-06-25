@@ -205,7 +205,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //RawMaterial
     //recent
     Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
-//for gana name from rawmaterial stock
+    Route::get('rawMaterial/saveEntireRawMaterial/{rawMaterial_id}', 'RawMaterialController@saveEntireRawMaterial')->name('rawMaterial.saveEntireRawMaterial');
+
+    //for gana name from rawmaterial stock
     Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
 
     Route::get('rawMaterial/getDanaGroupDanaNameFromRawMStock/{danaGroup_id}/{godam_id}', 'RawMaterialController@getDanaGroupDanaNameFromRawMStock')->name('rawMaterial.getDanaGroupDanaNameFromRawMStock');
@@ -815,11 +817,11 @@ Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"
 Route::get('tape-entry/receive/view/{id}',[TapeEntryController::class,"view"])->name("tape.entry.receive.view");
 Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"deleteTape"])->name("tape.entry.receive.delete");
     //reteieve planttype
-Route::get('tape-entry/ajax-request/{department_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
+Route::get('tape-entry/ajax-request/{godam_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
     //reteieve plantname
-Route::get('tape-entry/ajax-request/plantname/{planttype_id}',[TapeEntryController::class,"ajaxrequestplantname"])->name('tape.entry.ajax.plantname');
+Route::get('tape-entry/ajax-request/plantname/{planttype_id}/{godam_id}',[TapeEntryController::class,"ajaxrequestplantname"])->name('tape.entry.ajax.plantname');
     //retrieve shift
-Route::get('tape-entry/ajax-request/shift/{plantname_id}',[TapeEntryController::class,"ajaxrequestshift"])->name('tape.entry.ajax.shift');
+Route::get('tape-entry/ajax-request/shift/{plantname_id}/{godam_id}/{plantType_id}',[TapeEntryController::class,"ajaxrequestshift"])->name('tape.entry.ajax.shift');
     //get dana info
 Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajaxrequestdanainfo"])->name('tape.entry.ajax.get.danainfo');
     // tapeentrystock
