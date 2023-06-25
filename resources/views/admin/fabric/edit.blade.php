@@ -45,7 +45,21 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group col-md-12">
+                            <div class="col-md-6 form-group">
+                                <label for="Godam">{{ __('Godam Name') }}<span class="required-field">*</span></label>
+                                <select class="advance-select-box form-control @error('Godam') is-invalid @enderror" id="Godam" name="godam_id"  required>
+                                    <option value="" selected disabled>{{ __('Select a Godam') }}</option>
+                                    @foreach($godams as $key => $group)
+                                        <option value="{{ $group->id }}" {{$fabrics->godam_id == $group->id ? 'selected' : ''}}>{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('godam_id')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6">
                                 <label for="name">{{ __('Fabric Name') }}<span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="{{ __('Fabric Name') }}" value="{{ $fabrics->name }}" required>
                                 @error('name')

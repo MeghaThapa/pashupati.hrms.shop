@@ -99,6 +99,23 @@
                     </a>
                 </li>
 
+                <li class="nav-header text-bold">{{ __('TRIPAL') }}</li>
+                <li class="nav-item">
+                    <a href="{{ route('tripal.index') }}"
+                        class="nav-link {{ request()->is('admin/tripal*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>{{ __('TRIPAL') }}</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('doubletripal.index') }}"
+                        class="nav-link {{ request()->is('admin/doubletripal*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>{{ __('DOUBLETRIPAL') }}</p>
+                    </a>
+                </li>
+
                 <li class="nav-header text-bold">{{ __('PRODUCT') }}</li>
                 <li class="nav-item">
                     <a href="{{ route('items.index') }}"
@@ -257,10 +274,16 @@
                             <p>{{ __('Entry For Fabric Tnasfer For Bag') }}</p>
                         </a>
                     </li>
-                    <!-------------  Bag --------------------------->
-                
 
-                <li class="nav-header text-bold">{{ __('REPORT') }}</li>
+                    <li class="nav-item">
+                        <a href="{{ route('prints.and.cuts.index') }}"
+                            class="nav-link {{ request()->routeIs('prints.and.cuts.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('Prints and Cuts(Rolls)') }}</p>
+                        </a>
+                    </li>
+                    <!-------------  Bag --------------------------->
+                    <li class="nav-header text-bold">{{ __('Purchase Reports') }}</li>
                 <li class="nav-item">
                     <a href="{{ route('purchase.report') }}"
                         class="nav-link {{ request()->is('admin/purchase-report') ? 'active' : '' }}">

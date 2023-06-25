@@ -70,6 +70,8 @@
     .col-md-6 {
         padding: 0px 2px !important;
     }
+
+
 </style>
 @endsection
 
@@ -89,7 +91,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ date('Y-m-d') }}" step="any" min="0" class="form-control calculator"
+                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
                     id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
 
                 @error('bill_date')
@@ -104,7 +106,7 @@
                 <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
                     @foreach ($department as $data)
-                    <option value="{{ $data->id }}">{{ $data->name }}
+                    <option value="{{ $data->id }}">{{ $data->department }}
                     </option>
                     @endforeach
                 </select>
@@ -175,7 +177,7 @@
                 </label>
                 <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id"
                     required>
-                    <option value="" selected>{{ __('Select Fabric Name') }}</option>
+                    <option value="">{{ __('Select Fabric Name') }}</option>
                     @foreach ($fabrics as $fabric)
                     <option value="{{ $fabric->id }}">{{ $fabric->name }}
                     </option>
@@ -216,7 +218,7 @@
 <div class="row">
     <div class="Ajaxdata col-md-12">
         <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable">
+            <table class="table" id="rawMaterialItemTable" >
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -240,7 +242,7 @@
     </div>
 </div>
 <hr>
-<h1 class='text-center'>Compare Lam and Unlam</h1>
+{{-- <h1 class='text-center'>Compare Lam and Unlam</h1> --}}
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -272,7 +274,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <p style="font-weight: bold;">Laminated</p>
+                <p style="font-weight: bold;">Single Laminated</p>
             </div>
             <div class="card-body table-responsive">
                 <table class="table table-bordered" id="comparelamtable">
@@ -339,15 +341,7 @@
                         </button>
                     </div>
                 </div>
-                {{-- <hr>
-                <div class="col-md-12">
-                    <h4>wastage</h4>
-                    <select name="waste_type" id="waste_type" class="advance-select-box">
-                        <option>--select waste--</option>
-                        <option value="">Polo</option>
-                        <option value="">Rafia</option>
-                    </select>
-                </div> --}}
+            
 
             </div>
         </div>
@@ -409,7 +403,7 @@
         
                     <div class="col-md-4 form-group">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total SingleLam Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_in_mtr"
@@ -421,7 +415,7 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Lam Net Wt:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total SingleLam Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_net_wt"
@@ -483,6 +477,7 @@
                             @enderror
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -504,8 +499,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id='sendtolaminationform' action='{{ route("fabricSendReceive.store.laminated") }}' method="post">
+                <form id='sendtolaminationform' action='{{ route("tripal.store") }}' method="post">
                     @csrf
+                    <input type="text" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                    <input type="text" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+                    <input type="text" name="godam_id" id="godam_ids">
+                    <input type="text" name="planttype_id" id="planttype_id">
+                    <input type="text" name="plantname_id" id="plantname_id">
                     <div class="card">
                         <div class="card-body">
                             <div class="row m-2 p-3">
@@ -526,6 +526,7 @@
                                 </div>
                             </div>
                             <hr>
+                            
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
                                     <label for="">Roll</label>
@@ -614,8 +615,8 @@
                                 <div class="col-md-6">
                                     <button type='submit' class="btn btn-info">Update</button>
                                 </div>
-                                <input type="hidden" name="idoffabricforsendtolamination"
-                                    id="idoffabricforsendtolamination">
+                                <input type="hidden" name="fabricsid"
+                                    id="fabricsid">
                             </div>
                         </div>
                     </div>
@@ -639,13 +640,44 @@
 <script>
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
-        callunlaminatedfabricajax();
+        // callunlaminatedfabricajax();
         comparelamandunlam();
+
+        $("body").on("submit","#wastesubmit", function(event){
+            // Pace.start();
+            var fabric_name = $('#fabric_name').val(),
+            fabric_gsm = $('#fabric_gsm').val(),
+            token = $('meta[name="csrf-token"]').attr('content');
+              // $('#idcardShift').val(godam_id);
+            $.ajax({
+              type:"POST",
+              dataType:"JSON",
+              url:"{{route('getFabricNameColorList')}}",
+              data:{
+                _token: token,
+                fabric_name: fabric_name,
+                fabric_gsm: fabric_gsm
+            },
+            success: function(response){
+                console.log(response);
+                $('#fabric_color').html('');
+                $('#fabric_color').append('<option value="">--Choose FabricName--</option>');
+                $.each( response, function( i, val ) {
+                  $('#fabric_color').append('<option value='+val.color+'>'+val.color+'</option>');
+              });
+            },
+            error: function(event){
+                alert("Sorry");
+            }
+        });
+        });
 
         $("#toGodam").change(function(e){
 
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
+            $("#godam_ids").val(department_id);
+            // debugger;
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -663,6 +695,7 @@
         $("#plantType").change(function(e){
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.plantname',['id'=>':id']) }}";
+            $("#planttype_id").val(department_id);
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -677,22 +710,12 @@
             });
         });
 
-        // $("#shiftName").change(function(e){
-        //     let department_id =  $(this).val();
-        //     let geturl = "{{ route('fabricSendReceive.get.fabrics') }}";
-        //     $.ajax({
-        //         url:geturl.replace(':id',department_id),
-        //         beforeSend:function(){
-        //             console.log('Getting Fabrics');
-        //         },
-        //         success:function(response){
-        //             getfabrics(response);
-        //         },
-        //         error:function(error){
-        //             console.log(error);
-        //         }
-        //     });
-        // });
+        $("#plantName").change(function(e){
+            let department_id =  $(this).val();
+            $("#plantname_id").val(department_id);
+        
+        });
+
         /**************************** Ajax Calls End **************************/
     });
 
@@ -700,13 +723,14 @@
 
     function callunlaminatedfabricajax(){
         $.ajax({
-            url : "{{ route('fabricSendReceive.get.unlaminated') }}",
+            url : "{{ route('tripal.getFabric') }}",
             method: 'get',
             beforeSend:function(){
                 console.log('getting unlaminated fabric');
             },
             success:function(response){
                 emptytable();
+                console.log(response);
                 if(response.response != '404'){
                     filltable(response);
                 }else{
@@ -734,6 +758,8 @@
         data.plantname.forEach( d => {
             // if(d.name == '')
             $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
+
+
         });
     }
 
@@ -754,6 +780,8 @@
             let action = $(this).attr('action');
             let method = $(this).attr('method');
             let formData = $(this).serialize();
+            // console.log(action);
+            debugger;
            $.ajax({
             url:action,
             method : method,
@@ -762,6 +790,7 @@
                 'data' : formData
             },
             beforeSend:function(){
+                console.log('sending form');
             },
             success:function(response){
                 emptytable();
@@ -769,6 +798,7 @@
                 emptyform();
             },
             error:function(error){
+                console.log(error);
             }
            });
         });
@@ -812,23 +842,24 @@
     });
 
     function filltable(data){
-        // console.log(data);
+        // console.log(data.response);
         data.response.forEach(d => {
-            let title = d.fabric.name;
+            console.log(d.name);
+            let title = d.name;
             let group = d.gram.split('-')[0];
             let result = parseFloat(title) * parseFloat(group);
 
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
 
             tr.append(`<td>#</td>`);
-            tr.append(`<td>${d.fabric.name}</td>`);
+            tr.append(`<td>${d.name}</td>`);
             tr.append(`<td>${d.roll_no}</td>`);
             tr.append(`<td>${d.gross_wt}</td>`);
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`)
-            tr.append(`<td>${d.average}</td>`);
+            tr.append(`<td>${d.meter}</td>`);
             tr.append(`<td>${d.gram}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 
@@ -852,6 +883,7 @@
                 }
             },
             error:function(error){
+                console.log(error);
             }
         });
     }
@@ -869,6 +901,7 @@
                 }
             },
             error:function(response){
+                console.log(response);
             }
         });
     });
@@ -882,13 +915,13 @@
             let titleold = $('#staticBackdropLabel').text('');
             let title = $(this).attr('data-title');
             let id = $(this).attr('data-id');
-            $("#laminated_fabric_name").val(title+"(Lam)");
+            $("#laminated_fabric_name").val(title+"(SingleLam)");
             let laminated_fabric_group = $(this).attr('data-group');
             $("#laminated_fabric_group").val(laminated_fabric_group);
             let standard_weight_gram = $(this).attr('data-standard');
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
-            $("#idoffabricforsendtolamination").val(id);
+            $("#fabricsid").val(id);
             // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
             // $('#sendtolaminationform').attr('action',action);
             // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
@@ -927,9 +960,11 @@
                 callunlaminatedfabricajax();
                 comparelamandunlam();
                 $('#staticBackdrop1').modal('hide');
+                console.log(response);
 
             },
             error:function(error){
+                console.log(error);
             }
         });
     }
@@ -937,7 +972,7 @@
 
     function comparelamandunlam(){
         $.ajax({
-            url : "{{ route('fabricSendReceive.compare.lamandunlam') }}",
+            url : "{{ route('tripal.getUnlamSingleLam') }}",
             method:"get",
             success:function(response){
                 emptycomparelamtbody();
@@ -1012,10 +1047,6 @@
     }
 
     $("#danaNameId").on("change",function(e){
-        let id = $(this).val();
-        // $.ajax({
-
-        // });
         $("#add_dana_consumption_quantity").prop("disabled",false);
     });
 
@@ -1063,12 +1094,14 @@
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
+            // debugger;
+
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');
             }else{
             // subtractformautolad(danaNameId,consumption);
                 $.ajax({
-                    url : "{{ route('final.submit.fsr') }}",
+                    url : "{{ route('tripal.wastage.submit') }}",
                     method: "post",
                     data:{
                         "_token" : $('meta[name="csrf-token"]').attr('content'),
