@@ -24,6 +24,7 @@ class AutoloadController extends Controller
      */
     public function index()
     {
+
         return view('admin.autoload.index');
 
     }
@@ -31,10 +32,6 @@ class AutoloadController extends Controller
        return  AppHelper::getAutoLoadReceiptNo();
 
     }
-
-
-
-
     /**
      * Show the form for creating a new resource.
      *
@@ -119,11 +116,13 @@ class AutoloadController extends Controller
 
     public function dataTable(){
 
-         $autoloads = DB::table('auto_loads')
-         ->leftJoin('autoload_items', 'auto_loads.id', '=', 'autoload_items.autoload_id')
-         ->select('auto_loads.*', 'autoload_items.id AS has_item')
-         ->get();
-        return DataTables::of($autoloads)
+        $autoLoads = AutoLoad::select('id', 'transfer_date', 'receipt_no', 'created_at', 'updated_at')
+        ->orderBy('created_at', 'desc')
+        ->withCount('autoloadItems')
+        ->get()
+
+        ;
+        return DataTables::of($autoLoads)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $actionBtn ='';
@@ -131,14 +130,12 @@ class AutoloadController extends Controller
                 <button class=" btn btn-primary btnEdit" data-id="'.$row->id.'">
                 <i class="fas fa-edit fa-lg"></i>
                 </button>';
-                if(!$row->has_item){
+                if($row->autoload_items_count == 0 ){
                     $actionBtn .= '
                 <button class="btn btn-danger btnAutoloadDlt" data-id="'.$row->id.'">
                 <i class="fas fa-trash fa-lg"></i>
                 </button>';
                 }
-
-
                 return $actionBtn;
             })
             ->rawColumns(['action'])
