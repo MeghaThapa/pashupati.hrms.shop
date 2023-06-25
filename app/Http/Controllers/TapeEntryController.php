@@ -116,34 +116,53 @@ class TapeEntryController extends Controller
 
     public function ajaxrequestplanttype(Request $request){
         if($request->ajax()){
-            // return $request->department_id;
-            $planttype =  ProcessingStep::where("status",'1')->where('godam_id',$request->department_id)->where("name","like","tape"."%")->get();
-            return response([
+        $planttype = DB::table('autoload_items_stock')
+            ->join('processing_steps', 'processing_steps.id', '=', 'autoload_items_stock.plant_type_id')
+            ->where('from_godam_id', $request->godam_id)
+            ->where('processing_steps.name', 'like', 'tape' . '%')
+            ->select('processing_steps.id','processing_steps.name')
+            ->groupBy('processing_steps.id', 'processing_steps.name')
+            ->distinct()
+            ->get();
+             return response([
                 'planttype' => $planttype
-            ]);
-        }
-    }
-
-    public function ajaxrequestplantname(Request $request){
-        if($request->ajax()){
-            $id =  $request->planttype_id;
-            $plantname = ProcessingSubcat::where('processing_steps_id',$id)->get();
-            return response([
-                'plantname' => $plantname
             ],200);
         }
     }
 
-    public function ajaxrequestshift(Request $request){
-        if($request->ajax()){
-            $id =  $request->plantname_id;
-            $shift = AutoLoadItemStock::where('plant_name_id',$id)->value('shift_id');
-            $sname = Shift::where('id',$shift)->get();
+    public function ajaxrequestplantname($planttype_id,$godam_id){
+       // return $request;
+            $plantnames=DB::table('autoload_items_stock')
+            ->join('processing_subcats','processing_subcats.id','=','autoload_items_stock.plant_name_id')
+            ->where('plant_type_id',$planttype_id)
+            ->where('from_godam_id',$godam_id)
+            ->select('processing_subcats.id','processing_subcats.name')
+            ->groupBy('processing_subcats.id','processing_subcats.name')
+            ->distinct()
+            ->get();
+           //  $plantnames = AutoLoadItemStock::with('plantName')->where('from_godam_id',$godam_id)->where('plant_type_id',$planttype_id)->get();
             return response([
-                'shift' => $sname,
-                'status' => true
+                'plantname'=>$plantnames
+               // 'plantname' => $plantname
+            ],200);
+
+    }
+
+    public function ajaxrequestshift($plantname_id,$godam_id,$plantType_id){
+        $shifts=DB::table('autoload_items_stock')
+        ->join('shifts','shifts.id','=','autoload_items_stock.shift_id')
+        ->where('from_godam_id',$godam_id)
+        ->where('plant_type_id',$plantType_id)
+        ->where('plant_name_id',$plantname_id)
+        ->select('shifts.id','shifts.name')
+        ->groupBy('shifts.id','shifts.name')
+        ->distinct()
+        ->get();
+
+            //$shifts=AutoLoadItemStock::with('shift')->where('from_godam_id',$godam_id)->where('plant_type_id',$plantType_id)->where('plant_name_id',$plantname_id)->get();
+            return response([
+                'shifts'=>$shifts
             ]);
-        }
     }
 
 

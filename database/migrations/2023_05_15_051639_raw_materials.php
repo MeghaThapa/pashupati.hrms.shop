@@ -38,7 +38,7 @@ return new class extends Migration
             $table->string('pp_no')->nullable();
             $table->string('receipt_no');
 
-            $table->enum('status', ['pending', 'complete', 'cancel']);
+            $table->enum('status', ['pending', 'complete']);
 
             $table->string('remark')->nullable();
             $table->timestamps();
