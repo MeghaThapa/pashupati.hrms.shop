@@ -36,6 +36,7 @@ use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\GodamController;
 use App\Http\Controllers\StoreoutDepartmentController;
+use App\Http\Controllers\Tripal\TripalController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -479,6 +480,54 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
+
+    //tripal
+    Route::resource('tripal', 'Tripal\TripalController', [
+        'names' => [
+            'index' => 'tripal.index',
+            'create' => 'tripal.create',
+            'store' => 'tripal.store',
+            'edit' => 'tripal.edit',
+            'update' => 'tripal.update',
+        ]
+    ]);
+    Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
+    Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');
+
+    //get fabricdata in tripal
+
+    Route::get('tripal/getFabric/List', 'Tripal\TripalController@getfabrics')->name('tripal.getFabric');
+
+    Route::post('tripal/store', 'Tripal\TripalController@store')->name('tripal.store');
+
+    Route::get('tripal/getUnlamSingleLam/List','Tripal\TripalController@getUnlamSingleLam')->name('tripal.getUnlamSingleLam');
+
+    Route::post('tripal/wastage/submit','Tripal\TripalController@getWastageStore')->name("tripal.wastage.submit");
+
+
+
+    //double laminated tripal
+
+    Route::resource('doubletripal', 'Tripal\DoubleTripalController', [
+        'names' => [
+            'index' => 'doubletripal.index',
+            'create' => 'doubletripal.create',
+            'store' => 'doubletripal.store',
+            'edit' => 'doubletripal.edit',
+            'update' => 'doubletripal.update',
+        ]
+    ]);
+
+
+    Route::get('doubletripal/getSingleLaminatedFabric/List','Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
+    
+    Route::get('doubletripals/{id}/status', 'Tripal\DoubleTripalController@changeStatus')->name('doubletripal.status');
+    Route::get('doubletripals/{id}/delete', 'Tripal\DoubleTripalController@destroy')->name('doubletripal.delete');
+
+    Route::get('doubletripals/getUnlamSingleDoubleLam/List', 'Tripal\DoubleTripalController@getUnlamSingleDoubleLam')->name('doubletripal.getUnlamSingleDoubleLam');
+
+
+    Route::post('doubletripal/wastage/submit','Tripal\DoubleTripalController@getWastageStore')->name("doubletripal.wastage.submit");
 
 
 
