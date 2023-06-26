@@ -26,5 +26,8 @@ class RawMaterial extends Model
     {
         return $this->belongsTo('App\Models\Supplier', 'supplier_id', 'id');
     }
+    public function rawMaterialsItem(){
+        return $this->hasMany('App\Models\RawMaterialItem', 'raw_material_id', 'id');
+    }
 
 }

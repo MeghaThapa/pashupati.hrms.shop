@@ -43,6 +43,9 @@
                         <a class="btn btn-secondary" href="{{ route('storein.pdf') }}">
                             <i class="fas fa-download"></i> @lang('Export')
                         </a>
+                        <a href="{{ route('rawMaterial.godamTransferDetail') }}" class="btn btn-success">
+                            {{ __('Godam Transfer details') }}<i class="fas fa-plus-circle"></i>
+                        </a>
                         <a href="{{ route('rawMaterial.create') }}" class="btn btn-primary">
                             {{ __('Add Raw Materials') }} <i class="fas fa-plus-circle"></i>
                         </a>
