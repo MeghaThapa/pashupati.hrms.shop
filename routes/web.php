@@ -528,6 +528,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
     Route::post('doubletripal/wastage/submit','Tripal\DoubleTripalController@getWastageStore')->name("doubletripal.wastage.submit");
+    //for checking the quantity of data
+
+    Route::post('dana/autoload/checkQuantity', 'Tripal\TripalController@checkAutoloadQuantity')->name('dana.autoload.checkAutoloadQuantity');
 
 
 

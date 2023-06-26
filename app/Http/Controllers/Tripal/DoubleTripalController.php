@@ -554,7 +554,7 @@ class DoubleTripalController extends Controller
                     // }
 
                     Wastages::create([
-                        'name' => 'tripal',
+                        'name' => 'doubletripal',
                         'waste_id' => '1',
                         'quantity_in_kg' => $total_waste,
                     ]);
