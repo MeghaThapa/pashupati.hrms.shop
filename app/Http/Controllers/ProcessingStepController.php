@@ -50,7 +50,7 @@ class ProcessingStepController extends Controller
 
         // store processing step
         $processingStep = ProcessingStep::create([
-            'name' => $request->name,
+            'name' =>strtolower($request->name),
             'godam_id' => $request->godam_id,
             'code' => $request->processingStepCode,
             'note' => clean($request->note),
@@ -110,7 +110,7 @@ class ProcessingStepController extends Controller
 
         // update processing step
         $processingStep->update([
-            'name' => $request->name,
+            'name' => strtolower($request->name),
             'department_id' => $request->department,
             'code' => $request->processingStepCode,
             'note' => clean($request->note),

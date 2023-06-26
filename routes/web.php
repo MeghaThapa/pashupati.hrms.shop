@@ -35,6 +35,7 @@ use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\GodamController;
 use App\Http\Controllers\StoreoutDepartmentController;
+use App\Http\Controllers\Tripal\TripalController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -203,7 +204,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //RawMaterial
     //recent
     Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
-//for gana name from rawmaterial stock
+    Route::get('rawMaterial/saveEntireRawMaterial/{rawMaterial_id}', 'RawMaterialController@saveEntireRawMaterial')->name('rawMaterial.saveEntireRawMaterial');
+
+    //for gana name from rawmaterial stock
     Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
 
     Route::get('rawMaterial/getDanaGroupDanaNameFromRawMStock/{danaGroup_id}/{godam_id}', 'RawMaterialController@getDanaGroupDanaNameFromRawMStock')->name('rawMaterial.getDanaGroupDanaNameFromRawMStock');
@@ -478,6 +481,54 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
+
+    //tripal
+    Route::resource('tripal', 'Tripal\TripalController', [
+        'names' => [
+            'index' => 'tripal.index',
+            'create' => 'tripal.create',
+            'store' => 'tripal.store',
+            'edit' => 'tripal.edit',
+            'update' => 'tripal.update',
+        ]
+    ]);
+    Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
+    Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');
+
+    //get fabricdata in tripal
+
+    Route::get('tripal/getFabric/List', 'Tripal\TripalController@getfabrics')->name('tripal.getFabric');
+
+    Route::post('tripal/store', 'Tripal\TripalController@store')->name('tripal.store');
+
+    Route::get('tripal/getUnlamSingleLam/List','Tripal\TripalController@getUnlamSingleLam')->name('tripal.getUnlamSingleLam');
+
+    Route::post('tripal/wastage/submit','Tripal\TripalController@getWastageStore')->name("tripal.wastage.submit");
+
+
+
+    //double laminated tripal
+
+    Route::resource('doubletripal', 'Tripal\DoubleTripalController', [
+        'names' => [
+            'index' => 'doubletripal.index',
+            'create' => 'doubletripal.create',
+            'store' => 'doubletripal.store',
+            'edit' => 'doubletripal.edit',
+            'update' => 'doubletripal.update',
+        ]
+    ]);
+
+
+    Route::get('doubletripal/getSingleLaminatedFabric/List','Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
+    
+    Route::get('doubletripals/{id}/status', 'Tripal\DoubleTripalController@changeStatus')->name('doubletripal.status');
+    Route::get('doubletripals/{id}/delete', 'Tripal\DoubleTripalController@destroy')->name('doubletripal.delete');
+
+    Route::get('doubletripals/getUnlamSingleDoubleLam/List', 'Tripal\DoubleTripalController@getUnlamSingleDoubleLam')->name('doubletripal.getUnlamSingleDoubleLam');
+
+
+    Route::post('doubletripal/wastage/submit','Tripal\DoubleTripalController@getWastageStore')->name("doubletripal.wastage.submit");
 
 
 
@@ -765,11 +816,11 @@ Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"
 Route::get('tape-entry/receive/view/{id}',[TapeEntryController::class,"view"])->name("tape.entry.receive.view");
 Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"deleteTape"])->name("tape.entry.receive.delete");
     //reteieve planttype
-Route::get('tape-entry/ajax-request/{department_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
+Route::get('tape-entry/ajax-request/{godam_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
     //reteieve plantname
-Route::get('tape-entry/ajax-request/plantname/{planttype_id}',[TapeEntryController::class,"ajaxrequestplantname"])->name('tape.entry.ajax.plantname');
+Route::get('tape-entry/ajax-request/plantname/{planttype_id}/{godam_id}',[TapeEntryController::class,"ajaxrequestplantname"])->name('tape.entry.ajax.plantname');
     //retrieve shift
-Route::get('tape-entry/ajax-request/shift/{plantname_id}',[TapeEntryController::class,"ajaxrequestshift"])->name('tape.entry.ajax.shift');
+Route::get('tape-entry/ajax-request/shift/{plantname_id}/{godam_id}/{plantType_id}',[TapeEntryController::class,"ajaxrequestshift"])->name('tape.entry.ajax.shift');
     //get dana info
 Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajaxrequestdanainfo"])->name('tape.entry.ajax.get.danainfo');
     // tapeentrystock

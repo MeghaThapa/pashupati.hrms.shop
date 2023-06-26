@@ -68,7 +68,7 @@ class ProcessingSubcatController extends Controller
 
         // store processing subcat
         $processingSubcat = Processingsubcat::create([
-            'name' => $request->name,
+            'name' => strtolower($request->name),
             'processing_steps_id' =>$request->processing_steps_id,
             'slug' =>$request->name,
             'status' => $request->status,
@@ -129,7 +129,7 @@ class ProcessingSubcatController extends Controller
 
         // update processing step
         $processingStep->update([
-             'name' => $request->name,
+             'name' => strtolower($request->name),
             'processing_steps_id' =>$request->processing_steps_id,
             'slug' =>$request->name,
             'status' => $request->status,

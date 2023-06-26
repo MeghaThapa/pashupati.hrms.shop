@@ -42,7 +42,7 @@
                     @csrf
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label for="name">{{ __('Fabric Name') }}<span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="{{ __('Fabric Name') }}" value="{{ old('name') }}" required>
                                 @error('name')
@@ -51,7 +51,7 @@
                                         </span>
                                 @enderror
                             </div>
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-4 form-group">
                                 <label for="FabricGroup">{{ __('FabricGroup Name') }}<span class="required-field">*</span></label>
                                 <select class="advance-select-box form-control @error('FabricGroup') is-invalid @enderror" id="FabricGroup" name="fabricgroup_id"  required>
                                     <option value="" selected disabled>{{ __('Select a FabricGroup') }}</option>
@@ -65,6 +65,22 @@
                                         </span>
                                 @enderror
                             </div>
+
+                            <div class="col-md-4 form-group">
+                                <label for="FabricGroup">{{ __('Department Name') }}<span class="required-field">*</span></label>
+                                <select class="advance-select-box form-control @error('godam_id') is-invalid @enderror" id="godam_id" name="godam_id"  required>
+                                    <option value="" selected disabled>{{ __('Select a Godam') }}</option>
+                                    @foreach($godams as $key => $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('godam_id')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+
                         </div>
                       {{--   <div class="row">
                             <div class="form-group col-md-6">
@@ -109,6 +125,7 @@
                             
                         </div> --}}
                         <div class="row">
+
                             <div class="form-group col-md-6">
                                 <label for="meter" class="col-form-label">{{ __('Meter') }} <span class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('meter') is-invalid @enderror" id="meter" name="meter" placeholder="{{ __('Meter') }}" value="{{ old('name') }}" required>

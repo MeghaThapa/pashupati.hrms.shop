@@ -182,8 +182,8 @@
         </div>
     </div>
     <div class="row">
-        <a href="{{ route('rawMaterial.index') }}">
-            <button class="btn btn-primary">Back</button>
+        <a href="{{ route('rawMaterial.saveEntireRawMaterial',['rawMaterial_id'=>$rawMaterial->id]) }}">
+            <button class="btn btn-info">Save</button>
         </a>
     </div>
     <!--Dana Name popup-->
