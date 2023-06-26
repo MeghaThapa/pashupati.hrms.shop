@@ -483,7 +483,7 @@
         </div>
         <div class="card-footer">
             <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
-            <button class="btn btn-info" id="finalUpdate">Update</button>
+            <button class="btn btn-info" disabled id="finalUpdate">Update</button>
         </div>
     </div>
 </div>
@@ -641,6 +641,7 @@
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
         // callunlaminatedfabricajax();
+         // $('#fabricNameId').prop('disabled',true);
         comparelamandunlam();
 
         $("body").on("submit","#wastesubmit", function(event){
@@ -1055,23 +1056,75 @@
         $("#add_dana_consumption").prop("disabled",false);
     });
 
+    $(document).on("keyup","#polo_waste",function(e){
+        $("#finalUpdate").prop("disabled",false);
+    });
+
+    $(document).on("keyup","#fabric_waste",function(e){
+        $("#finalUpdate").prop("disabled",false);
+    });
+
+
     $(document).on("click","#add_dana_consumption",function(e){
+        // debugger;
         let dana = $("#danaNameId").val();
         let consumption = $("#add_dana_consumption_quantity").val();
-        if (consumption.trim() === '') {
-            alert("add quantity");
-        }else{
-            $("#totl_dana").val(consumption);
+   
+        $.ajax({
+            url:"{{ route('dana.autoload.checkAutoloadQuantity') }}",
+            method : 'post',
+            data:{
+                '_token' : $('meta[name="csrf-token"]').attr('content'),
+                'danaid' : dana
+            },
+            beforeSend:function(){
+                console.log('Getting Plant type');
+            },
+            success:function(response){
+                // console.log(response.itemquantity);
 
-            $("#selectedDanaID").val(dana);
-        }   
+             // if(consumption > response.itemquantity){
+             //    alert('kk');
+             // }
+             // else{
+             //    alert('issue');
+
+             // }
+
+                // if(response.itemquantity > consumption ? 'hi' : 'ok'){
+                //     alert('stock exceeded');
+                // }
+             
+                if (consumption.trim() === '') {
+                    alert("add quantity");
+                }else{
+                    $("#totl_dana").val(consumption);
+
+                    $("#selectedDanaID").val(dana);
+                }   
+             
+            },
+            error:function(error){
+                console.log(error);
+            }
+
+
+        });
+
+      
+       
+
+
     });
+
+
 
     $(document).on("keyup","#fabric_waste",function(e){
         let polo_waste = parseInt($("#polo_waste").val());
         let fabric_waste = parseInt($("#fabric_waste").val());
         let total_waste = polo_waste + fabric_waste;
         $("#total_waste").val(total_waste);
+
     });
     /********************** dana consumption and wastage and differences ******************************/
 
@@ -1088,6 +1141,8 @@
             let total_waste = $('#total_waste').val();
             let selectedDanaID = $("#selectedDanaID").val();
             let polo_waste = $("#polo_waste").val();
+            let godam_id = $("#toGodam").val();
+            // console.log(godam_id);
 
             trimmedConsumption = consumption.trim();
             trimmedPoloWaste = polo_waste.trim();

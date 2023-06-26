@@ -76,6 +76,17 @@ class TripalController extends Controller
         }
     }
 
+    public function checkAutoloadQuantity(Request $request){
+        // dd($request);
+        if($request->ajax()){
+            $dana_id =  $request->danaid;
+            $itemquantity = AutoLoadItemStock::where('dana_name_id',$dana_id)->value('quantity');
+            return response([
+                'itemquantity' => $itemquantity
+            ]);
+        }
+    }
+
     public function sendunlaminated(Request $request){
         if($request->ajax()){
             // return $request->data;
@@ -458,6 +469,8 @@ class TripalController extends Controller
 
             try{
                 DB::beginTransaction();
+                $department_id = Singlesidelaminatedfabric::value('department_id');
+                // dd($lamFabric);
 
                 //deduction
                     $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)->first();
@@ -542,16 +555,16 @@ class TripalController extends Controller
                     //     'quantity_in_kg' => $total_waste,
                     // ]);
 
-                    // WasteStock::create([
-                    //     'department_id' => $data->lamfabric->department_id,
-                    //     'waste_id' => '1',
-                    //     'quantity_in_kg' => $total_waste,
-                    // ]);
+                    WasteStock::create([
+                        'department_id' => $department_id,
+                        'waste_id' => '1',
+                        'quantity_in_kg' => $total_waste,
+                    ]);
 
-                    // $wastage = Wastages::create([
-                    //  'name' => 'tripal',
+                    $wastage = Wastages::create([
+                     'name' => 'tripal',
                     
-                    // ]);
+                    ]);
 
                     // $wastage_stock = WasteStock::create([
                     //  'waste_id' => $wastage->id,
