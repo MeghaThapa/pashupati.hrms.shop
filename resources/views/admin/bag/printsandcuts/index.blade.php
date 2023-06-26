@@ -36,13 +36,31 @@
                             <th>SN</th>
                             <th>Receipt Number</th>
                             <th>Status</th>
+                            <th>Date</th>
+                            <th>Date Np</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            
-                        </tr>
+                        @foreach($data as $index => $d)
+                            <tr>
+                                <td>{{ $index+1 }}</td>
+                                <td>{{ $d->receipt_number }}</td>
+                                <td>{{ $d->status }}</td>
+                                <td>{{ $d->date }}</td>
+                                <td>{{ $d->date_np }}</td>
+                                <td>
+                                    @if($d->status == "pending")
+                                        <div class="btn-group">
+                                            <a class="btn btn-primary" href="{{ route("prints.and.cuts.createPrintedRolls",["id"=>$d->id]) }}"> <i class="fas fa-edit"></i> </a>
+                                            <a class="btn btn-danger" href="javascript:void(0)"> <i class="fas fa-trash    "></i> </a>
+                                        </div>
+                                    @elseif($d->status == "completed")
+                                        <a class="btn btn-success" href="javascript:void(0)"> <i class="fa fa-eye" aria-hidden="true"></i> </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -50,6 +68,9 @@
     </div>
 </div>
 @endsection
+<script>
+    $(".table").dataTable();
+</script>
 @section('extra-script')
 @if(session()->has('message'))
 <script>

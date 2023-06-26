@@ -95,17 +95,19 @@
         <div class="form">
             <form action="">
                 <div class="row">
-                    <div class="col-md-3">
-                        <label for="receipt_number">Receipt Number</label>
-                        <input type="text" class="form-control" id='receipt_number' name='receipt_number' readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="Date NP">Date Np </label>
-                        <input type="text" class="form-control" id='date_np' name='date_np' readonly>
-                    </div>
+                    @foreach($data as $d)
+                        <div class="col-md-3">
+                            <label for="receipt_number">Receipt Number</label>
+                            <input type="text" value="{{ $d->receipt_number }}" class="form-control" id='receipt_number' name='receipt_number' readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="Date NP">Date</label>
+                            <input type="text" value="{{ $d->date }}"  class="form-control" id='date_np' name='date_np' readonly>
+                        </div>
+                    @endforeach
                     <div class="col-md-3">
                         <label for="Roll number">Roll Number</label>
-                        <input type="text" class="form-control" id='roll_number' name='roll_number' readonly>
+                        <input type="text" class="form-control" id='roll_number' name='roll_number' disabled>
                     </div>
                     <div class="col-md-3">
                         <label for="Fabric">Fabric </label>

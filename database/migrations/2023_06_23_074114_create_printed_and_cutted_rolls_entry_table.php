@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('printed_and_cutted_rolls', function (Blueprint $table) {
+        Schema::create('printed_and_cutted_rolls_entry', function (Blueprint $table) {
             $table->id();
             $table->string('receipt_number');
             $table->string('date');
