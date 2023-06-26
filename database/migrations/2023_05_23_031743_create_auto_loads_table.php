@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('transfer_date');
             $table->string('receipt_no');
+            $table->enum('status', ['pending', 'complete']);
             $table->timestamps();
         });
     }

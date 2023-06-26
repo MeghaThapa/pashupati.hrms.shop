@@ -206,6 +206,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //recent
     Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
     Route::get('rawMaterial/saveEntireRawMaterial/{rawMaterial_id}', 'RawMaterialController@saveEntireRawMaterial')->name('rawMaterial.saveEntireRawMaterial');
+    Route::get('rawMaterial/godamTransferDetail', 'RawMaterialController@godamTransferDetail')->name('rawMaterial.godamTransferDetail');
+    
+    Route::post('rawMaterial/filterGodamTransferAccGodam', 'RawMaterialController@filterGodamTransferAccGodam')->name('rawMaterial.filterGodamTransferAccGodam');
+
 
     //for gana name from rawmaterial stock
     Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
@@ -288,6 +292,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('autoload/getPlantTypePlantName/{plantType_id}',[AutoloadController::class,'getPlantTypePlantName'])->name('autoload.getPlantTypePlantName');
     Route::get('autoload/getDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getDanaGroupDanaName'])->name('autoload.getDanaGroupDanaName');
     Route::get('autoload/getPlantTypeAccGodam/{godam_id}',[AutoloadController::class,'getPlantTypeAccGodam'])->name('autoload.getPlantTypeAccGodam');
+
+    Route::get('autoload/saveEntireAutoload/{autoload_id}',[AutoloadController::class,'saveEntireAutoload'])->name('autoLoad.saveEntireAutoload');
+
 
     Route::get('autoload/getEditDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getEditDanaGroupAccToGodam'])->name('autoLoad.getEditDanaGroupAccToGodam');
     Route::get('autoload/getEditDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getEditDanaGroupDanaName'])->name('autoLoad.getEditDanaGroupDanaName');

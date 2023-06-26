@@ -100,7 +100,115 @@ class RawMaterialController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
+    //godam transfer
+    public function godamTransferDetail(){
+        $rawMaterials = RawMaterial::with(['rawMaterialsItem','rawMaterialsItem.danaName','rawMaterialsItem.danaGroup'])
+        ->whereNotNull('from_godam_id')
+        ->whereNotNull('to_godam_id')
+        ->get();
+        foreach ($rawMaterials as $rawMaterial) {
+            foreach($rawMaterial->rawMaterialsItem as $item){
+                $danaGroup = $item->danaGroup->name;
+                $danaName = $item->danaName->name;
+                $quantity = $item->quantity;
+                $key = $danaGroup . '_' . $danaName;
+                 if (!isset($danaData[$key])) {
+                    $danaData[$key] = [
+                        'danaGroup' => $danaGroup,
+                        'danaName' => $danaName,
+                        'quantity' => 0
+                    ];
+                }
+                $danaData[$key]['quantity'] += $quantity;
+            }
 
+        }
+        $godams=Godam::where('status','active')->get(['id','name']);
+
+        $rawMaterialFilter = json_decode(json_encode(array_values($danaData)));
+
+
+        return view('admin.rawMaterial.godamTransferDetails', compact('rawMaterialFilter','godams'));
+    }
+
+
+    public function filterGodamTransferAccGodam(Request $request){
+             $rawMaterialsQuery = RawMaterial::with(['rawMaterialsItem', 'rawMaterialsItem.danaName', 'rawMaterialsItem.danaGroup']);
+
+                    if ($request->has('from_godam_id') && $request->has('to_godam_id')) {
+                        $rawMaterialsQuery->where('from_godam_id', $request->from_godam_id)
+                                        ->where('to_godam_id', $request->to_godam_id);
+                    } elseif ($request->has('from_godam_id')) {
+                        $rawMaterialsQuery->where('from_godam_id', $request->from_godam_id);
+                    } elseif ($request->has('to_godam_id')) {
+                        $rawMaterialsQuery->where('to_godam_id', $request->to_godam_id);
+                    }
+
+                    $rawMaterials = $rawMaterialsQuery->get();
+
+                    $danaData = [];
+
+                    foreach ($rawMaterials as $rawMaterial) {
+                        foreach ($rawMaterial->rawMaterialsItem as $item) {
+                            $danaGroup = $item->danaGroup->name;
+                            $danaName = $item->danaName->name;
+                            $quantity = $item->quantity;
+                            $key = $danaGroup . '_' . $danaName;
+                            if (!isset($danaData[$key])) {
+                                $danaData[$key] = [
+                                    'danaGroup' => $danaGroup,
+                                    'danaName' => $danaName,
+                                    'quantity' => 0
+                                ];
+                            }
+                            $danaData[$key]['quantity'] += $quantity;
+                        }
+                        }
+
+            $godams = Godam::where('status', 'active')->get(['id', 'name']);
+
+            $rawMaterialFilter = json_decode(json_encode(array_values($danaData)));
+            //return  $rawMaterialFilter;
+            return view('admin.rawMaterial.godamTransferDetails', compact('rawMaterialFilter', 'godams'));
+
+    }
+    // public function filter(Request $request){
+    //     $TOTAL_ROW=35;
+    //     $TOTAL_AMOUNT = 0;
+
+    //     $stocks = DB::table('stocks')
+    //     ->join('storein_categories', 'stocks.category_id', '=', 'storein_categories.id')
+    //     ->join('items_of_storeins', 'stocks.item_id', '=', 'items_of_storeins.id')
+    //     ->join('storein_departments', 'stocks.department_id', '=', 'storein_departments.id')
+    //      ->join('units','stocks.unit','=','units.id')
+    //     ->join('sizes','stocks.size','=','sizes.id')
+    //     ->select(
+    //         'stocks.*',
+    //         'storein_categories.name as category_name',
+    //         'items_of_storeins.name as item_name',
+    //         'items_of_storeins.pnumber as item_num',
+    //         'storein_departments.name as department_name',
+    //         'units.name as unit_name',
+    //         'sizes.name as size_name',
+    //     );
+    //     if ($request->storein_department || $request->storein_department != null) {
+    //         $stocks->where('stocks.department_id', $request->storein_department);
+    //     }
+    //     if($request->storein_category || $request->storein_category !=null){
+    //           $stocks->where('stocks.category_id', $request->storein_category);
+    //     }
+    //     $stocks = $stocks->paginate($TOTAL_ROW);
+    //     $stocks->appends($request->only('storein_department', 'storein_category'));
+
+    //     foreach ($stocks->items() as $stock){
+    //         $TOTAL_AMOUNT += $stock->total_amount;
+    //     }
+
+
+    //     $departments=StoreinDepartment::where('status','active')->get();
+    //     $categories =StoreinCategory::where('status','active')->get();
+    //     return view('admin.Stock.itemStock', compact('stocks','departments','categories','TOTAL_AMOUNT'));
+    // }
     public function saveEntireRawMaterial($rawMaterial_id){
         $rawMaterial=RawMaterial::find($rawMaterial_id);
         $rawMaterial->status ='complete';

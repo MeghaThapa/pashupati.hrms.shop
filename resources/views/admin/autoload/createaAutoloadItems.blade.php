@@ -223,183 +223,188 @@
             </div>
 
         </div>
-        <!-- Modal -->
-        <div class="modal fade" id="editAutoloadItemModel" tabindex="-1" role="dialog"
-            aria-labelledby="tryModelLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="tryModelLabel">Modal Title</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="editAutoloadItemModelUpdate">
-                        <div class="modal-body">
-                            @csrf
-                            <div class="card-body">
-                                <div class="row">
-                                    {{-- recent --}}
 
-                                    <div class="col-md-12 form-group">
-                                        <input type="text" step="any" min="0"
-                                            class="form-control calculator" data-number="1" name="autoload_item_id_model"
-                                            id="autoloadItemIdModel" min="1">
-                                        <label for="size" class="col-form-label">{{ __('From Godam') }}
-                                        </label>
-                                        <a href="#" class="col-md-1 btn btn-primary dynamic-btn"
-                                            data-toggle="modal" data-target="#addDanaNameModel"
-                                            style="margin-top:0 !important; top:0;float:right;">
-                                            <i class="fas fa-plus"
-                                                style="display:flex;align-items: center;justify-content: center;"></i>
-                                        </a>
-                                        <select class="advance-select-box form-control" id="fromGodamIdModel"
-                                            name="from_godam_id_model" required>
-                                            <option value="" selected disabled>{{ __('Select From Godam') }}
-                                            </option>
-                                            @foreach ($fromGodams as $fromGodam)
-                                                <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('from_godam_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <label for="size" class="col-form-label">{{ __('Plant Type') }}
-                                        </label>
-                                        <a href="#" class="col-md-1 btn btn-primary dynamic-btn"
-                                            data-toggle="modal" data-target="#addDanaNameModel"
-                                            style="margin-top:8 !important; top:0;float:right;">
-                                            <i class="fas fa-plus"
-                                                style="display:flex;align-items: center;justify-content: center;"></i>
-                                        </a>
-                                        <select class="advance-select-box form-control" id="plantTypeIdModel"
-                                            name="plant_type_id_model" required>
-                                            <option value="" selected disabled>{{ __('Select Plant Type') }}
-                                            </option>
-                                            @foreach ($plantTypes as $plantType)
-                                                <option value="{{ $plantType->id }}">{{ $plantType->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('plant_type_id_model')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <label for="size" class="col-form-label">{{ __('Plant Name') }}
-                                        </label>
-                                        <select class="advance-select-box form-control" id="plantNameIdModel"
-                                            name="plant_name_id_model" required>
-                                            <option value="" selected disabled>{{ __('Select Plant Name') }}
-                                            </option>
 
-                                        </select>
-                                        @error('plant_name_id_model')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <label for="size" class="col-form-label">{{ __('Shift') }}
-                                        </label>
-                                        <select class="advance-select-box form-control" id="shiftIdModel"
-                                            name="shift_id_model" required>
-                                            <option value="" selected disabled>{{ __('Select Shift') }}</option>
-                                            @foreach ($shifts as $shift)
-                                                <option value="{{ $shift->id }}">{{ $shift->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('shift_id_model')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        {{-- <input type="text" step="any" min="0" class="form-control calculator"
+    </div>
+    <div class="row">
+        <a href="{{ route('autoLoad.saveEntireAutoload', ['autoload_id' => $autoload->id]) }}">
+            <button class="btn btn-info">Save</button>
+        </a>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="editAutoloadItemModel" tabindex="-1" role="dialog" aria-labelledby="tryModelLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tryModelLabel">Modal Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editAutoloadItemModelUpdate">
+                    <div class="modal-body">
+                        @csrf
+                        <div class="card-body">
+                            <div class="row">
+                                {{-- recent --}}
+
+                                <div class="col-md-12 form-group">
+                                    <input type="text" step="any" min="0" class="form-control calculator"
+                                        data-number="1" name="autoload_item_id_model" id="autoloadItemIdModel"
+                                        min="1">
+                                    <label for="size" class="col-form-label">{{ __('From Godam') }}
+                                    </label>
+                                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                        data-target="#addDanaNameModel"
+                                        style="margin-top:0 !important; top:0;float:right;">
+                                        <i class="fas fa-plus"
+                                            style="display:flex;align-items: center;justify-content: center;"></i>
+                                    </a>
+                                    <select class="advance-select-box form-control" id="fromGodamIdModel"
+                                        name="from_godam_id_model" required>
+                                        <option value="" selected disabled>{{ __('Select From Godam') }}
+                                        </option>
+                                        @foreach ($fromGodams as $fromGodam)
+                                            <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('from_godam_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="size" class="col-form-label">{{ __('Plant Type') }}
+                                    </label>
+                                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                        data-target="#addDanaNameModel"
+                                        style="margin-top:8 !important; top:0;float:right;">
+                                        <i class="fas fa-plus"
+                                            style="display:flex;align-items: center;justify-content: center;"></i>
+                                    </a>
+                                    <select class="advance-select-box form-control" id="plantTypeIdModel"
+                                        name="plant_type_id_model" required>
+                                        <option value="" selected disabled>{{ __('Select Plant Type') }}
+                                        </option>
+                                        @foreach ($plantTypes as $plantType)
+                                            <option value="{{ $plantType->id }}">{{ $plantType->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('plant_type_id_model')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="size" class="col-form-label">{{ __('Plant Name') }}
+                                    </label>
+                                    <select class="advance-select-box form-control" id="plantNameIdModel"
+                                        name="plant_name_id_model" required>
+                                        <option value="" selected disabled>{{ __('Select Plant Name') }}
+                                        </option>
+
+                                    </select>
+                                    @error('plant_name_id_model')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="size" class="col-form-label">{{ __('Shift') }}
+                                    </label>
+                                    <select class="advance-select-box form-control" id="shiftIdModel"
+                                        name="shift_id_model" required>
+                                        <option value="" selected disabled>{{ __('Select Shift') }}</option>
+                                        @foreach ($shifts as $shift)
+                                            <option value="{{ $shift->id }}">{{ $shift->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('shift_id_model')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    {{-- <input type="text" step="any" min="0" class="form-control calculator"
                                         id="rawMaterialItemIdModel" data-number="1" name="rawMaterial_item_id_model"
                                         min="1" required hidden> --}}
-                                        <label for="size" class="col-form-label">{{ __('Dana Group') }}
-                                        </label>
-                                        <a href="#" class="col-md-1 btn btn-primary dynamic-btn"
-                                            data-toggle="modal" data-target="#addDanaGroupModel"
-                                            style="margin-top:0 !important; top:0;float:right;">
-                                            <i class="fas fa-plus"
-                                                style="display:flex;align-items: center;justify-content: center;"></i>
-                                        </a>
-                                        <select class="advance-select-box form-control" id="danaGroupIdModel"
-                                            name="dana_group_id_model" required>
-                                            <option value="" selected disabled>{{ __('Select dana Group') }}
-                                            </option>
-                                            {{-- @foreach ($danaGroups as $danaGroup)
+                                    <label for="size" class="col-form-label">{{ __('Dana Group') }}
+                                    </label>
+                                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                        data-target="#addDanaGroupModel"
+                                        style="margin-top:0 !important; top:0;float:right;">
+                                        <i class="fas fa-plus"
+                                            style="display:flex;align-items: center;justify-content: center;"></i>
+                                    </a>
+                                    <select class="advance-select-box form-control" id="danaGroupIdModel"
+                                        name="dana_group_id_model" required>
+                                        <option value="" selected disabled>{{ __('Select dana Group') }}
+                                        </option>
+                                        {{-- @foreach ($danaGroups as $danaGroup)
                                             <option value="{{ $danaGroup->id }}">{{ $danaGroup->name }}
                                             </option>
                                         @endforeach --}}
-                                        </select>
+                                    </select>
 
-                                        @error('Receipt_no')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <label for="size" class="col-form-label">{{ __('Dana Name') }}
-                                        </label>
-                                        <a href="#" class="col-md-1 btn btn-primary dynamic-btn"
-                                            data-toggle="modal" data-target="#addDanaNameModel"
-                                            style="margin-top:0 !important; top:0;float:right;">
-                                            <i class="fas fa-plus"
-                                                style="display:flex;align-items: center;justify-content: center;"></i>
-                                        </a>
-                                        {{-- <input type="text" step="any" min="0" class="form-control calculator" id="remarks"
-                                    data-number="1" name="remarks" placeholder="{{ __('Remarks') }}" min="1" required> --}}
-                                        <select class="advance-select-box form-control" id="danaNameModel"
-                                            name="dana_name_id_model" required>
-                                            <option value="" selected disabled>{{ __('Select dana Name') }}</option>
-                                        </select>
-                                        @error('gp_no')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <label for="size" class="col-form-label">{{ __('Qty in Kg') }}
-                                        </label>
-                                        <input type="text" step="any" min="0"
-                                            class="form-control calculator" id="quantityInKgModel" data-number="1"
-                                            name="quantity_in_kg_model" placeholder="{{ __('Remarks') }}" min="1"
-                                            required>
-                                        @error('gp_no')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-
+                                    @error('Receipt_no')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
-                            </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="size" class="col-form-label">{{ __('Dana Name') }}
+                                    </label>
+                                    <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                                        data-target="#addDanaNameModel"
+                                        style="margin-top:0 !important; top:0;float:right;">
+                                        <i class="fas fa-plus"
+                                            style="display:flex;align-items: center;justify-content: center;"></i>
+                                    </a>
+                                    {{-- <input type="text" step="any" min="0" class="form-control calculator" id="remarks"
+                                    data-number="1" name="remarks" placeholder="{{ __('Remarks') }}" min="1" required> --}}
+                                    <select class="advance-select-box form-control" id="danaNameModel"
+                                        name="dana_name_id_model" required>
+                                        <option value="" selected disabled>{{ __('Select dana Name') }}</option>
+                                    </select>
+                                    @error('gp_no')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="size" class="col-form-label">{{ __('Qty in Kg') }}
+                                    </label>
+                                    <input type="text" step="any" min="0" class="form-control calculator"
+                                        id="quantityInKgModel" data-number="1" name="quantity_in_kg_model"
+                                        placeholder="{{ __('Remarks') }}" min="1" required>
+                                    @error('gp_no')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
 
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
-                        </div>
-                    </form>
-                </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
-
     </div>
     <!--Plant Type popup-->
     <div class="modal fade" id="addPlantTypeModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
@@ -958,13 +963,13 @@
             //clear input fields
             function clearInputFields() {
                 document.getElementById('quantityInKg').value = "";
-               // $('#fromGodamId').val($('#fromGodamId option:first').val()).change();
-               // $('#plantTypeId').val($('#plantTypeId option:first').val()).change();
+                // $('#fromGodamId').val($('#fromGodamId option:first').val()).change();
+                // $('#plantTypeId').val($('#plantTypeId option:first').val()).change();
                 //$('#plantNameId').val($('#plantNameId option:first').val()).change();
                 //$('#shiftId').val($('#shiftId option:first').val()).change();
                 $('#danaGroupId').val($('#danaGroupId option:first').val()).change();
                 $('#danaName').val($('#danaName option:first').val()).change();
-                
+
             }
 
 

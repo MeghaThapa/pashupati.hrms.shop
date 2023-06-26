@@ -116,7 +116,7 @@ class AutoloadController extends Controller
 
     public function dataTable(){
 
-        $autoLoads = AutoLoad::select('id', 'transfer_date', 'receipt_no', 'created_at', 'updated_at')
+        $autoLoads = AutoLoad::select('id', 'transfer_date', 'receipt_no', 'created_at', 'updated_at','status')
         ->orderBy('created_at', 'desc')
         ->withCount('autoloadItems')
         ->get()
@@ -125,6 +125,9 @@ class AutoloadController extends Controller
         return DataTables::of($autoLoads)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
+                if($row->status=="complete"){
+                    return '<span class="badge badge-success">COMPLETED</span>';
+                }
                 $actionBtn ='';
                 $actionBtn .= '
                 <button class=" btn btn-primary btnEdit" data-id="'.$row->id.'">
@@ -144,6 +147,13 @@ class AutoloadController extends Controller
     public function delete($autoload_id){
         $autoload=AutoLoad::find($autoload_id);
         $autoload->delete();
+    }
+
+    public function saveEntireAutoload($autoload_id){
+        $autoload=AutoLoad::find($autoload_id);
+        $autoload->status='complete';
+         $autoload->save();
+         return redirect()->route('autoload.index');
     }
     public function show($id)
     {
