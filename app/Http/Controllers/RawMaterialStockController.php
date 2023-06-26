@@ -22,16 +22,17 @@ class RawMaterialStockController extends Controller
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
        $rawMaterialStocks= DB::table('raw_material_stocks AS stock')
-       ->join('godam','godam.id','=','stock.godam_id')
-       ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
-       ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
-       ->select(
-              'godam.name as godamName',
-              'danaGroup.name as danaGroup',
-              'danaName.name as danaName',
-              'stock.quantity as quantity'
-          )
-          ->paginate(35);
+       //->join('godam','godam.id','=','stock.godam_id')
+         ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
+        ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
+        ->select(
+            //'godam.name as godamName',
+            'danaGroup.name as danaGroup',
+            'danaName.name as danaName',
+            DB::raw('SUM(stock.quantity) as quantity')
+        )
+        ->groupBy('danaGroup.name', 'danaName.name')
+        ->paginate(10);
         $godams=Godam::where('status','active')->get(['id','name']);
         return view('admin.rawMaterialStock.rawMaterialStockIndex',compact('settings','rawMaterialStocks','godams'));
 
@@ -69,12 +70,17 @@ class RawMaterialStockController extends Controller
 
         return view('admin.rawMaterialStock.danaNameFilter',compact('danaNames'));
     }
-    public function filterAccDanaName($danaName_id){
-        $rawMaterialItemStock=RawMaterialStock::with('danaName','danaGroup')->where('dana_name_id',$danaName_id)->get();
+   public function filterAccDanaName($danaName_id)
+    {
+        $rawMaterialItemStock = RawMaterialStock::with('danaName', 'danaGroup')
+            ->where('dana_name_id', $danaName_id)
+            ->groupBy('dana_group_id', 'dana_name_id')
+            ->select('dana_group_id', 'dana_name_id', DB::raw('SUM(quantity) as quantity'))
+            ->get();
+
         if ($rawMaterialItemStock) {
             return $rawMaterialItemStock;
         } else {
-
             return false;
         }
     }
@@ -83,8 +89,11 @@ class RawMaterialStockController extends Controller
     public function filterAccDanaGroup($danaGroup_id){
 
        // return ($danaGroup_id);
-        $rawMaterialItemStocks =RawMaterialStock::with('danaName','danaGroup')->where('dana_group_id',$danaGroup_id)->get();
-        //return $rawMaterialItemStocks;
+        $rawMaterialItemStocks =RawMaterialStock::with('danaName','danaGroup')
+        ->where('dana_group_id',$danaGroup_id)
+        ->groupBy('dana_group_id', 'dana_name_id')
+        ->select('dana_group_id', 'dana_name_id', DB::raw('SUM(quantity) as quantity'))
+        ->get();
         if ($rawMaterialItemStocks) {
             return $rawMaterialItemStocks;
         } else {

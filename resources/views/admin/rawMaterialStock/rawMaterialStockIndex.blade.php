@@ -44,7 +44,7 @@
                     <thead>
                         <tr>
                             <th>{{ __('S.No') }}</th>
-                            <th>{{ __('Godam') }}</th>
+                            {{-- <th>{{ __('Godam') }}</th> --}}
                             <th>{{ __('Dana Group Name') }}</th>
                             <th>{{ __('Dana Name') }}</th>
                             <th>{{ __('Quantity') }}</th>
@@ -56,7 +56,7 @@
                             @foreach ($rawMaterialStocks as $i => $stock)
                                 <tr>
                                     <td>{{ ++$i }}</td>
-                                    <td>{{ $stock->godamName }}</td>
+                                    {{-- <td>{{ $stock->godamName }}</td> --}}
                                     <td>{{ $stock->danaGroup }}</td>
                                     <td>{{ $stock->danaName }}</td>
                                     <td>{{ $stock->quantity }}</td>
