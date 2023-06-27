@@ -8,13 +8,13 @@ use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
 use App\Models\FabricNonWovenReciveEntry;
 use App\Models\FabricNonWovenReceiveEntryStock;
-use App\Models\Department;
+use App\Models\Godam;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use App\Models\Shift;
 use App\Models\Wastages;
 use App\Models\WasteStock;
-use App\Models\AutoloadItemStock;
+use App\Models\AutoLoadItemStock;
 use App\Models\DanaName;
 use Maatwebsite\Excel\Facades\Excel;
 use Response;
@@ -35,7 +35,7 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function create()
     {
-        $departments = Department::get();
+        $godams = Godam::where('status','active')->get();
         $shifts = Shift::get();
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
 
@@ -44,8 +44,8 @@ class FabricNonWovenReceiveEntryController extends Controller
       
         // dd($nonwovenfabrics);
         $receipt_no = "NFE"."-".getNepaliDate(date('Y-m-d'));
-        $dana = DanaName::where('status','active')->get();
-        return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics','receipt_no','getnetweight','dana'));
+        $dana = AutoLoadItemStock::get();
+        return view('admin.nonwovenfabrics-receiveentry.create',compact('godams','shifts','nonwovenfabrics','receipt_no','getnetweight','dana'));
     }
 
     public function store(Request $request)
@@ -104,10 +104,15 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function storeWaste(Request $request)
     {
+        // dd($request);
+        $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
 
-        $stock = AutoLoadItemStock::where('dana_name_id',$request->dana)->first();
+        $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
+
+
         $presentQuantity = $stock->quantity;
-        $deduction = $presentQuantity - $request->danaquantity;
+        $deduction = $presentQuantity - $request->consumption;
+        // dd($deduction);
 
         if($deduction == 0){
             $stock->delete();
@@ -118,17 +123,17 @@ class FabricNonWovenReceiveEntryController extends Controller
             ]);
         }
 
-       $wastage = Wastages::create([
-        'name' => 'nonwoven',
+       // $wastage = Wastages::create([
+       //  'name' => 'nonwoven',
       
-       ]);
+       // ]);
 
-       $wastage_stock = WasteStock::create([
-        'waste_id' => $wastage->id,
-        'department_id' => $request->godam_id,
-        'quantity_in_kg' => $request->wastage,
+       // $wastage_stock = WasteStock::create([
+       //  'waste_id' => $wastage->id,
+       //  'department_id' => $request->godam_id,
+       //  'quantity_in_kg' => $request->total_waste,
        
-       ]);
+       // ]);
 
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
