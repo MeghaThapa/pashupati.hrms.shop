@@ -105,8 +105,8 @@
                 </label>
                 <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                    @foreach ($department as $data)
-                    <option value="{{ $data->id }}">{{ $data->department }}
+                    @foreach ($godam as $data)
+                    <option value="{{ $data->id }}">{{ $data->name }}
                     </option>
                     @endforeach
                 </select>
@@ -1149,7 +1149,7 @@
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
-            // debugger;
+            debugger;
 
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');

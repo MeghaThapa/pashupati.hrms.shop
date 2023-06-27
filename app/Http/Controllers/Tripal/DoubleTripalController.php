@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AutoLoadItemStock;
 use App\Models\DanaName;
-use App\Models\Department;
+use App\Models\Godam;
 use App\Models\FabricLaminatedSentFSR;
 use App\Models\FabricStock;
 use App\Models\FabricTemporaryForLam;
@@ -39,13 +39,13 @@ class DoubleTripalController extends Controller
         $bill_no = "TRP"."-".getNepaliDate(date('Y-m-d'))."-".$id+1;
         $bill_date = date('Y-m-d');
         $shifts = Shift::where('status','active')->get();
-        $department = Department::where('status','active')->get();
+        $godam = Godam::where('status','active')->get();
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = AutoLoadItemStock::get();
         $fabrics = Singlesidelaminatedfabricstock::get();
         // dd($fabrics);
-        return view('admin.doubletripal.index',compact('department','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date'));
+        return view('admin.doubletripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date'));
     }
 
 
@@ -480,8 +480,10 @@ class DoubleTripalController extends Controller
             try{
                 DB::beginTransaction();
 
-                //deduction
-                    $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)->first();
+                    $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
+
+                    $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
+
                     $presentQuantity = $stock->quantity;
                     $deduction = $presentQuantity - $consumption;
 
@@ -553,43 +555,40 @@ class DoubleTripalController extends Controller
                         
                     // }
 
-                    $unlamfabtripal = Unlaminatedfabrictripal::where('status','sent')->get();
-                    $getalldata = Unlaminatedfabrictripal::where('bill_number',$unlamfabtripal[0]->bill_number)->get();
+                    // $unlamfabtripal = Unlaminatedfabrictripal::where('status','sent')->get();
+                    // $getalldata = Unlaminatedfabrictripal::where('bill_number',$unlamfabtripal[0]->bill_number)->get();
                     // dd($getalldata);
                     // dd($unlamfabtripal,$unlamfabtripal[0]->bill_number);
 
-                    Tripal::create([
-                        'bill_number' => $unlamfabtripal[0]->bill_number, 
-                        'bill_date' => $unlamfabtripal[0]->bill_date, 
-                        'fabric_id' => $unlamfabtripal[0]->fabric_id, 
-                        'roll_no' => $unlamfabtripal[0]->roll_no, 
-                        'gross_wt' => $unlamfabtripal[0]->gross_wt, 
-                        'net_wt' => $unlamfabtripal[0]->net_wt, 
-                        'meter' => $unlamfabtripal[0]->meter, 
-                        'average' => $unlamfabtripal[0]->average, 
-                        'gram' => $unlamfabtripal[0]->gram, 
-                        'department_id' => $unlamfabtripal[0]->department_id, 
-                        'planttype_id' => $unlamfabtripal[0]->planttype_id, 
-                        'plantname_id' => $unlamfabtripal[0]->plantname_id, 
-                        // 'status' => $data->lamfabric->status,
-                        "type_lam" => "double"
-                    ]);
+                    // Tripal::create([
+                    //     'bill_number' => $unlamfabtripal[0]->bill_number, 
+                    //     'bill_date' => $unlamfabtripal[0]->bill_date, 
+                    //     'fabric_id' => $unlamfabtripal[0]->fabric_id, 
+                    //     'roll_no' => $unlamfabtripal[0]->roll_no, 
+                    //     'gross_wt' => $unlamfabtripal[0]->gross_wt, 
+                    //     'net_wt' => $unlamfabtripal[0]->net_wt, 
+                    //     'meter' => $unlamfabtripal[0]->meter, 
+                    //     'average' => $unlamfabtripal[0]->average, 
+                    //     'gram' => $unlamfabtripal[0]->gram, 
+                    //     'department_id' => $unlamfabtripal[0]->department_id, 
+                    //     'planttype_id' => $unlamfabtripal[0]->planttype_id, 
+                    //     'plantname_id' => $unlamfabtripal[0]->plantname_id, 
+                    //     // 'status' => $data->lamfabric->status,
+                    //     "type_lam" => "double"
+                    // ]);
 
-                    Wastages::create([
-                        'name' => 'doubletripal',
-                        'waste_id' => '1',
-                        'quantity_in_kg' => $total_waste,
-                    ]);
+                    // Wastages::create([
+                    //     'name' => 'doubletripal',
+                    //     'waste_id' => '1',
+                    //     'quantity_in_kg' => $total_waste,
+                    // ]);
 
-                    WasteStock::create([
-                        'department_id' => '1',
-                        'waste_id' => '1',
-                        'quantity_in_kg' => $total_waste,
-                    ]);
+                    // WasteStock::create([
+                    //     'department_id' => '1',
+                    //     'waste_id' => '1',
+                    //     'quantity_in_kg' => $total_waste,
+                    // ]);
 
-                    // LaminatedFabric::whereIn('id', $lamFabricToDelete)->delete();
-
-                    // FabricTemporaryForLam::whereIn('id',$lamFabricTempToDelete)->delete();
 
                 DB::commit();
 

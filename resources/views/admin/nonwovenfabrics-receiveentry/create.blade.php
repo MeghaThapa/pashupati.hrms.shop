@@ -98,8 +98,8 @@
                 </label>
                 <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                   @foreach ($departments as $data)
-                        <option value="{{ $data->id }}">{{ $data->department }}
+                   @foreach ($godams as $data)
+                        <option value="{{ $data->id }}">{{ $data->name }}
                     </option>
                     @endforeach
                 </select>
@@ -246,143 +246,151 @@
 <div class="row">
 
     <div class="col-md-5">
-        <div class="card card-body mt-2">
-            <div class="row p-2">
-                <div class="col-md-6">
-                    <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
-                    </label>
-                    <select class="advance-select-box form-control" id="dana" name="dana" required>
-                        <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                        @foreach ($dana as $dana)
-                        <option value="{{ $dana->id }}">{{ $dana->danaName->name }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('total_ul_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
+        <div class="card mt-2 p-5">
+            <div class="card-body">
+                <div class="row p-2">
+                    <div class="col-md-6">
+                        <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
+                        </label>
+                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
+                            <option value="" selected disabled>{{ __('-Select Dana Name-') }}</option>
+                            @foreach ($dana as $dana)
+                            <option value="{{ $dana->id }}">{{ $dana->danaName->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('total_ul_in_mtr')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="size" class="col-form-label">{{ __('Qty:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="add_dana_consumption_quantity"
+                            data-number="1" name="total_ul_in_mtr" min="1" disabled required>
+                        @error('total_ul_in_mtr')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <button class=" form-control btn btn-primary" id='add_dana_consumption' disabled>
+                            Add
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label for="size" class="col-form-label">{{ __('Qty:') }}<span class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="quantity"
-                        data-number="1" name="quantity" min="1" required>
-                    @error('total_ul_in_mtr')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary add_more">
-                        Add
-                    </button>
-                </div>
+            
+
             </div>
         </div>
     </div>
-    <div class="col-md-7" style="height: 100%;">
-        <div class="row">
-            <div class="col-md-6 form-group">
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Filter:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="filter"
-                        data-number="1" name="filter" min="1" required>
-                    @error('filter')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
+
+    <div class="card col-md-7">
+        <div class="card-body m-2 p-5">
+            <div class="col-md-12" style="height: 100%;">
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Filter:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="filter"
+                                data-number="1" name="filter" min="1" required>
+                            @error('filter')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Filament:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="filament"
+                                data-number="1" name="filament" min="1" required>
+                            @error('filament')
+                            <input type="text" name="dana_id" id="dana_id">
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div >
+                            <label for="size" class="col-form-label">{{ __('Roal coast:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="roalcoast"
+                                data-number="1" name="roalcoast" min="1" required>
+                            @error('roalcoast')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Strip:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="strip"
+                                data-number="1" name="strip" min="1" required>
+                            @error('strip')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+        
+                    </div>
+        
+                    <div class="col-md-4 form-group">
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Dana Quantity:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="dana_quanity"
+                                data-number="1" name="dana_quanity" min="1" required>
+                            @error('dana_quanity')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Wastage:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="wastage"
+                                data-number="1" name="wastage" min="1" required>
+                            @error('wastage')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Net Weight:') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <input type="text" step="any" min="0" class="form-control calculator" id="total_netweight"
+                                data-number="1" name="netweight" value="{{$getnetweight}}" min="1"  required readonly>
+                            @error('netweight')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        
+                    </div>
+        
                 </div>
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Filament:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="filament"
-                        data-number="1" name="filament" min="1" required>
-                    @error('filament')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                
             </div>
-            <div class="col-md-6 form-group">
-                <div >
-                    <label for="size" class="col-form-label">{{ __('Roal coast:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="roalcoast"
-                        data-number="1" name="roalcoast" min="1" required>
-                    @error('roalcoast')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Strip:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="strip"
-                        data-number="1" name="strip" min="1" required>
-                    @error('strip')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Dana Quantity:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="dana_quanity"
-                        data-number="1" name="dana_quanity" min="1" required>
-                    @error('dana_quanity')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Wastage:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="wastage"
-                        data-number="1" name="wastage" min="1" required>
-                    @error('wastage')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="size" class="col-form-label">{{ __('Net Weight:') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" step="any" min="0" class="form-control calculator" id="total_netweight"
-                        data-number="1" name="netweight" value="{{$getnetweight}}" min="1"  required>
-                    @error('netweight')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-
-                <button id="getwastagesrelated" class="btn btn-primary mt-4 add_wastage">
-                    Update
-                </button>
-
-            </div>
-            
+        </div>
+        <div class="card-footer">
+            <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
+            <button class="btn btn-primary" disabled id="finalUpdate">Update</button>
         </div>
     </div>
     {{-- <div class="col-md-7" style="height: 100%;">
@@ -466,6 +474,56 @@
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script>
+
+
+    $("#danaNameId").on("change",function(e){
+        var danaid = $(this).val(); 
+        $("#add_dana_consumption_quantity").prop("disabled",false);
+    });
+
+
+    $(document).on("keyup","#add_dana_consumption_quantity",function(e){
+        $("#add_dana_consumption").prop("disabled",false);
+    });
+
+    $(document).on("keyup","#filter",function(e){
+        $("#finalUpdate").prop("disabled",false);
+    });
+
+    $(document).on("click","#add_dana_consumption",function(e){
+        // debugger;
+        let dana = $("#danaNameId").val();
+        let consumption = $("#add_dana_consumption_quantity").val();
+        $("#dana_quanity").val(consumption);
+    
+        $.ajax({
+            url:"{{ route('dana.autoload.checkAutoloadQuantity') }}",
+            method : 'post',
+            data:{
+                '_token' : $('meta[name="csrf-token"]').attr('content'),
+                'danaid' : dana
+            },
+            beforeSend:function(){
+                console.log('Getting Plant type');
+            },
+            success:function(response){
+             
+                if (consumption.trim() === '') {
+                    alert("add quantity");
+                }else{
+                    $("#totl_dana").val(consumption);
+
+                    $("#selectedDanaID").val(dana);
+                }   
+             
+            },
+            error:function(error){
+                console.log(error);
+            }
+
+        });
+
+    });
     $('#filter').keyup(function(event){
       event.preventDefault();
       debugger;
@@ -527,83 +585,101 @@
     });
 </script>
 <script type="text/javascript">
-  $('.add_wastage').click(function(event){
-    var wastage = $("#wastage").val(),
-        netweight = $("#netweight").val(),
-        danaquantity = $("#dana_quanity").val(),
-        dana = $("#dana").val();
-    debugger;
-    var  token = $('meta[name="csrf-token"]').attr('content');
-    $.ajax({
-      type:"POST",
-      dataType:"html",
-      url:"{{route('storeWastage')}}",
-      data:{
-        _token:token,
-        wastage: wastage,
-        netweight: netweight,
-        godam_id: '1',
-        danaquantity: danaquantity,
-        dana: dana,
-      },
-      success: function(response){
-        $('#dana_list').append(response);
-        $('table').on('click','#cross',function(e){
-          e.preventDefault();
-          $(this).closest('tr').remove();
-        });
-        $("#dana_quanity").val(quantity);
+  // $('.add_wastage').click(function(event){
+  //   var wastage = $("#wastage").val(),
+  //       netweight = $("#netweight").val(),
+  //       danaquantity = $("#dana_quanity").val(),
+  //       dana = $("#dana").val();
+  //   debugger;
+  //   var  token = $('meta[name="csrf-token"]').attr('content');
+  //   $.ajax({
+  //     type:"POST",
+  //     dataType:"html",
+  //     url:"{{route('storeWastage')}}",
+  //     data:{
+  //       _token:token,
+  //       wastage: wastage,
+  //       netweight: netweight,
+  //       godam_id: '1',
+  //       danaquantity: danaquantity,
+  //       dana: dana,
+  //     },
+  //     success: function(response){
+  //       $('#dana_list').append(response);
+  //       $('table').on('click','#cross',function(e){
+  //         e.preventDefault();
+  //         $(this).closest('tr').remove();
+  //       });
+  //       $("#dana_quanity").val(quantity);
 
         
 
-        // $("#submit").addClass('d-none');
-        // $("#calculate").removeClass('d-none');
-        // $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
-      },
-      error:function(event){
-        alert('Error');
-        return false;
-      }
-    })
-  })
-</script>
-<script type="text/javascript">
-  $('.add_more').click(function(event){
-    var dana = $("#dana").val(),
-        quantity = $("#quantity").val();
-    debugger;
-    var  token = $('meta[name="csrf-token"]').attr('content');
-    $.ajax({
-      type:"POST",
-      dataType:"html",
-      url:"{{route('getDanaList')}}",
-      data:{
-        _token:token,
-        dana: dana,
-        quantity: quantity,
-       
-      },
-      success: function(response){
-        $('#dana_list').append(response);
-        $('table').on('click','#cross',function(e){
-          e.preventDefault();
-          $(this).closest('tr').remove();
-        });
-        $("#dana_quanity").val(quantity);
+  //       // $("#submit").addClass('d-none');
+  //       // $("#calculate").removeClass('d-none');
+  //       // $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
+  //     },
+  //     error:function(event){
+  //       alert('Error');
+  //       return false;
+  //     }
+  //   })
+  // })
 
-        
+   $(document).on("click","#finalUpdate",function(e){
 
-        // $("#submit").addClass('d-none');
-        // $("#calculate").removeClass('d-none');
-        // $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
-      },
-      error:function(event){
-        alert('Error');
-        return false;
+      let danaNameId = $("#selectedDanaID").val();
+      let consumption = $("#add_dana_consumption_quantity").val();
+      let wastage = $("#wastage").val();
+      // let total_waste = $('#total_waste').val();
+      let selectedDanaID = $("#selectedDanaID").val();
+      let filter = $("#filter").val();
+      let filament = $("#filament").val();
+      let roalcoast = $("#roalcoast").val();
+      let strip = $("#strip").val();
+      let godam_id = $("#toGodam").val();
+      // console.log(godam_id);
+      // debugger;
+
+      trimmedConsumption = consumption.trim();
+      trimmedFilter = filter.trim();
+      // trimmedFabricWaste = fabric_waste.trim();
+      trimmedTotalWaste = wastage.trim();
+
+      // debugger;
+
+      if(trimmedConsumption == '' || trimmedFilter == '' || trimmedTotalWaste == ''){
+          alert('Waste and Consumption cannot be null');
+      }else{
+      // subtractformautolad(danaNameId,consumption);
+          $.ajax({
+              url : "{{ route('storeWastage') }}",
+              method: "post",
+              data:{
+                  "_token" : $('meta[name="csrf-token"]').attr('content'),
+                  "danaNameID" : danaNameId,
+                  "consumption" : trimmedConsumption,
+                  "total_waste" : trimmedTotalWaste,
+                  "selectedDanaID" : selectedDanaID
+              },
+              beforeSend:function(){
+                  console.log("Before Send");
+              },
+              success:function(response){
+                  console.log(response);
+                  if(response == '200'){
+                      location.reload();
+                  }else{
+
+                  }
+              },
+              error:function(error){
+                  console.log(error);
+              }
+          }); 
       }
-    })
-  })
+  });
 </script>
+
 <script>
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
@@ -860,7 +936,7 @@
             tr.append(`<td>${d.length}</td>`);
             tr.append(`<td>${d.gross_weight}</td>`);
             tr.append(`<td>${d.net_weight}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            // tr.append(`<td><div class="btn-group"><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 
