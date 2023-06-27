@@ -27,7 +27,7 @@ use Exception;
 use Str;
 use App\Models\SingleSideunlaminatedFabric;
 use App\Models\Singlesidelaminatedfabric;
-use App\Models\SinglesidelaminatedfabricStock;
+use App\Models\Singlesidelaminatedfabricstock;
 use App\Models\DoubleSideLaminatedFabric;
 use App\Models\DoubleSideLaminatedFabricStock;
 
@@ -42,8 +42,8 @@ class DoubleTripalController extends Controller
         $department = Department::where('status','active')->get();
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
-        $dana = DanaName::where('status','active')->get();
-        $fabrics = SinglesidelaminatedfabricStock::get();
+        $dana = AutoLoadItemStock::get();
+        $fabrics = Singlesidelaminatedfabricstock::get();
         // dd($fabrics);
         return view('admin.doubletripal.index',compact('department','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date'));
     }
@@ -552,6 +552,28 @@ class DoubleTripalController extends Controller
                     //     }
                         
                     // }
+
+                    $unlamfabtripal = Unlaminatedfabrictripal::where('status','sent')->get();
+                    $getalldata = Unlaminatedfabrictripal::where('bill_number',$unlamfabtripal[0]->bill_number)->get();
+                    // dd($getalldata);
+                    // dd($unlamfabtripal,$unlamfabtripal[0]->bill_number);
+
+                    Tripal::create([
+                        'bill_number' => $unlamfabtripal[0]->bill_number, 
+                        'bill_date' => $unlamfabtripal[0]->bill_date, 
+                        'fabric_id' => $unlamfabtripal[0]->fabric_id, 
+                        'roll_no' => $unlamfabtripal[0]->roll_no, 
+                        'gross_wt' => $unlamfabtripal[0]->gross_wt, 
+                        'net_wt' => $unlamfabtripal[0]->net_wt, 
+                        'meter' => $unlamfabtripal[0]->meter, 
+                        'average' => $unlamfabtripal[0]->average, 
+                        'gram' => $unlamfabtripal[0]->gram, 
+                        'department_id' => $unlamfabtripal[0]->department_id, 
+                        'planttype_id' => $unlamfabtripal[0]->planttype_id, 
+                        'plantname_id' => $unlamfabtripal[0]->plantname_id, 
+                        // 'status' => $data->lamfabric->status,
+                        "type_lam" => "double"
+                    ]);
 
                     Wastages::create([
                         'name' => 'doubletripal',

@@ -299,7 +299,7 @@
         </div>
     </div>
     <div class="col-md-6 float-right ml-3">
-        <button class="btn btn-danger discard">Discard</button>
+        {{-- <button class="btn btn-danger discard">Discard</button> --}}
     </div>
 </div>
 <hr>
@@ -313,8 +313,8 @@
                         </label>
                         <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
                             <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
-                            @foreach ($dana as $danaName)
-                            <option value="{{ $danaName->id }}">{{ $danaName->name }}
+                            @foreach ($dana as $dana)
+                            <option value="{{ $dana->id }}">{{ $dana->danaName->name }}
                             </option>
                             @endforeach
                         </select>

@@ -14,7 +14,7 @@ use App\Models\ProcessingSubcat;
 use App\Models\Shift;
 use App\Models\Wastages;
 use App\Models\WasteStock;
-use App\Models\AutoloadItemStock;
+use App\Models\AutoLoadItemStock;
 use App\Models\DanaName;
 use Maatwebsite\Excel\Facades\Excel;
 use Response;
@@ -44,7 +44,7 @@ class FabricNonWovenReceiveEntryController extends Controller
       
         // dd($nonwovenfabrics);
         $receipt_no = "NFE"."-".getNepaliDate(date('Y-m-d'));
-        $dana = DanaName::where('status','active')->get();
+        $dana = AutoLoadItemStock::get();
         return view('admin.nonwovenfabrics-receiveentry.create',compact('departments','shifts','nonwovenfabrics','receipt_no','getnetweight','dana'));
     }
 
