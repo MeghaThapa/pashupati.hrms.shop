@@ -21,45 +21,63 @@ class RawMaterialStockController extends Controller
     {
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
+
        $rawMaterialStocks= DB::table('raw_material_stocks AS stock')
-       //->join('godam','godam.id','=','stock.godam_id')
-         ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
+        ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
         ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
         ->select(
-            //'godam.name as godamName',
             'danaGroup.name as danaGroup',
             'danaName.name as danaName',
             DB::raw('SUM(stock.quantity) as quantity')
         )
         ->groupBy('danaGroup.name', 'danaName.name')
-        ->paginate(10);
-        $godams=Godam::where('status','active')->get(['id','name']);
-        return view('admin.rawMaterialStock.rawMaterialStockIndex',compact('settings','rawMaterialStocks','godams'));
+        ->paginate(35);
 
+        $godams=Godam::where('status','active')->get(['id','name']);
+        $danaGroups=DanaGroup::where('status','active')->get(['id','name']);
+        $danaNames= DanaName::where('status','active')->get(['id','name']);
+
+        return view('admin.rawMaterialStock.rawMaterialStockIndex',
+        compact('settings','rawMaterialStocks','godams','danaGroups','danaNames'));
     }
-    public function filterAccGodam(Request $request){
-        //return $request;
-        $rawMaterialStocks=RawMaterialStock::where('godam_id',$request->godam_id);
-        // return $rawMaterialStocks;
-        $rawMaterialStocks=DB::table('raw_material_stocks AS stock')
-         ->when($request->godam_id != 'all', function ($query) use ($request) {
-                return $query->where('stock.godam_id', $request->godam_id);
-            })
-            ->join('godam AS godam', 'stock.godam_id', '=', 'godam.id')
-            ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
-            ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
-            ->select(
-                'godam.name as godamName',
-              'danaGroup.name as danaGroup',
-              'danaName.name as danaName',
-              'stock.quantity as quantity'
-          )
-          ->paginate(35);
+    public function filterStocks(Request $request){
+
         $helper= new AppHelper();
         $settings= $helper->getGeneralSettigns();
         $godams=Godam::where('status','active')->get(['id','name']);
-        return view('admin.rawMaterialStock.rawMaterialStockIndex',compact('settings','rawMaterialStocks','godams'));
+        $danaGroups=DanaGroup::where('status','active')->get(['id','name']);
+        $danaNames= DanaName::where('status','active')->get(['id','name']);
+        $godam_id = $request->godam_id ?? null ;
+        $dana_group_id = $request->danaGroup_id ?? null;
+        $dana_name_id = $request->danaName_id??null;
+
+          $rawMaterialStocks= DB::table('raw_material_stocks AS stock')
+           ->join('dana_names AS danaName', 'stock.dana_name_id', '=', 'danaName.id')
+           ->join('dana_groups AS danaGroup', 'stock.dana_group_id', '=', 'danaGroup.id')
+           ->select(
+               'danaGroup.name as danaGroup',
+               'danaName.name as danaName',
+               DB::raw('SUM(stock.quantity) as quantity')
+           )
+           ->groupBy('danaGroup.name', 'danaName.name');
+            if ($godam_id  || $godam_id  != null) {
+                $rawMaterialStocks->where('stock.godam_id',$godam_id);
+            }
+            if($dana_group_id || $dana_group_id !=null){
+                $rawMaterialStocks->where('stock.dana_group_id', $dana_group_id);
+            }
+            if($dana_name_id || $dana_name_id !=null){
+                $rawMaterialStocks->where('stock.dana_name_id', $dana_name_id);
+            }
+
+            $rawMaterialStocks= $rawMaterialStocks->paginate(35);
+
+
+        return view('admin.rawMaterialStock.rawMaterialStockIndex',
+        compact('settings','rawMaterialStocks','godams','danaGroups','danaNames'));
     }
+
+
     Public function danaGroupFilter(){
         $danaGroups=DanaGroup::all();
         return view('admin.rawMaterialStock.danaGroupFilter',compact('danaGroups'));

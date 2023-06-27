@@ -93,7 +93,6 @@ class StockController extends Controller
             $TOTAL_AMOUNT += $stock->total_amount;
         }
 
-
         $departments=StoreinDepartment::where('status','active')->get();
         $categories =StoreinCategory::where('status','active')->get();
         return view('admin.Stock.itemStock', compact('stocks','departments','categories','TOTAL_AMOUNT'));
