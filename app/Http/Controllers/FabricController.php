@@ -26,12 +26,12 @@ class FabricController extends Controller
         return view('admin.fabric.index', compact('fabrics','departments'));
     }
 
-   
+
      public function create()
     {
         $fabricgroups = FabricGroup::get();
          $godams = Godam::get();
-       
+
         return view('admin.fabric.create',compact('fabricgroups','godams'));
     }
 

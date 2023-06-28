@@ -64,20 +64,14 @@ class TapeEntryController extends Controller
         }
     }
 
-    public function create($id){
+    public function create($tapeReceive_id){
         // $department = AutoLoadItemStock::with('fromGodam')->get();
         // $department = Department::where("name","like","tape"."%")->get();
 
+        // return $bhabishid;
+
         $departments = [];
 
-<<<<<<< HEAD
-        $departments = AutoLoadItemStock::with('fromGodam')
-            ->whereHas('fromGodam', function ($query) {
-                $query->where('name', '<>', 'bsw');
-            })
-            ->distinct('from_godam_id')
-            ->get(['from_godam_id']);
-=======
         $getdepartment = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
         foreach($getdepartment as $data){
             $id = $data->from_godam_id;
@@ -95,18 +89,18 @@ class TapeEntryController extends Controller
         //     })
         //     ->distinct('from_godam_id')
         //     ->get(['from_godam_id']);
->>>>>>> f07d6e471e00bbf9db2e7b3b2e60ac7c947d8a08
 
         // $departmentIds = $departments->pluck('from_godam_id')->toArray();
 
         // $department = Department::whereIn('id', $departmentIds)->get();
 
 
+
         $shift = AutoLoadItemStock::with('shift')->get();
         $tapeentries = TapeEntry::where('id', $id)->get();
         $wastage = Wastages::all();
 
-        return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries','wastage'));
+        return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries','wastage',"tapeReceive_id"));
 
     }
 
@@ -213,7 +207,7 @@ class TapeEntryController extends Controller
     // }
 
     public function tapeentrystockstore(Request $request){
-        // return $request;
+        //return $request;
         try{
 
             DB::beginTransaction();
@@ -278,7 +272,7 @@ class TapeEntryController extends Controller
 
     function wastemgmt($totalwaste,$department,$wastetype){
         WasteStock::create([
-            'department_id' => $department,
+            'godam_id' => $department,
             'quantity_in_kg' => $totalwaste,
             'waste_id' => '1'
         ]);

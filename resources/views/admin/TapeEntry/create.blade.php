@@ -65,8 +65,8 @@
         }
 
         /* .select2-selection {
-                                                                                                            width:150px !important;
-                                                                                                        } */
+                                                                                                                                                                        width:150px !important;
+                                                                                                                                                                    } */
     </style>
 @endsection
 
@@ -91,7 +91,6 @@
     <div class="content">
         <div class="container-fluid">
             {{-- <div class="card"> --}}
-
             {{-- <div class="card-body"> --}}
             <form id="tape_entry_form" action="{{ route('tape.entry.stock.store') }}" method="post">
                 @csrf
@@ -107,9 +106,9 @@
                             <input type="text" value="{{ $data->receipt_number }}" id="receipt_number_1_repeat"
                                 name="receipt_number" class="form-control" readonly required />
                         </div>
-                        <input type="hidden" name='tape_entry_id' value="{{ $data->id }}">
                     </div>
                 @endforeach
+                <input type="text" name='tape_entry_id' value="{{ $tapeReceive_id }}">
                 <hr>
                 <div class='row mt-2'>
                     <div class="col-md-12">
@@ -215,29 +214,8 @@
         </div>
         <hr>
         <div class='row mt-3'>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div>
-                            <label for="receipt_no">Dana Name</label>
-                            <select class="form-control select2 advance-select-box" id="dana"> {{-- select2
-                                    advance-select-box --}}
-                                {{-- @foreach ($dananame as $data)
-                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                    @endforeach --}}
-                            </select>
-                        </div>
-                        <div class="mt-2">
-                            <label for="receipt_no">Quantity in Kg</label>
-                            <input type="text" class="form-control" name="qty_in_kg" id='dana_quantity' />
-                            <hr>
-                            <button class="btn btn-primary float-right" id="add_new_dana_to_autoloader_stock"
-                                disabled>Add</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
+
+            <div class="col-md-12">
                 <div class="card">
                     <table class="table table-bordered" id="tape_entry_dana_table"
                         style="background:rgba(241, 214, 147,0.2)">
@@ -249,12 +227,12 @@
                             </tr>
                         </thead>
                         {{-- <tbody>
-                                <tr>
-                                    <th>1</th>
-                                    <th>dana name</th>
-                                    <th>dana qty</th>
-                                </tr>
-                            </tbody> --}}
+                                        <tr>
+                                            <th>1</th>
+                                            <th>dana name</th>
+                                            <th>dana qty</th>
+                                        </tr>
+                                    </tbody> --}}
                     </table>
                 </div>
             </div>

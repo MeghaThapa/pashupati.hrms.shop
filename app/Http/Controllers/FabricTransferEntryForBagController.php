@@ -13,6 +13,8 @@ use App\Models\Godam;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+
 use Symfony\Component\Mime\Encoder\Rfc2231Encoder;
 
 class FabricTransferEntryForBagController extends Controller
@@ -21,7 +23,7 @@ class FabricTransferEntryForBagController extends Controller
   public function index()
   {
     $data = FabricTransferEntryForBag::orderBy('id', "DESC")->paginate(20);
-    return view('admin.bag.fabric transfer for bag.index', compact('data'));
+    return view('admin.bag.fabricTransferForBag.index', compact('data'));
   }
 
   public function create()
@@ -29,7 +31,7 @@ class FabricTransferEntryForBagController extends Controller
     $id = FabricTransferEntryForBag::latest()->value('id');
     $bill_no = "FTB" . "-" . getNepaliDate(date('Y-m-d')) . "-" . $id + 1;
     $date_np = getNepaliDate(date('Y-m-d'));
-    return view("admin.bag.fabric transfer for bag.create", compact("bill_no", "date_np"));
+    return view("admin.bag.fabricTransferForBag.create", compact("bill_no", "date_np"));
   }
   public function store(Request $request)
   {
@@ -43,7 +45,9 @@ class FabricTransferEntryForBagController extends Controller
       "receipt_date" => $request->receipt_date,
       "receipt_date_np" => $request->date_np
     ]);
-    return back()->with(["message" => "Creation successful"]);
+    Session::flash('success', 'Creation successful');
+    return back();
+    // ->with(["message" => "Creation successful"]);
   }
   /***********  For Receipts end ************/
 
@@ -84,7 +88,7 @@ class FabricTransferEntryForBagController extends Controller
     if ($request->ajax()) {
 
       $fabric_bag_entry_id = $request->fabric_bag_entry_id;
-      
+
       $fabricDetails = FabricStock::where("id", $id)->get();
       try {
         DB::beginTransaction();
@@ -190,7 +194,7 @@ class FabricTransferEntryForBagController extends Controller
 
         DB::commit();
         return response([
-          "message" => "ok" 
+          "message" => "ok"
         ],200);
       }
       catch(Exception $e){
@@ -198,7 +202,7 @@ class FabricTransferEntryForBagController extends Controller
         return $e->getMessage();
       }
     }
-  } 
+  }
 
   public function updateFabricTransferEntryForBag($id){
     FabricTransferEntryForBag::where('id',$id)->update([
