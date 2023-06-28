@@ -14,7 +14,11 @@ class PrintedAndCuttedRollsController extends Controller
         return view("admin.bag.printsandcuts.index",compact("data"));
     }
     public function createEntry(){
-        return view("admin.bag.printsandcuts.createEntry");
+         $id = PrintedAndCuttedRollsEntry::latest()->value('id');
+        $nepaliDate = getNepaliDate(date('Y-m-d'));
+        $date = date('Y-m-d');
+        $receipt_no = "PCR" . "-" . getNepaliDate(date('Y-m-d')) . "-" . $id + 1;
+        return view("admin.bag.printsandcuts.createEntry",compact('nepaliDate','date','receipt_no'));
     }
 
     public function storeEntry(Request $request){
@@ -34,7 +38,7 @@ class PrintedAndCuttedRollsController extends Controller
     }
     /*************** For Entry *********/
     public function createPrintedRolls($id){
-        $data = PrintedAndCuttedRollsEntry::where('id',$id)->get(); 
+        $data = PrintedAndCuttedRollsEntry::where('id',$id)->get();
         return view("admin.bag.printsandcuts.create")->with([
             "data" => $data
         ]);

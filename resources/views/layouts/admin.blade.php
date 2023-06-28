@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
+    {{-- toster --}}
+    <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
+
     <meta charset="utf-8">
     <meta name="description"
         content="{{ __('Productify is a production management system build to simplify production or manufacturing process. Productify is lightweight, secure and fast and based on laravel.') }}">
@@ -44,6 +47,10 @@
     <link rel="stylesheet" type="text/css" href=" {{ asset('css/main.css') }} ">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/app.js') }} "></script>
+    {{-- toster --}}
+    <script src="
+    https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js
+    "></script>
     @yield('extra-style')
 
 </head>
