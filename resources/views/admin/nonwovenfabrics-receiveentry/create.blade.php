@@ -706,6 +706,7 @@
               $.each( response, function( i, val ) {
 
                 $('#fabric_name').append(`<option value="${val.slug}">${val.name}</option>`);
+                // $('#fabric_name').append('<option value='+val.slug+'>'+val.name+'</option>');
               });
             },
             error: function(event){
@@ -719,6 +720,7 @@
             var fabric_name = $('#fabric_name').val(),
             fabric_gsm = $('#fabric_gsm').val(),
             token = $('meta[name="csrf-token"]').attr('content');
+            console.log(fabric_name);
               // $('#idcardShift').val(godam_id);
             $.ajax({
               type:"POST",

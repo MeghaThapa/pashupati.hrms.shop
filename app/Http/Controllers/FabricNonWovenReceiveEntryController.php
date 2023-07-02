@@ -248,8 +248,9 @@ class FabricNonWovenReceiveEntryController extends Controller
         // dd($request);
       $fabric_gsm = $request->fabric_gsm;
       $plantname_list = NonWovenFabric::where('gsm',$fabric_gsm)
-      // ->where('is_active','1')
-      ->get();
+      ->distinct()->get(['name','slug']);
+      // ->get();
+      // dd($plantname_list);
       return Response::json($plantname_list);
     }
 
@@ -257,6 +258,7 @@ class FabricNonWovenReceiveEntryController extends Controller
        
       $fabric_gsm = $request->fabric_gsm;
       $fabric_name = $request->fabric_name;
+      // dd($request);
       $fabric_color_list = NonWovenFabric::where('gsm',$fabric_gsm)
                                           ->where('slug',$fabric_name)
                                          ->get();
