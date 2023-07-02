@@ -13,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('wastages_stock', function (Blueprint $table) {
+        Schema::create('bag_brands', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('godam_id');
-            $table->foreign("godam_id")->references('id')->on('godam')->onDelete('cascade');
-            $table->unsignedBigInteger('waste_id');
-            $table->foreign("waste_id")->references('id')->on('wastages');
-            $table->string('quantity_in_kg');
+            $table->string('name');
+             $table->unsignedBigInteger("group_id");
+            $table-> foreign("group_id")->references("id")->on('groups')->onDelete('cascade');
+            $table->enum('status',['active','inactive']);
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wastages_stock');
+        Schema::dropIfExists('bag_brands');
     }
 };

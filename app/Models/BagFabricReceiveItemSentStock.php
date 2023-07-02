@@ -13,6 +13,9 @@ class BagFabricReceiveItemSentStock extends Model
         "fabric_bag_entry_id","fabric_id","gram","gross_wt","net_wt","meter","roll_no","loom_no"
     ];
     public function fabric(){
-        return $this->belongsTo(Fabric::class);
+        return $this->belongsTo(Fabric::class,"fabric_id");
+    }
+    public function fabricTransferForBag(){
+        return $this->belongsTo(FabricTransferEntryForBag::class,"fabric_bag_entry_id","id");
     }
 }

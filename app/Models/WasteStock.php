@@ -12,9 +12,9 @@ class WasteStock extends Model
     protected $table = "wastages_stock";
     protected $id = "id";
     protected $fillable = [
-        'department_id','waste_id','quantity_in_kg','created_at','updated_at'
+        'godam_id','waste_id','quantity_in_kg','created_at','updated_at'
     ];
     public function wastage(){
         return  $this->belongsTo(Wastages::class);
-    }  
+    }
 }
