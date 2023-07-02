@@ -8,20 +8,20 @@ use Cviebrock\EloquentSluggable\Sluggable;
 
 class NonWovenFabric extends Model
 {
-    use Sluggable;
+    // use Sluggable;
 
     protected $fillable = [
         'name', 'slug', 'gsm','color', 'status'
     ];
 
-    public function sluggable(): array
-    {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
-    }
+    // public function sluggable(): array
+    // {
+    //     return [
+    //         'slug' => [
+    //             'source' => 'name'
+    //         ]
+    //     ];
+    // }
 
     public function isActive()
     {

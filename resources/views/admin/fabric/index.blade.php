@@ -117,7 +117,10 @@
                                 <td>{{ $fabric->gross_wt}} </td>
                                 <td>{{ $fabric->net_wt }}</td>
                                 <td>{{ $fabric->meter }}</td>
-                                <td>{{round($fabric->gram, 2)}}</td>
+                                <td>{{round($fabric->average_wt, 2)}}
+                                <td>{{round($fabric->gram_wt, 2)}}</td>
+                                </td>
+                              
                                 {{-- <td>{{round(round($fabric->gram, 2) /  (int) filter_var($fabric->name, FILTER_SANITIZE_NUMBER_INT) )}}</td> --}}
                                 <td>
                                     @if ($fabric->isActive())
@@ -170,13 +173,100 @@
                             </td>
                         </tr>
                     @endif
+
+
                     </tbody>
                 </table>
             </div>
+
             <!-- /.card-body -->
 
             <!-- pagination start -->
-            {{-- {{ $fabrics->links() }} --}}
+            {{ $fabrics->links() }}
+
+            <div class="card-body p-0">
+                <form class="form-horizontal" action="{{ route('fabrics.store') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="name">{{ __('Pipe  Name') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="{{ __('Fabric Name') }}" value="{{ old('name') }}" required>
+                                @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="FabricGroup">{{ __('FabricGroup Name') }}<span class="required-field">*</span></label>
+                                <select class="advance-select-box form-control @error('FabricGroup') is-invalid @enderror" id="FabricGroup" name="fabricgroup_id"  required>
+                                    <option value="" selected disabled>{{ __('Select a FabricGroup') }}</option>
+                                  {{--   @foreach($fabricgroups as $key => $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach --}}
+                                </select>
+                                @error('fabricgroup_id')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 form-group">
+                                <label for="FabricGroup">{{ __('Department Name') }}<span class="required-field">*</span></label>
+                                <select class="advance-select-box form-control @error('godam_id') is-invalid @enderror" id="godam_id" name="godam_id"  required>
+                                    <option value="" selected disabled>{{ __('Select a Godam') }}</option>
+                               {{--      @foreach($godams as $key => $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach --}}
+                                </select>
+                                @error('godam_id')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+
+                        </div>
+                 
+                        <div class="row">
+
+                            <div class="form-group col-md-6">
+                                <label for="meter" class="col-form-label">{{ __('Meter') }} <span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('meter') is-invalid @enderror" id="meter" name="meter" placeholder="{{ __('Meter') }}" value="{{ old('name') }}" required>
+                                @error('meter')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div> 
+                            <div class="form-group col-md-6">
+                                <label for="status" class="col-form-label">{{ __('Status') }}</label>
+                                <select class="form-control" id="status" name="status" >
+                                    <option value="1">{{ __('Active') }}</option>
+                                    <option value="0">{{ __('Inactive') }}</option>
+                                </select>
+                            </div>
+                             
+                             
+                        </div>
+                        
+                        <div class="row">
+                            
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('Save Fabric') }}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </form>
+            </div>
+
+
             <!-- pagination end -->
         </div>
     </div>
