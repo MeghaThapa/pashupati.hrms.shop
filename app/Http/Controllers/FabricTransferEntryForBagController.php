@@ -100,6 +100,7 @@ class FabricTransferEntryForBagController extends Controller
             "gram" => $data->gram,
             "gross_wt" => $data->gross_wt,
             "net_wt" => $data->net_wt,
+            "average"=>$data->average,
             "meter" => $data->meter,
             "roll_no" => $data->roll_no,
             "loom_no" => $data->loom_no

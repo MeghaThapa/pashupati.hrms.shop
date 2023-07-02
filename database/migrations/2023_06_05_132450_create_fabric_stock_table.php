@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('meter');
             $table->string('roll_no');
             $table->string('loom_no');
+            $table->string('average');
             $table->boolean('status')->nullable()->default(1);
             $table->enum("is_laminated",["true","false"])->default('false');
             $table->timestamps();
