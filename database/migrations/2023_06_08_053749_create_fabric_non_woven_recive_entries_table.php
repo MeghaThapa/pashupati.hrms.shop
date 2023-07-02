@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('net_weight');
             // $table->string('dana_quantity');
             $table->unsignedBigInteger('godam_id');
-            $table->foreign('godam_id')->references("id")->on('department')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('godam_id')->references("id")->on('godam')->onDelete('cascade');
 
             $table->unsignedBigInteger('planttype_id');
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade')->onUpdate('cascade');

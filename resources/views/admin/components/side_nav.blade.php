@@ -116,6 +116,54 @@
                     </a>
                 </li>
 
+                <li class="nav-header text-bold">{{ __('Fabric') }}</li>
+                <li class="nav-item">
+                    <a href="{{ route('fabric-groups.index') }}"
+                        class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric Group</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('fabrics.index') }}"
+                        class="nav-link {{ request()->is('admin/fabrics*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a href="{{ route('fabricSendReceive.index') }}"
+                        class="nav-link">
+                        {{ request()->is('admin/fabrics/sendAndReceive*') ? 'active' : '' }}
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric Send Receive</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
+
+
+
+                 <li class="nav-item">
+                     <a href="{{ route('nonwovenfabrics.index') }}"
+                         class="nav-link {{ request()->is('admin/nonwovenfabrics*') ? 'active' : '' }}">
+                         <i class="nav-icon fas fa-tags"></i>
+                         <p>Non Woven Fabric</p>
+                         {{-- <p>{{ __('Categories') }}</p> --}}
+                     </a>
+                 </li>
+
+                <li class="nav-item">
+                     <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
+                         class="nav-link {{ request()->is('admin/nonwovenfabrics-receiveentry*') ? 'active' : '' }}">
+                         <i class="nav-icon fas fa-tags"></i>
+                         <p>Non Woven Fabric Received Entry</p>
+                     </a>
+                 </li>
+
                 <li class="nav-header text-bold">{{ __('PRODUCT') }}</li>
                 <li class="nav-item">
                     <a href="{{ route('items.index') }}"
@@ -138,50 +186,8 @@
                         <p>{{ __('Sub Categories') }}</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('fabric-groups.index') }}"
-                        class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric Group</p>
-                        {{-- <p>{{ __('Categories') }}</p> --}}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('fabrics.index') }}"
-                        class="nav-link {{ request()->is('admin/fabrics*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric</p>
-                        {{-- <p>{{ __('Categories') }}</p> --}}
-                    </a>
-                </li>
+           
 
-                 <li class="nav-item">
-                    <a href="{{ route('fabricSendReceive.index') }}"
-                        class="nav-link">
-                        {{ request()->is('admin/fabrics/sendAndReceive*') ? 'active' : '' }}
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric Send Receive</p>
-                        {{-- <p>{{ __('Categories') }}</p> --}}
-                    </a>
-                </li>
-
-
-                <li class="nav-item">
-                    <a href="{{ route('nonwovenfabrics.index') }}"
-                        class="nav-link {{ request()->is('admin/nonwovenfabrics*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Non Woven Fabric</p>
-                        {{-- <p>{{ __('Categories') }}</p> --}}
-                    </a>
-                </li>
-
-               <li class="nav-item">
-                    <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
-                        class="nav-link {{ request()->is('admin/nonwovenfabrics-receiveentry*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Non Woven Fabric Received Entry</p>
-                    </a>
-                </li>
                 
                
                 <li class="nav-item">

@@ -37,6 +37,11 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                
            ]);
            $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
+           // dd($row);
+           // dd(filter_var($row['size'], FILTER_SANITIZE_NUMBER_FLOAT) );
+
+           $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
+           // dd($gram_wt);
 
            $fabric = Fabric::firstOrCreate([
                'roll_no' => $row['roll_no']
@@ -48,7 +53,8 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                'gross_wt' => $row['gross_wt'],
                'net_wt' => $row['net_wt'],
                'meter' => $row['meter'],
-               'gram' => $row['grams'],
+               'gram_wt' => $gram_wt,
+               'average_wt' => $row['grams'],
                'godam_id' => $this->department_id,
                
            ]);
@@ -61,9 +67,11 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             'gross_wt' => $row['gross_wt'],
             'net_wt' => $row['net_wt'],
             'meter' => $row['meter'],
-            'gram' => $row['grams'],
+            'gram_wt' => $gram_wt,
+            'average_wt' => $row['grams'],
             'godam_id' => $this->department_id,
         ]);
+           
        }
    }
 }

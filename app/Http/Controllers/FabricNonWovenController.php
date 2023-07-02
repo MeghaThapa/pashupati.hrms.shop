@@ -7,6 +7,8 @@ use App\Models\Fabric;
 use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+
 
 class FabricNonWovenController extends Controller
 {
@@ -41,6 +43,7 @@ class FabricNonWovenController extends Controller
 
         $fabric = NonWovenFabric::create([
             'name' => $request['name'],
+            'slug' => Str::slug($request['name']),
             'gsm' => $request['gsm'],
             'color' => $request['color'],
         ]);
@@ -87,6 +90,7 @@ class FabricNonWovenController extends Controller
         // update fabric
         $fabric->update([
             'name' => $request->name,
+            'slug' => Str::slug($request['name']),
             'gsm' => $request['gsm'],
             'color' => $request['color'],
         ]);

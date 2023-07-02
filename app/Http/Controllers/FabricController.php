@@ -21,7 +21,8 @@ class FabricController extends Controller
         }
         $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
 
-         $departments = Godam::get();
+        $departments = Godam::get();
+         // dd($fabrics);
 
         return view('admin.fabric.index', compact('fabrics','departments'));
     }
@@ -55,11 +56,13 @@ class FabricController extends Controller
             'loom_no' => '0',
             'fabricgroup_id' => $request['fabricgroup_id'],
             'godam_id' => $request['godam_id'],
+            'average_wt' => '0',
             'gross_wt' => '0',
             'net_wt' => '0',
             'meter' => $request['meter'],
-            'gram' => '00',
+            'gram_wt' => '00',
         ]);
+
         return redirect()->back()->withSuccess('Sub category created successfully!');
     }
 

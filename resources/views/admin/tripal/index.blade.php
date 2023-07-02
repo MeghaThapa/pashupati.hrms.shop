@@ -105,8 +105,8 @@
                 </label>
                 <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                    @foreach ($department as $data)
-                    <option value="{{ $data->id }}">{{ $data->department }}
+                    @foreach ($godam as $data)
+                    <option value="{{ $data->id }}">{{ $data->name }}
                     </option>
                     @endforeach
                 </select>
@@ -299,7 +299,7 @@
         </div>
     </div>
     <div class="col-md-6 float-right ml-3">
-        <button class="btn btn-danger discard">Discard</button>
+        {{-- <button class="btn btn-danger discard">Discard</button> --}}
     </div>
 </div>
 <hr>
@@ -313,8 +313,8 @@
                         </label>
                         <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
                             <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
-                            @foreach ($dana as $danaName)
-                            <option value="{{ $danaName->id }}">{{ $danaName->name }}
+                            @foreach ($dana as $dana)
+                            <option value="{{ $dana->id }}">{{ $dana->danaName->name }}
                             </option>
                             @endforeach
                         </select>
@@ -1149,7 +1149,7 @@
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
-            // debugger;
+            debugger;
 
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');

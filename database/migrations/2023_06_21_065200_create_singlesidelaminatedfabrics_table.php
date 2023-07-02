@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreign('plantname_id')->references("id")->on('processing_subcats')->onDelete('cascade');
 
             $table->bigInteger('department_id')->unsigned()->index();
-            $table->foreign('department_id')->references('id')->on('department')->onDelete('cascade');
+            $table->foreign('department_id')->references('id')->on('godam')->onDelete('cascade');
 
             $table->string('gram');
             $table->string('gross_wt');
