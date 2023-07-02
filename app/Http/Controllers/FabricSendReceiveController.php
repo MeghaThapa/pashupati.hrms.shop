@@ -36,7 +36,7 @@ class FabricSendReceiveController extends Controller
     // public function store(Request $request){
     //     $request->validate([
     //         "bill_no" => "required",
-    //         'billdate' => "required" 
+    //         'billdate' => "required"
     //     ]);
     // }
     /************* aile baki xa **************/
@@ -52,8 +52,8 @@ class FabricSendReceiveController extends Controller
             }
         }
 
-        $department = Godam::whereIn('id',$departments)->get();
-
+       // $department = Godam::whereIn('id',$departments)->get();
+        $department=Godam::where('status','active')->get();
         $id = UnlaminatedFabric::latest()->value('id');
         $bill_no = "FSR"."-".getNepaliDate(date('Y-m-d'))."-".$id+1;
         $shifts = Shift::where('status','active')->get();
@@ -106,7 +106,7 @@ class FabricSendReceiveController extends Controller
             $roll_number = $fabricDetails->roll_no;
             $gross_weight = $fabricDetails->gross_wt;
             $net_wt = $fabricDetails->net_wt;
-            $meter = $fabricDetails->meter; 
+            $meter = $fabricDetails->meter;
             // $gram = $fabricDetails->fabricgroup->name;
             $gram = $fabricDetails->gram;
             $avg = ($net_wt + $gross_weight)/2;
@@ -133,7 +133,7 @@ class FabricSendReceiveController extends Controller
             }catch(Exception $e){
                 DB::rollBack();
                 return response([
-                    "message" => "Something went wrong!{$e->getMessage()}" 
+                    "message" => "Something went wrong!{$e->getMessage()}"
                 ]);
             }
         }
@@ -145,7 +145,7 @@ class FabricSendReceiveController extends Controller
             return response(['response'=>$data]);
         }else{
             return response(['response'=> '404']);
-        }   
+        }
     }
 
     public function sendunlaminateddelete(Request $request,$id){
@@ -161,14 +161,14 @@ class FabricSendReceiveController extends Controller
                     return response([
                         'response'=> "200",
                     ]);
-                
+
                 }else{
                     DB::rollBack();
                     return response([
                         'response'=> "400",
                     ]);
                 }
-                
+
            }catch(Exception $e){
                 DB::rollBack();
                 return response([
@@ -183,7 +183,7 @@ class FabricSendReceiveController extends Controller
 
             $data = [];
             parse_str($request->data,$data);
-            
+
             $idoffabricforsendtolamination = $data['idoffabricforsendtolamination'];
 
             $fabricstock =  UnlaminatedFabric::with('fabric')->where('id',$idoffabricforsendtolamination)->first(); //where('id',$idoffabricforsendtolamination)->
@@ -192,7 +192,7 @@ class FabricSendReceiveController extends Controller
             $planttype_id = $fabricstock->planttype_id;
             $plantname_id = $fabricstock->plantname_id;
             $bill_number = $fabricstock->bill_number;
-            $bill_date = $fabricstock->bill_date; 
+            $bill_date = $fabricstock->bill_date;
             $meter = $fabricstock->meter;
             $fabricgroup_id = $fabricstock->fabric->fabricgroup_id;
 
@@ -215,7 +215,7 @@ class FabricSendReceiveController extends Controller
             //     "laminated_gross_weight_3" => $laminated_gross_weight_3,
             //     "total" => $total_gross_weight
             // ];
-    
+
 
             $laminated_net_weight = $data['laminated_net_weight'];
             $laminated_net_weight_2 = $data['laminated_net_weight_2'];
@@ -254,13 +254,13 @@ class FabricSendReceiveController extends Controller
             $fabricmodelquery = Fabric::where('id',$fabric_id)->first();
 
            DB::beginTransaction();
-                
+
                 $fabric =  UnlaminatedFabric::with('fabric')->where('id',$idoffabricforsendtolamination)->first();
                 $updatetosent = $fabric->update([
                     "status" => "sent"
                 ]);
 
-                
+
                 if($lamimated_roll_no != null && $laminated_gross_weight != null && $laminated_net_weight != null && $laminated_avg_weight != null && $laminated_gram != null){
 
                     $lamfabriccreate = FabricTemporaryForLam::create([
@@ -283,14 +283,14 @@ class FabricSendReceiveController extends Controller
                     $create = LaminatedFabric::create([
                         "lam_fabric_id" => $lam_fabric_id,
                         "standard_weight_gram" => $data['standard_weight_gram'],
-                        "roll_no" => $lamimated_roll_no, 
-            
+                        "roll_no" => $lamimated_roll_no,
+
                         "gross_wt" => $laminated_gross_weight,
                         "net_wt" => $laminated_net_weight,
                         "average" => $laminated_avg_weight,
                         "gram" => $laminated_gram,
                         "meter" => $meter,
-            
+
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
                         "department_id" => $department_id,
@@ -320,14 +320,14 @@ class FabricSendReceiveController extends Controller
                     $create = LaminatedFabric::create([
                         "lam_fabric_id" => $lam_fabric_id,
                         "standard_weight_gram" => $data['standard_weight_gram'],
-                        "roll_no" => $lamimated_roll_no_2, 
-            
+                        "roll_no" => $lamimated_roll_no_2,
+
                         "gross_wt" => $laminated_gross_weight_2,
                         "net_wt" => $laminated_net_weight_2,
                         "average" => $laminated_avg_weight_2,
                         "gram" => $laminated_gram_2,
                         "meter" => $meter,
-            
+
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
                         "department_id" => $department_id,
@@ -358,14 +358,14 @@ class FabricSendReceiveController extends Controller
                     $create = LaminatedFabric::create([
                         "lam_fabric_id" => $lam_fabric_id,
                         "standard_weight_gram" => $data['standard_weight_gram'],
-                        "roll_no" => $lamimated_roll_no_3, 
-            
+                        "roll_no" => $lamimated_roll_no_3,
+
                         "gross_wt" => $laminated_gross_weight_3,
                         "net_wt" => $laminated_net_weight_3,
                         "average" => $laminated_avg_weight_3,
                         "gram" => $laminated_gram_3,
                         "meter" => $meter,
-            
+
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
                         "department_id" => $department_id,
@@ -377,14 +377,14 @@ class FabricSendReceiveController extends Controller
                 // $createStock = LaminatedFabricStock::create([
                 //     "fabric_id" => $lam_fabric_id,
                 //     "standard_weight_gram" => $data['standard_weight_gram'],
-                //     "roll_no" => json_encode($roll_no), 
-        
+                //     "roll_no" => json_encode($roll_no),
+
                 //     "gross_wt" => json_encode($gross_weight),
                 //     "net_wt" => json_encode($net_weight),
                 //     "average" => json_encode($avg_weight),
                 //     "gram" => json_encode($gram),
-                //     "meter" => $meter, 
-        
+                //     "meter" => $meter,
+
                 //     "bill_number" => $bill_number,
                 //     'bill_date' => $bill_date,
                 //     "department_id" => $department_id,
@@ -396,7 +396,7 @@ class FabricSendReceiveController extends Controller
                 // UnlaminatedFabricStock::where('id',$idoffabricforsendtolamination)->delete();
                 // UnlaminatedFabric::where('id',$idoffabricforsendtolamination)->delete();
                 // FabricStock::where('id',$fabric_id)->delete();
-                
+
            DB::commit();
            return "Done";
         }
@@ -405,7 +405,7 @@ class FabricSendReceiveController extends Controller
             return "exception".$e->getMessage();
         }
     }
-    
+
     public function comparelamandunlam(Request $request){
         if($request->ajax()){
             $unlam = UnlaminatedFabric::with('fabric')->where('status',"sent")->get();
@@ -489,18 +489,18 @@ class FabricSendReceiveController extends Controller
                     }
                     else{
                         $stock->update([
-                            "quantity" => $deduction    
+                            "quantity" => $deduction
                         ]);
                     }
-                
+
                 //fabric stock creation
                     UnlaminatedFabric::where('status','sent')->delete();
                     $lamFabric = LaminatedFabric::with('lamfabric')->get();
                     foreach($lamFabric as $data){
                         Fabric::create([
-                            'name' => $data->lamfabric->name, 
-                            'slug' => $data->lamfabric->slug, 
-                            'fabricgroup_id' => $data->lamfabric->fabricgroup_id, 
+                            'name' => $data->lamfabric->name,
+                            'slug' => $data->lamfabric->slug,
+                            'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
                             'status' => $data->lamfabric->status,
                             'gram' => $data->gram,
                             'gross_wt' => $data->gross_wt,
@@ -512,9 +512,9 @@ class FabricSendReceiveController extends Controller
                         ]);
 
                         FabricStock::create([
-                            'name' => $data->lamfabric->name, 
-                            'slug' => $data->lamfabric->slug, 
-                            'fabricgroup_id' => $data->lamfabric->fabricgroup_id, 
+                            'name' => $data->lamfabric->name,
+                            'slug' => $data->lamfabric->slug,
+                            'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
                             'status' => $data->lamfabric->status,
                             'gram' => $data->gram,
                             'gross_wt' => $data->gross_wt,
@@ -526,8 +526,8 @@ class FabricSendReceiveController extends Controller
                         ]);
 
                         FabricLaminatedSentFSR::create([
-                            'name'=> $data->lamfabric->name, 
-                            'slug' => $data->lamfabric->slug, 
+                            'name'=> $data->lamfabric->name,
+                            'slug' => $data->lamfabric->slug,
                             'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
                             'roll_no' => $data->roll_no,
                             "loom_no" => $data->lamfabric->loom_no,
@@ -549,7 +549,7 @@ class FabricSendReceiveController extends Controller
                         if (!in_array($data->department_id, $department)) {
                             $department[] = $data->department_id;
                         }
-                        
+
                     }
 
                     WasteStock::create([
