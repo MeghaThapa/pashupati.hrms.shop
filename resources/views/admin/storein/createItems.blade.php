@@ -60,8 +60,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                width:150px !important;
-                                                                                                                                                                                                                            } */
+                                                                                                                                                                                                                                    width:150px !important;
+                                                                                                                                                                                                                                } */
     </style>
 @endsection
 

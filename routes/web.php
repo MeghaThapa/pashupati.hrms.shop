@@ -36,6 +36,9 @@ use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\GodamController;
 use App\Http\Controllers\StoreoutDepartmentController;
 use App\Http\Controllers\Tripal\TripalController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\BagBrandController;
+// brandBag.store
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -911,5 +914,17 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
     Route::post("prints/and/cuts/store/entry",[PrintedAndCuttedRollsController::class,"storeEntry"])->name('prints.and.cuts.store.entry');
 
     Route::get("prints/and/cuts/creacreatePrintedRolls/{id}",[PrintedAndCuttedRollsController::class,"createPrintedRolls"])->name('prints.and.cuts.createPrintedRolls');
+    Route::get("printsAndCuts/getNetWeightGrossWeight/{fabric_id}",[PrintedAndCuttedRollsController::class,"getNetWeightGrossWeight"])->name('printsAndCuts.getNetWeightGrossWeight');
 
 /******************** Bag  End ************************/
+/****************Group Start********************/
+    Route::post("group/store",[GroupController::class,"store"])->name('group.store');
+
+
+/****************Group End********************/
+
+/****************Bag Brand Start********************/
+    Route::post("bagBrand/store",[BagBrandController::class,"store"])->name('bagBrand.store');
+    Route::get("bagBrand/getBagBrandFromGroup/{group_id}",[BagBrandController::class,"getBagBrandFromGroup"])->name('bagBrand.getBagBrandFromGroup');
+
+/****************Bag Brand End********************/
