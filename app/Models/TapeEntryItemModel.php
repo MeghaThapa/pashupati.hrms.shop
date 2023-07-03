@@ -4,13 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\TapeEntry;
 
-class TapeEntryStockModel extends Model
+class TapeEntryItemModel extends Model
 {
     use HasFactory;
-    
-    protected $table = 'tape_entry_stock';
+    protected $table = 'tape_entry_items';
     protected $id = "id";
     protected $fillable = [
         'id','tape_entry_id','toGodam_id','plantType_id','plantName_id',

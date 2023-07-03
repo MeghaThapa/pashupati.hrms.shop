@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TapeEntryItemModel;
 use App\Models\TapeEntryStockModel;
 use App\Models\Wastages;
 use App\Models\WasteStock;
@@ -231,11 +232,11 @@ class TapeEntryController extends Controller
                 $this->wastemgmt($totalwaste,$department,$wastetype);
             }
 
-            $tesm = TapeEntryStockModel::create([
+            TapeEntryItemModel::create([
                 'tape_entry_id'=>$tape_entry_id,
                 'toGodam_id'=>$department,
-                'planttype_id'=>$planttype,
-                'plantname_id'=>$plantname,
+                'plantType_id'=>$planttype,
+                'plantName_id'=>$plantname,
                 'shift_id'=>$shift,
                 'tape_type'=>$tapetype,
                 'tape_qty_in_kg'=>$tape_qty_in_kg,
@@ -246,6 +247,50 @@ class TapeEntryController extends Controller
                 'dana_in_kg'=>$dana_in_kg,
             ]);
 
+            $getEarlierData = TapeEntryStockModel::where("toGodam_id",$department)
+                                ->where("planttype_id",$planttype)
+                                ->where("plantname_id",$plantname)
+                                ->where("shift_id",$shift)
+                                ->first();
+            if($getEarlierData == null){
+                $tesm = TapeEntryStockModel::create([
+                    'tape_entry_id'=>$tape_entry_id,
+                    'toGodam_id'=>$department,
+                    'plantType_id'=>$planttype,
+                    'plantName_id'=>$plantname,
+                    'shift_id'=>$shift,
+                    'tape_type'=>$tapetype,
+                    'tape_qty_in_kg'=>$tape_qty_in_kg,
+                    'total_in_kg'=>$total_in_kg,
+                    'loading'=>$loading,
+                    'running'=>$running,
+                    'bypass_wast'=>$bypass_wast,
+                    'dana_in_kg'=>$dana_in_kg,
+                ]);
+            }else{
+                $quantity = $getEarlierData->tape_qty_in_kg + $tape_qty_in_kg;
+                $total_in_kg = $getEarlierData->total_in_kg + $total_in_kg;
+                $quantity = $getEarlierData->tape_qty_in_kg + $tape_qty_in_kg;
+                $loading = $getEarlierData->loading + $loading;
+                $running = $getEarlierData->running + $running;
+                $bypass_wast = $getEarlierData->bypass_wast + $bypass_wast;
+                $dana_in_kg = $getEarlierData->dana_in_kg + $dana_in_kg;
+
+                $tesm =  $getEarlierData::update([
+                    'tape_entry_id'=>$tape_entry_id,
+                    'toGodam_id'=>$department,
+                    'plantType_id'=>$planttype,
+                    'plantName_id'=>$plantname,
+                    'shift_id'=>$shift,
+                    'tape_type'=>$tapetype,
+                    'tape_qty_in_kg'=>$tape_qty_in_kg,
+                    'total_in_kg'=>$total_in_kg,
+                    'loading'=>$loading,
+                    'running'=>$running,
+                    'bypass_wast'=>$bypass_wast,
+                    'dana_in_kg'=>$dana_in_kg,
+                ]);
+            }
 
             TapeEntry::where('id',$tape_entry_id)->update([
                 'status' => "created",
