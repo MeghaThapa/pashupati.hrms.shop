@@ -18,7 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger("fabric_bag_entry_id");
             $table-> foreign("fabric_bag_entry_id")->references("id")->on('bag_fabric_entry')->onDelete('cascade');
             $table->unsignedBigInteger('fabric_id');
-            $table->foreign("fabric_id")->references("id")->on('fabrics')->onDelete("cascade");
+            $table->foreign("fabric_id")->references("id")->on('fabrics');
+            $table->string('average');
             $table->string('gram');
             $table->string('gross_wt');
             $table->string('net_wt');
