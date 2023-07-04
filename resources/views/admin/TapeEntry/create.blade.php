@@ -113,7 +113,7 @@
                 <div class='row mt-2'>
                     <div class="col-md-12">
                         <label for="receipt_no">To Godam</label>
-                        <select class="form-control select2 " name="togodam" id="togodam" required>
+                        <select class="form-control select2 advance-select-box" name="togodam" id="togodam" required>
                             {{-- select2 advance-select-box --}}
                             <option>Select Godam/Department</option>
                             {{-- @php
@@ -254,7 +254,7 @@
             </div>
             <div class="col-md-6">
                 <label>Total Row/Dana in Kg</label>
-                <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" disabled required />
+                <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" readonly required />
                 <button type="submit" id="btn-update" class="btn btn-info mt-3" disabled>Update</button>
             </div>
         </div>
@@ -289,7 +289,6 @@
                 $(document).on("change click", '#planttype', function(e) {
                     // $("#planttype").on("select2:select",function(e){
                     let godam_id = $('#togodam').val();
-                    console.log(godam_id);
                     $.ajax({
                         url: "{{ route('tape.entry.ajax.plantname', ['planttype_id' => ':id', 'godam_id' => ':godam_id']) }}"
                             .replace(':id', e.target.value)
@@ -378,7 +377,6 @@
                             console.log("ajax fired");
                         },
                         success: function(response) {
-                            console.log(response);
                             planttype(response);
                         },
                         error: function(error) {
@@ -393,7 +391,7 @@
                     $('#planttype').empty();
                     $('<option></option>').text("Select Plant Type").appendTo('#planttype');
                     response.planttype.forEach(data => {
-                        if (data.name == "tape plant") {
+                        if (data.name.startsWith("tape")) {
                             $('<option></option>').attr('value', `${data.id}`).text(`${data.name}`).appendTo(
                                 '#planttype');
                         }

@@ -73,14 +73,16 @@ class TapeEntryController extends Controller
 
         $departments = [];
 
-        $getdepartment = AutoLoadItemStock::distinct('from_godam_id')->get();
+        $getdepartment = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
         foreach($getdepartment as $data){
             $id = $data->from_godam_id;
             if(!in_array($id,$departments)){
                 $departments[] = $id;
             }
-        }   
-        $department = Godam::whereIn("id",$departments)->get(); 
+        }
+
+
+       $department = Godam::whereIn("id",$departments)->get();
 
         // $departments = AutoLoadItemStock::with('fromGodam')
         //     ->whereHas('fromGodam', function ($query) {
@@ -93,15 +95,18 @@ class TapeEntryController extends Controller
 
         // $department = Department::whereIn('id', $departmentIds)->get();
 
+
+
         $shift = AutoLoadItemStock::with('shift')->get();
         $tapeentries = TapeEntry::where('id', $tapeReceive_id)->get();
         $wastage = Wastages::all();
 
         return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries','wastage',"tapeReceive_id"));
+
     }
 
     public function view($id){
-        return TapeEntryStockModel::where('tape_entry_id',$id)->get();
+        return TapeEntryItemModel::where('tape_entry_id',$id)->get();
 
     }
 
@@ -114,7 +119,6 @@ class TapeEntryController extends Controller
 
 
     public function ajaxrequestplanttype(Request $request){
-        return $request;
         if($request->ajax()){
         $planttype = DB::table('autoload_items_stock')
             ->join('processing_steps', 'processing_steps.id', '=', 'autoload_items_stock.plant_type_id')
@@ -264,27 +268,26 @@ class TapeEntryController extends Controller
                     'dana_in_kg'=>$dana_in_kg,
                 ]);
             }else{
-                $quantity = $getEarlierData->tape_qty_in_kg + $tape_qty_in_kg;
-                $total_in_kg = $getEarlierData->total_in_kg + $total_in_kg;
-                $quantity = $getEarlierData->tape_qty_in_kg + $tape_qty_in_kg;
-                $loading = $getEarlierData->loading + $loading;
-                $running = $getEarlierData->running + $running;
-                $bypass_wast = $getEarlierData->bypass_wast + $bypass_wast;
-                $dana_in_kg = $getEarlierData->dana_in_kg + $dana_in_kg;
+                $new_tape_qty_in_kg = $getEarlierData->tape_qty_in_kg + $tape_qty_in_kg;
+                $new_total_in_kg = $getEarlierData->total_in_kg + $total_in_kg;
+                $new_loading = $getEarlierData->loading + $loading;
+                $new_running = $getEarlierData->running + $running;
+                $new_bypass_wast = $getEarlierData->bypass_wast + $bypass_wast;
+                $new_dana_in_kg = $getEarlierData->dana_in_kg + $dana_in_kg;
 
-                $tesm =  $getEarlierData::update([
+                $tesm =  $getEarlierData->update([
                     'tape_entry_id'=>$tape_entry_id,
                     'toGodam_id'=>$department,
                     'plantType_id'=>$planttype,
                     'plantName_id'=>$plantname,
                     'shift_id'=>$shift,
                     'tape_type'=>$tapetype,
-                    'tape_qty_in_kg'=>$tape_qty_in_kg,
-                    'total_in_kg'=>$total_in_kg,
-                    'loading'=>$loading,
-                    'running'=>$running,
-                    'bypass_wast'=>$bypass_wast,
-                    'dana_in_kg'=>$dana_in_kg,
+                    'tape_qty_in_kg'=>$new_tape_qty_in_kg,
+                    'total_in_kg'=>$new_total_in_kg,
+                    'loading'=>$new_loading,
+                    'running'=>$new_running,
+                    'bypass_wast'=>$new_bypass_wast,
+                    'dana_in_kg'=>$new_dana_in_kg,
                 ]);
             }
 
@@ -302,7 +305,7 @@ class TapeEntryController extends Controller
             }
 
             DB::commit();
-        return $this->index()->with(['message'=>"Tape Receive Entry Successful"]);
+        return redirect()->route("tape.entry")->with(['message'=>"Tape Receive Entry Successful"]);
 
         }
         catch(Exception $e){
