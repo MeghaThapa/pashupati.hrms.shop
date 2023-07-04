@@ -113,7 +113,7 @@
                 <div class='row mt-2'>
                     <div class="col-md-12">
                         <label for="receipt_no">To Godam</label>
-                        <select class="form-control select2 advance-select-box" name="togodam" id="togodam" required>
+                        <select class="form-control select2 " name="togodam" id="togodam" required>
                             {{-- select2 advance-select-box --}}
                             <option>Select Godam/Department</option>
                             {{-- @php
@@ -289,6 +289,7 @@
                 $(document).on("change click", '#planttype', function(e) {
                     // $("#planttype").on("select2:select",function(e){
                     let godam_id = $('#togodam').val();
+                    console.log(godam_id);
                     $.ajax({
                         url: "{{ route('tape.entry.ajax.plantname', ['planttype_id' => ':id', 'godam_id' => ':godam_id']) }}"
                             .replace(':id', e.target.value)
@@ -377,7 +378,7 @@
                             console.log("ajax fired");
                         },
                         success: function(response) {
-                            //  console.log('received response', response);
+                            console.log(response);
                             planttype(response);
                         },
                         error: function(error) {
@@ -517,7 +518,8 @@
 
                     $('#btn-update').prop('disabled', false);
 
-                    let final = total + loading + running + bypass;
+                    // let final = total + loading + running + bypass;
+                    let final = total;
                     if (final != dana_in_kg) {
                         e.preventDefault();
                         alert('not equal');

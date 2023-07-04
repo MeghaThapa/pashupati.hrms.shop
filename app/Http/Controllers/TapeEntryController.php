@@ -73,16 +73,14 @@ class TapeEntryController extends Controller
 
         $departments = [];
 
-        $getdepartment = AutoLoadItemStock::with('fromGodam')->distinct('from_godam_id')->get();
+        $getdepartment = AutoLoadItemStock::distinct('from_godam_id')->get();
         foreach($getdepartment as $data){
             $id = $data->from_godam_id;
             if(!in_array($id,$departments)){
                 $departments[] = $id;
             }
-        }
-
-
-       $department = Godam::whereIn("id",$departments)->get();
+        }   
+        $department = Godam::whereIn("id",$departments)->get(); 
 
         // $departments = AutoLoadItemStock::with('fromGodam')
         //     ->whereHas('fromGodam', function ($query) {
@@ -95,14 +93,11 @@ class TapeEntryController extends Controller
 
         // $department = Department::whereIn('id', $departmentIds)->get();
 
-
-
         $shift = AutoLoadItemStock::with('shift')->get();
-        $tapeentries = TapeEntry::where('id', $id)->get();
+        $tapeentries = TapeEntry::where('id', $tapeReceive_id)->get();
         $wastage = Wastages::all();
 
         return view('admin.TapeEntry.create', compact('department', 'shift', 'tapeentries','wastage',"tapeReceive_id"));
-
     }
 
     public function view($id){
@@ -119,6 +114,7 @@ class TapeEntryController extends Controller
 
 
     public function ajaxrequestplanttype(Request $request){
+        return $request;
         if($request->ajax()){
         $planttype = DB::table('autoload_items_stock')
             ->join('processing_steps', 'processing_steps.id', '=', 'autoload_items_stock.plant_type_id')
