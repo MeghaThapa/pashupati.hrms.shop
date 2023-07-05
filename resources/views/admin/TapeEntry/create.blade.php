@@ -254,7 +254,7 @@
             </div>
             <div class="col-md-6">
                 <label>Total Row/Dana in Kg</label>
-                <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" disabled required />
+                <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" readonly required />
                 <button type="submit" id="btn-update" class="btn btn-info mt-3" disabled>Update</button>
             </div>
         </div>
@@ -377,7 +377,6 @@
                             console.log("ajax fired");
                         },
                         success: function(response) {
-                            //  console.log('received response', response);
                             planttype(response);
                         },
                         error: function(error) {
@@ -392,7 +391,7 @@
                     $('#planttype').empty();
                     $('<option></option>').text("Select Plant Type").appendTo('#planttype');
                     response.planttype.forEach(data => {
-                        if (data.name == "tape plant") {
+                        if (data.name.startsWith("tape")) {
                             $('<option></option>').attr('value', `${data.id}`).text(`${data.name}`).appendTo(
                                 '#planttype');
                         }
@@ -517,7 +516,8 @@
 
                     $('#btn-update').prop('disabled', false);
 
-                    let final = total + loading + running + bypass;
+                    // let final = total + loading + running + bypass;
+                    let final = total;
                     if (final != dana_in_kg) {
                         e.preventDefault();
                         alert('not equal');
