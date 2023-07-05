@@ -117,11 +117,9 @@
                                 <td>{{ $fabric->gross_wt}} </td>
                                 <td>{{ $fabric->net_wt }}</td>
                                 <td>{{ $fabric->meter }}</td>
-                                <td>{{round($fabric->average_wt, 2)}}
-                                <td>{{round($fabric->gram_wt, 2)}}</td>
-                                </td>
-                              
-                                {{-- <td>{{round(round($fabric->gram, 2) /  (int) filter_var($fabric->name, FILTER_SANITIZE_NUMBER_INT) )}}</td> --}}
+                                <td>{{round($fabric->average_wt, 2)}}</td>
+
+                                <td>{{(round($fabric->average_wt, 2) /  (int) filter_var($fabric->name, FILTER_SANITIZE_NUMBER_INT) )}}</td>
                                 <td>
                                     @if ($fabric->isActive())
                                         <span class="badge badge-success">{{ __('Active') }}</span>
@@ -185,43 +183,50 @@
             {{ $fabrics->links() }}
 
             <div class="card-body p-0">
-                <form class="form-horizontal" action="{{ route('fabrics.store') }}" method="post" enctype="multipart/form-data">
+                <form class="form-horizontal" action="{{ route('fabricDetail') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="name">{{ __('Pipe  Name') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="{{ __('Fabric Name') }}" value="{{ old('name') }}" required>
-                                @error('name')
+                            <div class="form-group col-md-2">
+                                <label for="name">{{ __('Pipe  Cutting') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('pipe_cutting') is-invalid @enderror" id="pipe_cutting" name="pipe_cutting" placeholder="{{ __('Fabric Name') }}" value="{{ old('pipe_cutting') }}" required>
+                                @error('pipe_cutting')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                 @enderror
                             </div>
-                            <div class="col-md-4 form-group">
-                                <label for="FabricGroup">{{ __('FabricGroup Name') }}<span class="required-field">*</span></label>
-                                <select class="advance-select-box form-control @error('FabricGroup') is-invalid @enderror" id="FabricGroup" name="fabricgroup_id"  required>
-                                    <option value="" selected disabled>{{ __('Select a FabricGroup') }}</option>
-                                  {{--   @foreach($fabricgroups as $key => $group)
-                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
-                                    @endforeach --}}
-                                </select>
-                                @error('fabricgroup_id')
+                            <div class="form-group col-md-2">
+                                <label for="name">{{ __('Bd Westage') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('bd_wastage') is-invalid @enderror" id="bd_wastage" name="bd_wastage" placeholder="{{ __('Fabric Name') }}" value="{{ old('bd_wastage') }}" required>
+                                @error('bd_wastage')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                 @enderror
                             </div>
-
-                            <div class="col-md-4 form-group">
-                                <label for="FabricGroup">{{ __('Department Name') }}<span class="required-field">*</span></label>
-                                <select class="advance-select-box form-control @error('godam_id') is-invalid @enderror" id="godam_id" name="godam_id"  required>
-                                    <option value="" selected disabled>{{ __('Select a Godam') }}</option>
-                               {{--      @foreach($godams as $key => $group)
-                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
-                                    @endforeach --}}
-                                </select>
-                                @error('godam_id')
+                            <div class="form-group col-md-2">
+                                <label for="other_wastage">{{ __('Other Westage') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('other_wastage') is-invalid @enderror" id="other_wastage" name="other_wastage" placeholder="{{ __('Fabric Name') }}" value="{{ old('other_wastage') }}" required>
+                                @error('other_wastage')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="total_wastage">{{ __('Total Westage') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('total_wastage') is-invalid @enderror" id="total_wastage" name="total_wastage" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_wastage') }}" required>
+                                @error('total_wastage')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="total_netweight">{{ __('Total Net Weight') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('total_netweight') is-invalid @enderror" id="total_netweight" name="total_netweight" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_netweight') }}" required>
+                                @error('total_netweight')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -231,34 +236,58 @@
                         </div>
                  
                         <div class="row">
-
-                            <div class="form-group col-md-6">
-                                <label for="meter" class="col-form-label">{{ __('Meter') }} <span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('meter') is-invalid @enderror" id="meter" name="meter" placeholder="{{ __('Meter') }}" value="{{ old('name') }}" required>
-                                @error('meter')
+                            <div class="form-group col-md-2">
+                                <label for="total_meter">{{ __('Total Meter') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('total_meter') is-invalid @enderror" id="total_meter" name="total_meter" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_meter') }}" required>
+                                @error('total_meter')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="total_weightinkg">{{ __('Total weight in kg') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('total_weightinkg') is-invalid @enderror" id="total_weightinkg" name="total_weightinkg" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_weightinkg') }}" required>
+                                @error('total_weightinkg')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="total_wastageinpercent">{{ __('Westage in %') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('total_wastageinpercent') is-invalid @enderror" id="total_wastageinpercent" name="total_wastageinpercent" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_wastageinpercent') }}" required>
+                                @error('total_wastageinpercent')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
-                            </div> 
-                            <div class="form-group col-md-6">
-                                <label for="status" class="col-form-label">{{ __('Status') }}</label>
-                                <select class="form-control" id="status" name="status" >
-                                    <option value="1">{{ __('Active') }}</option>
-                                    <option value="0">{{ __('Inactive') }}</option>
-                                </select>
                             </div>
-                             
-                             
+                            <div class="form-group col-md-2">
+                                <label for="run_loom">{{ __('Run Loom') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('run_loom') is-invalid @enderror" id="run_loom" name="run_loom" placeholder="{{ __('Fabric Name') }}" value="{{ old('run_loom') }}" required>
+                                @error('run_loom')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="wrapping">{{ __('Wrapping') }}<span class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('wrapping') is-invalid @enderror" id="wrapping" name="wrapping" placeholder="{{ __('Fabric Name') }}" value="{{ old('wrapping') }}" required>
+                                @error('wrapping')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+
                         </div>
                         
-                        <div class="row">
-                            
-                            
-                        </div>
+                        
                         <div class="row">
                             <div class="col-sm-10">
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('Save Fabric') }}</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('Update') }}</button>
                             </div>
                         </div>
                     </div>

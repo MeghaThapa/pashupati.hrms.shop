@@ -13,7 +13,7 @@ class FabricStock extends Model
     protected $table = 'fabric_stock';
     protected $id = 'id';
     protected $fillable = [
-        'name','slug', 'fabricgroup_id', 'status','average_wt','gram_wt','gross_wt','net_wt','meter','roll_no','loom_no','is_laminated','godam_id'
+        'name','slug', 'fabricgroup_id', 'status','average_wt','gram_wt','gross_wt','net_wt','meter','roll_no','loom_no','is_laminated','godam_id','bill_no'
     ];
 
    /**

@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bag_fabric_entry', function (Blueprint $table) {
+        Schema::create('fabric_temporaries', function (Blueprint $table) {
             $table->id();
-            $table->string("receipt_number");
-            $table->string('receipt_date');
-            $table->string('receipt_date_np');
-            $table->enum("status",["completed","pending"])->default("pending");
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('fabric_temporaries');
     }
 };

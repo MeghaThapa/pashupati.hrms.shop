@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Fabric;
 use App\Models\FabricGroup;
 use App\Models\Godam;
+use App\Models\FabricDetail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FabricImport;
 
@@ -22,7 +23,6 @@ class FabricController extends Controller
         $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
 
         $departments = Godam::get();
-         // dd($fabrics);
 
         return view('admin.fabric.index', compact('fabrics','departments'));
     }
@@ -161,5 +161,49 @@ class FabricController extends Controller
             ]);
         }
         return redirect()->route('fabrics.index')->withSuccess('Fabric status changed successfully!');
+    }
+
+    public function fabricDetail(Request $request)
+    {
+        //validate form
+        $validator = $request->validate([
+            'pipe_cutting' => 'required|integer',
+            'bd_wastage' => 'required|integer',
+            'other_wastage' => 'required|integer',
+            'total_wastage' => 'required|integer',
+            'total_netweight' => 'required|integer',
+            'total_meter' => 'required|integer',
+            'total_weightinkg' => 'required|integer',
+            'total_wastageinpercent' => 'required|integer',
+            'run_loom' => 'required|integer',
+            'wrapping' => 'required|integer',
+        ]);
+
+
+        // $getLastId = FabricDetail::lastInsertId();
+        $getLastId = Fabric::latest()->first();
+        $bill_no = $getLastId->bill_no;
+
+        // dd($request);
+        // dd($getLastId,$bill_no);
+
+
+        // store subcategory
+        $fabric = FabricDetail::create([
+            'bill_number' => $bill_no,
+            'bill_date' => '0',
+            'pipe_cutting' => $request['pipe_cutting'],
+            'bd_wastage' => $request['bd_wastage'],
+            'other_wastage' => $request['other_wastage'],
+            'total_wastage' => $request['total_wastage'],
+            'total_netweight' => $request['total_netweight'],
+            'total_meter' => $request['total_meter'],
+            'total_weightinkg' => $request['total_weightinkg'],
+            'total_wastageinpercent' => $request['total_wastageinpercent'],
+            'run_loom' => $request['run_loom'],
+            'wrapping' => $request['wrapping'],
+        ]);
+
+        return redirect()->back()->withSuccess('Sub category created successfully!');
     }
 }

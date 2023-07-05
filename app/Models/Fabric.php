@@ -13,7 +13,7 @@ class Fabric extends Model
     * @var array
     */
    protected $fillable = [
-       'name', 'slug', 'fabricgroup_id', 'status','average_wt','gram_wt','gross_wt','net_wt','meter','roll_no','loom_no','is_laminated','godam_id'
+       'name', 'slug', 'fabricgroup_id', 'status','average_wt','gram_wt','gross_wt','net_wt','meter','roll_no','loom_no','is_laminated','godam_id','bill_no'
    ];
 
    /**
