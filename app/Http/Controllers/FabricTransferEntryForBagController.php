@@ -70,7 +70,9 @@ class FabricTransferEntryForBagController extends Controller
   {
     if ($request->ajax()) {
       $data = FabricStock::where("godam_id", $id)->orderBy('name', "asc")->get();
-      return $data;
+      return response([
+        "data" => $data
+    ]);
     }
   }
 

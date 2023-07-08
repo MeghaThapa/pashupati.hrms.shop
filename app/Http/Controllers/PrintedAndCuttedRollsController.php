@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PrintedAndCuttedRolls;
 use App\Models\PrintedAndCuttedRollsEntry;
 use App\Models\BagFabricReceiveItemSentStock;
+use App\Models\AutoLoadItemStock;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use DB;
@@ -12,6 +13,7 @@ class PrintedAndCuttedRollsController extends Controller
 {
     /*************** For Entry *********/
     public function index(){
+
         $data = PrintedAndCuttedRollsEntry::all();
         return view("admin.bag.printsandcuts.index",compact("data"));
     }
@@ -40,22 +42,65 @@ class PrintedAndCuttedRollsController extends Controller
     }
     /*************** For Entry *********/
     public function createPrintedRolls($id){
-     $data = PrintedAndCuttedRollsEntry::where('id',$id)->get();
-     $fabrics = DB::table('bag_fabric_receive_item_sent_stock as stock')
-     ->join('fabrics', 'fabrics.id', '=', 'stock.fabric_id')
-     ->select('fabrics.id','fabrics.name')
-     ->get();
-     $groups=Group::where('status','active')->get();
-   //  return $groups;
-     return view("admin.bag.printsandcuts.create")->with([
-            "data" => $data,
-            "fabrics"=>$fabrics,
-            "groups"=>$groups
-     ]);
-    }
+        $data = PrintedAndCuttedRollsEntry::where('id',$id)->first();
+        // return $data;
+        $fabrics = DB::table('bag_fabric_receive_item_sent_stock as stock')
+        ->join('fabrics', 'fabrics.id', '=', 'stock.fabric_id')
+        ->select('fabrics.id','fabrics.name')
+        ->get();
+        $groups=Group::where('status','active')->get();
+         $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
+            $query->select('id','name');
+        }])
+        ->select('from_godam_id')
+        ->distinct()
+        ->get();
 
-    public function getNetWeightGrossWeight($fabric_id){
-        $netWeightGrossWeight=BagFabricReceiveItemSentStock::where('fabric_id',$fabric_id)->first(['gross_wt','net_wt']);
-        return $netWeightGrossWeight;
+
+
+        return view("admin.bag.printsandcuts.create")->with([
+                "data" => $data,
+                "fabrics"=>$fabrics,
+                "groups"=>$groups,
+                "godams"=>$godams
+        ]);
+    }
+    public function getFabric(Request $request){
+      return  BagFabricReceiveItemSentStock::where('roll_no',$request->roll_no)
+       ->with(['fabric'=>function ($query){
+            $query->select('id','name');
+       }])
+       ->select('fabric_id as fabric_id','net_wt','gross_wt','average')
+       ->first();
+    }
+    public function getDanaGroup(Request $request){
+        $danaGroups=AutoLoadItemStock::with(['danaGroup'=>function ($query){
+                $query->select('id','name');
+            }])
+            ->select('dana_group_id')
+            ->where('from_godam_id',$request->godam_id)
+            ->distinct()
+            ->get();
+        return $danaGroups;
+        }
+        public function getDanaName(Request $request){
+        $danaNames=AutoLoadItemStock::with(['danaName'=>function ($query){
+                $query->select('id','name');
+            }])
+            ->select('dana_name_id')
+            ->where('dana_group_id',$request->dana_group_id)
+            ->where('from_godam_id',$request->godam_id)
+            ->distinct()
+            ->get();
+        return $danaNames;
+        }
+    public function getStockQuantity(Request $request){
+         $stockQty=AutoLoadItemStock::
+            select('quantity')
+            ->where('from_godam_id',$request->godam_id)
+            ->where('dana_group_id',$request->dana_group_id)
+            ->where('from_godam_id',$request->godam_id)
+            ->first();
+        return $stockQty;
     }
 }
