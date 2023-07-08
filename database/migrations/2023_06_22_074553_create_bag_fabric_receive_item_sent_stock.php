@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('meter');
             $table->string('roll_no');
             $table->string('loom_no');
-            //$table->string('average');
+            $table->string('average');
             $table->timestamps();
         });
     }

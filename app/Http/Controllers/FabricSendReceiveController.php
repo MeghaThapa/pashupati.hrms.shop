@@ -97,8 +97,9 @@ class FabricSendReceiveController extends Controller
 
     public function sendunlaminated(Request $request){
         // dd('lol');
+        //return $request->data;
         if($request->ajax()){
-            // return $request->data;
+
             $data = [];
             parse_str($request->data,$data);
             $fabricDetails = Fabric::where('id',$data['fabric_name_id'])->first();

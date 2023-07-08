@@ -71,6 +71,9 @@
 @endsection
 @section('content')
     <!-- Content Header (Page header) -->
+    <div id="error_msg" class="alert alert-danger mt-2" hidden>
+
+    </div>
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
@@ -92,38 +95,37 @@
     <div id="success_msg" class="alert alert-success mt-2" hidden>
 
     </div>
+    {{-- <input type="text" value="{{ $data->id }}"> --}}
     {{-- </div> --}}
     <div class="content">
         <div class="container-fluid">
             <a class='btn btn-primary go-back float-right'>Go back</a>
             <br><br>
             <div class="form">
-                <form action="">
+                <form action="" id="savePrintingAndCuttingBagItem">
+                    <input type="text" value="{{ $data->id }}" class="form-control" id='printAndCutEntryId'
+                        name='printAndCutEntry_id' hidden>
                     <div class="row">
-                        @foreach ($data as $d)
-                            <div class="col-md-3">
-                                <label for="receipt_number">Receipt Number</label>
-                                <input type="text" value="{{ $d->receipt_number }}" class="form-control"
-                                    id='receipt_number' name='receipt_number' readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="Date NP">Date</label>
-                                <input type="text" value="{{ $d->date }}" class="form-control" id='date_np'
-                                    name='date_np' readonly>
-                            </div>
-                        @endforeach
+                        {{-- @foreach ($data as $d) --}}
+                        <div class="col-md-3">
+                            <label for="receipt_number">Receipt Number</label>
+                            <input type="text" value="{{ $data->receipt_number }}" class="form-control"
+                                id='receipt_number' name='receipt_number' readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="Date NP">Date</label>
+                            <input type="text" value="{{ $data->date_np }}" class="form-control" id='date_np'
+                                name='date_np' readonly>
+                        </div>
+                        {{-- @endforeach --}}
                         <div class="col-md-3">
                             <label for="Roll number">Roll Number</label>
-                            <input type="text" class="form-control" id='roll_number' name='roll_number' disabled>
+                            <input type="text" class="form-control" id='rollNumber' name='roll_number'>
                         </div>
                         <div class="col-md-3">
                             <label for="Fabric">Fabric </label>
                             <select name="fabric_id" class="form-control advance-select-box" id="fabricId">
                                 <option value="">Fabric Hre</option>
-                                @foreach ($fabrics as $fabricData)
-                                    <option value="{{ $fabricData->id }}">{{ $fabricData->name }}
-                                    </option>
-                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -211,19 +213,29 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="cut_length">Quantity Piece</label>
                             <input type="text" class="form-control" id="quantity_piece" name="quantity_piece">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
+                            <label for="cut_length">wastage</label>
+                            <input type="text" class="form-control" id="wastage" name="wastage">
+                        </div>
+                        <div class="col-md-2">
                             <label for="cut_length">AVG</label>
                             <input type="text" class="form-control" id="avg" name="avg">
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-primary">Add</button>
+                        </div>
+
+                    </div>
                 </form>
                 <hr>
                 <div class="table-custom table-responsive ">
-                    <table class="table table-hover table-bordered">
+                    <table class="table table-hover table-bordered" id="printsAndCutsItem">
                         <thead>
                             <tr>
                                 <th>SN</th>
@@ -242,57 +254,94 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>SN</td>
-                                <td>Brand Group</td>
-                                <td>Bag Brand</td>
-                                <td>Quantity Piece</td>
-                                <td>Average</td>
-                                <td>Wastage</td>
-                                <td>Roll No</td>
-                                <td>Fabric Name</td>
-                                <td>NW</td>
-                                <td>GW</td>
-                                <td>Meter</td>
-                                <td>Avg</td>
-                                <td>Req Bag</td>
-                                <td>
-                                    <a class="btn btn-danger" href="javascript:void(0)"><i class="fa fa-trash"
-                                            aria-hidden="true"></i></a>
-                                </td>
-                            </tr>
+                        <tbody id="result">
                         </tbody>
                     </table>
                 </div>
                 <hr>
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-body">
-                                Hello
+                    <div class="col-md-5">
+                        <form id="addPrintsAndCutsDanaConsumption">
+                            <div class="card p-2">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="cut_length">Godam</label>
+                                        <select
+                                            class="advance-select-box form-control  @error('godam_id') is-invalid @enderror"
+                                            id="godamId" name="godam_id" required>
+                                            <option value=" " selected disabled>{{ __('Select Godam') }}</option>
+                                            @foreach ($godams as $godam)
+                                                <option value="{{ $godam->fromGodam->id }}">
+                                                    {{ $godam->fromGodam->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cut_length">Dana Group</label>
+                                        <select
+                                            class="advance-select-box form-control  @error('dana_group_id') is-invalid @enderror"
+                                            id="danaGroupId" name="dana_group_id" required>
+                                            <option value=" " selected disabled>{{ __('Select dana group') }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="cut_length">Dana Name</label>
+                                        <select
+                                            class="advance-select-box form-control  @error('dana_name_id') is-invalid @enderror"
+                                            id="danaNameId" name="dana_name_id" required>
+                                            <option value=" " selected disabled>{{ __('Select Dana') }}</option>
+                                            {{-- @foreach ($groups as $group)
+                                            <option value="{{ $group->id }}"
+                                                {{ old('group_id') == $group->id ? 'selected' : '' }}>{{ $group->name }}
+                                            </option>
+                                        @endforeach --}}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="cut_length">Available</label>
+                                        <input type="text" class="form-control" id="avilableStock"
+                                            name="avilable_stock" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cut_length">Quantity</label>
+                                        <input type="text" class="form-control" id="quantity" name="quantity">
+                                    </div>
+                                    <div class="col-md-2 mt-4">
+                                        <button class="btn btn-primary ">Add</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="col-md-9">
-                        <table class="table table-bordered table-hover">
+                    <div class="col-md-7">
+                        <table class="table table-bordered table-hover" id="danaConsumption">
                             <thead>
                                 <tr>
-                                    <th>Hello</th>
+                                    <th style="width:30px;">SN</th>
+                                    <th>Godam</th>
+                                    <th>Dana Group</th>
+                                    <th>Dana Name</th>
+                                    <th>Quantity</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
+                            <tbody id="printsCutsDanaConsumpt">
+                                {{-- <tr>
                                     <td>
                                         Hwello
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="row mx-1">
-                    <button class="btn btn-success">Update</button>
+                    <button class="btn btn-success" id="updateStocks">Update</button>
                 </div>
             </div>
         </div>
@@ -443,6 +492,118 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script>
         $(document).ready(function() {
+            //When Page Refresh
+            getPrintsAndCutsBagItems();
+
+            //when page refresh
+            getdanaConsumptionData();
+
+            function getdanaConsumptionData() {
+                let printAndCutEntry_id_data = {!! json_encode($data->id) !!};
+                //console.log('printAndCutEntry_id_data', printAndCutEntry_id_data);
+                $.ajax({
+                    url: '{{ route('printingAndCuttingBagItem.getPrintsAndCutsDanaConsumption') }}',
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        printAndCutEntry_id: printAndCutEntry_id_data
+                    },
+                    success: function(response) {
+                        console.log('consumption data', response);
+                        response.forEach(function(response) {
+                                setIntoConsumptionTable(response)
+                            }
+
+                        )
+                        //setIntoConsumptionTable(res)
+                        // if (response.count <= 0) {
+                        //     return false;
+                        // }
+                        // response.printingAndCuttingBagItem.forEach(itemsRow => {
+                        //     setIntoConsumptionTable(itemsRow);
+                        // });
+                        // deleteEventBtn();
+                        checkRowInTable('danaConsumption');
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            function getPrintsAndCutsBagItems() {
+                let printAndCutEntry_id_data = {!! json_encode($data->id) !!};
+                $.ajax({
+                    url: '{{ route('printingAndCuttingBagItem.getPrintsAndCutsBagItems') }}',
+                    method: 'GET',
+                    data: {
+                        printAndCutEntry_id: printAndCutEntry_id_data
+                    },
+                    success: function(response) {
+                        if (response.count <= 0) {
+                            return false;
+                        }
+                        response.printingAndCuttingBagItem.forEach(itemsRow => {
+                            setIntoTable(itemsRow);
+                        });
+                        deleteEventBtn();
+                        checkRowInTable('printsAndCutsItem');
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            function checkRowInTable(tableId) {
+                // let tableTbody = tableId.querySelector("tbody");
+                tableTbody = document.querySelector("#" + tableId + " tbody");
+                let updateStocksBtn = document.getElementById('updateStocks');
+
+                if (tableTbody && tableTbody.rows.length <= 0) {
+                    updateStocksBtn.disabled = true;
+                } else {
+                    updateStocksBtn.disabled = false;
+                }
+            }
+
+            // function checkRowInTable() {
+            //     let tableTbody = document.querySelector("#printsAndCutsItem tbody");
+            //     let updateStocksBtn = document.getElementById('updateStocks');
+
+            //     if (tableTbody.rows.length <= 0) {
+            //         updateStocksBtn.disabled = true;
+            //     } else {
+            //         updateStocksBtn.enable = true;
+            //     }
+            // }
+
+
+            //meghamm
+            document.getElementById('updateStocks').addEventListener('click', function(event) {
+                let printAndCutEntry_id = {!! json_encode($data->id) !!};
+                $.ajax({
+                    url: "{{ route('printingAndCuttingBagItem.updateStock') }}",
+                    method: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        printAndCutEntry_id: printAndCutEntry_id,
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        // setOptionInSelect('fabricId', response.fabric.id, response.fabric.name);
+                        // $('#netWeight').val(response.net_wt);
+                        // $('#grossWeight').val(response.gross_wt);
+                        // $('#average').val(response.average);
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+                // console.log('hello');
+            });
+
+
             $(".go-back").click(function() {
                 history.back();
             });
@@ -452,32 +613,166 @@
                 alert("hello");
             });
 
-
             $('#fabricId').on('select2:select', function(e) {
-                // console.log('helo');
+
                 let fabric_id = e.params.data.id;
+                console.log('fabric_id', fabric_id);
                 // let click_by=blade;
                 getNetWeightGrossWeight(fabric_id);
             });
 
+            $('#godamId').on('select2:select', function(e) {
+                let godam_id = e.params.data.id;
+                $('#danaGroupId').empty();
+                getDanaGroup(godam_id);
+            });
 
+            $('#danaGroupId').on('select2:select', function(e) {
+                // console.log('df');
+                let dana_group_id = e.params.data.id;
+                $('#danaNameId').empty();
+                getDanaName(dana_group_id);
+            });
 
-            //  adding event listenersfor calculating QTY in kg
-            document.getElementById('average').addEventListener('input', checkInputsToCalQtyInKg);
-            document.getElementById('reqBag').addEventListener('input', checkInputsToCalQtyInKg);
+            $('#danaNameId').on('select2:select', function(e) {
+                // console.log('df');
+                let godam_id = document.getElementById('godamId').value;
+                let dana_group_id = document.getElementById('danaGroupId').value;
+                let dana_name_id = e.params.data.id;
+                $('#avilableStock').empty();
+                getStockQuantity(godam_id, dana_group_id, dana_name_id);
+            });
+            // printsAndCuts.getStockQuantity
+            function getStockQuantity(godam_id, dana_group_id, dana_name_id) {
+                $.ajax({
+                    url: "{{ route('printsAndCuts.getStockQuantity') }}",
+                    method: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        dana_group_id: dana_group_id,
+                        godam_id: godam_id,
+                        dana_name_id: dana_name_id
+                    },
+                    success: function(response) {
+                        console.log('stockQty', response);
+                        document.getElementById('avilableStock').value = response.quantity;
+                        // response.forEach(function(item) {
+                        //     setOptionInSelect('danaNameId', item.dana_name.id, item.dana_name
+                        //         .name);
+                        // });
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+            }
 
-            function checkInputsToCalQtyInKg() {
-                var average = document.getElementById('average').value;
-                var reqBag = document.getElementById('reqBag').value;
-                // Check if both fields have values
-                if (meter && cutLength) {
-                    calculateQtyInKg(average, reqBag);
+            function getDanaName(dana_group_id) {
+                let godam_id = document.getElementById('godamId').value;
+                $.ajax({
+                    url: "{{ route('printsAndCuts.getDanaName') }}",
+                    method: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        dana_group_id: dana_group_id,
+                        godam_id: godam_id
+
+                    },
+                    success: function(response) {
+                        $('#danaNameId').prepend(
+                            "<option value='' disabled selected>Select required</option>");
+                        response.forEach(function(item) {
+                            setOptionInSelect('danaNameId', item.dana_name.id, item.dana_name
+                                .name);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+            }
+
+            function getDanaGroup(godam_id) {
+                $.ajax({
+                    url: "{{ route('printsAndCuts.getDanaGroup') }}",
+                    method: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        godam_id: godam_id,
+                    },
+                    success: function(response) {
+                        $('#danaGroupId').prepend(
+                            "<option value='' disabled selected>Select required data</option>");
+                        response.forEach(function(item) {
+                            setOptionInSelect('danaGroupId', item.dana_group.id, item.dana_group
+                                .name);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+            }
+
+            //to calculate avg
+            let cutLengthInput = document.getElementById("cutLength");
+
+            // Add the event listener to the input field
+            cutLengthInput.addEventListener("input", handleAvgCalculation);
+
+            function handleAvgCalculation() {
+                let cutLengthValue = cutLengthInput.value;
+                let average = document.getElementById("average").value;
+                if (cutLengthValue && average) {
+                    calculation(cutLengthValue, average);
                 }
             }
 
-            function calculateQtyInKg(average, reqBag) {
-                let qtyInKg = parseFloat(average) * parseFloat(reqBag);
-                document.getElementById('qtyInKg').value = qtyInKg;
+            function calculation(cutLengthValue, average) {
+                let avg = parseFloat(average) * parseFloat(cutLengthValue) / 39.37;
+                avg = avg.toFixed(2);
+                document.getElementById('avg').value = parseFloat(avg);
+            }
+            //  adding event listenersfor calculating QTY in kg
+            // document.getElementById('average').addEventListener('input', checkInputsToCalQtyInKg);
+            // document.getElementById('reqBag').addEventListener('input', checkInputsToCalQtyInKg);
+
+            // function checkInputsToCalQtyInKg() {
+            //     var average = document.getElementById('average').value;
+            //     var reqBag = document.getElementById('reqBag').value;
+            //     // Check if both fields have values
+            //     if (meter && cutLength) {
+            //         calculateQtyInKg(average, reqBag);
+            //     }
+            // }
+
+            // function calculateQtyInKg(average, reqBag) {
+            //     let qtyInKg = parseFloat(average) * parseFloat(reqBag);
+            //     document.getElementById('qtyInKg').value = qtyInKg;
+            // }
+
+
+            document.getElementById('rollNumber').addEventListener('input', getFabric);
+
+            function getFabric() {
+                let roll_no = document.getElementById('rollNumber').value;
+                $.ajax({
+                    url: "{{ route('printsAndCuts.getFabric') }}",
+                    method: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        roll_no: roll_no,
+                    },
+                    success: function(response) {
+                        setOptionInSelect('fabricId', response.fabric.id, response.fabric.name);
+                        $('#netWeight').val(response.net_wt);
+                        $('#grossWeight').val(response.gross_wt);
+                        $('#average').val(response.average);
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
             }
 
             // Adding event listeners
@@ -486,8 +781,8 @@
 
             // Checking if both input fields have a value
             function checkInputs() {
-                var meter = document.getElementById('meter').value;
-                var cutLength = document.getElementById('cutLength').value;
+                let meter = document.getElementById('meter').value;
+                let cutLength = document.getElementById('cutLength').value;
 
                 // Check if both fields have values
                 if (meter && cutLength) {
@@ -500,6 +795,49 @@
                 // Update the value of the 'reqBag' element
                 document.getElementById('reqBag').value = reqBag;
             }
+            //save addPrintsAndDanaConsumption
+            document.getElementById('addPrintsAndCutsDanaConsumption').addEventListener('submit', function(e) {
+                //let printCutEntry_id = {!! json_encode($data->id) !!};
+                e.preventDefault();
+                const form = e.target;
+                let printCutEntry_id = {!! json_encode($data->id) !!};
+                console.log('testing', printCutEntry_id);
+                let godam_id = form.elements['godam_id'];
+                let dana_group_id = form.elements['dana_group_id'];
+                let dana_name_id = form.elements['dana_name_id'];
+                let quantity = form.elements['quantity'];
+                $.ajax({
+                    url: "{{ route('printingAndCuttingDanaConsumption.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        printCutEntry_id: printCutEntry_id,
+                        godam_id: godam_id.value,
+                        dana_group_id: dana_group_id.value,
+                        dana_name_id: dana_name_id.value,
+                        quantity: quantity.value
+                    },
+                    success: function(response) {
+                        removeAllTableRows('danaConsumption');
+                        getdanaConsumptionData();
+                        // setIntoConsumptionTable(response);
+                        // getdanaConsumptionData();
+                        updateStockQuantity();
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+            });
+            //current
+            function updateStockQuantity() {
+                let godam_id = $('#godamId').val();
+                let dana_group_id = $('#danaGroupId').val();
+                let dana_name_id = $('#danaNameId').val();
+                console.log('godam_id:', godam_id, 'dana_group_id:', dana_group_id, 'dana_name_id:', dana_name_id)
+                getStockQuantity(godam_id, dana_group_id, dana_name_id);
+            }
+
             //Save group
             document.getElementById('createGroupModel').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -529,6 +867,201 @@
                     }
                 });
             });
+            checkRollNumber()
+
+            function checkRollNumber($roll_no) {
+                let tbody = document.querySelector("#printsAndCutsItem tbody");
+                let rollNumbers = tbody.querySelector('.rowRollno');
+
+            }
+            //save printing and cutting bag items
+            document.getElementById('savePrintingAndCuttingBagItem').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = e.target;
+                let printAndCutEntry_id = form.elements['printAndCutEntry_id'];
+                let roll_no = form.elements['rollNumber'];
+                let fabric_id = form.elements['fabricId'];
+                let netWeight = form.elements['netWeight'];
+                let grossWeight = form.elements['grossWeight'];
+                let meter = form.elements['meter'];
+                let average = form.elements['average'];
+                let cutLength = form.elements['cutLength'];
+                let reqBag = form.elements['reqBag'];
+                let qtyInKg = form.elements['qtyInKg'];
+                let group_id = form.elements['group'];
+                let bagBrand_id = form.elements['bagBrand'];
+                let quantity_piece = form.elements['quantity_piece'];
+                let wastage = form.elements['wastage'];
+                let avg = form.elements['avg'];
+                $.ajax({
+                    url: "{{ route('printingAndCuttingBagItem.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        printAndCutEntry_id: printAndCutEntry_id.value,
+                        group_id: group_id.value,
+                        bag_brand_id: bagBrand_id.value,
+                        quantity_piece: quantity_piece.value,
+                        average: average.value,
+                        wastage: wastage.value,
+                        roll_no: roll_no.value,
+                        fabric_id: fabric_id.value,
+                        net_weight: netWeight.value,
+                        cut_length: cutLength.value,
+                        qty_in_kg: qtyInKg.value,
+                        gross_weight: grossWeight.value,
+                        meter: meter.value,
+                        avg: avg.value,
+                        req_bag: reqBag.value,
+                    },
+                    success: function(response) {
+                        // console.log('new response', response);
+                        // console.log('test res megha', response.printingAndCuttingBagItem)
+                        setSuccessMessage(response.message);
+                        setIntoTable(response.printingAndCuttingBagItem);
+                        deleteEventBtn();
+                        // $('#bagBrandModel').modal('hide');
+                        // setSuccessMessage(response.message);
+                        // setOptionInSelect('bagBrand', response.bagBrand.id,
+                        //     response.bagBrand.name);
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+            });
+
+            let sn = 1;
+            //set data in the table
+            function setIntoTable(res) {
+
+                var html = "";
+
+                html = "<tr id=editRow-" + res.id + "><td>" + sn +
+                    "</td><td class='rowGroupName'>" + res.group.name +
+                    "</td><td class='rowBrandBagName'>" + res.brand_bag.name +
+                    "</td><td class='rowQuantity_piece'>" + res.quantity_piece +
+                    "</td><td class='rowAverage'>" + res.average +
+                    "</td><td class='rowWastage'>" + res.wastage +
+                    "</td><td class='rowRollno'>" + res.roll_no +
+                    "</td><td class='rowFabricName'>" + res.fabric.name +
+                    "</td><td class='rowNetWeight'>" + res.net_weight +
+                    "</td><td class='rowGrossWeight'>" + res.gross_weight +
+                    "</td><td class='rowMeter'>" + res.meter +
+                    "</td><td class='rowAvg'>" + res.avg +
+                    "</td><td class='rowReqBag'>" + res.req_bag +
+                    "</td> <td>" +
+                    // "<button class='btn btn-success editItemBtn' data-id=" +
+                    // res.id + "><i class='fas fa-edit'></i></button>" +
+                    // "  " +
+                    "<button class='btn btn-danger dltPrintingAndCuttingBagItems' data-id=" +
+                    res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
+
+                document.getElementById('result').innerHTML += html;
+                sn++;
+                // Clearing the input fields
+                clearInputFields();
+            }
+            //set data into dana consumption table
+            function setIntoConsumptionTable(res) {
+                var html = "";
+                html = "<tr id=editConsumptRow-" + res.id + "><td>" + sn +
+                    "</td><td class='rowGodamName'>" + res.godam.name +
+                    "</td><td class='rowDanaGroupName'>" + res.dana_group.name +
+                    "</td><td class='rowDanaName'>" + res.dana_name.name +
+                    "</td><td class='rowQuantity'>" + res.quantity +
+                    "</td> <td>" +
+                    // "<button class='btn btn-success editItemBtn' data-id=" +
+                    // res.id + "><i class='fas fa-edit'></i></button>" +
+                    // "  " +
+                    "<button class='btn btn-danger dltPrintingAndCutDanaConsumption' data-id=" +
+                    res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
+
+                document.getElementById('printsCutsDanaConsumpt').innerHTML += html;
+                sn++;
+                // Clearing the input fields
+                clearInputFields();
+            }
+
+            function deleteEventBtn() {
+                let deleteButtons = document.getElementsByClassName('dltPrintingAndCuttingBagItems');
+                //console.log(deleteButtons);
+                for (let i = 0; i < deleteButtons.length; i++) {
+                    deleteButtons[i].addEventListener('click', function(event) {
+                        console.log('hello');
+                        let printingAndCuttingBagItem_id = this.getAttribute('data-id');
+                        // console.log(storeout_item_id);
+                        new swal({
+                            title: "Are you sure?",
+                            text: "Do you want to delete Item.",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                            showCancelButton: true,
+                            cancelButtonText: 'Cancel',
+                            closeOnClickOutside: false,
+                        }).then((willDelete) => {
+                            if (willDelete) {
+                                $.ajax({
+                                    url: '{{ route('printingAndCuttingBagItem.itemDelete', ['printingAndCuttingBagItem_id' => ':lol']) }}'
+                                        .replace(':lol', printingAndCuttingBagItem_id),
+                                    type: "DELETE",
+                                    data: {
+                                        "_method": "DELETE",
+                                        "_token": "{{ csrf_token() }}",
+                                    },
+                                    success: function(response) {
+                                        removeAllTableRows('printsAndCutsItem');
+                                        checkRowInTable();
+                                        getPrintsAndCutsBagItems();
+                                    },
+                                    error: function(result) {
+                                        new swal({
+                                            title: "Error",
+                                            text: "something went wrong",
+                                            type: 'error',
+                                            timer: '1500'
+                                        });
+                                    }
+                                });
+                            }
+                        });
+
+                    });
+
+                }
+            }
+            //remove all table data
+            function removeAllTableRows(tableId) {
+                // Resetting SN
+                sn = 1;
+                let tableTbody = document.querySelector("#" + tableId + " tbody");
+                //let tableTbody = tableId.querySelector("tbody");
+                if (tableTbody) {
+                    for (var i = tableTbody.rows.length - 1; i >= 0; i--) {
+                        tableTbody.deleteRow(i);
+                    }
+                }
+            }
+
+            //clear the data from input fields
+            function clearInputFields() {
+                document.getElementById('rollNumber').value = "";
+                document.getElementById('netWeight').value = "";
+                document.getElementById('grossWeight').value = "";
+                document.getElementById('meter').value = "";
+                document.getElementById('average').value = "";
+                document.getElementById('cutLength').value = "";
+                document.getElementById('reqBag').value = "";
+                document.getElementById('qtyInKg').value = "";
+                document.getElementById('quantity_piece').value = "";
+                document.getElementById('wastage').value = "";
+                document.getElementById('avg').value = "";
+                $('#fabricId').val($('#fabricId option:first').val()).change();
+                $('#group').val($('#group option:first').val()).change();
+                $('#bagBrand').val($('#bagBrand option:first').val()).change();
+            }
+
             //save brand bag
             document.getElementById('createBrandBagModel').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -568,7 +1101,7 @@
                         .replace(':Replaced', group_id),
                     method: 'GET',
                     success: function(response) {
-                        console.log('bag name from group', response);
+                        // console.log('bag name from group', response);
                         fillOptionInSelect(response.bagBrands, '#bagBrand');
 
                     },
@@ -607,7 +1140,7 @@
 
                 // refresh the select2 element to update the UI
                 selectElement.trigger('change.select2');
-                $('#' + elementId).val(optionId).trigger('change.select2');
+                // $('#' + elementId).val(optionId).trigger('change.select2');
             }
 
             function setErrorMsg(errorMessage) {
@@ -629,23 +1162,7 @@
                 }, 2000); // 5000 milliseconds = 5 seconds
             }
 
-            function getNetWeightGrossWeight(fabric_id) {
-                $.ajax({
-                    url: "{{ route('printsAndCuts.getNetWeightGrossWeight', ['fabric_id' => ':Replaced']) }}"
-                        .replace(
-                            ':Replaced',
-                            fabric_id),
-                    method: 'GET',
-                    success: function(response) {
-                        console.log(response);
-                        document.getElementById('netWeight').value = response.net_wt;
-                        document.getElementById('grossWeight').value = response.gross_wt;
-                    },
-                    error: function(xhr, status, error) {
-                        reject(error);
-                    }
-                });
-            }
+
         });
     </script>
     <script>

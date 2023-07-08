@@ -38,6 +38,8 @@ use App\Http\Controllers\StoreoutDepartmentController;
 use App\Http\Controllers\Tripal\TripalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
+use App\Http\Controllers\PrintingAndCuttingBagItemController;
+use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -913,8 +915,15 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
     Route::get("prints/and/cuts/create/entry",[PrintedAndCuttedRollsController::class,"createEntry"])->name('prints.and.cuts.create.entry');
     Route::post("prints/and/cuts/store/entry",[PrintedAndCuttedRollsController::class,"storeEntry"])->name('prints.and.cuts.store.entry');
 
-    Route::get("prints/and/cuts/creacreatePrintedRolls/{id}",[PrintedAndCuttedRollsController::class,"createPrintedRolls"])->name('prints.and.cuts.createPrintedRolls');
-    Route::get("printsAndCuts/getNetWeightGrossWeight/{fabric_id}",[PrintedAndCuttedRollsController::class,"getNetWeightGrossWeight"])->name('printsAndCuts.getNetWeightGrossWeight');
+    Route::get("prints/and/cuts/createPrintedRolls/{id}",[PrintedAndCuttedRollsController::class,"createPrintedRolls"])->name('prints.and.cuts.createPrintedRolls');
+
+    Route::post("printsAndCuts/getFabric",[PrintedAndCuttedRollsController::class,"getFabric"])->name('printsAndCuts.getFabric');
+    Route::post("printsAndCuts/getDanaGroup",[PrintedAndCuttedRollsController::class,"getDanaGroup"])->name('printsAndCuts.getDanaGroup');
+
+    Route::post("printsAndCuts/getDanaName",[PrintedAndCuttedRollsController::class,"getDanaName"])->name('printsAndCuts.getDanaName');
+
+    Route::post("printsAndCuts/getStockQuantity",[PrintedAndCuttedRollsController::class,"getStockQuantity"])->name('printsAndCuts.getStockQuantity');
+
 
 /******************** Bag  End ************************/
 /****************Group Start********************/
@@ -924,7 +933,24 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
 /****************Group End********************/
 
 /****************Bag Brand Start********************/
-    Route::post("bagBrand/store",[BagBrandController::class,"store"])->name('bagBrand.store');
-    Route::get("bagBrand/getBagBrandFromGroup/{group_id}",[BagBrandController::class,"getBagBrandFromGroup"])->name('bagBrand.getBagBrandFromGroup');
+Route::post("bagBrand/store",[BagBrandController::class,"store"])->name('bagBrand.store');
+Route::get("bagBrand/getBagBrandFromGroup/{group_id}",[BagBrandController::class,"getBagBrandFromGroup"])->name('bagBrand.getBagBrandFromGroup');
 
 /****************Bag Brand End********************/
+
+/***************printing and cutting bag item start*****************/
+Route::post("printingAndCuttingBagItem/store",[PrintingAndCuttingBagItemController::class,"store"])->name('printingAndCuttingBagItem.store');
+Route::get("printingAndCuttingBagItem",[PrintingAndCuttingBagItemController::class,"getPrintsAndCutsBagItems"])->name('printingAndCuttingBagItem.getPrintsAndCutsBagItems');
+Route::delete("printingAndCuttingBagItem/{printingAndCuttingBagItem_id}",[PrintingAndCuttingBagItemController::class,"itemDelete"])->name('printingAndCuttingBagItem.itemDelete');
+Route::post("printingAndCuttingBagItem/updateStock",[PrintingAndCuttingBagItemController::class,"updateStock"])->name('printingAndCuttingBagItem.updateStock');
+
+
+
+
+/***************printing and cutting bag item end*****************/
+/*************************PrintsAndCutsDanaConsumptionController start****************************/
+Route::post("printingAndCuttingDanaConsumption/store",[PrintsAndCutsDanaConsumptionController::class,"store"])->name('printingAndCuttingDanaConsumption.store');
+
+Route::post("printingAndCuttingDanaConsumption/getPrintsAndCutsDanaConsumption",[PrintsAndCutsDanaConsumptionController::class,"getPrintsAndCutsDanaConsumption"])->name('printingAndCuttingBagItem.getPrintsAndCutsDanaConsumption');
+
+/*************************PrintsAndCutsDanaConsumptionController end****************************/

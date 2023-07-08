@@ -64,8 +64,8 @@
         }
 
         /* .select2-selection {
-                width:150px !important;
-            } */
+                                                            width:150px !important;
+                                                        } */
     </style>
 @endsection
 @section('content')
@@ -307,12 +307,12 @@
         });
 
         function putfabricsonplace(data) {
+            console.log(data);
             $("#fabric_name").empty();
             $("<option disbled>--Select Fabric--</option>").appendTo("#fabric_name")
-            data.forEach(d => {
-                let option = $("<option></option>").appendTo("#fabric_name");
-                option.text(`${d.name} -> ${d.id}`);
-                option.val(`${d.id}`);
+            data.data.forEach(d => {
+                let option = $(`<option value=${d.id}>${d.name}</option>`).appendTo("#fabric_name");
+
             });
         }
 
@@ -322,7 +322,7 @@
 
                 let average = (d.meter / d.net_wt).toFixed(4);
 
-                let tr = $('<tr><tr>').appendTo("#tbody");
+                let tr = $('<tr></tr>').appendTo("#tbody");
                 tr.append(`<td>${d.id}</td>`);
                 tr.append(`<td>${d.name}</td>`);
                 tr.append(`<td>${d.roll_no}</td>`);
