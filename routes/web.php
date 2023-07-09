@@ -480,6 +480,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
+    Route::post('/fabrics/discard', 'FabricController@discard')->name('fabrics.discard');
     Route::resource('fabrics', 'FabricController', [
         'names' => [
             'index' => 'fabrics.index',

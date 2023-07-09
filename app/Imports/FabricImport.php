@@ -14,15 +14,17 @@ use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 {
 
-    public $department_id;
+    public $godam_id;
 
-    public function __construct($department_id)
+    public function __construct($godam_id)
     {
-        $this->department_id = $department_id;
+        $this->godam_id = $godam_id;
     }
   
    public function collection(Collection $rows)
    {
+      $bill_no = "FI"."-".getNepaliDate(date('Y-m-d'))."-".strtotime(date(("H:i:s")));
+
        foreach ($rows as $row) {
            // dd($row);
            $size = trim($row['size']);
@@ -39,7 +41,6 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
            $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
 
            $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
-           $bill_no = "FI"."-".getNepaliDate(date('Y-m-d'))."-".date('H-i-s');
 
 
            $fabric = Fabric::firstOrCreate([
@@ -54,7 +55,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                'meter' => $row['meter'],
                'gram_wt' => $gram_wt,
                'average_wt' => $row['grams'],
-               'godam_id' => $this->department_id,
+               'godam_id' => $this->godam_id,
                'bill_no' => $bill_no,
                
            ]);
@@ -69,7 +70,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             'meter' => $row['meter'],
             'gram_wt' => $gram_wt,
             'average_wt' => $row['grams'],
-            'godam_id' => $this->department_id,
+            'godam_id' => $this->godam_id,
             'bill_no' => $bill_no,
         ]);
            

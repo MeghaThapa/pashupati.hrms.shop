@@ -67,8 +67,9 @@ class TripalController extends Controller
     public function getfabrics(Request $request){
         // dd($request);
         if($request->ajax()){
-            $fabrics = Fabric::where('status','1')->get();
-            // dd($fabrics);
+            $fabrics = Fabric::where('id',$request->fabric_id)->where('status','1')->value('name');
+            $fabrics = Fabric::where('name',$fabric_name)->get();
+            dd($fabrics);
             return response(['response'=>$fabrics]);
             // return response([
             //     'fabrics' => $fabrics
