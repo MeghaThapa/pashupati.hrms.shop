@@ -482,6 +482,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
+    Route::post('/fabrics/discard', 'FabricController@discard')->name('fabrics.discard');
     Route::resource('fabrics', 'FabricController', [
         'names' => [
             'index' => 'fabrics.index',
@@ -493,6 +494,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
+
+    Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.detailStore');
+
+    Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [

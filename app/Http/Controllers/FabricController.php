@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Fabric;
 use App\Models\FabricGroup;
 use App\Models\Godam;
+use App\Models\Shift;
+use App\Models\FabricDetail;
+use App\Models\TapeEntryStockModel;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FabricImport;
+use Illuminate\Support\Facades\DB;
 
 
 class FabricController extends Controller
@@ -22,9 +26,25 @@ class FabricController extends Controller
         $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
 
         $departments = Godam::get();
-         // dd($fabrics);
+        $shifts = Shift::get();
 
-        return view('admin.fabric.index', compact('fabrics','departments'));
+        $getFabricLastId = Fabric::latest()->first();
+        
+
+        // dd($getFabricLastId); 
+
+        if($getFabricLastId != null)
+        {
+         $fabric_netweight = Fabric::where('bill_no',$getFabricLastId->bill_no)->sum('net_wt');
+
+        }
+
+        else{
+            $fabric_netweight = 0;
+        }
+
+
+        return view('admin.fabric.index', compact('fabrics','departments','shifts','fabric_netweight'));
     }
 
 
@@ -72,7 +92,7 @@ class FabricController extends Controller
             "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
         ]);
         $file = $request->file('file');
-        $import = Excel::import(new FabricImport($request->department_id), $file);
+        $import = Excel::import(new FabricImport($request->godam_id), $file);
         if($import){
             return back()->with(["message"=>"Data imported successfully!"]);
         }else{
@@ -162,4 +182,84 @@ class FabricController extends Controller
         }
         return redirect()->route('fabrics.index')->withSuccess('Fabric status changed successfully!');
     }
+
+    public function fabricDetail(Request $request)
+    {
+        $godam_id = $request->to_godam_id;
+        $planttype_id = $request->planttype_id;
+        $plantname_id = $request->plantname_id;
+        $shift_id = $request->shift_id;
+        //validate form
+        $validator = $request->validate([
+            'pipe_cutting' => 'required|integer',
+            'bd_wastage' => 'required|integer',
+            'other_wastage' => 'required|integer',
+            'total_wastage' => 'required|integer',
+            // 'total_netweight' => 'required|integer',
+            'total_meter' => 'required|integer',
+            'total_weightinkg' => 'required|integer',
+            'total_wastageinpercent' => 'required|integer',
+            'run_loom' => 'required|integer',
+            'wrapping' => 'required|integer',
+        ]);
+
+
+        $getLastId = Fabric::latest()->first();
+        $bill_no = $getLastId->bill_no;
+
+        $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$godam_id)
+                                              ->where('plantType_id',$planttype_id)
+                                              ->where('plantName_id',$plantname_id)
+                                              ->where('shift_id',$shift_id)
+                                              ->value('id');
+
+        $findTape = TapeEntryStockModel::find($gettapeQuantity);
+        // dd($findTape->tape_qty_in_kg);                                      
+        $totalwastage = $request['total_wastage'];
+        $totalnetWeight = $request['total_netweight'];
+        $finalWastage = $totalwastage + $totalnetWeight;
+
+        // dd($finalWastage,$findTape->tape_qty_in_kg);
+        if($totalnetWeight < $findTape->tape_qty_in_kg){
+
+            $final = $findTape->tape_qty_in_kg - $finalWastage;
+            $findTape->tape_qty_in_kg = $final;
+            $findTape->update();
+
+            $countData = FabricDetail::where('bill_number',$bill_no)->count();
+            if($countData != 1){
+                // store subcategory
+                $fabric = FabricDetail::create([
+                    'bill_number' => $bill_no,
+                    'bill_date' => '0',
+                    'pipe_cutting' => $request['pipe_cutting'],
+                    'bd_wastage' => $request['bd_wastage'],
+                    'other_wastage' => $request['other_wastage'],
+                    'total_wastage' => $request['total_wastage'],
+                    'total_netweight' => $request['total_netweight'],
+                    'total_meter' => $request['total_meter'],
+                    'total_weightinkg' => $request['total_weightinkg'],
+                    'total_wastageinpercent' => $request['total_wastageinpercent'],
+                    'run_loom' => $request['run_loom'],
+                    'wrapping' => $request['wrapping'],
+                ]);
+
+            }
+
+        }
+
+        return redirect()->back()->withSuccess('Sub category created successfully!');
+    }
+
+    public function discard()
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('fabrics')->truncate();
+        DB::table('fabric_stock')->truncate();
+        DB::table('fabric_details')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        return back();
+    }
+
+ 
 }

@@ -686,6 +686,7 @@
                 },
                 success:function(response){
                     addplanttype(response);
+                    addfabrictype(response);
                 },
                 error:function(error){
                     console.log(error);
@@ -723,15 +724,22 @@
     /**************************** Ajax functions **************************/
 
     function callunlaminatedfabricajax(){
+        var token = $('meta[name="csrf-token"]').attr('content');
         $.ajax({
             url : "{{ route('tripal.getFabric') }}",
             method: 'get',
+            type:"POST",
+            dataType:"JSON",
+            data:{
+                _token: token,
+                fabric_id: '1',
+            },
+           
             beforeSend:function(){
                 console.log('getting unlaminated fabric');
             },
             success:function(response){
                 emptytable();
-                console.log(response);
                 if(response.response != '404'){
                     filltable(response);
                 }else{
@@ -749,6 +757,14 @@
         $('#plantType').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
         data.planttype.forEach( d => {
             $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
+        });
+    }
+
+    function addfabrictype(data){
+        $("#fabric_name_id").empty();
+        $('#fabric_name_id').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
+        data.fabrictype.forEach( d => {
+            $('#fabric_name_id').append(`<option value="${d.id}">${d.name}</option>`);
         });
     }
 
@@ -847,7 +863,7 @@
         data.response.forEach(d => {
             console.log(d.name);
             let title = d.name;
-            let group = d.gram.split('-')[0];
+            let group = d.average_wt.split('-')[0];
             let result = parseFloat(title) * parseFloat(group);
 
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
@@ -859,8 +875,8 @@
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`)
             tr.append(`<td>${d.meter}</td>`);
-            tr.append(`<td>${d.gram}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            tr.append(`<td>${d.average_wt}</td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.average_wt}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 
