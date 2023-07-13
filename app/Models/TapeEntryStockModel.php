@@ -22,4 +22,24 @@ class TapeEntryStockModel extends Model
     public function tapeentry(){
         return $this->belongsTo(TapeEntry::class);
     }
+
+    public function getGodam()
+    {
+        return $this->belongsTo('App\Models\Godam','toGodam_id');
+    }
+
+    public function getPlantType()
+    {
+        return $this->belongsTo('App\Models\ProcessingStep','plantType_id');
+    }
+
+    public function getPlantName()
+    {
+        return $this->belongsTo('App\Models\ProcessingSubcat','plantName_id');
+    }
+
+    public function getShift()
+    {
+        return $this->belongsTo('App\Models\Shift','shift_id');
+    }
 }

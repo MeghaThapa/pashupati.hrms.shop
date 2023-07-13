@@ -21,6 +21,7 @@ use App\Http\Controllers\ProcessingSubcatController;
 use App\Http\Controllers\RawMaterialStockController;
 use App\Http\Controllers\AutoloadController;
 use App\Http\Controllers\TapeEntryController;
+use App\Http\Controllers\TapeEntryStockController;
 use App\Http\Controllers\AutoloadItemsController;
 use App\Http\Controllers\AutoLoadStockController;
 use App\Http\Controllers\StoreinTypeController;
@@ -30,12 +31,17 @@ use App\Http\Controllers\StoreinCategoryController;
 use App\Http\Controllers\ItemsOfStoreinController;
 
 use App\Http\Controllers\FabricNonWovenController;
+use App\Http\Controllers\NonWovenStockController;
+
+use App\Http\Controllers\FabricStockController;
 
 use App\Http\Controllers\WastageController;
 use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\GodamController;
 use App\Http\Controllers\StoreoutDepartmentController;
 use App\Http\Controllers\Tripal\TripalController;
+use App\Http\Controllers\Tripal\SingleTripalStockController;
+use App\Http\Controllers\Tripal\DoubleTripalStockController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
@@ -499,6 +505,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
+    //fabric stock
+
+    Route::get('fabrics/getstock/index',[FabricStockController::class,'index'])->name('fabric-stock.index');
+
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [
         'names' => [
@@ -521,6 +531,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('tripal/getUnlamSingleLam/List','Tripal\TripalController@getUnlamSingleLam')->name('tripal.getUnlamSingleLam');
 
     Route::post('tripal/wastage/submit','Tripal\TripalController@getWastageStore')->name("tripal.wastage.submit");
+
+    //singletripal stock
+    Route::get('single-tripal/getstock/index',[SingleTripalStockController::class,'index'])->name('singletripal-stock.index');
+
+    //doubletripal stock
+    Route::get('double-tripal/getstock/index',[DoubleTripalStockController::class,'index'])->name('doubletripal-stock.index');
 
 
 
@@ -596,6 +612,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('nonwovenfabric/getFabricNameColorList', 'FabricNonWovenReceiveEntryController@getFabricNameColorList')->name('getFabricNameColorList');
 
     Route::post('nonwovenfabrics-receiveentry/getDanaList', 'FabricNonWovenReceiveEntryController@getDanaList')->name('getDanaList');
+
+    //nonwoven stock
+
+    Route::get('nonwovenfabrics-receiveentry/getstock/index',[NonWovenStockController::class,'index'])->name('nonwovenfabrics-receiveentrystock.index');
+     // Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('tapeentry-stock.filterStock');
 
 
     Route::post('department/getPlantTypeList', 'FabricNonWovenReceiveEntryController@getPlantTypeList')->name('getPlantTypeList');
@@ -846,6 +867,10 @@ Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajax
     // tapeentrystock
 Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
 /**************tape entry end*************/
+
+//tapeentry stock
+Route::get('tape-entry/getstock/index',[TapeEntryStockController::class,'index'])->name('tapeentry-stock.index');
+ Route::post('tape-entry/getstock/filterStocks',[TapeEntryStockController::class,'filterStock'])->name('tapeentry-stock.filterStock');
 
 /******************** wastages *****************************/
 Route::get('setup/wastage/index',[WastageController::class,'index'])->name('setup.wastage.index');

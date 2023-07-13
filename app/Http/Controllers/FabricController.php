@@ -185,6 +185,7 @@ class FabricController extends Controller
 
     public function fabricDetail(Request $request)
     {
+        // dd($request);
         $godam_id = $request->to_godam_id;
         $planttype_id = $request->planttype_id;
         $plantname_id = $request->plantname_id;
@@ -208,13 +209,14 @@ class FabricController extends Controller
         $bill_no = $getLastId->bill_no;
 
         $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$godam_id)
-                                              ->where('plantType_id',$planttype_id)
-                                              ->where('plantName_id',$plantname_id)
-                                              ->where('shift_id',$shift_id)
+                                              // ->where('plantType_id',$planttype_id)
+                                              // ->where('plantName_id',$plantname_id)
+                                              // ->where('shift_id',$shift_id)
                                               ->value('id');
+                                              // dd($gettapeQuantity);
 
         $findTape = TapeEntryStockModel::find($gettapeQuantity);
-        // dd($findTape->tape_qty_in_kg);                                      
+        dd($findTape->tape_qty_in_kg);                                      
         $totalwastage = $request['total_wastage'];
         $totalnetWeight = $request['total_netweight'];
         $finalWastage = $totalwastage + $totalnetWeight;

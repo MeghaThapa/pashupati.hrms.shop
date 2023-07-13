@@ -678,7 +678,6 @@
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
             $("#godam_ids").val(department_id);
-            // debugger;
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -718,13 +717,22 @@
         
         });
 
+
+
+
         /**************************** Ajax Calls End **************************/
     });
 
     /**************************** Ajax functions **************************/
 
     function callunlaminatedfabricajax(){
+        // $("#fabricNameId").change(function(e){
+        //     let fabric_id =  $(this).val();
+        //     let data = fabric_id;
+
+        // });
         var token = $('meta[name="csrf-token"]').attr('content');
+        // var data = fabric_id;
         $.ajax({
             url : "{{ route('tripal.getFabric') }}",
             method: 'get',
@@ -798,7 +806,6 @@
             let method = $(this).attr('method');
             let formData = $(this).serialize();
             // console.log(action);
-            debugger;
            $.ajax({
             url:action,
             method : method,
@@ -837,6 +844,8 @@
         $("#rollnumberfabric").prop('required',false);
         $("#rollnumberfabric").prop('disabled',true);
     });
+
+
 
     $("#rollnumberfabric").keyup(function(e){
         getfabricsrelated_enable();
@@ -1082,7 +1091,6 @@
 
 
     $(document).on("click","#add_dana_consumption",function(e){
-        // debugger;
         let dana = $("#danaNameId").val();
         let consumption = $("#add_dana_consumption_quantity").val();
    
@@ -1165,7 +1173,6 @@
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
-            debugger;
 
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');

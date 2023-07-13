@@ -55,6 +55,7 @@
 
                         <form action="{{ route('import.fabric') }}" method="POST" enctype="multipart/form-data">
                           @csrf
+                          
                           <div class=" form-group">
                               <label for="size" class="col-form-label">{{ __('To Godam') }}
                               </label>
@@ -88,10 +89,10 @@
                 </div>
             </div>
 
-            <form action="{{ route('fabrics.discard') }}" method="POST" role="search">
+            {{-- <form action="{{ route('fabrics.discard') }}" method="POST" role="search">
                 @csrf
                 <input type="submit" name="button" value="discard">
-            </form>
+            </form> --}}
 
             <div class="p-0 table-responsive table-custom my-3">
                 <table class="table">
@@ -209,7 +210,7 @@
                                 </span>
                                 @enderror
                             </div>
-                            <div class="col-md-3 form-group">
+                            {{-- <div class="col-md-3 form-group">
                                 <label for="size" class="col-form-label">{{ __('Plant Type') }}
                                 </label>
                                 <select class="advance-select-box form-control" id="plantType" name="planttype_id" required>
@@ -220,8 +221,8 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
-                            </div>
-                            <div class="col-md-3 form-group">
+                            </div> --}}
+                            {{-- <div class="col-md-3 form-group">
                                 <label for="size" class="col-form-label">{{ __('Plant Name') }}
                                 </label>
                                 <select class="advance-select-box form-control" id="plantName" name="plantname_id" required>
@@ -232,10 +233,10 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
-                            </div>
+                            </div> --}}
                             
 
-                            <div class=" form-group col-md-3">
+                            {{-- <div class=" form-group col-md-3">
                                 <label for="size" class="col-form-label">{{ __('Shift') }}
                                 </label>
                                 <select class="advance-select-box form-control" id="shift_id" name="shift_id" required>
@@ -245,7 +246,7 @@
                                     </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                         </div>
                         <div class="row">
@@ -318,7 +319,7 @@
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="total_wastageinpercent">{{ __('Westage in %') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('total_wastageinpercent') is-invalid @enderror" id="total_wastageinpercent" name="total_wastageinpercent" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_wastageinpercent') }}" required>
+                                <input type="text" class="form-control @error('total_wastageinpercent') is-invalid @enderror" id="total_wastageinpercent" name="total_wastageinpercent" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_wastageinpercent') }}" required readonly>
                                 @error('total_wastageinpercent')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -420,6 +421,21 @@
         });
 
     });
+    $('#total_weightinkg').keyup(function(event){
+      event.preventDefault();
+      debugger;
+      if($(this).val() != '') {
+        var filter = $("#total_wastage").val();
+        var weightinkg = $("#total_weightinkg").val();
+        var final = (filter / weightinkg) * 100;
+        var round = Math.round(final,2);
+        // var nettotal = total_fee - amount_received - parseInt(discount) + parseInt(fine);
+
+        $("#total_wastageinpercent").val(round);
+       
+      }
+    });
+
     $('#filter').keyup(function(event){
       event.preventDefault();
       debugger;
