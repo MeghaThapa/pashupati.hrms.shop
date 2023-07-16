@@ -678,7 +678,6 @@
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
             $("#godam_ids").val(department_id);
-            // debugger;
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -686,6 +685,7 @@
                 },
                 success:function(response){
                     addplanttype(response);
+                    addfabrictype(response);
                 },
                 error:function(error){
                     console.log(error);
@@ -717,21 +717,37 @@
         
         });
 
+
+
+
         /**************************** Ajax Calls End **************************/
     });
 
     /**************************** Ajax functions **************************/
 
     function callunlaminatedfabricajax(){
+        // $("#fabricNameId").change(function(e){
+        //     let fabric_id =  $(this).val();
+        //     let data = fabric_id;
+
+        // });
+        var token = $('meta[name="csrf-token"]').attr('content');
+        // var data = fabric_id;
         $.ajax({
             url : "{{ route('tripal.getFabric') }}",
             method: 'get',
+            type:"POST",
+            dataType:"JSON",
+            data:{
+                _token: token,
+                fabric_id: '1',
+            },
+           
             beforeSend:function(){
                 console.log('getting unlaminated fabric');
             },
             success:function(response){
                 emptytable();
-                console.log(response);
                 if(response.response != '404'){
                     filltable(response);
                 }else{
@@ -749,6 +765,14 @@
         $('#plantType').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
         data.planttype.forEach( d => {
             $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
+        });
+    }
+
+    function addfabrictype(data){
+        $("#fabric_name_id").empty();
+        $('#fabric_name_id').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
+        data.fabrictype.forEach( d => {
+            $('#fabric_name_id').append(`<option value="${d.id}">${d.name}</option>`);
         });
     }
 
@@ -782,7 +806,6 @@
             let method = $(this).attr('method');
             let formData = $(this).serialize();
             // console.log(action);
-            debugger;
            $.ajax({
             url:action,
             method : method,
@@ -822,6 +845,8 @@
         $("#rollnumberfabric").prop('disabled',true);
     });
 
+
+
     $("#rollnumberfabric").keyup(function(e){
         getfabricsrelated_enable();
         $("#fabricNameId").prop('disabled',true);
@@ -847,7 +872,7 @@
         data.response.forEach(d => {
             console.log(d.name);
             let title = d.name;
-            let group = d.gram.split('-')[0];
+            let group = d.average_wt.split('-')[0];
             let result = parseFloat(title) * parseFloat(group);
 
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
@@ -859,8 +884,8 @@
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`)
             tr.append(`<td>${d.meter}</td>`);
-            tr.append(`<td>${d.gram}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            tr.append(`<td>${d.average_wt}</td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.average_wt}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 
@@ -1066,7 +1091,6 @@
 
 
     $(document).on("click","#add_dana_consumption",function(e){
-        // debugger;
         let dana = $("#danaNameId").val();
         let consumption = $("#add_dana_consumption_quantity").val();
    
@@ -1149,7 +1173,6 @@
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
-            debugger;
 
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');

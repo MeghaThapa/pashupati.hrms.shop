@@ -196,15 +196,15 @@
 
             <div class="col-md-3 form-group">
                 <label for="fabric_length">Length</label>
-                <input type="number" class="form-control" name="fabric_length" id="fabric_length">
+                <input type="text" class="form-control" name="fabric_length" id="fabric_length">
             </div>
             <div class="col-md-3 form-group">
                 <label for="gross_weight">Gross weight</label>
-                <input type="number" class="form-control" name="gross_weight" id="gross_weight">
+                <input type="text" class="form-control" name="gross_weight" id="gross_weight">
             </div>
             <div class="col-md-3 form-group">
                 <label for="net_weight">Net weight</label>
-                <input type="number" class="form-control" name="net_weight" id="net_weight">
+                <input type="text" class="form-control" name="net_weight" id="net_weight">
             </div>
 
             
@@ -248,6 +248,7 @@
     <div class="col-md-5">
         <div class="card mt-2 p-5">
             <div class="card-body">
+                
                 <div class="row p-2">
                     <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
