@@ -13,13 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('printing_and_cutting_bag_stocks', function (Blueprint $table) {
+        Schema::create('bag_bundel_items', function (Blueprint $table) {
             $table->id();
+            $table->string('bundel_no');
+            
+            $table->unsignedBigInteger("bag_bundel_entry_id");
+            $table-> foreign("bag_bundel_entry_id")->references("id")->on('bag_bundel_entries')->onDelete('cascade');
             $table->unsignedBigInteger("group_id");
             $table-> foreign("group_id")->references("id")->on('groups')->onDelete('cascade');
             $table->unsignedBigInteger("bag_brand_id");
             $table-> foreign("bag_brand_id")->references("id")->on('bag_brands')->onDelete('cascade');
-            $table->string('quantity_piece');
+            $table->string('qty_in_kg');
+            $table->string('qty_pcs');
+            $table->string('average_weight');
+
             $table->timestamps();
         });
     }
@@ -31,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('printing_and_cutting_bag_stocks');
+        Schema::dropIfExists('bag_bundel_items');
     }
 };

@@ -6,6 +6,8 @@ use App\Models\PrintedAndCuttedRolls;
 use App\Models\PrintedAndCuttedRollsEntry;
 use App\Models\BagFabricReceiveItemSentStock;
 use App\Models\AutoLoadItemStock;
+use App\Models\Godam;
+use App\Models\Wastages;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use DB;
@@ -56,13 +58,15 @@ class PrintedAndCuttedRollsController extends Controller
         ->distinct()
         ->get();
 
-
-
+        $wasteGodams=Godam::where('status','active')->get();
+        $wastageTypes=Wastages::where('status','active')->get();
         return view("admin.bag.printsandcuts.create")->with([
                 "data" => $data,
                 "fabrics"=>$fabrics,
                 "groups"=>$groups,
-                "godams"=>$godams
+                "godams"=>$godams,
+                "wasteGodams"=>$wasteGodams,
+                "wastageTypes"=>$wastageTypes,
         ]);
     }
     public function getFabric(Request $request){
@@ -81,14 +85,17 @@ class PrintedAndCuttedRollsController extends Controller
             ->where('from_godam_id',$request->godam_id)
             ->distinct()
             ->get();
-        return $danaGroups;
+
+            return response()->json([
+                'danaGroups'=>$danaGroups
+            ]);
         }
         public function getDanaName(Request $request){
         $danaNames=AutoLoadItemStock::with(['danaName'=>function ($query){
                 $query->select('id','name');
             }])
             ->select('dana_name_id')
-            ->where('dana_group_id',$request->dana_group_id)
+            //->where('dana_group_id',$request->dana_group_id)
             ->where('from_godam_id',$request->godam_id)
             ->distinct()
             ->get();
@@ -98,9 +105,9 @@ class PrintedAndCuttedRollsController extends Controller
          $stockQty=AutoLoadItemStock::
             select('quantity')
             ->where('from_godam_id',$request->godam_id)
-            ->where('dana_group_id',$request->dana_group_id)
-            ->where('from_godam_id',$request->godam_id)
+            ->where('dana_name_id',$request->dana_name_id)
             ->first();
         return $stockQty;
     }
+
 }

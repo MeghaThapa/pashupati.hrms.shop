@@ -29,11 +29,14 @@ return new class extends Migration
             $table-> foreign("fabric_id")->references("id")->on('fabrics')->onDelete('cascade');
             $table->string('net_weight');
             $table->string('cut_length');
-            $table->string('qty_in_kg');
             $table->string('gross_weight');
             $table->string('meter');
             $table->string('avg');
             $table->string('req_bag');
+            $table->unsignedBigInteger("godam_id");
+            $table-> foreign("godam_id")->references("id")->on('godam')->onDelete('cascade');
+            $table->unsignedBigInteger("wastage_id");
+            $table-> foreign("wastage_id")->references("id")->on('wastages')->onDelete('cascade');
             $table->timestamps();
         });
     }

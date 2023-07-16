@@ -19,8 +19,6 @@ return new class extends Migration
             $table-> foreign("printCutEntry_id")->references("id")->on('printed_and_cutted_rolls_entry')->onDelete('cascade');
             $table->unsignedBigInteger("godam_id");
             $table-> foreign("godam_id")->references("id")->on('godam')->onDelete('cascade');
-            $table->unsignedBigInteger("dana_group_id");
-            $table-> foreign("dana_group_id")->references("id")->on('dana_groups')->onDelete('cascade');
             $table->unsignedBigInteger("dana_name_id");
             $table-> foreign("dana_name_id")->references("id")->on('dana_names')->onDelete('cascade');
             $table->string('quantity');

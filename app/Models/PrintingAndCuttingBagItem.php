@@ -19,6 +19,6 @@ class PrintingAndCuttingBagItem extends Model
     }
      public function fabric()
     {
-        return $this->belongsTo('App\Models\fabric', 'fabric_id', "id");
+        return $this->belongsTo('App\Models\Fabric', 'fabric_id', "id");
     }
 }

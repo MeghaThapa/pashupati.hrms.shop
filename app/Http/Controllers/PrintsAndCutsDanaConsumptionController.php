@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PrintsAndCutsDanaConsumption;
 use App\Models\AutoLoadItemStock;
+use App\Models\PrintedAndCuttedRollsEntry;
 use Illuminate\Http\Request;
 use DB;
 
@@ -41,7 +42,6 @@ class PrintsAndCutsDanaConsumptionController extends Controller
         $request->validate([
             "printCutEntry_id"=>"required",
             "godam_id"=>"required",
-            "dana_group_id"=>"required",
             "dana_name_id"=>"required",
             "quantity"=>"required",
         ]);
@@ -49,7 +49,6 @@ class PrintsAndCutsDanaConsumptionController extends Controller
             DB::beginTransaction();
             //deduct quantity from autoloader  stock
             $autoloaderStock=AutoLoadItemStock::where('from_godam_id',$request->godam_id)
-            ->where('dana_group_id',$request->dana_group_id)
             ->where('dana_name_id',$request->dana_name_id)
             ->first();
             if($autoloaderStock->quantity<$request->quantity){
@@ -66,7 +65,6 @@ class PrintsAndCutsDanaConsumptionController extends Controller
             }
             $printsCutsDanaConsumption=PrintsAndCutsDanaConsumption::where('printCutEntry_id', $request->printCutEntry_id)
             ->where('godam_id',$request->godam_id)
-            ->where('dana_group_id',$request->dana_group_id)
             ->where('dana_name_id',$request->dana_name_id)
             ->first();
             if($printsCutsDanaConsumption){
@@ -76,13 +74,12 @@ class PrintsAndCutsDanaConsumptionController extends Controller
                 $printsCutsDanaConsumption=new PrintsAndCutsDanaConsumption();
                 $printsCutsDanaConsumption->printCutEntry_id = $request->printCutEntry_id;
                 $printsCutsDanaConsumption->godam_id  = $request->godam_id;
-                $printsCutsDanaConsumption->dana_group_id = $request->dana_group_id;
                 $printsCutsDanaConsumption->dana_name_id = $request->dana_name_id;
                 $printsCutsDanaConsumption->quantity = $request->quantity;
                 $printsCutsDanaConsumption->save();
         }
         DB::commit();
-        return $printsCutsDanaConsumption->load(['godam:id,name','danaGroup:id,name','danaName:id,name']);
+        return $printsCutsDanaConsumption->load(['godam:id,name','danaName:id,name']);
         }catch(Exception $ex){
             DB::rollback();
             return $ex;
@@ -92,8 +89,25 @@ class PrintsAndCutsDanaConsumptionController extends Controller
     public function getPrintsAndCutsDanaConsumption(Request $request){
         //return $request->printAndCutEntry_id;
             $printsCutsDanaConsumption=PrintsAndCutsDanaConsumption::where('printCutEntry_id',$request->printAndCutEntry_id)->get();
-            return $printsCutsDanaConsumption->load(['godam:id,name','danaGroup:id,name','danaName:id,name']);
+            return $printsCutsDanaConsumption->load(['godam:id,name','danaName:id,name']);
     }
+
+    // public function deleteConsumedDana(Request $request){
+    //     $printsAndCutsEntry_id=PrintedAndCuttedRollsEntry::where('receipt_number',$request->receipt_no)->get('id');
+    //     $prints_and_cuts_dana_consumption =PrintsAndCutsDanaConsumption::where($request->prints_and_cuts_dana_consumption_id);
+    //     $autoloaderStock=AutoLoadItemStock::where('from_godam_id',$prints_and_cuts_dana_consumption->godam_id)
+    //     ->where('dana_group_id',$prints_and_cuts_dana_consumption->dana_group_id)
+    //     ->where('dana_name_id',$prints_and_cuts_dana_consumption->dana_name_id)
+    //     ->first();
+    //     if($autoloaderStock){
+    //         $autoloaderStock->quantity+=$prints_and_cuts_dana_consumption->quantity;
+    //         $autoloaderStock->save();
+    //     }else{
+    //         $autoloaderStock= new AutoloaderStock();
+
+
+    //     }
+    // }
 
     /**
      * Display the specified resource.
