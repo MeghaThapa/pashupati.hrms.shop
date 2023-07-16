@@ -46,6 +46,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
+use App\Http\Controllers\BagBundelEntryController;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -955,6 +956,8 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
     Route::post("printsAndCuts/getStockQuantity",[PrintedAndCuttedRollsController::class,"getStockQuantity"])->name('printsAndCuts.getStockQuantity');
 
 
+
+
 /******************** Bag  End ************************/
 /****************Group Start********************/
     Route::post("group/store",[GroupController::class,"store"])->name('group.store');
@@ -983,4 +986,32 @@ Route::post("printingAndCuttingDanaConsumption/store",[PrintsAndCutsDanaConsumpt
 
 Route::post("printingAndCuttingDanaConsumption/getPrintsAndCutsDanaConsumption",[PrintsAndCutsDanaConsumptionController::class,"getPrintsAndCutsDanaConsumption"])->name('printingAndCuttingBagItem.getPrintsAndCutsDanaConsumption');
 
+Route::post("printingAndCuttingDanaConsumption/deleteConsumedDana",[PrintsAndCutsDanaConsumptionController::class,"deleteConsumedDana"])->name('printingAndCuttingBagItem.deleteConsumedDana');
+
 /*************************PrintsAndCutsDanaConsumptionController end****************************/
+/**********************Bundelling start***************************/
+Route::controller(BagBundelEntryController::class)
+->prefix('bagBundelling')
+->group(function(){
+    Route::get("index","index")->name('bagBundelling.index');
+     Route::get("createBagBundelEntry","createBagBundleEntry")->name('bagBundelling.createBagBundleEntry');
+    Route::post("getBrandBag","getBrandBag")->name('bundelling.getBrandBag');
+     Route::post("update/{bagBundleEntryId}","update")->name('bagBundelling.update');
+
+    Route::post("store","store")->name('bagBundelling.store');
+    Route::get("edit/{bagBundelEntry_id}","edit")->name('bagBundelling.edit');
+    Route::post("saveEntireBagBundelling","saveEntireBagBundelling")->name('bagBundelling.saveEntireBagBundelling');
+
+});
+
+Route::controller(BagBundelItemController::class)
+->prefix('bagBundelItem')
+->group(function(){
+     Route::post("getAvailableStock","getAvailableStock")->name('bagBundelItem.getAvailableStock');
+    Route::get("createBagBundelItem/{bagBundelEntryId}","index")->name('bagBundelItem.index');
+    Route::post("getBagBundelItemData","getBagBundelItemData")->name('bagBundelItem.getBagBundelItemData');
+    Route::post("getBagBundelItem","store")->name('bagBundelItem.store');
+    Route::delete("deleteBagBundelItem/{bagBundelItemId}","deleteBagBundelItem")->name('bagBundelItem.deleteBagBundelItem');
+});
+
+/**********************Bundelling ends***************************/

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\PrintingAndCuttingBagItem;
 use App\Models\PrintingAndCuttingBagStock;
 use App\Models\BagFabricReceiveItemSentStock;
+use App\Models\PrintedAndCuttedRollsEntry;
 use Illuminate\Http\Request;
+use App\Models\WasteStock;
 use Expection;
 use DB;
 
@@ -39,6 +41,8 @@ class PrintingAndCuttingBagItemController extends Controller
      */
     public function store(Request $request)
     {
+        try{
+
        $request->validate([
         "printAndCutEntry_id" => "required",
         "group_id" => "required",
@@ -50,12 +54,16 @@ class PrintingAndCuttingBagItemController extends Controller
         "fabric_id"=>"required",
         "net_weight"=>"required",
         "cut_length"=>"required",
-        "qty_in_kg"=>"required",
+
         "gross_weight"=>"required",
         "meter"=>"required",
         "avg"=>"required",
         "req_bag"=>"required",
+        "godam_id"=>'required',
+        "waste_type_id"=>'required',
        ]);
+
+       DB::beginTransaction();
        $printingAndCuttingBagItem = new PrintingAndCuttingBagItem();
        $printingAndCuttingBagItem->printAndCutEntry_id= $request->printAndCutEntry_id;
        $printingAndCuttingBagItem->group_id = $request->group_id;
@@ -67,18 +75,38 @@ class PrintingAndCuttingBagItemController extends Controller
        $printingAndCuttingBagItem->fabric_id = $request->fabric_id;
        $printingAndCuttingBagItem->net_weight = $request->net_weight;
        $printingAndCuttingBagItem->cut_length = $request->cut_length;
-       $printingAndCuttingBagItem->qty_in_kg = $request->qty_in_kg;
        $printingAndCuttingBagItem->gross_weight = $request->gross_weight;
        $printingAndCuttingBagItem->meter = $request->meter;
        $printingAndCuttingBagItem->avg = $request->avg;
        $printingAndCuttingBagItem->req_bag = $request->req_bag;
-       $printingAndCuttingBagItem->save();
+       $printingAndCuttingBagItem->godam_id= $request->godam_id;
+       $printingAndCuttingBagItem->wastage_id= $request->waste_type_id;
 
+       $printingAndCuttingBagItem->save();
+       //find wastage stock and add up or create new waste stock if no stock exists
+       $wastageStock=WasteStock::where('godam_id',$request->godam_id)
+       ->where('waste_id',$request->waste_type_id)
+       ->first();
+       if($wastageStock){
+        $wastageStock->quantity_in_kg=$wastageStock->quantity_in_kg + $request->wastage;
+        $wastageStock->save();
+       }else{
+        $wastageStock=new WasteStock();
+        $wastageStock->godam_id = $request->godam_id;
+        $wastageStock->waste_id  = $request->waste_type_id;
+        $wastageStock->quantity_in_kg = $request->wastage;
+        $wastageStock->save();
+       }
        $printingAndCuttingBagItem->load(['group:id,name','brandBag:id,name','fabric:id,name']);
+       DB::commit();
         return response()->json([
             'message' => 'Printing and cutting bag item created successfully ',
             'printingAndCuttingBagItem' => $printingAndCuttingBagItem
         ]);
+        }
+        catch(Exception $e){
+            DB::rollback();;
+        }
     }
 
     public function getPrintsAndCutsBagItems(Request $request){
@@ -99,7 +127,16 @@ class PrintingAndCuttingBagItemController extends Controller
         //
     }
     public function itemDelete($printingAndCuttingBagItem_id){
-         return PrintingAndCuttingBagItem::find($printingAndCuttingBagItem_id)->delete();
+         $printingAndCuttingBagItem = PrintingAndCuttingBagItem::find($printingAndCuttingBagItem_id);
+         $wasteStock =WasteStock::where('godam_id',$printingAndCuttingBagItem->godam_id )
+         ->where('waste_id',$printingAndCuttingBagItem->wastage_id)
+         ->first();
+         $wasteStock->quantity_in_kg=$wasteStock->quantity_in_kg-$printingAndCuttingBagItem->wastage;
+         if($wasteStock->quantity_in_kg<=0){
+                $wasteStock->delete();
+         }
+         $printingAndCuttingBagItem ->delete();
+
     }
 
     public function updateStock(Request $request){
@@ -118,23 +155,29 @@ class PrintingAndCuttingBagItemController extends Controller
                         'message' => 'The roll no you entered is not available or has already been used'
                     ],500);
                 }
-                //adding to PrintingAndCuttingBagStock
+                //adding to stock
+                $printingAndCuttingBagStock=PrintingAndCuttingBagStock::where('group_id',$item->group_id)
+                ->where('bag_brand_id',$item->bag_brand_id)->first();
+                if($printingAndCuttingBagStock){
+                  $printingAndCuttingBagStock->quantity_piece += $item->quantity_piece;
+                  $printingAndCuttingBagStock->save();
+                }
+                else{
                 $printingAndCuttingBagStock = new PrintingAndCuttingBagStock();
                 $printingAndCuttingBagStock->group_id  = $item->group_id;
                 $printingAndCuttingBagStock->bag_brand_id  = $item->bag_brand_id ;
                 $printingAndCuttingBagStock->quantity_piece = $item->quantity_piece;
-                 $printingAndCuttingBagStock->qty_in_kg= $item->qty_in_kg;
-                $printingAndCuttingBagStock->cut_length = $item->cut_length;
-                $printingAndCuttingBagStock->wastage = $item->wastage;
                 $printingAndCuttingBagStock->save();
-
+                }
             }
             $bagFabricEntry=PrintedAndCuttedRollsEntry::where('id',$request->printAndCutEntry_id)->first();
             $bagFabricEntry->status="completed";
             $bagFabricEntry->save();
-
             DB::commit();
-            return redirect()->route('prints.and.cuts.index')->withSuccess('Prints and cuts creaed successfully!');
+            return response()->json([
+                'message'=>'printing and cutting done successfully'
+            ]);
+           // return redirect()->route('prints.and.cuts.index')->withSuccess('Prints and cuts creaed successfully!');
         }catch(Expection $ex){
             DB::rollback();
         }

@@ -64,8 +64,7 @@
                 </table>
             </div>
              <!-- Modal -->
-    <div class="modal fade" id="createAutoloadModel" tabindex="-1" role="dialog" aria-labelledby="tryModelLabel"
-    aria-hidden="true">
+<div class="modal fade" id="createAutoloadModel" tabindex="-1" role="dialog" aria-labelledby="tryModelLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -107,13 +106,6 @@
                                     </span>
                                 @enderror
                             </div>
-
-                            {{-- <div>
-                                <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                                    Add
-                                </button>
-                            </div> --}}
-
                         </div>
                     </div>
 
@@ -190,9 +182,9 @@
         <script>
         $(document).ready(function() {
 
-$('.edit-btn').on('click', function(){
-    $('#editAutoloadModel').modal('hide');
-})
+        $('.edit-btn').on('click', function(){
+            $('#editAutoloadModel').modal('hide');
+        })
             //for edit
                 document.getElementById('addAutoload').addEventListener('click', function(e){
                     $.ajax({

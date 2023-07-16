@@ -3,7 +3,7 @@
     <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
 
-    {{-- <style>
+    <style>
         .col-form-label {
             font-size: 12px !important;
 
@@ -65,9 +65,9 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                            width:150px !important;
-                                                                                                                                                                                                                                                                                                                                        } */
-    </style> --}}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
+    </style>
 @endsection
 @section('content')
     <!-- Content Header (Page header) -->
@@ -147,17 +147,13 @@
                             <label for="average">Average</label>
                             <input type="text" class="form-control" id="average" name="average">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="cut_length">Cut Length</label>
                             <input type="text" class="form-control" id="cutLength" name="cut_length">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="req_length">Req Bag</label>
                             <input type="text" class="form-control" id="reqBag" name="req_bag">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="req_length">QTY in kg</label>
-                            <input type="text" class="form-control" id="qtyInKg" name="qty_in_kg">
                         </div>
                     </div>
                     <hr>
@@ -213,17 +209,44 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="cut_length">Quantity Piece</label>
                             <input type="text" class="form-control" id="quantity_piece" name="quantity_piece">
                         </div>
-                        <div class="col-md-2">
+
+                        <div class="col-md-3">
+                            <label for="cut_length">AVG</label>
+                            <input type="text" class="form-control" id="avg" name="avg">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
                             <label for="cut_length">wastage</label>
                             <input type="text" class="form-control" id="wastage" name="wastage">
                         </div>
-                        <div class="col-md-2">
-                            <label for="cut_length">AVG</label>
-                            <input type="text" class="form-control" id="avg" name="avg">
+                        <div class="col-md-3">
+                            <label for="cut_length">Godam</label>
+                            <select class="advance-select-box form-control  @error('godam_id') is-invalid @enderror"
+                                id="wasteGodamId" name="waste_godam_id" required>
+                                <option value=" " selected disabled>{{ __('Select Godam') }}</option>
+                                @foreach ($wasteGodams as $wasteGodam)
+                                    <option value="{{ $wasteGodam->id }}">
+                                        {{ $wasteGodam->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cut_length">Waste Type</label>
+                            <select class="advance-select-box form-control  @error('godam_id') is-invalid @enderror"
+                                id="wasteTypeId" name="waste_type_id" required>
+                                <option value=" " selected disabled>{{ __('Select waste type') }}</option>
+                                @foreach ($wastageTypes as $wastageType)
+                                    <option value="{{ $wastageType->id }}">
+                                        {{ $wastageType->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -277,7 +300,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-4">
+                                    {{-- <div class="col-md-4">
                                         <label for="cut_length">Dana Group</label>
                                         <select
                                             class="advance-select-box form-control  @error('dana_group_id') is-invalid @enderror"
@@ -285,28 +308,23 @@
                                             <option value=" " selected disabled>{{ __('Select dana group') }}
                                             </option>
                                         </select>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-md-4">
                                         <label for="cut_length">Dana Name</label>
                                         <select
                                             class="advance-select-box form-control  @error('dana_name_id') is-invalid @enderror"
                                             id="danaNameId" name="dana_name_id" required>
-                                            <option value=" " selected disabled>{{ __('Select Dana') }}</option>
-                                            {{-- @foreach ($groups as $group)
-                                            <option value="{{ $group->id }}"
-                                                {{ old('group_id') == $group->id ? 'selected' : '' }}>{{ $group->name }}
-                                            </option>
-                                        @endforeach --}}
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-md-4">
                                         <label for="cut_length">Available</label>
                                         <input type="text" class="form-control" id="avilableStock"
                                             name="avilable_stock" readonly>
                                     </div>
+                                </div>
+                                <div class="row">
+
                                     <div class="col-md-4">
                                         <label for="cut_length">Quantity</label>
                                         <input type="text" class="form-control" id="quantity" name="quantity">
@@ -324,18 +342,13 @@
                                 <tr>
                                     <th style="width:30px;">SN</th>
                                     <th>Godam</th>
-                                    <th>Dana Group</th>
+                                    {{-- <th>Dana Group</th> --}}
                                     <th>Dana Name</th>
                                     <th>Quantity</th>
-                                    <th>Action</th>
+
                                 </tr>
                             </thead>
                             <tbody id="printsCutsDanaConsumpt">
-                                {{-- <tr>
-                                    <td>
-                                        Hwello
-                                    </td>
-                                </tr> --}}
                             </tbody>
                         </table>
                     </div>
@@ -492,42 +505,94 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script>
         $(document).ready(function() {
+            pageRefresh();
+
+            async function pageRefresh() {
+                await getdanaConsumptionData();
+                deleteDanaConsumptionData();
+            }
             //When Page Refresh
             getPrintsAndCutsBagItems();
 
             //when page refresh
-            getdanaConsumptionData();
+            function deleteDanaConsumptionData() {
+
+                let deleteButtons = document.getElementsByClassName('dltPrintingAndCutDanaConsumption');
+                //console.log(deleteButtons);
+                for (let i = 0; i < deleteButtons.length; i++) {
+                    deleteButtons[i].addEventListener('click', function(event) {
+                        // console.log('hello');
+                        let prints_and_cuts_dana_consumption_id = this.getAttribute('data-id');
+                        // console.log(storeout_item_id);
+                        let receipt_no = document.getElementById(receipt_number).value;
+                        new swal({
+                            title: "Are you sure?",
+                            text: "Do you want to delete Item.",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                            showCancelButton: true,
+                            cancelButtonText: 'Cancel',
+                            closeOnClickOutside: false,
+                        }).then((willDelete) => {
+                            if (willDelete) {
+                                $.ajax({
+                                    url: '{{ route('printingAndCuttingBagItem.deleteConsumedDana') }}',
+                                    type: "POST",
+                                    data: {
+                                        "_method": "POST",
+                                        'receipt_no': receipt_no,
+                                        "prints_and_cuts_dana_consumption_id": prints_and_cuts_dana_consumption_id,
+                                        "_token": "{{ csrf_token() }}",
+                                    },
+                                    success: function(response) {
+                                        removeAllTableRows(
+                                            'printsAndCutsItem');
+                                        //   checkRowInTable();
+                                        getPrintsAndCutsBagItems();
+                                    },
+                                    error: function(result) {
+                                        new swal({
+                                            title: "Error",
+                                            text: "something went wrong",
+                                            type: 'error',
+                                            timer: '1500'
+                                        });
+                                    }
+                                });
+                            }
+                        });
+
+                    });
+
+                }
+
+            }
 
             function getdanaConsumptionData() {
-                let printAndCutEntry_id_data = {!! json_encode($data->id) !!};
-                //console.log('printAndCutEntry_id_data', printAndCutEntry_id_data);
-                $.ajax({
-                    url: '{{ route('printingAndCuttingBagItem.getPrintsAndCutsDanaConsumption') }}',
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        printAndCutEntry_id: printAndCutEntry_id_data
-                    },
-                    success: function(response) {
-                        console.log('consumption data', response);
-                        response.forEach(function(response) {
+                return new Promise(function(resolve, reject) {
+                    let printAndCutEntry_id_data = {!! json_encode($data->id) !!};
+                    //console.log('printAndCutEntry_id_data', printAndCutEntry_id_data);
+                    $.ajax({
+                        url: '{{ route('printingAndCuttingBagItem.getPrintsAndCutsDanaConsumption') }}',
+                        method: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            printAndCutEntry_id: printAndCutEntry_id_data
+                        },
+                        success: function(response) {
+                            console.log('consumption data hgftyuhb', response);
+                            response.forEach(function(response) {
+                                console.log('qty', response.quantity)
                                 setIntoConsumptionTable(response)
-                            }
-
-                        )
-                        //setIntoConsumptionTable(res)
-                        // if (response.count <= 0) {
-                        //     return false;
-                        // }
-                        // response.printingAndCuttingBagItem.forEach(itemsRow => {
-                        //     setIntoConsumptionTable(itemsRow);
-                        // });
-                        // deleteEventBtn();
-                        checkRowInTable('danaConsumption');
-                    },
-                    error: function(xhr, status, error) {
-                        reject(error);
-                    }
+                            })
+                            resolve();
+                        },
+                        error: function(xhr, status, error) {
+                            setErrorMsg(xhr.responseJSON.message);
+                            reject();
+                        }
+                    });
                 });
             }
 
@@ -547,7 +612,7 @@
                             setIntoTable(itemsRow);
                         });
                         deleteEventBtn();
-                        checkRowInTable('printsAndCutsItem');
+                        //  checkRowInTable('printsAndCutsItem');
                     },
                     error: function(xhr, status, error) {
                         reject(error);
@@ -555,28 +620,19 @@
                 });
             }
 
-            function checkRowInTable(tableId) {
-                // let tableTbody = tableId.querySelector("tbody");
-                tableTbody = document.querySelector("#" + tableId + " tbody");
-                let updateStocksBtn = document.getElementById('updateStocks');
-
-                if (tableTbody && tableTbody.rows.length <= 0) {
-                    updateStocksBtn.disabled = true;
-                } else {
-                    updateStocksBtn.disabled = false;
-                }
-            }
-
-            // function checkRowInTable() {
-            //     let tableTbody = document.querySelector("#printsAndCutsItem tbody");
+            //function to disable update button
+            // function checkRowInTable(tableId) {
+            //     tableTbody = document.querySelector("#" + tableId + " tbody");
             //     let updateStocksBtn = document.getElementById('updateStocks');
 
-            //     if (tableTbody.rows.length <= 0) {
+            //     if (tableTbody && tableTbody.rows.length <= 0) {
             //         updateStocksBtn.disabled = true;
             //     } else {
-            //         updateStocksBtn.enable = true;
+            //         updateStocksBtn.disabled = false;
             //     }
             // }
+
+
 
 
             //meghamm
@@ -590,7 +646,9 @@
                         printAndCutEntry_id: printAndCutEntry_id,
                     },
                     success: function(response) {
-                        console.log(response);
+                        //console.log(response);
+                        setSuccessMessage(response.message);
+                        window.location.href = "{{ route('prints.and.cuts.index') }}";
                         // setOptionInSelect('fabricId', response.fabric.id, response.fabric.name);
                         // $('#netWeight').val(response.net_wt);
                         // $('#grossWeight').val(response.gross_wt);
@@ -608,48 +666,41 @@
                 history.back();
             });
 
-
-            $(".add-group").click(function(e) {
-                alert("hello");
-            });
-
             $('#fabricId').on('select2:select', function(e) {
 
                 let fabric_id = e.params.data.id;
                 console.log('fabric_id', fabric_id);
-                // let click_by=blade;
-                getNetWeightGrossWeight(fabric_id);
             });
 
             $('#godamId').on('select2:select', function(e) {
                 let godam_id = e.params.data.id;
                 $('#danaGroupId').empty();
-                getDanaGroup(godam_id);
+                getDanaName(godam_id);
             });
 
-            $('#danaGroupId').on('select2:select', function(e) {
-                // console.log('df');
-                let dana_group_id = e.params.data.id;
-                $('#danaNameId').empty();
-                getDanaName(dana_group_id);
-            });
+
+
+            // $('#danaGroupId').on('select2:select', function(e) {
+            //     // console.log('df');
+            //     let dana_group_id = e.params.data.id;
+            //     $('#danaNameId').empty();
+            //     getDanaName(dana_group_id);
+            // });
 
             $('#danaNameId').on('select2:select', function(e) {
                 // console.log('df');
                 let godam_id = document.getElementById('godamId').value;
-                let dana_group_id = document.getElementById('danaGroupId').value;
                 let dana_name_id = e.params.data.id;
                 $('#avilableStock').empty();
-                getStockQuantity(godam_id, dana_group_id, dana_name_id);
+                getStockQuantity(godam_id, dana_name_id);
             });
             // printsAndCuts.getStockQuantity
-            function getStockQuantity(godam_id, dana_group_id, dana_name_id) {
+            function getStockQuantity(godam_id, dana_name_id) {
                 $.ajax({
                     url: "{{ route('printsAndCuts.getStockQuantity') }}",
                     method: 'post',
                     data: {
                         _token: "{{ csrf_token() }}",
-                        dana_group_id: dana_group_id,
                         godam_id: godam_id,
                         dana_name_id: dana_name_id
                     },
@@ -674,15 +725,17 @@
                     method: 'post',
                     data: {
                         _token: "{{ csrf_token() }}",
-                        dana_group_id: dana_group_id,
+                        //dana_group_id: dana_group_id,
                         godam_id: godam_id
 
                     },
                     success: function(response) {
                         $('#danaNameId').prepend(
-                            "<option value='' disabled selected>Select required</option>");
+                            "<option value='' disabled selected>Select required</option>"
+                        );
                         response.forEach(function(item) {
-                            setOptionInSelect('danaNameId', item.dana_name.id, item.dana_name
+                            setOptionInSelect('danaNameId', item.dana_name.id, item
+                                .dana_name
                                 .name);
                         });
                     },
@@ -702,9 +755,11 @@
                     },
                     success: function(response) {
                         $('#danaGroupId').prepend(
-                            "<option value='' disabled selected>Select required data</option>");
-                        response.forEach(function(item) {
-                            setOptionInSelect('danaGroupId', item.dana_group.id, item.dana_group
+                            "<option value='' disabled selected>Select required data</option>"
+                        );
+                        response.danaGroups.forEach(function(item) {
+                            setOptionInSelect('danaGroupId', item.dana_group.id,
+                                item.dana_group
                                 .name);
                         });
                     },
@@ -764,7 +819,8 @@
                         roll_no: roll_no,
                     },
                     success: function(response) {
-                        setOptionInSelect('fabricId', response.fabric.id, response.fabric.name);
+                        setOptionInSelect('fabricId', response.fabric.id, response.fabric
+                            .name);
                         $('#netWeight').val(response.net_wt);
                         $('#grossWeight').val(response.gross_wt);
                         $('#average').val(response.average);
@@ -777,7 +833,8 @@
 
             // Adding event listeners
             document.getElementById('meter').addEventListener('input', checkInputs);
-            document.getElementById('cutLength').addEventListener('input', checkInputs);
+            document
+                .getElementById('cutLength').addEventListener('input', checkInputs);
 
             // Checking if both input fields have a value
             function checkInputs() {
@@ -796,46 +853,44 @@
                 document.getElementById('reqBag').value = reqBag;
             }
             //save addPrintsAndDanaConsumption
-            document.getElementById('addPrintsAndCutsDanaConsumption').addEventListener('submit', function(e) {
-                //let printCutEntry_id = {!! json_encode($data->id) !!};
-                e.preventDefault();
-                const form = e.target;
-                let printCutEntry_id = {!! json_encode($data->id) !!};
-                console.log('testing', printCutEntry_id);
-                let godam_id = form.elements['godam_id'];
-                let dana_group_id = form.elements['dana_group_id'];
-                let dana_name_id = form.elements['dana_name_id'];
-                let quantity = form.elements['quantity'];
-                $.ajax({
-                    url: "{{ route('printingAndCuttingDanaConsumption.store') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        printCutEntry_id: printCutEntry_id,
-                        godam_id: godam_id.value,
-                        dana_group_id: dana_group_id.value,
-                        dana_name_id: dana_name_id.value,
-                        quantity: quantity.value
-                    },
-                    success: function(response) {
-                        removeAllTableRows('danaConsumption');
-                        getdanaConsumptionData();
-                        // setIntoConsumptionTable(response);
-                        // getdanaConsumptionData();
-                        updateStockQuantity();
-                    },
-                    error: function(xhr, status, error) {
-                        setErrorMsg(xhr.responseJSON.message);
-                    }
+            document.getElementById('addPrintsAndCutsDanaConsumption').addEventListener('submit',
+                function(e) {
+                    //let printCutEntry_id = {!! json_encode($data->id) !!};
+                    e.preventDefault();
+                    const form = e.target;
+                    let printCutEntry_id = {!! json_encode($data->id) !!};
+                    //console.log('testing', printCutEntry_id);
+                    let godam_id = form.elements['godam_id'];
+                    let dana_name_id = form.elements['dana_name_id'];
+                    let quantity = form.elements['quantity'];
+                    $.ajax({
+                        url: "{{ route('printingAndCuttingDanaConsumption.store') }}",
+                        method: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            printCutEntry_id: printCutEntry_id,
+                            godam_id: godam_id.value,
+                            dana_name_id: dana_name_id.value,
+                            quantity: quantity.value
+                        },
+                        success: function(response) {
+                            removeAllTableRows('danaConsumption');
+                            getdanaConsumptionData();
+                            // setIntoConsumptionTable(response);
+                            // getdanaConsumptionData();
+                            updateStockQuantity();
+                        },
+                        error: function(xhr, status, error) {
+                            setErrorMsg(xhr.responseJSON.message);
+                        }
+                    });
                 });
-            });
             //current
             function updateStockQuantity() {
                 let godam_id = $('#godamId').val();
-                let dana_group_id = $('#danaGroupId').val();
+                // let dana_group_id = $('#danaGroupId').val();
                 let dana_name_id = $('#danaNameId').val();
-                console.log('godam_id:', godam_id, 'dana_group_id:', dana_group_id, 'dana_name_id:', dana_name_id)
-                getStockQuantity(godam_id, dana_group_id, dana_name_id);
+                getStockQuantity(godam_id, dana_name_id);
             }
 
             //Save group
@@ -875,61 +930,80 @@
 
             }
             //save printing and cutting bag items
-            document.getElementById('savePrintingAndCuttingBagItem').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const form = e.target;
-                let printAndCutEntry_id = form.elements['printAndCutEntry_id'];
-                let roll_no = form.elements['rollNumber'];
-                let fabric_id = form.elements['fabricId'];
-                let netWeight = form.elements['netWeight'];
-                let grossWeight = form.elements['grossWeight'];
-                let meter = form.elements['meter'];
-                let average = form.elements['average'];
-                let cutLength = form.elements['cutLength'];
-                let reqBag = form.elements['reqBag'];
-                let qtyInKg = form.elements['qtyInKg'];
-                let group_id = form.elements['group'];
-                let bagBrand_id = form.elements['bagBrand'];
-                let quantity_piece = form.elements['quantity_piece'];
-                let wastage = form.elements['wastage'];
-                let avg = form.elements['avg'];
-                $.ajax({
-                    url: "{{ route('printingAndCuttingBagItem.store') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        printAndCutEntry_id: printAndCutEntry_id.value,
-                        group_id: group_id.value,
-                        bag_brand_id: bagBrand_id.value,
-                        quantity_piece: quantity_piece.value,
-                        average: average.value,
-                        wastage: wastage.value,
-                        roll_no: roll_no.value,
-                        fabric_id: fabric_id.value,
-                        net_weight: netWeight.value,
-                        cut_length: cutLength.value,
-                        qty_in_kg: qtyInKg.value,
-                        gross_weight: grossWeight.value,
-                        meter: meter.value,
-                        avg: avg.value,
-                        req_bag: reqBag.value,
-                    },
-                    success: function(response) {
-                        // console.log('new response', response);
-                        // console.log('test res megha', response.printingAndCuttingBagItem)
-                        setSuccessMessage(response.message);
-                        setIntoTable(response.printingAndCuttingBagItem);
-                        deleteEventBtn();
-                        // $('#bagBrandModel').modal('hide');
-                        // setSuccessMessage(response.message);
-                        // setOptionInSelect('bagBrand', response.bagBrand.id,
-                        //     response.bagBrand.name);
-                    },
-                    error: function(xhr, status, error) {
-                        setErrorMsg(xhr.responseJSON.message);
-                    }
+            document.getElementById('savePrintingAndCuttingBagItem').addEventListener('submit',
+                function(e) {
+                    e.preventDefault();
+                    const form = e.target;
+                    let printAndCutEntry_id = form.elements['printAndCutEntry_id'];
+                    let roll_no = form.elements['roll_number'];
+                    let fabric_id = form.elements['fabricId'];
+                    let netWeight = form.elements['netWeight'];
+                    let grossWeight = form.elements['grossWeight'];
+                    let meter = form.elements['meter'];
+                    let average = form.elements['average'];
+                    let cutLength = form.elements['cutLength'];
+                    let reqBag = form.elements['reqBag'];
+                    let group_id = form.elements['group'];
+                    let bagBrand_id = form.elements['bagBrand'];
+                    let quantity_piece = form.elements['quantity_piece'];
+                    let wastage = form.elements['wastage'];
+                    let avg = form.elements['avg'];
+                    let godam_id = form.elements['waste_godam_id'];
+                    let waste_type_id = form.elements['waste_type_id'];
+                    //  checkIfRollAlreadyEntered(roll_no);
+                    $.ajax({
+                        url: "{{ route('printingAndCuttingBagItem.store') }}",
+                        method: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            printAndCutEntry_id: printAndCutEntry_id.value,
+                            group_id: group_id.value,
+                            bag_brand_id: bagBrand_id.value,
+                            quantity_piece: quantity_piece.value,
+                            average: average.value,
+                            wastage: wastage.value,
+                            roll_no: roll_no.value,
+                            fabric_id: fabric_id.value,
+                            net_weight: netWeight.value,
+                            cut_length: cutLength.value,
+                            gross_weight: grossWeight.value,
+                            meter: meter.value,
+                            avg: avg.value,
+                            req_bag: reqBag.value,
+                            godam_id: godam_id.value,
+                            waste_type_id: waste_type_id.value
+                        },
+                        success: function(response) {
+                            // console.log('new response', response);
+                            // console.log('test res megha', response.printingAndCuttingBagItem)
+                            setSuccessMessage(response.message);
+                            setIntoTable(response.printingAndCuttingBagItem);
+                            deleteEventBtn();
+                            // $('#bagBrandModel').modal('hide');
+                            // setSuccessMessage(response.message);
+                            // setOptionInSelect('bagBrand', response.bagBrand.id,
+                            //     response.bagBrand.name);
+                        },
+                        error: function(xhr, status, error) {
+                            setErrorMsg(xhr.responseJSON.message);
+                        }
+                    });
                 });
-            });
+
+            function checkIfRollAlreadyEntered() {
+                try {
+                    let bundles = Math.floor(quantity_Pcs_cal / bundle_pcs_cal);
+                    let remainingPieces = quantity_Pcs_cal % bundle_pcs_cal;
+                    if (remainingPieces > 0) {
+                        throw new Error(
+                            `Cannot create complete bundles. Remaining pieces: ${remainingPieces}`);
+                    }
+                    return true;
+                } catch (error) {
+                    setErrorMsg(error.message);
+                    return false;
+                }
+            }
 
             let sn = 1;
             //set data in the table
@@ -967,15 +1041,10 @@
                 var html = "";
                 html = "<tr id=editConsumptRow-" + res.id + "><td>" + sn +
                     "</td><td class='rowGodamName'>" + res.godam.name +
-                    "</td><td class='rowDanaGroupName'>" + res.dana_group.name +
                     "</td><td class='rowDanaName'>" + res.dana_name.name +
                     "</td><td class='rowQuantity'>" + res.quantity +
-                    "</td> <td>" +
-                    // "<button class='btn btn-success editItemBtn' data-id=" +
-                    // res.id + "><i class='fas fa-edit'></i></button>" +
-                    // "  " +
-                    "<button class='btn btn-danger dltPrintingAndCutDanaConsumption' data-id=" +
-                    res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
+                    "</td></tr>";
+
 
                 document.getElementById('printsCutsDanaConsumpt').innerHTML += html;
                 sn++;
@@ -988,7 +1057,7 @@
                 //console.log(deleteButtons);
                 for (let i = 0; i < deleteButtons.length; i++) {
                     deleteButtons[i].addEventListener('click', function(event) {
-                        console.log('hello');
+                        // console.log('hello');
                         let printingAndCuttingBagItem_id = this.getAttribute('data-id');
                         // console.log(storeout_item_id);
                         new swal({
@@ -1004,15 +1073,17 @@
                             if (willDelete) {
                                 $.ajax({
                                     url: '{{ route('printingAndCuttingBagItem.itemDelete', ['printingAndCuttingBagItem_id' => ':lol']) }}'
-                                        .replace(':lol', printingAndCuttingBagItem_id),
+                                        .replace(':lol',
+                                            printingAndCuttingBagItem_id),
                                     type: "DELETE",
                                     data: {
                                         "_method": "DELETE",
                                         "_token": "{{ csrf_token() }}",
                                     },
                                     success: function(response) {
-                                        removeAllTableRows('printsAndCutsItem');
-                                        checkRowInTable();
+                                        removeAllTableRows(
+                                            'printsAndCutsItem');
+                                        //   checkRowInTable();
                                         getPrintsAndCutsBagItems();
                                     },
                                     error: function(result) {
@@ -1053,7 +1124,6 @@
                 document.getElementById('average').value = "";
                 document.getElementById('cutLength').value = "";
                 document.getElementById('reqBag').value = "";
-                document.getElementById('qtyInKg').value = "";
                 document.getElementById('quantity_piece').value = "";
                 document.getElementById('wastage').value = "";
                 document.getElementById('avg').value = "";
@@ -1116,7 +1186,8 @@
                 if (obj.length == 0) {
                     selectOptions += "<option value='' disabled selected>No Data found</option>";
                 } else {
-                    selectOptions += "<option value='' disabled selected> select required data </option>";
+                    selectOptions +=
+                        "<option value='' disabled selected> select required data </option>";
                     for (let i = 0; i < obj.length; i++) {
                         let optionText = obj[i].name;
                         let optionValue = obj[i].id;

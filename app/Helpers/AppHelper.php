@@ -88,7 +88,9 @@ class AppHelper
         $splitDate = explode("-", $date);
         $cal = new Nepali_Calendar();
         $nep = $cal->eng_to_nep($splitDate[0], $splitDate[1], $splitDate[2]);
-        return ($nep["year"] . '-' . $nep["month"] . '-' . $nep["date"]);
+        return 'drtyhvfgh';
+        return $nep["month"];
+       // return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' . $nep["date"]);
     }
 
     public static function getTodayNepaliDate($yy, $mm, $dd, $date)
@@ -96,7 +98,7 @@ class AppHelper
         $splitDate = explode("-", $date);
         $cal = new Nepali_Calendar();
         $nep = $cal->eng_to_nep($yy, $mm, $dd);
-        return ($nep["year"] . '-' . $nep["month"] . '-' . $nep["date"]);
+        return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' . $nep["date"]);
     }
 
     // return formatted currency
