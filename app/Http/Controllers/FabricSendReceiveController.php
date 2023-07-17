@@ -24,6 +24,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Str;
 use App\Models\Godam;
+use Throwable;
 
 class FabricSendReceiveController extends Controller
 {
@@ -106,9 +107,8 @@ class FabricSendReceiveController extends Controller
         if($request->ajax()){
             $data = [];
             parse_str($request->data,$data);
-
+           
             $fabricDetails = Fabric::where('id',$data['fabric_name_id'])->first();
-            // dd($fabricDetails);
             $name = $fabricDetails->name;
             $roll_number = $fabricDetails->roll_no;
             $gross_weight = $fabricDetails->gross_wt;
@@ -146,7 +146,7 @@ class FabricSendReceiveController extends Controller
 
     }
     public function getunlaminated(){
-        $data = UnlaminatedFabric::with('fabric')->where('status','pending')->get();
+        $data = UnlaminatedFabric::where('status','pending')->with('fabric')->get();
         if(count($data) != 0){
             return response(['response'=>$data]);
         }else{
@@ -185,14 +185,12 @@ class FabricSendReceiveController extends Controller
     }
     public function storelaminated(Request $request){
         try{
-            // dd('lol');
-
             $data = [];
             parse_str($request->data,$data);
 
             $idoffabricforsendtolamination = $data['idoffabricforsendtolamination'];
 
-            $fabricstock =  UnlaminatedFabric::with('fabric')->where('id',$idoffabricforsendtolamination)->first(); //where('id',$idoffabricforsendtolamination)->
+            $fabricstock =  UnlaminatedFabric::where('id',$idoffabricforsendtolamination)->with('fabric')->first(); //where('id',$idoffabricforsendtolamination)->
             $fabric_id = $fabricstock->fabric_id;
             $department_id = $fabricstock->department_id;
             $planttype_id = $fabricstock->planttype_id;
@@ -478,6 +476,8 @@ class FabricSendReceiveController extends Controller
             $polo_waste = $request->polo_waste;
             $selectedDanaID = $request->selectedDanaID;
             $total_waste  = $request->total_waste;
+            $godamId = $request->godam_id; 
+            $autoloader_godam_selected = $request->autoloader_godam_selected;
             $lamFabricToDelete = [];
             $lamFabricTempToDelete = [];
             $department = [];
@@ -486,14 +486,18 @@ class FabricSendReceiveController extends Controller
                 DB::beginTransaction();
 
                 //deduction
-                    $stock = AutoLoadItemStock::where('dana_id',$selectedDanaID)->first();
+                    $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)
+                            ->where("from_godam_id",$autoloader_godam_selected)                
+                            ->first();
                     $presentQuantity = $stock->quantity;
                     $deduction = $presentQuantity - $consumption;
 
                     if($deduction == 0){
                         $stock->delete();
-                    }
-                    else{
+                    }elseif($deduction < 0){
+                        return "amount exceeded";
+                        // return back()->with("error","Amount Exceeded");
+                    }else{
                         $stock->update([
                             "quantity" => $deduction
                         ]);
@@ -501,14 +505,16 @@ class FabricSendReceiveController extends Controller
 
                 //fabric stock creation
                     UnlaminatedFabric::where('status','sent')->delete();
-                    $lamFabric = LaminatedFabric::with('lamfabric')->get();
+                    $lamFabric = LaminatedFabric::with(['lamfabric'])->get();
                     foreach($lamFabric as $data){
                         Fabric::create([
                             'name' => $data->lamfabric->name,
+                            "godam_id" => $godamId,
                             'slug' => $data->lamfabric->slug,
                             'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
                             'status' => $data->lamfabric->status,
-                            'gram' => $data->gram,
+                            "average_wt" => $data->average,
+                            'gram_wt' => $data->gram,
                             'gross_wt' => $data->gross_wt,
                             'net_wt' => $data->net_wt,
                             'meter' => $data->meter,
@@ -520,9 +526,11 @@ class FabricSendReceiveController extends Controller
                         FabricStock::create([
                             'name' => $data->lamfabric->name,
                             'slug' => $data->lamfabric->slug,
+                            "godam_id" => $godamId,
                             'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
                             'status' => $data->lamfabric->status,
-                            'gram' => $data->gram,
+                            "average_wt" => $data->average,
+                            'gram_wt' => $data->gram,
                             'gross_wt' => $data->gross_wt,
                             'net_wt' => $data->net_wt,
                             'meter' => $data->meter,
@@ -558,11 +566,13 @@ class FabricSendReceiveController extends Controller
 
                     }
 
-                    WasteStock::create([
-                        'department_id' => $department[0],
-                        'waste_id' => '1',
-                        'quantity_in_kg' => $total_waste,
-                    ]);
+                    if($total_waste>0){
+                        WasteStock::create([
+                            'godam_id' => '1',
+                            'waste_id' => '1',
+                            'quantity_in_kg' => $total_waste,
+                        ]);
+                    }
 
                     LaminatedFabric::whereIn('id', $lamFabricToDelete)->delete();
 
@@ -571,8 +581,9 @@ class FabricSendReceiveController extends Controller
                 DB::commit();
 
                 return response(200);
-            }catch(Exception $e){
+            }catch(Throwable $e){
                 DB::rollBack();
+                dd($e->getMessage());
                 return response([
                     "exception" => $e->getMessage(),
                 ]);
@@ -597,6 +608,15 @@ class FabricSendReceiveController extends Controller
                     "quantity" => $quantity
                 ]
             ],200);
+        }
+    }
+
+    public function getStuffOfAutoloader(Request $request,$godamId){
+        if($request->ajax()){
+            $data = AutoLoadItemStock::where("from_godam_id",$godamId)->with("fromGodam","danaName")->get();
+            return response([
+                "data" => $data
+            ]);
         }
     }
 }
