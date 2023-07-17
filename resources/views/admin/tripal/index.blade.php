@@ -178,10 +178,10 @@
                 <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id"
                     required>
                     <option value="">{{ __('Select Fabric Name') }}</option>
-                    @foreach ($fabrics as $fabric)
+                   {{--  @foreach ($fabrics as $fabric)
                     <option value="{{ $fabric->id }}">{{ $fabric->name }}
                     </option>
-                    @endforeach
+                    @endforeach --}}
                 </select>
                 @error('fabric_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -501,11 +501,11 @@
             <div class="modal-body">
                 <form id='sendtolaminationform' action='{{ route("tripal.store") }}' method="post">
                     @csrf
-                    <input type="text" name="bill_no" id="bill_nos" value="{{$bill_no}}">
-                    <input type="text" name="bill_date" id="bill_dates" value="{{$bill_date}}">
-                    <input type="text" name="godam_id" id="godam_ids">
-                    <input type="text" name="planttype_id" id="planttype_id">
-                    <input type="text" name="plantname_id" id="plantname_id">
+                    <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                    <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+                    <input type="hidden" name="godam_id" id="godam_ids">
+                    <input type="hidden" name="planttype_id" id="planttype_id">
+                    <input type="hidden" name="plantname_id" id="plantname_id">
                     <div class="card">
                         <div class="card-body">
                             <div class="row m-2 p-3">
@@ -552,6 +552,10 @@
                                     <label for="">Gram</label>
                                     <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
                                 </div>
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="laminated_meter" id="laminated_meter">
+                                </div>
                             </div>
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
@@ -579,6 +583,12 @@
                                     <input class='form-control' type="text" name="laminated_gram_2"
                                         id="laminated_gram_2">
                                 </div>
+
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="laminated_meter_2"
+                                        id="laminated_meter_2">
+                                </div>
                             </div>
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
@@ -605,6 +615,12 @@
                                     <label for="">Gram</label>
                                     <input class='form-control' type="text" name="laminated_gram_3"
                                         id="laminated_gram_3">
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="laminated_meter_3"
+                                        id="laminated_meter_3">
                                 </div>
                             </div>
                             <hr>
@@ -693,6 +709,8 @@
             });
         });
 
+
+
         $("#plantType").change(function(e){
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.plantname',['id'=>':id']) }}";
@@ -725,40 +743,7 @@
 
     /**************************** Ajax functions **************************/
 
-    function callunlaminatedfabricajax(){
-        // $("#fabricNameId").change(function(e){
-        //     let fabric_id =  $(this).val();
-        //     let data = fabric_id;
-
-        // });
-        var token = $('meta[name="csrf-token"]').attr('content');
-        // var data = fabric_id;
-        $.ajax({
-            url : "{{ route('tripal.getFabric') }}",
-            method: 'get',
-            type:"POST",
-            dataType:"JSON",
-            data:{
-                _token: token,
-                fabric_id: '1',
-            },
-           
-            beforeSend:function(){
-                console.log('getting unlaminated fabric');
-            },
-            success:function(response){
-                emptytable();
-                if(response.response != '404'){
-                    filltable(response);
-                }else{
-                    console.log(response.response);
-                }
-                
-            },error:function(error){
-                console.log(error);
-            }
-        });
-    }
+ 
 
     function addplanttype(data){
         $("#plantType").empty();
@@ -769,15 +754,14 @@
     }
 
     function addfabrictype(data){
-        $("#fabric_name_id").empty();
-        $('#fabric_name_id').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
-        data.fabrictype.forEach( d => {
-            $('#fabric_name_id').append(`<option value="${d.id}">${d.name}</option>`);
+        $("#fabricNameId").empty();
+        $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
+        data.godamfabrics.forEach( d => {
+            $('#fabricNameId').append(`<option value="${d.id}">${d.name}</option>`);
         });
     }
 
     function addplantname(data){
-        console.log(data);
         $("#plantName").empty();
         $('#plantName').append(`<option value="" disabled selected>--Select Plant Name--</option>`);
         data.plantname.forEach( d => {
@@ -787,39 +771,57 @@
 
         });
     }
-
-    function getfabrics(data){
-        $('#fabricNameId').prop('disabled',false);
-        $("#fabricNameId").empty();
-        $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
-        data.fabrics.forEach(d => {
-            $("#fabricNameId").append(`<option value="${d.id}">${d.name}</option>`);
-        });
-    }
     /**************************** Ajax functions **************************/
 
     /************************* Form Submission *************************/
     $(document).ready(function(){
-        $(document).on('submit','#createRawMaterial',function(e){
+        $(document).on('click','#getfabricsrelated',function(e){
             e.preventDefault();
+            // debugger;
             let action = $(this).attr('action');
             let method = $(this).attr('method');
             let formData = $(this).serialize();
+
+            var bill_number = $('#bill_nos').val(),
+            bill_date = $('#bill_dates').val(),
+            godam_id = $('#godam_ids').val(),
+            plantype_id = $('#planttype_id').val(),
+            plantname_id = $('#plantname_id').val(),
+            shift_id = $('#shift_id').val(),
+            fabric_id = $('#fabricNameId').val(),
+            roll = $('#rollnumberfabric').val();
+
+            // console.log(formData['bill_number']);
             // console.log(action);
+            debugger;
            $.ajax({
-            url:action,
-            method : method,
+            url : "{{ route('tripal.getFabric') }}",
+            method: 'get',
+            type:"POST",
+            dataType:"JSON",
             data:{
                 '_token' : $('meta[name="csrf-token"]').attr('content'),
-                'data' : formData
+                'data' : formData,
+                'fabric_id' : fabric_id,
+                'roll' : roll
+
             },
             beforeSend:function(){
                 console.log('sending form');
             },
+            // success:function(response){
+            //     emptytable();
+            //     callunlaminatedfabricajax();
+            //     emptyform();
+            // },
             success:function(response){
                 emptytable();
-                callunlaminatedfabricajax();
-                emptyform();
+                if(response.response != '404'){
+                    filltable(response);
+                }else{
+                    console.log(response.response);
+                }
+
             },
             error:function(error){
                 console.log(error);
@@ -827,6 +829,41 @@
            });
         });
     })
+
+    // function callunlaminatedfabricajax(){
+    //     // $("#fabricNameId").change(function(e){
+    //     //     let fabric_id =  $(this).val();
+    //     //     let data = fabric_id;
+
+    //     // });
+    //     var token = $('meta[name="csrf-token"]').attr('content');
+    //     // var data = fabric_id;
+    //     $.ajax({
+    //         url : "{{ route('tripal.getFabric') }}",
+    //         method: 'get',
+    //         type:"POST",
+    //         dataType:"JSON",
+    //         data:{
+    //             _token: token,
+    //             fabric_id: '1',
+    //         },
+           
+    //         beforeSend:function(){
+    //             console.log('getting unlaminated fabric');
+    //         },
+    //         success:function(response){
+    //             emptytable();
+    //             if(response.response != '404'){
+    //                 filltable(response);
+    //             }else{
+    //                 console.log(response.response);
+    //             }
+                
+    //         },error:function(error){
+    //             console.log(error);
+    //         }
+    //     });
+    // }
     /************************* Form Submission *************************/
 
     /************************* Other Functionalities ***********************/
@@ -885,7 +922,7 @@
             tr.append(`<td>${d.meter}</td>`)
             tr.append(`<td>${d.meter}</td>`);
             tr.append(`<td>${d.average_wt}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.average_wt}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.average_wt}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a></div></td>`);
         });
     }
 
@@ -983,7 +1020,7 @@
                 console.log('sending');
             },
             success:function(response){
-                callunlaminatedfabricajax();
+                // callunlaminatedfabricajax();
                 comparelamandunlam();
                 $('#staticBackdrop1').modal('hide');
                 console.log(response);

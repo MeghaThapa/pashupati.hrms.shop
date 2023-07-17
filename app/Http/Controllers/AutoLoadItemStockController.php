@@ -6,6 +6,7 @@ use App\Models\AutoLoadItemStock;
 use Illuminate\Http\Request;
 
 
+
 class AutoLoadItemStockController extends Controller
 {
     /**

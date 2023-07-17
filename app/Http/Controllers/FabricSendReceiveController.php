@@ -69,10 +69,13 @@ class FabricSendReceiveController extends Controller
             $department_id =  $request->id;
 
             $planttype = ProcessingStep::where('godam_id',$department_id)->get();
+            // $godamfabric = Fabric::where('godam_id',$department_id)->distinct()->get(['name','id']);
+            $godamfabric = Fabric::where('godam_id',$department_id)->distinct()->get(['name','id']);
             // $planttype = ProcessingStep::where('godam_id',$department_id)->where("name","like","lam"."%")->get();
             // dd($planttype);
             return response([
-                'planttype' => $planttype
+                'planttype' => $planttype,
+                'godamfabrics' => $godamfabric
             ]);
         }
     }
@@ -80,8 +83,10 @@ class FabricSendReceiveController extends Controller
         if($request->ajax()){
             $department_id =  $request->id;
             $plantname = ProcessingSubcat::where('processing_steps_id',$department_id)->get();
+           
             return response([
                 'plantname' => $plantname
+               
             ]);
         }
     }

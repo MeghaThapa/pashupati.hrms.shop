@@ -7,6 +7,8 @@ use App\Libraries\Nepali_Calendar;
 use App\Models\RawMaterial;
 use App\Models\AutoLoad;
 use App\Models\Storeout;
+use App\Models\Singlesidelaminatedfabric;
+use App\Models\DoubleSideLaminatedFabricStock;
 use Carbon\Carbon;
 
 class AppHelper
@@ -152,5 +154,38 @@ class AppHelper
     public static function instance()
     {
         return new AppHelper();
+    }
+
+    public static function getSingleTripalReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+
+        $singletripal = Singlesidelaminatedfabric::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'TRP'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'TRP'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
+    }
+
+
+    public static function getDoubleTripalReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+
+        $singletripal = DoubleSideLaminatedFabricStock::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'DTRP'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'DTRP'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
     }
 }
