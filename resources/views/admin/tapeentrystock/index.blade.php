@@ -26,29 +26,8 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Type</label>
-                <select class="advance-select-box form-control" id="planttype_id" name="planttypes_id">
-                    <option value="" selected disabled>{{ __('Select Plant Type') }}</option>
-                    {{-- <option value="all">All Stocks</option> --}}
-                    @foreach ($planttypes as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
-                    @endforeach
-
-                </select>
-
-            </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Name</label>
-                <select class="advance-select-box form-control" id="plantname_id" name="plantname_id">
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- <option value="all">All Stocks</option> --}}
-                    @foreach ($plantnames as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
-                    @endforeach
-                </select>
-
-            </div>
+          
+          
             <div class="col-md-3">
                 <button class="btn btn-primary" style="width:200px" type="submit">Show Report</button>
 
@@ -92,9 +71,9 @@
 
                 </table>
             </div>
-            {{-- @if ($tapeststocks)
+            @if ($tapeststocks)
                 {{ $tapeststocks->links() }}
-            @endif --}}
+            @endif 
         </div>
     </div>
 @endsection

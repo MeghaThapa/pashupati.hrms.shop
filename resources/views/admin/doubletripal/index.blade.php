@@ -501,11 +501,11 @@
             <div class="modal-body">
                 <form id='sendtolaminationform' action='{{ route("doubletripal.store") }}' method="post">
                     @csrf
-                    <input type="text" name="bill_no" id="bill_nos" value="{{$bill_no}}">
-                    <input type="text" name="bill_date" id="bill_dates" value="{{$bill_date}}">
-                    <input type="text" name="godam_id" id="godam_ids">
-                    <input type="text" name="planttype_id" id="planttype_id">
-                    <input type="text" name="plantname_id" id="plantname_id">
+                    <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                    <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+                    <input type="hidden" name="godam_id" id="godam_ids">
+                    <input type="hidden" name="planttype_id" id="planttype_id">
+                    <input type="hidden" name="plantname_id" id="plantname_id">
                     <div class="card">
                         <div class="card-body">
                             <div class="row m-2 p-3">
@@ -552,6 +552,11 @@
                                     <label for="">Gram</label>
                                     <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
                                 </div>
+
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="laminated_meter" id="laminated_meter">
+                                </div>
                             </div>
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
@@ -579,6 +584,11 @@
                                     <input class='form-control' type="text" name="laminated_gram_2"
                                         id="laminated_gram_2">
                                 </div>
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="laminated_meter_2"
+                                        id="laminated_meter_2">
+                                </div>
                             </div>
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
@@ -605,6 +615,11 @@
                                     <label for="">Gram</label>
                                     <input class='form-control' type="text" name="laminated_gram_3"
                                         id="laminated_gram_3">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="laminated_meter_3"
+                                        id="laminated_meter_3">
                                 </div>
                             </div>
                             <hr>
@@ -914,7 +929,7 @@
             let titleold = $('#staticBackdropLabel').text('');
             let title = $(this).attr('data-title');
             let id = $(this).attr('data-id');
-            $("#laminated_fabric_name").val(title+"(Lam)");
+            $("#laminated_fabric_name").val(title+"(DoubleLam)");
             let laminated_fabric_group = $(this).attr('data-group');
             $("#laminated_fabric_group").val(laminated_fabric_group);
             let standard_weight_gram = $(this).attr('data-standard');
