@@ -677,22 +677,22 @@
             });
         });
 
-        // $("#shiftName").change(function(e){
-        //     let department_id =  $(this).val();
-        //     let geturl = "{{ route('fabricSendReceive.get.fabrics') }}";
-        //     $.ajax({
-        //         url:geturl.replace(':id',department_id),
-        //         beforeSend:function(){
-        //             console.log('Getting Fabrics');
-        //         },
-        //         success:function(response){
-        //             getfabrics(response);
-        //         },
-        //         error:function(error){
-        //             console.log(error);
-        //         }
-        //     });
-        // });
+        $("#shiftName").change(function(e){
+            let department_id =  $(this).val();
+            let geturl = "{{ route('fabricSendReceive.get.fabrics') }}";
+            $.ajax({
+                url:geturl.replace(':id',department_id),
+                beforeSend:function(){
+                    console.log('Getting Fabrics');
+                },
+                success:function(response){
+                    getfabrics(response);
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        });
         /**************************** Ajax Calls End **************************/
     });
 

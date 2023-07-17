@@ -99,18 +99,18 @@ class FabricSendReceiveController extends Controller
         // dd('lol');
         //return $request->data;
         if($request->ajax()){
-
             $data = [];
             parse_str($request->data,$data);
+
             $fabricDetails = Fabric::where('id',$data['fabric_name_id'])->first();
+            // dd($fabricDetails);
             $name = $fabricDetails->name;
             $roll_number = $fabricDetails->roll_no;
             $gross_weight = $fabricDetails->gross_wt;
             $net_wt = $fabricDetails->net_wt;
             $meter = $fabricDetails->meter;
-            // $gram = $fabricDetails->fabricgroup->name;
-            $gram = $fabricDetails->gram;
-            $avg = ($net_wt + $gross_weight)/2;
+            $gram = $fabricDetails->gram_wt;
+            $avg = $fabricDetails->average_wt;
 
             try{
                 DB::beginTransaction();

@@ -248,24 +248,24 @@ class TapeEntryController extends Controller
             ]);
 
             $getEarlierData = TapeEntryStockModel::where("toGodam_id",$department)
-                                ->where("planttype_id",$planttype)
-                                ->where("plantname_id",$plantname)
-                                ->where("shift_id",$shift)
+                                // ->where("planttype_id",$planttype)
+                                // ->where("plantname_id",$plantname)
+                                // ->where("shift_id",$shift)
                                 ->first();
             if($getEarlierData == null){
                 $tesm = TapeEntryStockModel::create([
-                    'tape_entry_id'=>$tape_entry_id,
+                    // 'tape_entry_id'=>$tape_entry_id,
                     'toGodam_id'=>$department,
-                    'plantType_id'=>$planttype,
-                    'plantName_id'=>$plantname,
-                    'shift_id'=>$shift,
+                    // 'plantType_id'=>$planttype,
+                    // 'plantName_id'=>$plantname,
+                    // 'shift_id'=>$shift,
                     'tape_type'=>$tapetype,
                     'tape_qty_in_kg'=>$tape_qty_in_kg,
                     'total_in_kg'=>$total_in_kg,
                     'loading'=>$loading,
                     'running'=>$running,
                     'bypass_wast'=>$bypass_wast,
-                    'dana_in_kg'=>$dana_in_kg,
+                    // 'dana_in_kg'=>$dana_in_kg,
                 ]);
             }else{
                 $new_tape_qty_in_kg = $getEarlierData->tape_qty_in_kg + $tape_qty_in_kg;
@@ -276,18 +276,18 @@ class TapeEntryController extends Controller
                 $new_dana_in_kg = $getEarlierData->dana_in_kg + $dana_in_kg;
 
                 $tesm =  $getEarlierData->update([
-                    'tape_entry_id'=>$tape_entry_id,
+                    // 'tape_entry_id'=>$tape_entry_id,
                     'toGodam_id'=>$department,
-                    'plantType_id'=>$planttype,
-                    'plantName_id'=>$plantname,
-                    'shift_id'=>$shift,
+                    // 'plantType_id'=>$planttype,
+                    // 'plantName_id'=>$plantname,
+                    // 'shift_id'=>$shift,
                     'tape_type'=>$tapetype,
                     'tape_qty_in_kg'=>$new_tape_qty_in_kg,
                     'total_in_kg'=>$new_total_in_kg,
                     'loading'=>$new_loading,
                     'running'=>$new_running,
                     'bypass_wast'=>$new_bypass_wast,
-                    'dana_in_kg'=>$new_dana_in_kg,
+                    // 'dana_in_kg'=>$new_dana_in_kg,
                 ]);
             }
 
@@ -310,6 +310,7 @@ class TapeEntryController extends Controller
         }
         catch(Exception $e){
             DB::rollBack();
+            dd($e->getMessage());
             return "exception :".$e->getMessage();
         }
     }
