@@ -307,9 +307,21 @@
             <div class="card-body">
                 <div class="row p-2">
                     <div class="col-md-6">
+
+                        <label for="" class="col-form-label">Godam</label>
+                        <?php
+                            $godam = \App\Models\Godam::where("status","active")->get();
+                        ?>
+                        <select class="advance-select-box form-control" id="autoloader_godam">
+                            <option value="" selected disabled>--Choose Godam--</option>
+                            @foreach($godam as $data)
+                            <option value="{{ $data->id }}">{{ $data->name }}</option>
+                            @endforeach
+                        </select>
+
                         <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
                         </label>
-                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
+                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" disabled required>
                             <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
                             @foreach ($dana as $danaName)
                             <option value="{{ $danaName->id }}">{{ $danaName->name }}
@@ -323,7 +335,7 @@
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="size" class="col-form-label">{{ __('Qty:') }}<span class="required-field">*</span>
+                        <label for="size" class="col-form-label">{{ __('Enter Qty:') }}<span class="required-field">*</span>
                         </label>
                         <input type="number" step="any" min="0" class="form-control" id="add_dana_consumption_quantity"
                             data-number="1" name="total_ul_in_mtr" min="1" disabled required>
@@ -487,8 +499,10 @@
             </div>
         </div>
         <div class="card-footer">
-            <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
+            <input type="text" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
             <button class="btn btn-info" id="finalUpdate">Update</button>
+            <input type="text" name="godam_id" id="godam_id" required/>
+            <input type="text" name="autoloader_godam_selected" id="autoloader_godam_selected" required>
         </div>
     </div>
 </div>
@@ -613,9 +627,10 @@
                                 </div> --}}
                                 <div class="col-md-6">
                                     <button type='submit' class="btn btn-info">Update</button>
+                                    <input type="hidden" name="idoffabricforsendtolamination"
+                                                id="idoffabricforsendtolamination">
                                 </div>
-                                <input type="hidden" name="idoffabricforsendtolamination"
-                                    id="idoffabricforsendtolamination">
+                                
                             </div>
                         </div>
                     </div>
@@ -643,6 +658,8 @@
         comparelamandunlam();
 
         $("#toGodam").change(function(e){
+            let godamId = $(this).val(); 
+            $("#godam_id").val(godamId);
 
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
@@ -812,7 +829,7 @@
     });
 
     function filltable(data){
-        // console.log(data);
+        console.log(data);
         data.response.forEach(d => {
             let title = d.fabric.name;
             let group = d.gram.split('-')[0];
@@ -826,8 +843,8 @@
             tr.append(`<td>${d.gross_wt}</td>`);
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`)
-            tr.append(`<td>${d.average}</td>`);
-            tr.append(`<td>${d.gram}</td>`);
+            tr.append(`<td>${d.fabric.average_wt}</td>`);
+            tr.append(`<td>${d.fabric.gram_wt}</td>`);
             tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
@@ -872,6 +889,22 @@
             }
         });
     });
+
+    $("#autoloader_godam").change(function(e){
+        e.preventDefault();
+        let godamId = $(this).val(); 
+        $("#danaNameId").prop("disabled",false)
+        $.ajax({
+            url : "{{ route('get.autoloader.godam.id.into.fsr',['godamId' => ':godamId']) }}".replace(":godamId",godamId),
+            method :  'get',
+            success:function(response){
+                putdanaNameId(response);
+                $("#autoloader_godam_selected").val(godamId);
+            },error:function(error){
+                console.log(error);
+            }
+        })
+    })
     /************************* Other Functionalities ***********************/
 
     /************************* Send for lamination **************************/
@@ -951,6 +984,19 @@
             }
         });
     }
+
+    function putdanaNameId(data){
+        console.log(data);
+        $("#danaNameId").empty();
+        $("#danaNameId").append(`<option selected disabled>--Select Dana--</option>`);
+        data.data.forEach(d => {
+            $("#danaNameId").append(`<option value="${d.dana_name.id}">${d.dana_name.name}</option>`);
+        });
+    }
+
+    $(document).on('change',"#danaNameId",function(){
+        $("#selectedDanaID").val($(this).val());
+    })
     /************************* Send for lamination **************************/
 
     /********** put on tbodys compare *********************/
@@ -1049,7 +1095,7 @@
          * @this portion adds to fabric stock and subtraction from fabric stock
          ********/
 
-         $(document).on("click","#finalUpdate",function(e){
+        $(document).on("click","#finalUpdate",function(e){
 
             let danaNameId = $("#selectedDanaID").val();
             let consumption = $("#add_dana_consumption_quantity").val();
@@ -1057,6 +1103,8 @@
             let total_waste = $('#total_waste').val();
             let selectedDanaID = $("#selectedDanaID").val();
             let polo_waste = $("#polo_waste").val();
+            let godam_id = $("#godam_id").val();
+            let autoloader_godam_selected = $("#autoloader_godam_selected").val();
 
             trimmedConsumption = consumption.trim();
             trimmedPoloWaste = polo_waste.trim();
@@ -1065,6 +1113,9 @@
 
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');
+            }
+            else if(godam_id == null){
+                alert("please choose godam");
             }else{
             // subtractformautolad(danaNameId,consumption);
                 $.ajax({
@@ -1077,7 +1128,9 @@
                         "fabric_waste" : trimmedFabricWaste,
                         "polo_waste" : trimmedPoloWaste,
                         "total_waste" : trimmedTotalWaste,
-                        "selectedDanaID" : selectedDanaID
+                        "selectedDanaID" : selectedDanaID,
+                        "godam_id" : godam_id,
+                        "autoloader_godam_selected" : autoloader_godam_selected
                     },
                     beforeSend:function(){
                         console.log("Before Send");
@@ -1095,6 +1148,7 @@
                     }
                 }); 
             }
+        
         });
 
     // function subtractformautolad(danaNameId,consumption){
