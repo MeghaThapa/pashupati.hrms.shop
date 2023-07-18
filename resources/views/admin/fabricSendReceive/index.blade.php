@@ -740,7 +740,9 @@
         $("#plantType").empty();
         $('#plantType').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
         data.planttype.forEach( d => {
-            $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
+            if (d.name && d.name.startsWith('lam')) {
+             $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
+            }
         });
     }
 
