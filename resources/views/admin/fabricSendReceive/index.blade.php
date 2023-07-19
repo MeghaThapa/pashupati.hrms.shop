@@ -499,10 +499,10 @@
             </div>
         </div>
         <div class="card-footer">
-            <input type="text" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
+            <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
             <button class="btn btn-info" id="finalUpdate">Update</button>
-            <input type="text" name="godam_id" id="godam_id" required/>
-            <input type="text" name="autoloader_godam_selected" id="autoloader_godam_selected" required>
+            <input type="hidden" name="godam_id" id="godam_id" required/>
+            <input type="hidden" name="autoloader_godam_selected" id="autoloader_godam_selected" required>
         </div>
     </div>
 </div>
@@ -803,6 +803,7 @@
         });
         $("#rollnumberfabric").prop('disabled',false);
     });
+
 
     $("#fabricNameId").change(function(e){
         getfabricsrelated_enable();
@@ -1140,7 +1141,10 @@
                     success:function(response){
                         console.log(response);
                         if(response == '200'){
-                            location.reload();
+                            alert("Saved Successfully");
+                            setTimeout(function(){
+                                location.reload();
+                            },500)
                         }else{
 
                         }
