@@ -20,34 +20,8 @@ use App\Models\TapeEntry;
 
 class TapeEntryController extends Controller
 {
-    // public function index(){
-    //         /************** for all data *********************/
-    //     // $department = Department::where('status','active')->get();
-    //     // $planttype =  ProcessingStep::where("status",'1')->get();
-    //     // $plantname = ProcessingSubcat::where('status','active')->get();
-    //     // $dananame = DanaName::where("status",'active')->get();
-
-    //         /************** for stock data *********************/
-    //     $department = AutoLoadItemStock::with(['fromGodam'])->get();
-    //     // $planttype = AutoLoadItemStock::with(['plantType'])->get();
-    //     // $plantname = AutoLoadItemStock::with(['plantName'])->get();
-    //     $shift = AutoLoadItemStock::with(['shift'])->get();
-    //     // $dananame = AutoLoadItemStock::with(['danaName'])->get();
-
-
-
-    //     // $department = Department::where('id',$departmentid)->get();
-    //     // $planttype = ProcessingStep::where('id',$planttypeid)->get();
-    //     // $plantname = ProcessingSubcat::where('id',$plantnameid)->get();
-    //     // $shift = Shift::where('id',$shift_id)->get();
-    //     // $dananame = DanaName::where('id',$dananame_id)->get();
-
-    //     // return view('admin.TapeEntry.index',compact('department','planttype','plantname','shift','dananame'));
-    //     return view('admin.TapeEntry.index',compact('department','shift'));
-    // }
-
     public function index(){
-        $tapeentries = TapeEntry::orderBy('created_at','DESC')->get();
+        $tapeentries = TapeEntry::orderBy('updated_at','DESC')->get();
         return view('admin.TapeEntry.index',compact('tapeentries'));
     }
 
@@ -316,10 +290,13 @@ class TapeEntryController extends Controller
     }
 
     function wastemgmt($totalwaste,$department,$wastetype){
+        
+        $wastage_type = Wastages::where("name" ,"like" , "raffia"."%")->value("id");
+        
         WasteStock::create([
             'godam_id' => $department,
             'quantity_in_kg' => $totalwaste,
-            'waste_id' => '1'
+            'waste_id' => $wastage_type
         ]);
     }
 }

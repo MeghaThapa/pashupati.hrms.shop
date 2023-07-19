@@ -90,8 +90,6 @@
     <!-- /.content-header -->
     <div class="content">
         <div class="container-fluid">
-            {{-- <div class="card"> --}}
-            {{-- <div class="card-body"> --}}
             <form id="tape_entry_form" action="{{ route('tape.entry.stock.store') }}" method="post">
                 @csrf
                 @foreach ($tapeentries as $data)
@@ -141,26 +139,15 @@
                 <div class='row mt-2'>
                     <div class="col-md-4">
                         <label for="receipt_no">Plant Type</label>
-                        <select class="form-control select2 advance-select-box" name="planttype" id="planttype" required>
-                            {{-- advance-select-box --}}
-                            {{-- @foreach ($planttype as $data)
-                                <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                @endforeach --}}
-                        </select>
+                        <select class="form-control select2 advance-select-box" name="planttype" id="planttype" required></select>
                     </div>
                     <div class="col-md-4">
                         <label for="receipt_no">Plant Name</label>
-                        <select class="form-control select2 advance-select-box" name="plantname" id="plantname" required>
-                            {{-- advance-select-box --}}
-                            {{-- @foreach ($plantname as $data)
-                                <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                @endforeach --}}
-                        </select>
+                        <select class="form-control select2 advance-select-box" name="plantname" id="plantname" required></select>
                     </div>
                     <div class="col-md-4">
                         <label for="receipt_no">Plant Shift</label>
                         <select class="form-control select2 advance-select-box" name="shift" id="shift" required>
-                            {{-- select2 advance-select-box --}}
                             @foreach ($shift as $data)
                                 @php
                                     $currentDepartment = $data->shift->name;
@@ -201,7 +188,7 @@
                         <label for="tape type">Tape Type</label>
                         <select name="tapetype" id="tapetype" name="tapetype" class='advance-select-box select2' disabled
                             required>
-                            <option> select type</option>
+                            <option selected disabled>--select type--</option>
                             <option value="tape1">Tape1</option>
                         </select>
                     </div>
@@ -226,33 +213,13 @@
                                 <th>Dana Qty</th>
                             </tr>
                         </thead>
-                        {{-- <tbody>
-                                        <tr>
-                                            <th>1</th>
-                                            <th>dana name</th>
-                                            <th>dana qty</th>
-                                        </tr>
-                                    </tbody> --}}
                     </table>
                 </div>
             </div>
         </div>
         <hr>
         <div class="row d-flex justify-content-center">
-            <div class="col-md-3" title='This is enabled if wastage ooccurs'>
-                <div class="card">
-                    <div class="card-body">
-                        <label for="">Waste Type</label>
-                        <select name="wastetype" id="wastetype" class="advance-select-box select2" disabled>
-                            <option value="">select waste type</option>
-                            @foreach ($wastage as $data)
-                                <option value="{{ $data->id }}">{{ $data->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <label>Total Row/Dana in Kg</label>
                 <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" readonly required />
                 <button type="submit" id="btn-update" class="btn btn-info mt-3" disabled>Update</button>
@@ -260,21 +227,9 @@
         </div>
         <hr>
         </form>
-        {{--
-        </div> --}}
-        <!-- card-body -->
-        {{--
-    </div> --}}
-        <!-- card -->
     </div>
     </div>
     @push('scripts')
-        <script>
-            $(document).ready(function() {
-                // let receipt_number = $('#receipt_number_1').val();
-                // let receipt_number_repeat = $('#receipt_number_1_repeat').val(receipt_number);
-            });
-        </script>
         <script>
             $(document).ready(function() {
                 $(document).on('change click', '#togodam', function() {
@@ -320,7 +275,6 @@
                         },
                         success: function(response) {
                             console.log('shift name response', response);
-                            // plantname(response);
                             $('#shift').empty();
                             shift(response);
                         },
