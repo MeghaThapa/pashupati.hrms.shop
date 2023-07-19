@@ -495,8 +495,10 @@ class FabricSendReceiveController extends Controller
                     if($deduction == 0){
                         $stock->delete();
                     }elseif($deduction < 0){
-                        return "amount exceeded";
-                        // return back()->with("error","Amount Exceeded");
+                        return response([
+                            "message" => "amount exceeded for dana consumption",
+                            "status" => "403"
+                            ]);
                     }else{
                         $stock->update([
                             "quantity" => $deduction
