@@ -37,6 +37,9 @@ return new class extends Migration
             $table->unsignedBigInteger('shift_id');
             $table->foreign('shift_id')->references("id")->on('shifts')->onDelete('cascade')->onUpdate('cascade');
 
+            $table->unsignedBigInteger('nonwovenfabric_id');
+            $table->foreign('nonwovenfabric_id')->references("id")->on('non_woven_fabrics')->onDelete('cascade')->onUpdate('cascade');
+
             $table->timestamps();
         });
     }

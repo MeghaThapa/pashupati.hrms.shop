@@ -35,7 +35,12 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function create()
     {
-        $godams = Godam::where('status','active')->get();
+         $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
+            $query->select('id','name');
+        }])
+        ->select('from_godam_id')
+        ->distinct()
+        ->get();
         $shifts = Shift::get();
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
 
@@ -108,6 +113,7 @@ class FabricNonWovenReceiveEntryController extends Controller
         $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
 
         $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
+        dd($stock);
 
 
         $presentQuantity = $stock->quantity;
