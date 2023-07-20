@@ -9,6 +9,7 @@ use App\Models\AutoLoad;
 use App\Models\Storeout;
 use App\Models\Singlesidelaminatedfabric;
 use App\Models\DoubleSideLaminatedFabricStock;
+use App\Models\FinalTripalStock;
 use Carbon\Carbon;
 
 class AppHelper
@@ -90,13 +91,13 @@ class AppHelper
         $splitDate = explode("-", $date);
         $cal = new Nepali_Calendar();
         $nep = $cal->eng_to_nep($splitDate[0], $splitDate[1], $splitDate[2]);
-        return 'drtyhvfgh';
-        return $nep["month"];
-       // return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' . $nep["date"]);
+        //return $nep["month"];
+       return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' . $nep["date"]);
     }
 
     public static function getTodayNepaliDate($yy, $mm, $dd, $date)
     {
+        // dd($date);
         $splitDate = explode("-", $date);
         $cal = new Nepali_Calendar();
         $nep = $cal->eng_to_nep($yy, $mm, $dd);
@@ -179,6 +180,7 @@ class AppHelper
     {
         $todayEnglishDate = Carbon::now()->format('Y-n-j');
         $date = self::getNepaliDate($todayEnglishDate);
+        // dd($todayEnglishDate,$date);
 
         $singletripal = DoubleSideLaminatedFabricStock::where('status','completed')->latest()->first();
         $receipt = "";
@@ -187,6 +189,23 @@ class AppHelper
             return $receipt;
         } else {
             $receipt = 'DTRP'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
+    }
+
+    public static function getFinalTripalReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+        // dd($todayEnglishDate,$date);
+
+        $singletripal = FinalTripalStock::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'FTRP'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'FTRP'.'-'.$date . '-' . $singletripal->id + 1;
             return $receipt;
         }
     }

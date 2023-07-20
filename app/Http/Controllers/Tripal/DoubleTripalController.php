@@ -179,17 +179,13 @@ class DoubleTripalController extends Controller
 
             $data = [];
             parse_str($request->data,$data);
-            // dd($data);
             
             $fabric_ids = $data['fabricsid'];
 
-            // dd($fabric_id);
             $fabric_data = Singlesidelaminatedfabricstock::find($fabric_ids);
             $getdata = Singlesidelaminatedfabric::where('id',$fabric_data->singlelamfabric_id)->value('fabric_id');
             $fabric_id = $getdata;
-            dd($fabric_data,$getdata,$fabric_id);
-            //singlefabric stock
-            // dd($fabric_data,'lol');
+      
 
             SingleSideunlaminatedFabric::create([
                 'bill_number' => $data['bill_no'],
@@ -211,7 +207,6 @@ class DoubleTripalController extends Controller
 
             $fabricstock =  SingleSideunlaminatedFabric::with('fabric')->where('id',$fabric_id)->where('bill_number',$data['bill_no'])->latest()->first(); //where('id',$idoffabricforsendtolamination)->
             // dd($fabricstock);
-            $fabric_id = $fabricstock->fabric_id;
             $department_id = $data['godam_id'];
             $planttype_id = $data['planttype_id'];
             $plantname_id = $data['plantname_id'];

@@ -42,6 +42,7 @@ use App\Http\Controllers\StoreoutDepartmentController;
 use App\Http\Controllers\Tripal\TripalController;
 use App\Http\Controllers\Tripal\SingleTripalStockController;
 use App\Http\Controllers\Tripal\DoubleTripalStockController;
+use App\Http\Controllers\Tripal\FinalTripalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
@@ -562,6 +563,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
 
 
+
     Route::get('doubletripal/getSingleLaminatedFabric/List','Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
 
     Route::get('doubletripals/{id}/status', 'Tripal\DoubleTripalController@changeStatus')->name('doubletripal.status');
@@ -574,6 +576,30 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //for checking the quantity of data
 
     Route::post('dana/autoload/checkQuantity', 'Tripal\TripalController@checkAutoloadQuantity')->name('dana.autoload.checkAutoloadQuantity');
+
+    //finl tripal
+
+    Route::resource('finaltripal', 'Tripal\FinalTripalController', [
+        'names' => [
+            'index' => 'finaltripal.index',
+            'create' => 'finaltripal.create',
+            'store' => 'finaltripal.store',
+            'edit' => 'finaltripal.edit',
+            'update' => 'finaltripal.update',
+        ]
+    ]);
+    //get doublelamlist
+
+    Route::get('tripal/getDoubleFabricStockList/final', 'Tripal\FinalTripalController@getDoubleFabricStockList')->name('finaltripal.getDoubleFabricStockList');
+
+    Route::post('tripal/store/tripalEntry', 'Tripal\FinalTripalController@storeTripalEntry')->name('tripalEntryStore');
+
+    Route::get('final/tripal/getTripalFabricEntry', 'Tripal\FinalTripalController@getTripalFabricEntry')->name('finaltripal.getTripalFabricEntry');
+
+    Route::post('finaltripal/name/store', 'Tripal\FinalTripalController@storeTripalName')->name('finaltripal.storeName');
+
+    Route::post('finaltripal/wastage/submit','Tripal\FinalTripalController@getWastageStore')->name("finaltripal.wastage.submit");
+
 
 
 
