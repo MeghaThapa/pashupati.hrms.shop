@@ -235,12 +235,12 @@
 
                 <tbody id="rawMaterialItemTbody">
                 </tbody>
-                <input type="text" name="bill_no" id="bill_nos" value="{{$bill_no}}">
-                <input type="text" name="bill_date" id="bill_dates" value="{{$bill_date}}">
-                <input type="text" name="godam_id" id="godam_data">
-                <input type="text" name="planttype_id" id="planttype_data">
-                <input type="text" name="plantname_id" id="plantname_data">
-                <input type="text" name="shift_id" id="shift_data">
+                <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+                <input type="hidden" name="godam_id" id="godam_data">
+                <input type="hidden" name="planttype_id" id="planttype_data">
+                <input type="hidden" name="plantname_id" id="plantname_data">
+                <input type="hidden" name="shift_id" id="shift_data">
 
             </table>
         </div>
@@ -290,8 +290,9 @@
                     <div class="col-md-3">
                         <label for="size" class="col-form-label">{{ __('tripal:') }}<span class="required-field">*</span>
                         </label>
+                      
                         <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
-                            tabindex="-1" data-target="#TripalNameModel"
+                            tabindex="-1" data-target="#groupModel"
                             style="margin-top:0 !important; top:8px;float:right;">
                             <i class="fas fa-plus"
                                 style="display:flex;align-items: center;justify-content: center;"></i>
@@ -387,8 +388,8 @@
                         </button>
                     </div>
                   </div>
-                  <input type="text" name="bill_no" id="bill_nos" value="{{$bill_no}}">
-                  <input type="text" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+                  <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                  <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
 
                 </form>
             </div>
@@ -472,6 +473,9 @@
             </div>
         </div>
     </div>
+    <div id="success_msg" class="alert alert-success mt-2" hidden>
+
+    </div>
     <div class="card col-md-7">
         <div class="card-body m-2 p-5">
             <div class="col-md-12" style="height: 100%;">
@@ -524,7 +528,7 @@
                             </span>
                             @enderror
                         </div>
-                        <input type="text" name="bill" id="bill" value="{{$bill_no}}">
+                        <input type="hidden" name="bill" id="bill" value="{{$bill_no}}">
         
                     </div>
         
@@ -614,18 +618,23 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="TripalNameModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
+<div class="modal fade" id="groupModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModaltax">Add Storein Type</h5>
+
+                <h5 class="modal-title" id="exampleModalcat">Add Group</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="modelFormTripalname">
+            <div id="error_msg" class="alert alert-danger mt-2" hidden>
+
+            </div>
+           
+            <form id="createGroupModel">
                 @csrf
                 <div class="modal-body">
                     <div class="card-body">
@@ -665,6 +674,8 @@
 </div>
 
 
+
+
 <!-- Modal -->
 sendforlamination
 
@@ -677,12 +688,16 @@ sendforlamination
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
 <script>
-    document.getElementById('modelFormTripalname').addEventListener('submit', function(
-        e) {
+        // $('#groupModel').modal('show');
+
+
+    document.getElementById('createGroupModel').addEventListener('submit', function(e) {
         e.preventDefault();
-        const form = event.target;
+        // $('#groupModel').modal('show');
+        
+
+        const form = e.target;
         let name = form.elements['name'];
-     
         $.ajax({
             url: "{{ route('finaltripal.storeName') }}",
             method: 'POST',
@@ -691,47 +706,75 @@ sendforlamination
                 name: name.value,
             },
             success: function(response) {
-                $('#modelFormTripalname').modal('hide');
-                setSuccessMessage(response.message);
-               
+
+                $('#groupModel').modal('hide');
+                console.log('group', response);
+                // setSuccessMessage(response.message);
+                // setOptionInSelect('groupNameModel', response.group.id,
+                //     response.group.name);
+                // setOptionInSelect('group', response.group.id,
+                //     response.group.name);
             },
             error: function(xhr, status, error) {
-                // console.log();
-                // console.log(xhr.responseText.message);
-                let errorMsg = xhr.responseJSON.message;
-                console.log(errorMsg);
-                if (errorMsg) {
-                    setErrorMessage('danaName-create-form-error',
-                        errorMsg);
-                } else {
-
-                    setErrorMessage('danaName-create-form-error',
-                        'Something went wrong');
-                }
-
+                setErrorMsg(xhr.responseJSON.message);
             }
         });
+    });
+    // document.getElementById('modelFormTripalname').addEventListener('submit', function(
+    //     e) {
+    //     e.preventDefault();
+    //     const form = event.target;
+    //     let name = form.elements['name'];
+     
+    //     $.ajax({
+    //         url: "{{ route('finaltripal.storeName') }}",
+    //         method: 'POST',
+    //         data: {
+    //             _token: "{{ csrf_token() }}",
+    //             name: name.value,
+    //         },
+    //         success: function(response) {
+    //             $('#TripalNameModel').modal('hide');
+    //             setSuccessMessage(response.message);
+               
+    //         },
+    //         error: function(xhr, status, error) {
+    //             // console.log();
+    //             // console.log(xhr.responseText.message);
+    //             let errorMsg = xhr.responseJSON.message;
+    //             console.log(errorMsg);
+    //             if (errorMsg) {
+    //                 setErrorMessage('danaName-create-form-error',
+    //                     errorMsg);
+    //             } else {
+
+    //                 setErrorMessage('danaName-create-form-error',
+    //                     'Something went wrong');
+    //             }
+
+    //         }
+    //     });
 
         //success message
-        function setSuccessMessage(message) {
-            let successContainer = document.getElementById('success_msg');
-            //console.log(successContainer);
-            successContainer.hidden = false;
-            successContainer.innerHTML = message;
-            setTimeout(function() {
-                successContainer.hidden = true;
-            }, 2000); // 5000 milliseconds = 5 seconds
-        }
-        // errror message inside of model
-        function setErrorMessage(element_id, message) {
-            let errorContainer = document.getElementById(element_id);
-            errorContainer.hidden = false;
-            errorContainer.innerHTML = message;
-            setTimeout(function() {
-                errorContainer.hidden = true;
-            }, 2000);
-        }
-    });
+        // function setSuccessMessage(message) {
+        //     let successContainer = document.getElementById('success_msg');
+        //     //console.log(successContainer);
+        //     successContainer.hidden = false;
+        //     successContainer.innerHTML = message;
+        //     setTimeout(function() {
+        //         successContainer.hidden = true;
+        //     }, 2000); // 5000 milliseconds = 5 seconds
+        // }
+        // // errror message inside of model
+        // function setErrorMessage(element_id, message) {
+        //     let errorContainer = document.getElementById(element_id);
+        //     errorContainer.hidden = false;
+        //     errorContainer.innerHTML = message;
+        //     setTimeout(function() {
+        //         errorContainer.hidden = true;
+        //     }, 2000);
+        // }
+    // });
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
         // callunlaminatedfabricajax();
@@ -1137,7 +1180,7 @@ sendforlamination
                 emptycomparelamtbody();
                 emptycompareunlamtbody();
                 putonlamtbody(response);
-                $("#sendtolaminationform")[0].reset();
+                // $("#sendtolaminationform")[0].reset();
                 weightdiffs(response);
             },
             error:function(error){

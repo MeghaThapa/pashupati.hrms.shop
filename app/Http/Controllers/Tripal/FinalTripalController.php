@@ -151,9 +151,14 @@ class FinalTripalController extends Controller
             'date_np' => $todayEnglishDate,
         ]);
 
-         return response()->json([
-            'message' => 'Trpal Name created successfully ',
-        ]);
+        return response()->json([
+                 'message' =>'group Created Successfully',
+                 // 'group' => $group,
+             ],201);
+
+        //  return response()->json([
+        //     'message' => 'Trpal Name created successfully ',
+        // ]);
     }
 
 
