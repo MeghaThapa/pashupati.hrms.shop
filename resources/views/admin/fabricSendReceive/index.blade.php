@@ -173,13 +173,12 @@
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id"
-                    required>
-                    <option value="" selected>{{ __('Select Fabric Name') }}</option>
-                    @foreach ($fabrics as $fabric)
+                <select class="advance-select-box form-control" id="fabricNameId" {{-- name="fabric_name_id" --}}>
+                    <option value="" disabled selected>{{ __('Select Fabric Name') }}</option>
+                    {{-- @foreach ($fabrics as $fabric)
                     <option value="{{ $fabric->id }}">{{ $fabric->name }}
                     </option>
-                    @endforeach
+                    @endforeach --}}
                 </select>
                 @error('fabric_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -213,6 +212,28 @@
         </div>
     </form>
 </div>
+<hr>
+<div class="row">
+    <div class="table-responsive table-custom my-3">
+        <table class="table table-hover table-striped">
+            <thead class="table-info">
+                <tr>
+                    <th>{{ __('Sr.No') }}</th>
+                    <th>{{ __('Fabric Name') }}</th>
+                    <th>{{ __('Roll No') }}</th>
+                    <th>{{ __('G.W') }}</th>
+                    <th>{{ __('N.W') }}</th>
+                    <th>{{ __('Meter') }}</th>
+                    <th>{{ __('Avg') }}</th>
+                    <th>{{ __('Gram') }}</th>
+                    <th>{{__('Send')}}</th>
+                </tr>
+            </thead>
+            <tbody id="same-fabrics"></tbody>
+        </table>
+    </div>
+</div>
+<hr>
 <div class="row">
     <div class="Ajaxdata col-md-12">
         <div class="p-0 table-responsive table-custom my-3">
@@ -695,10 +716,15 @@
         });
 
         $("#shiftName").change(function(e){
-            let department_id =  $(this).val();
+            let shift_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.fabrics') }}";
+            let godam_id = $("#godam_id").val();
             $.ajax({
-                url:geturl.replace(':id',department_id),
+                url : geturl,
+                data : {
+                    "shift_id" : shift_id,
+                    "godam_id" : godam_id,
+                },
                 beforeSend:function(){
                     console.log('Getting Fabrics');
                 },
@@ -710,6 +736,27 @@
                 }
             });
         });
+
+        $("#fabricNameId").change(function(e){
+            let fabric_name_id = $(this).val();
+            $.ajax({
+                url :" {{ route('get.fabric.same.name') }}",
+                method : "post",
+                data : {
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                   "fabric_name_id" : fabric_name_id
+                },
+                beforeSend:function(){
+                    console.log("getting data");
+                },
+                success:function(response){
+                    putsamefabricsontabledata(response)
+                    
+                },error:function(error){
+                    console.log(error);
+                }
+            });
+        })
         /**************************** Ajax Calls End **************************/
     });
 
@@ -764,9 +811,94 @@
             $("#fabricNameId").append(`<option value="${d.id}">${d.name}</option>`);
         });
     }
+
+    
+    function putsamefabricsontabledata(data){
+        console.log(data)
+        $("#same-fabrics").empty();
+        data.fabrics.forEach((d,index) => {
+            let tr = $("<tr></tr>").appendTo("#same-fabrics");
+            tr.append(`<td>${index+1}</td>`);
+            tr.append(`<td>${d.name}</td>`);
+            tr.append(`<td>${d.roll_no}</td>`);
+            tr.append(`<td>${d.gross_wt}</td>`);
+            tr.append(`<td>${d.net_wt}</td>`);
+            tr.append(`<td>${d.meter}</td>`);
+            tr.append(`<td>${d.average_wt}</td>`);
+            tr.append(`<td>${d.gram_wt}</td>`);
+            tr.append(`<td>
+                            <a class="btn btn-primary send_to_lower"  
+                                data-name='${d.name}' 
+                                data-gross_wt="${d.gross_wt}" 
+                                data-roll_no="${d.roll_no}"  
+                                data-id="${d.id}" 
+                                data-net_wt = "${d.net_wt}"
+                                data-meter = "${d.meter}"
+                                data-average_wt = "${d.average_wt}"
+                                data-gram_wt = "${d.gram_wt}" 
+                                data-bill_no = "${d.bill_no}"
+                                href="${d.id}">Send</a>
+                        </td>`);
+        }) 
+    }
     /**************************** Ajax functions **************************/
 
     /************************* Form Submission *************************/
+    $(document).on("click",".send_to_lower",function(e){
+        e.preventDefault()
+        let godam = $("#toGodam").val()
+        let plantType = $("#plantType").val()
+        let plantName = $("#plantName").val()
+        let shiftName = $("#shiftName").val()
+        let fabric_id = $(this).val()
+
+        let name = $(this).data("name")
+        let gross_wt = $(this).data("gross_wt")
+        let net_wt = $(this).data("net_wt")
+        let roll_no = $(this).data("roll_no")
+        let meter = $(this).data("meter")
+        let average_wt = $(this).data("average_wt")
+        let gram_wt = $(this).data("gram_wt")
+        let bill_no = $(this).data("bill_no")
+        let billDate = $("#billDate").val()
+        let id = $(this).data("id") 
+
+        console.log(godam,plantName,plantType,shiftName)
+
+        $.ajax({
+            url  : "{{ route('fabricSendReceive.send.unlaminated.revised') }}",
+            method : "post",
+            data:{
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "name" : name,
+                "gross_wt" : gross_wt,
+                "net_wt" : net_wt,
+                "roll_no" : roll_no,
+                "meter" : meter,
+                "average_wt" : average_wt,
+                "gram_wt" : gram_wt,
+                "bill_no" : bill_no,
+                "billDate" : billDate,
+                "godam" : godam,
+                "plantType" : plantType,
+                "plantName" : plantName,
+                "shiftName" : shiftName,
+                "fabric_id" : id
+            },
+            beforeSend:function(){
+                console.log("sending")
+            },
+            success:function(response){
+                emptytable();
+                callunlaminatedfabricajax();
+                emptyform();
+            },
+            error:function(error){
+                console.log("error",error);
+            }
+        })
+    })
+
     $(document).ready(function(){
         $(document).on('submit','#createRawMaterial',function(e){
             e.preventDefault();
@@ -783,9 +915,14 @@
             beforeSend:function(){
             },
             success:function(response){
-                emptytable();
-                callunlaminatedfabricajax();
-                emptyform();
+                console.log(response);
+                if(response.status == "200"){
+                    emptytable();
+                    callunlaminatedfabricajax();
+                    emptyform();
+                }else{
+                    alert(response.message_error)
+                }
             },
             error:function(error){
             }
@@ -805,16 +942,16 @@
     });
 
 
-    $("#fabricNameId").change(function(e){
-        getfabricsrelated_enable();
-        $("#rollnumberfabric").prop('required',false);
-        $("#rollnumberfabric").prop('disabled',true);
-    });
+    // $("#fabricNameId").change(function(e){
+    //     getfabricsrelated_enable();
+    //     $("#rollnumberfabric").prop('required',false);
+    //     $("#rollnumberfabric").prop('disabled',true);
+    // });
 
     $("#rollnumberfabric").keyup(function(e){
         getfabricsrelated_enable();
-        $("#fabricNameId").prop('disabled',true);
-        $("#fabricNameId").prop('required',false);
+        // $("#fabricNameId").prop('disabled',true);
+        // $("#fabricNameId").prop('required',false);
     });
 
     function getfabricsrelated_enable(){

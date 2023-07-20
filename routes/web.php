@@ -465,30 +465,35 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
     //fabric send receive contoller
-    /************* aile baki xa **************/
-        Route::get('/fabricSendReceive/create', 'FabricSendReceiveController@create')->name('fabricSendReceive.create');
-        Route::post('/fabricSendReceive/store', 'FabricSendReceiveController@store')->name('fabricSendReceive.store');
-    /************* aile baki xa **************/
-    Route::get('/fabricSendReceive/index', 'FabricSendReceiveController@index')->name('fabricSendReceive.index');
-    Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
-    Route::get('/fabricSendReceive/ajax/get/plantname/{id}', 'FabricSendReceiveController@getplantname')->name('fabricSendReceive.get.plantname');
-    Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
-    Route::post("fabric/send/unlaminated/store",[FabricSendReceiveController::class,'sendunlaminated'])->name("fabricSendReceive.send.unlaminated");
-    Route::get('fabric/send/unlaminated/delete/{id}',[FabricSendReceiveController::class,'sendunlaminateddelete'])->name('fabricSendReceive.send.unlaminated.delete');
-    //getting unlaminated into form
-    Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
-    Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+        /************* aile baki xa **************/
+            Route::get('/fabricSendReceive/create', 'FabricSendReceiveController@create')->name('fabricSendReceive.create');
+            Route::post('/fabricSendReceive/store', 'FabricSendReceiveController@store')->name('fabricSendReceive.store');
+        /************* aile baki xa **************/
+        Route::get('/fabricSendReceive/index', 'FabricSendReceiveController@index')->name('fabricSendReceive.index');
+        Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
+        Route::get('/fabricSendReceive/ajax/get/plantname/{id}', 'FabricSendReceiveController@getplantname')->name('fabricSendReceive.get.plantname');
+        Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
+        Route::post("fabric/send/unlaminated/store",[FabricSendReceiveController::class,'sendunlaminated'])->name("fabricSendReceive.send.unlaminated");
+        Route::get('fabric/send/unlaminated/delete/{id}',[FabricSendReceiveController::class,'sendunlaminateddelete'])->name('fabricSendReceive.send.unlaminated.delete');
+        Route::post("fabric/send/unlaminated/store/revised",[FabricSendReceiveController::class,'sendunlaminatedrevised'])->name("fabricSendReceive.send.unlaminated.revised");
 
-    Route::get('get/autoloader/godam/id/into/fsr/{godamId}',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
-    
-    //sending for lamination
-    // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
 
-    Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
+        //getting unlaminated into form
+        Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
+        Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+        Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name");  
 
-    Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
-    Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
-    Route::post('final/submit/fsr',[FabricSendReceiveController::class,'finalsubmitfsr'])->name("final.submit.fsr");
+        Route::get('get/autoloader/godam/id/into/fsr/{godamId}',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
+        
+        //sending for lamination
+        // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+
+        Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
+
+        Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
+        Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
+        Route::post('final/submit/fsr',[FabricSendReceiveController::class,'finalsubmitfsr'])->name("final.submit.fsr");
+    //fabric send receive contoller End
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
