@@ -294,10 +294,24 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('bagBundelling.index') }}"
-                        class="nav-link {{ request()->routeIs('bagBundelling.index') ? 'active' : '' }}">
+                    <a href="{{ route('bagBundelStock.index') }}"
+                        class="nav-link {{ request()->routeIs('bagBundelStock.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-chart-area"></i>
-                        <p>{{ __('Bundle Making') }}</p>
+                        <p>{{ __('Bundle Stock') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('bagSelling.index') }}"
+                        class="nav-link {{ request()->routeIs('bagSelling.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-chart-area"></i>
+                        <p>{{ __('Bundle Selling') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('bagSalesStock.index') }}"
+                        class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-chart-area"></i>
+                        <p>{{ __('Bag Sales Stock') }}</p>
                     </a>
                 </li>
                 <!-------------  Bag --------------------------->

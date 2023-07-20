@@ -82,23 +82,19 @@ class AppHelper
             return $receipt;
         }
     }
-
+    
     public static function getNepaliDate($date)
     {
         $splitDate = explode("-", $date);
         $cal = new Nepali_Calendar();
         $nep = $cal->eng_to_nep($splitDate[0], $splitDate[1], $splitDate[2]);
-        return 'drtyhvfgh';
-        return $nep["month"];
-       // return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' . $nep["date"]);
+        return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' .str_pad($nep["date"], 2, '0', STR_PAD_LEFT) );
     }
 
-    public static function getTodayNepaliDate($yy, $mm, $dd, $date)
+    public static function getTodayNepaliDate()
     {
-        $splitDate = explode("-", $date);
-        $cal = new Nepali_Calendar();
-        $nep = $cal->eng_to_nep($yy, $mm, $dd);
-        return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' . $nep["date"]);
+        $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
+        return getNepaliDate($currentDate);
     }
 
     // return formatted currency

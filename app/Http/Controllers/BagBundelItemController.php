@@ -29,8 +29,10 @@ class BagBundelItemController extends Controller
     }
 
     public function getBagBundelItemData(Request $request){
-        $bagBundelentry_id=BagBundelEntry::where('receipt_no',$request->receipt_no)->get('id')->first();
-        $bagBundelItems=BagBundelItem::with('group:id,name','bagBrand:id,name')->where('bag_bundel_entry_id',$bagBundelentry_id->id)
+        $bagBundelentry_id=BagBundelEntry::find($request->bagBundelEntry_id)->id;
+        //return  $bagBundelentry_id;
+        $bagBundelItems=BagBundelItem::with('group:id,name','bagBrand:id,name')
+        ->where('bag_bundel_entry_id',$bagBundelentry_id)
         ->get();
         return $bagBundelItems;
     }
@@ -49,20 +51,22 @@ class BagBundelItemController extends Controller
     {
         try{
         DB::beginTransaction();
+
         $bagBundelItem = BagBundelItem::find($bagBundelItemId);
+       // return $bagBundelItem->qty_pcs;
         $printingAndCuttingBagStock=PrintingAndCuttingBagStock::where('group_id',$bagBundelItem->group_id)
         ->where('bag_brand_id',$bagBundelItem->bag_brand_id)
         ->first();
         if($printingAndCuttingBagStock){
-            $printingAndCuttingBagStock->qty_in_kg +=$bagBundelItem->quantity_in_kg;
-            $printingAndCuttingBagStock->quantity_piece +=$bagBundelItem->quantity_Pcs;
+            $printingAndCuttingBagStock->quantity_piece =$printingAndCuttingBagStock->quantity_piece + $bagBundelItem->qty_pcs;
+           // return([$printingAndCuttingBagStock->quantity_piece, $bagBundelItem->quantity_Pcs]);
             $printingAndCuttingBagStock->save();
         }
         else{
             $stock = new PrintingAndCuttingBagStock();
             $stock->group_id= $bagBundelItem->group_id;
             $stock->bag_brand_id = $bagBundelItem->brand_bag_id;
-            $stock->qty_in_kg =$bagBundelItem->qty_kg;
+            // $stock->qty_in_kg =$bagBundelItem->qty_kg;
             $stock->quantity_piece = $bagBundelItem-> qty_pcs;
             $stock->save();
         }
@@ -73,51 +77,31 @@ class BagBundelItemController extends Controller
         }
     }
 
-     function getNepaliDate($date)
-    {
-        $splitDate = explode("-", $date);
-        $cal = new Nepali_Calendar();
-        $nep = $cal->eng_to_nep($splitDate[0], $splitDate[1], $splitDate[2]);
-        return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' . $nep["date"]);
-    }
     //for bundel number
-    function generateBagBundelNumber()
+    public function generateBagBundelNumber()
     {
-        $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
-        $nepaliDate = self::getNepaliDate($currentDate);
-
+        $nepaliDate = getTodayNepaliDate();
         // Extract the year, month, and day from the Nepali date
         // 2080-03-29-123
         $year = substr($nepaliDate, 0, 4);
         $month = substr($nepaliDate, 5, 2);
         $day = substr($nepaliDate, 8, 2);
-
         // Get the last invoice number from the database based on the current year and month
         $bundleItem =BagBundelItem::latest()->first();
-
         if($bundleItem){
             $bundleNo= substr($bundleItem->bundel_no, strrpos($bundleItem->bundel_no, '-') + 1);
-            $lastNumber = $bundleNo ? $bundleNo : 0;
+            $lastNumber = $bundleNo ? $bundleNo + 1 : 1;
         }else{
-           $bundleNo = $year . '-' . $month . '-' . $day . "-0";
-            $lastHyphenPos = strrpos($bundleNo, '-');
-            $lastNumber = intval(substr($bundleNo, $lastHyphenPos + 1));
-
-            $newNumber = $lastNumber + 1;
+            $lastNumber = 1;
         }
-
-
-        $newNumber = $lastNumber + 1;
-
         // If the month has changed, reset the last number to 1
-        // if (!$bundleItem && $month == substr($bundleItem->bundel_no, 5, 2)) {
-        //     $newNumber = 1;
-        // }
-
+        if ($bundleItem && $month != substr($bundleItem->bundel_no, 8, 2)) {
+            $lastNumber = 1;
+        }
         // Format the bundel number
-        return "BB-$year-$month-$day-$newNumber";
-
+        return "BB-$year-$month-$day-$lastNumber";
     }
+
     /**
      * Store a newly created resource in storage.
      *

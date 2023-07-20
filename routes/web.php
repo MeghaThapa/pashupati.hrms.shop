@@ -41,6 +41,7 @@ use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
+use App\Http\Controllers\BagSellingItemController;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -984,4 +985,48 @@ Route::controller(BagBundelItemController::class)
     Route::delete("deleteBagBundelItem/{bagBundelItemId}","deleteBagBundelItem")->name('bagBundelItem.deleteBagBundelItem');
 });
 
+Route::controller(BagBundelStockController::class)
+->prefix('bagBundelStock')
+->group(function(){
+    Route::get("index","index")->name('bagBundelStock.index');
+    Route::get("bagBundellingYajraDatatables","bagBundellingYajraDatatables")->name('bagBundelStock.bagBundellingYajraDatatables');
+});
+
 /**********************Bundelling ends***************************/
+
+/*****************************Bag Selling start**********************************/
+Route::controller(BagSellingEntryController::class)
+->prefix('bagSelling')
+->group(function(){
+    Route::get("index","index")->name('bagSelling.index');
+    Route::get("create","create")->name('bagSelling.create');
+    Route::post("store","store")->name('bagSelling.store');
+    Route::get("getBagBrand","getBagBrand")->name('bagSelling.getBagBrand');
+    Route::get("getBundleNo","getBundleNo")->name('bagSelling.getBundleNo');
+    Route::get("getPcsWeightAvg","getPcsWeightAvg")->name('bagSelling.getPcsWeightAvg');
+    Route::get("bagSellingYajraDatatables","bagSellingYajraDatatables")->name('bagSelling.bagSellingYajraDatatables');
+    Route::get("edit/{bagSellingEntry_id}","edit")->name('bagSellingEntry.edit');
+    Route::post("update/{bagSellingEntry_id}","update")->name('bagSellingEntry.update');
+});
+
+
+Route::controller(BagSalesStockController::class)
+->prefix('bagSalesStock')
+->group(function(){
+    Route::get("index","index")->name('bagSalesStock.index');
+     Route::get("bagSalesStockYajraDatatables","bagSalesStockYajraDatatables")->name('bagSalesStock.bagSalesStockYajraDatatables');
+});
+
+
+Route::controller(BagSellingItemController::class)
+->prefix('bagSellingItem')
+->group(function(){
+
+     Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
+     Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
+     Route::post("store","store")->name('bagSellingItem.store');
+
+});
+Route::post("bagSellingItem/saveEntireBagSellingEntry",[BagSellingItemController::class,"saveEntireBagSellingEntry"])->name('bagSellingItem.saveEntireBagSellingEntry');
+
+/*****************************Bag Selling end************************************/

@@ -151,13 +151,11 @@
 
         $('#groupId').on('select2:select', function(e) {
             let group_id = e.params.data.id;
-            //  console.log('group_id', group_id);
             getBagBrand(group_id);
         });
 
         $('#brandBagId').on('select2:select', function(e) {
             let brand_bag_id = e.params.data.id;
-            //console.log('brandBagId', brand_bag_id);
             let group_id = document.getElementById('groupId').value
             getAvailableStock(brand_bag_id, group_id);
         });
@@ -169,16 +167,18 @@
         quantityInPcs.addEventListener('input', averageWeight);
 
         function getBagBundellingItemData() {
+            let bagBundelEntry_id = {!! json_encode($bagBundelEntry->id) !!}
             return new Promise(function(resolve, reject) {
-                let receipt_number = document.getElementById('receiptNumber').value;
+
                 $.ajax({
                     url: "{{ route('bagBundelItem.getBagBundelItemData') }}",
                     method: 'post',
                     data: {
                         _token: "{{ csrf_token() }}",
-                        receipt_no: receipt_number,
+                        bagBundelEntry_id: bagBundelEntry_id,
                     },
                     success: function(response) {
+
                         response.forEach(function($item) {
                             setIntoTable($item)
                         })
@@ -240,11 +240,6 @@
             let quantity_Pcs = form.elements['quantity_in_pcs'].value;
             let avg_weight = form.elements['avg_weight'].value;
             let bundel_no = form.elements['bundel_no'].value;
-            // let quantity_Pcs_cal = parseInt(form.elements['quantity_in_pcs'].value);
-            // let bundle_pcs_cal = parseInt(form.elements['bundle_pcs'].value);
-            // if (calculateBundles(quantity_Pcs_cal, bundle_pcs_cal) == false) {
-            //     return false;
-            // }
             $.ajax({
                 url: "{{ route('bagBundelItem.store') }}",
                 method: 'post',
@@ -262,6 +257,10 @@
                     console.log('output', response);
                     setIntoTable(response);
                     deleteEventBtn();
+                    setTimeout(function() {
+                        //  updateBundleNo();
+                    }, 3000);
+
                 },
                 error: function(xhr, status, error) {
                     setErrorMsg(xhr.responseJSON.message);
@@ -321,11 +320,10 @@
         function deleteEventBtn() {
 
             let deleteButtons = document.getElementsByClassName('dltBagBundelItem');
-            //console.log(deleteButtons);
             for (let i = 0; i < deleteButtons.length; i++) {
                 deleteButtons[i].addEventListener('click', function(event) {
-                    console.log('sdfessdfe');
                     let bagBundelingItemId = this.getAttribute('data-id');
+
                     new swal({
                         title: "Are you sure?",
                         text: "Do you want to delete Item.",
@@ -348,6 +346,7 @@
                                 success: function(response) {
                                     removeAllTableRows('bagBundellingTable');
                                     refresh();
+                                    // updateBundleNo();
                                 },
                                 error: function(result) {
                                     new swal({
@@ -378,6 +377,8 @@
             }
         }
 
+
+
         function getBagBrand(group_id) {
             $.ajax({
 
@@ -388,7 +389,6 @@
                     group_id: group_id,
                 },
                 success: function(response) {
-                    // console.log('bag brand of bundelling', response);
                     $('#danaGroupId').prepend(
                         "<option value='' disabled selected>Select required data</option>");
                     response.brandBags.forEach(function(item) {

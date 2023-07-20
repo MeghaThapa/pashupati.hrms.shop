@@ -330,8 +330,8 @@
                     <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
                         placeholder="{{ __('Purchase Note') }}">
                         @if ($storein->note)
-{{ $storein->note }}
-@endif
+                {{ $storein->note }}
+                @endif
                     </textarea>
                     @error('note')
                         <span class="invalid-feedback" role="alert">
