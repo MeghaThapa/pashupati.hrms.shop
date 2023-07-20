@@ -92,11 +92,43 @@ class FabricSendReceiveController extends Controller
         }
     }
 
-    public function getfabrics(Request $request){
-        if($request->ajax()){
-            $fabrics = FabricStock::where('status','1')->get();
+    // public function getfabrics(Request $request){
+    //     if($request->ajax()){
+
+    //         $fabrics = [];
+
+    //         $getAllfabrics = FabricStock::where('status','1')->get();
+                       
+    //         foreach($getAllfabrics as $data){
+    //             $fabric_name = $data->name;
+    //             if(!in_array($fabric_name,$fabrics)){
+    //                 array_push($fabrics,$data);
+    //             }
+    //         }
+    //         return response([
+    //             'fabrics' => $fabrics
+    //         ]);
+    //     }
+    // }
+
+    public function getfabrics(Request $request)
+    {
+        if ($request->ajax()) {
+            $getAllfabrics = FabricStock::where('status', '1')->where("godam_id",$request->godam_id)->get();
+            $uniqueFabrics = $getAllfabrics->unique('name');
             return response([
-                'fabrics' => $fabrics
+                'fabrics' => $uniqueFabrics->values()->all()
+            ]);
+        }
+    }
+
+    public function getfabricwithsamename(Request $request){
+        if($request->ajax()){
+            $fabric_name_id = $request->fabric_name_id;
+            $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
+            $fabrics = FabricStock::where("name",$fabric_name)->get();
+            return response()->json([
+                "fabrics" => $fabrics
             ]);
         }
     }
@@ -104,35 +136,113 @@ class FabricSendReceiveController extends Controller
     public function sendunlaminated(Request $request){
         // dd('lol');
         //return $request->data;
+        // if($request->ajax()){
+        //     $data = [];
+        //     parse_str($request->data,$data);
+           
+        //     $fabricDetails = Fabric::where('id',$data['fabric_name_id'])->first();
+        //     $name = $fabricDetails->name;
+        //     $roll_number = $fabricDetails->roll_no;
+        //     $gross_weight = $fabricDetails->gross_wt;
+        //     $net_wt = $fabricDetails->net_wt;
+        //     $meter = $fabricDetails->meter;
+        //     $gram = $fabricDetails->gram_wt;
+        //     $avg = $fabricDetails->average_wt;
+
+        //     try{
+        //         DB::beginTransaction();
+
+        //         UnlaminatedFabric::create([
+        //             'bill_number' => $data['bill_number'],
+        //             'bill_date' => $data['bill_date'],
+        //             'fabric_id' =>$data['fabric_name_id'] ,
+        //             'roll_no' => $roll_number ,
+        //             'gross_wt' => $gross_weight ,
+        //             'net_wt' => $net_wt,
+        //             'meter' => $meter,
+        //             'average' => $avg,
+        //             'gram' => $gram,
+        //             'department_id' =>$data['to_godam_id'],
+        //             'planttype_id' => $data['plant_type_id'],
+        //             'plantname_id' =>  $data['plant_name_id']
+        //         ]);
+
+        //         DB::commit();
+        //     }catch(Exception $e){
+        //         DB::rollBack();
+        //         return response([
+        //             "message" => "Something went wrong!{$e->getMessage()}"
+        //         ]);
+        //     }
+        // }
+
+       
         if($request->ajax()){
             $data = [];
             parse_str($request->data,$data);
-           
-            $fabricDetails = Fabric::where('id',$data['fabric_name_id'])->first();
-            $name = $fabricDetails->name;
-            $roll_number = $fabricDetails->roll_no;
-            $gross_weight = $fabricDetails->gross_wt;
-            $net_wt = $fabricDetails->net_wt;
-            $meter = $fabricDetails->meter;
-            $gram = $fabricDetails->gram_wt;
-            $avg = $fabricDetails->average_wt;
+            
+            $bill_number = $data['bill_number'];
+            $bill_date = $data['bill_date'];
+            $to_godam_id = $data['to_godam_id'];
+            $planttype_id = $data['plant_type_id'];
+            $plantname_id =  $data['plant_name_id'];
+            $roll_number = $data['roll_number'];
+            
+            $details = Fabric::where("roll_no",$roll_number)->first();
+            try{
+                UnlaminatedFabric::create([
+                    'bill_number' => $bill_number,
+                    'bill_date' => $bill_date,
+                    'fabric_id' =>$details->id,
+                    'roll_no' => $roll_number ,
+                    'gross_wt' => $details->gross_wt ,
+                    'net_wt' => $details->net_wt,
+                    'meter' => $details->meter,
+                    'average' => $details->average_wt,
+                    'gram' => $details->gram_wt,
+                    'department_id' =>$to_godam_id,
+                    'planttype_id' => $planttype_id,
+                    'plantname_id' =>  $plantname_id
+                ]);
+            }catch(Exception $e){
+                return response(["message_error" => $e->getMessage()]);
+            }
+        }
+    }
+
+    public function sendunlaminatedrevised(Request $request){
+        if($request->ajax()){
+
+            $gram_wt = $request->gram_wt;
+            $net_wt = $request->net_wt;
+            $gross_wt  =  $request->gross_wt;
+            $bill_date =  $request->billDate;
+            $bill_no = $request->bill_no;
+            $meter = $request->meter;
+            $average_wt = $request->average_wt;
+            $godam = $request->godam;
+            $plantName = $request->plantName;
+            $plantType = $request->plantType;
+            $fabric_id = $request->fabric_id;
+            $roll_number = $request->roll_no;
 
             try{
                 DB::beginTransaction();
 
                 UnlaminatedFabric::create([
-                    'bill_number' => $data['bill_number'],
-                    'bill_date' => $data['bill_date'],
-                    'fabric_id' =>$data['fabric_name_id'] ,
+                    'bill_number' => $bill_no,
+                    'bill_date' => $bill_date,
+                    'fabric_id' =>$fabric_id ,
                     'roll_no' => $roll_number ,
-                    'gross_wt' => $gross_weight ,
+                    'gross_wt' => $gross_wt ,
                     'net_wt' => $net_wt,
                     'meter' => $meter,
-                    'average' => $avg,
-                    'gram' => $gram,
-                    'department_id' =>$data['to_godam_id'],
-                    'planttype_id' => $data['plant_type_id'],
-                    'plantname_id' =>  $data['plant_name_id']
+                    'average' => $average_wt,
+                    'gram' => $gram_wt,
+                    'department_id' =>$godam,
+                    'planttype_id' => $plantType,
+                    'plantname_id' =>  $plantName
+                    
                 ]);
 
                 DB::commit();
@@ -144,7 +254,9 @@ class FabricSendReceiveController extends Controller
             }
         }
 
+       
     }
+
     public function getunlaminated(){
         $data = UnlaminatedFabric::where('status','pending')->with('fabric')->get();
         if(count($data) != 0){
