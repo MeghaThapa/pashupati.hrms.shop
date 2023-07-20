@@ -601,7 +601,7 @@ class FabricSendReceiveController extends Controller
                     $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)
                             ->where("from_godam_id",$autoloader_godam_selected)                
                             ->first();
-                    $presentQuantity = $stock->quantity;
+                    $presentQuantity = $stock->quantity; 
                     $deduction = $presentQuantity - $consumption;
 
                     if($deduction == 0){
