@@ -391,6 +391,7 @@
         </div>
         <div class="card-footer">
             <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
+            <input type="hidden" name="billno" class="form-control" id="billno" value="{{$receipt_no}}" readonly>
             <button class="btn btn-primary" disabled id="finalUpdate">Update</button>
         </div>
     </div>
@@ -638,6 +639,7 @@
       let roalcoast = $("#roalcoast").val();
       let strip = $("#strip").val();
       let godam_id = $("#toGodam").val();
+      let bill = $("#billno").val();
       // console.log(godam_id);
       // debugger;
 
@@ -660,7 +662,8 @@
                   "danaNameID" : danaNameId,
                   "consumption" : trimmedConsumption,
                   "total_waste" : trimmedTotalWaste,
-                  "selectedDanaID" : selectedDanaID
+                  "selectedDanaID" : selectedDanaID,
+                  "bill" : bill
               },
               beforeSend:function(){
                   console.log("Before Send");

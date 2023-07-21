@@ -44,8 +44,8 @@ class GroupController extends Controller
         $group->status= $request->status;
         $group->save();
        return response()->json([
-                'message' =>'group Created Successfully',
-                'group' => $group,
+                'message' =>'Tripal Name Created Successfully',
+                // 'group' => $group,
             ],201);
     }
 

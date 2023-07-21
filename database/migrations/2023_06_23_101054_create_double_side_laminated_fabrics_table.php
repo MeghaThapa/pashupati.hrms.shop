@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('bill_number');
             $table->string('bill_date');
             $table->enum("type_lam",["single","double"])->default("single");
-            $table->enum("status",["sent","pending"])->default("pending");
+            $table->enum("status",["sent","pending","completed"])->default("pending");
             $table->timestamps();
         });
     }

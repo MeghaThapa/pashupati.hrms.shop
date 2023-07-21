@@ -791,9 +791,6 @@
             fabric_id = $('#fabricNameId').val(),
             roll = $('#rollnumberfabric').val();
 
-            // console.log(formData['bill_number']);
-            // console.log(action);
-            debugger;
            $.ajax({
             url : "{{ route('tripal.getFabric') }}",
             method: 'get',
@@ -809,11 +806,7 @@
             beforeSend:function(){
                 console.log('sending form');
             },
-            // success:function(response){
-            //     emptytable();
-            //     callunlaminatedfabricajax();
-            //     emptyform();
-            // },
+          
             success:function(response){
                 emptytable();
                 if(response.response != '404'){
@@ -830,40 +823,7 @@
         });
     })
 
-    // function callunlaminatedfabricajax(){
-    //     // $("#fabricNameId").change(function(e){
-    //     //     let fabric_id =  $(this).val();
-    //     //     let data = fabric_id;
-
-    //     // });
-    //     var token = $('meta[name="csrf-token"]').attr('content');
-    //     // var data = fabric_id;
-    //     $.ajax({
-    //         url : "{{ route('tripal.getFabric') }}",
-    //         method: 'get',
-    //         type:"POST",
-    //         dataType:"JSON",
-    //         data:{
-    //             _token: token,
-    //             fabric_id: '1',
-    //         },
-           
-    //         beforeSend:function(){
-    //             console.log('getting unlaminated fabric');
-    //         },
-    //         success:function(response){
-    //             emptytable();
-    //             if(response.response != '404'){
-    //                 filltable(response);
-    //             }else{
-    //                 console.log(response.response);
-    //             }
-                
-    //         },error:function(error){
-    //             console.log(error);
-    //         }
-    //     });
-    // }
+ 
     /************************* Form Submission *************************/
 
     /************************* Other Functionalities ***********************/
@@ -898,11 +858,6 @@
         $('#rawMaterialItemTbody').empty();
     }
 
-    $(document).on('click','#deletesendforlamination',function(e){
-        e.preventDefault();
-        let id = $(this).attr('data-id');
-        deletefromunlamintedtable(id);
-    });
 
     function filltable(data){
         // console.log(data.response);
@@ -930,44 +885,6 @@
         $("#createRawMaterial")[0].reset();
     }
 
-    function deletefromunlamintedtable(data){
-        $.ajax({
-            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
-            method:'get',
-            beforeSend:function(){
-                console.log('deleteing from unlamintaed table');
-            },
-            success:function(response){
-                if(response.response == '200'){
-                    emptytable();
-                    callunlaminatedfabricajax();
-                }else if(response.response == '400'){
-                    alert('Not Allowed OR Data is no longer there');
-                }
-            },
-            error:function(error){
-                console.log(error);
-            }
-        });
-    }
-
-    $(".discard").click(function(e){
-        $.ajax({
-            url:"{{ route('discard') }}",
-            method:"get",
-            success:function(response){
-                if(response.message == "200"){
-                    location.reload(true);
-                }
-                else{
-                    alert(response.message);
-                }
-            },
-            error:function(response){
-                console.log(response);
-            }
-        });
-    });
     /************************* Other Functionalities ***********************/
 
     /************************* Send for lamination **************************/

@@ -298,9 +298,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6 float-right ml-3">
-        <button class="btn btn-danger discard">Discard</button>
-    </div>
+    
 </div>
 <hr>
 <div class="row">
