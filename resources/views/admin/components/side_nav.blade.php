@@ -183,13 +183,7 @@
                     </a>
                 </li>
 
-                 <li class="nav-item">
-                      <a href="{{ route('nonwovenfabrics-receiveentrystock.index') }}"
-                          class="nav-link {{ request()->is('admin/nonwovenfabrics-receiveentrystock*') ? 'active' : '' }}">
-                          <i class="nav-icon fas fa-tags"></i>
-                          <p>Non Woven Fabric Received EntryStock</p>
-                      </a>
-                  </li>
+                 
 
                  {{-- <li class="nav-item">
                       <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
