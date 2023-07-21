@@ -39,6 +39,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('nonwovenfabric_id');
             $table->foreign('nonwovenfabric_id')->references("id")->on('non_woven_fabrics')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum("status",["sent","pending","completed"])->default("sent");
 
             $table->timestamps();
         });

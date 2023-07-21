@@ -18,6 +18,8 @@ use App\Models\AutoLoadItemStock;
 use App\Models\DanaName;
 use Maatwebsite\Excel\Facades\Excel;
 use Response;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\AppHelper;
 
 class FabricNonWovenReceiveEntryController extends Controller
 {
@@ -45,11 +47,11 @@ class FabricNonWovenReceiveEntryController extends Controller
         $shifts = Shift::get();
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
 
-        $getnetweight = FabricNonWovenReciveEntry::sum('net_weight');
+        $getnetweight = FabricNonWovenReciveEntry::where('status','sent')->sum('net_weight');
         // dd($getsumnetweight);
       
         // dd($nonwovenfabrics);
-        $receipt_no = "NFE"."-".getNepaliDate(date('Y-m-d'));
+        $receipt_no = AppHelper::getNonWovenReceiveEntryReceiptNo();
         $dana = AutoLoadItemStock::get();
         return view('admin.nonwovenfabrics-receiveentry.create',compact('godams','shifts','nonwovenfabrics','receipt_no','getnetweight','dana'));
     }
@@ -110,44 +112,68 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function storeWaste(Request $request)
     {
-        // dd($request);
-        $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
 
-        $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
-        dd($stock);
+        if($request->ajax()){
+            // dd($request);
+            // dd('kk');
+            $consumption = $request->consumption;
+            $danaNameID = $request->danaNameID;
+            $fabric_waste = $request->fabric_waste;
+            $polo_waste = $request->polo_waste;
+            $selectedDanaID = $request->selectedDanaID;
+            $total_waste  = $request->total_waste;
+            $lamFabricToDelete = [];
+            $lamFabricTempToDelete = [];
+            $department = [];
+
+            // dd($department);
+
+            try{
+                DB::beginTransaction();
+
+                 $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
+
+                 $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
+                 // dd($stock);
 
 
-        $presentQuantity = $stock->quantity;
-        $deduction = $presentQuantity - $request->consumption;
-        // dd($deduction);
+                 $presentQuantity = $stock->quantity;
+                 $deduction = $presentQuantity - $request->consumption;
+                 // dd($deduction);
 
-        if($deduction == 0){
-            $stock->delete();
+                 // if($deduction == 0){
+                 //     $stock->delete();
+                 // }
+                 // else{
+                 //     $stock->update([
+                 //         'quantity' => $deduction
+                 //     ]);
+                 // }
+
+                 $getsinglesidelaminatedfabric = FabricNonWovenReciveEntry::where('receive_no',$request->bill)->update(['status' => 'completed']); 
+
+                 $getdoublesidelaminatedfabric = FabricNonWovenReceiveEntryStock::where('receive_no',$request->bill)->update(['status' => 'completed']); 
+
+               
+
+                DB::commit();
+
+                return response(200);
+            }catch(Exception $e){
+                DB::rollBack();
+                return response([
+                    "exception" => $e->getMessage(),
+                ]);
+            }
         }
-        else{
-            $stock->update([
-                'quantity' => $deduction
-            ]);
-        }
-
-       // $wastage = Wastages::create([
-       //  'name' => 'nonwoven',
-      
-       // ]);
-
-       // $wastage_stock = WasteStock::create([
-       //  'waste_id' => $wastage->id,
-       //  'department_id' => $request->godam_id,
-       //  'quantity_in_kg' => $request->total_waste,
-       
-       // ]);
+ 
 
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
 
     public function getnonwovenentries(){
         // return response(['response'=> '404']);
-        $data = FabricNonWovenReciveEntry::with('nonfabric')->get();
+        $data = FabricNonWovenReciveEntry::with('nonfabric')->where('status','sent')->get();
         // dd($data);
         if(count($data) != 0){
             return response(['response'=>$data]);

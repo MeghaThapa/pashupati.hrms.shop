@@ -10,6 +10,7 @@ use App\Models\Storeout;
 use App\Models\Singlesidelaminatedfabric;
 use App\Models\DoubleSideLaminatedFabricStock;
 use App\Models\FinalTripalStock;
+use App\Models\FabricNonWovenReceiveEntryStock;
 use Carbon\Carbon;
 
 class AppHelper
@@ -206,6 +207,23 @@ class AppHelper
             return $receipt;
         } else {
             $receipt = 'FTRP'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
+    }
+
+    public static function getNonWovenReceiveEntryReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+        // dd($todayEnglishDate,$date);
+
+        $singletripal = FabricNonWovenReceiveEntryStock::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'NFRE'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'NFRE'.'-'.$date . '-' . $singletripal->id + 1;
             return $receipt;
         }
     }

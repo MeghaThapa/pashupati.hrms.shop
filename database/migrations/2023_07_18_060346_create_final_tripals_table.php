@@ -43,7 +43,7 @@ return new class extends Migration
             $table->string('average_wt');
             $table->string('bill_number');
             $table->string('bill_date');
-            $table->enum("status",["sent","pending"])->default("pending");
+            $table->enum("status",["sent","pending","completed"])->default("pending");
             $table->string('date_en');
             $table->string('date_np');
             $table->timestamps();
