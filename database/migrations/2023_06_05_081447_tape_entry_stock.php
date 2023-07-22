@@ -37,6 +37,7 @@ return new class extends Migration
                 $table->string('loading');
                 $table->string('running');
                 $table->string('bypass_wast');
+                $table->enum("cause",["opening","transaction"])->default('transaction');
                 // $table->string('dana_in_kg');
 
                 $table->timestamps();

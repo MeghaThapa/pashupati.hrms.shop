@@ -303,6 +303,15 @@
                         <p>{{ __('Storeout') }}</p>
                     </a>
                 </li>
+
+                <li class="nav-header text-bold">{{ __('Tape') }}</li>
+                <li class="nav-item">
+                    <a href="{{ route('tape.opening') }}"
+                        class="nav-link {{ request()->routeIs('tape.opening') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-random"></i>
+                        <p>{{ __('Tape Opening') }}</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                             <a href="{{ route('tape.entry') }}"
                                 class="nav-link {{ request()->is('admin/tape-entry') ? 'active' : '' }}">

@@ -20,6 +20,35 @@ use App\Models\TapeEntry;
 
 class TapeEntryController extends Controller
 {
+    public function openingcreate(){
+        $godam = Godam::where("status","active")->get(); 
+        return view("admin.TapeEntry.opening")->with([
+            "godam" => $godam,
+        ]);
+    }
+    public function openingstore(Request $request){
+        $request->validate([
+            "tape_quantity" => "numeric|required",
+            "opening_date" => "required",
+            "to_godam" => "required",
+            "receipt_number" => "required"
+        ]);
+        
+        TapeEntryStockModel::create([
+            "toGodam_id" => $request->to_godam,
+            "tape_type" => "Tape1",
+            "tape_qty_in_kg" => $request->tape_quantity,
+            "total_in_kg" => $request->tape_quantity,
+            'loading'=> "0",
+            'running' => '0',
+            'bypass_wast' => "0",
+            "cause" => "opening"
+        ]);
+        return  back()->with([
+            "message" => "Tape Opening added successfully"
+        ]);
+    }
+
     public function index(){
         $tapeentries = TapeEntry::orderBy('updated_at','DESC')->get();
         return view('admin.TapeEntry.index',compact('tapeentries'));
