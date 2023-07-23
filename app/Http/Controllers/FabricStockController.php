@@ -12,9 +12,43 @@ use App\Models\Godam;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use DB;
+use App\Imports\FabricOpeningImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Throwable;
 
 class FabricStockController extends Controller
 {
+    public function openingCreate(){
+        $godam = Godam::where("status","active")->get();
+        return view("admin.fabric.fabric_opening.index")->with([
+            "godam" => $godam
+        ]);
+    }
+    public function openingStore(Request $request){
+        $request->validate([
+            "fabric_opening_date" => "required",
+            "godam" => "required",
+            "file" => "required|mimes:csv,xlsx,xls,xltx,xltm"
+        ]);
+
+        $file = $request->file("file");
+        $godam = $request->godam;
+        $type = $request->type;
+
+        try{
+            $fabricImport = new FabricOpeningImport($godam,$type);
+            $import = Excel::import($fabricImport,$file);
+            $importException = $fabricImport->getExceptionMessage();
+            if($importException){
+                return $importException->getMessage();
+            }else{
+                return "Import Successful";
+            }
+            
+        }catch(Throwable $th){
+            return $th->getMessage();
+        }
+    }
     public function index()
     {
        $helper= new AppHelper();
