@@ -125,7 +125,13 @@
                     </a>
                 </li>
 
-                <li class="nav-header text-bold">{{ __('Fabric') }}</li>
+            <li class="nav-header text-bold">{{ __('Fabric') }}</li>
+            <li class="nav-item">
+                    <a href="{{ route('fabric.opening') }}" class="nav-link {{ request()->routeIs('admin.fabric.opening') ? "active" : ""}}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric Opening</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('fabric-groups.index') }}"
                         class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">

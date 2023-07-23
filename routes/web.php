@@ -515,6 +515,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
+    //fabric opening
+    Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
+    Route::post("fabric/opening/store",[FabricStockController::class,"openingStore"])->name("fabric.opening.store");
+
     //fabric stock
 
     Route::get('fabrics/getstock/index',[FabricStockController::class,'index'])->name('fabric-stock.index');
