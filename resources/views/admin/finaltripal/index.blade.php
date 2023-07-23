@@ -994,7 +994,7 @@ sendforlamination
         deletefromunlamintedtable(id);
     });
 
-    function filltable(data){
+    function repo(data){
         // console.log(data,data.godam_id);
         // console.log(data.response,data);
         data.response.forEach(d => {
@@ -1081,7 +1081,7 @@ sendforlamination
             
                // console.log(data);
 
-            debugger;
+            // debugger;
             $.ajax({
                 url : "{{ route('tripalEntryStore') }}",
                 method: "post",
@@ -1311,7 +1311,7 @@ sendforlamination
                 // }
              
                 if (consumption.trim() === '') {
-                    alert("add quantity");
+                    // alert("add quantity");
                 }else{
                     $("#totl_dana").val(consumption);
 

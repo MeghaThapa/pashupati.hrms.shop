@@ -125,6 +125,33 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('openingtripal.index') }}"
+                        class="nav-link {{ request()->is('admin/openingtripal*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>{{ __('Opening single') }}</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('openingdoubletripal.index') }}"
+                        class="nav-link {{ request()->is('admin/openingdoubletripal*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>{{ __('Opening Double') }}</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('openingfinaltripal.index') }}"
+                        class="nav-link {{ request()->is('admin/openingfinaltripal*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>{{ __('Opening FinalTripal') }}</p>
+                    </a>
+                </li>
+
+
+                
+
             <li class="nav-header text-bold">{{ __('Fabric') }}</li>
             <li class="nav-item">
                     <a href="{{ route('fabric.opening') }}" class="nav-link {{ request()->routeIs('admin.fabric.opening') ? "active" : ""}}">
