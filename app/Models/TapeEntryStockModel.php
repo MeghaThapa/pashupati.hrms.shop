@@ -16,7 +16,7 @@ class TapeEntryStockModel extends Model
         'id','tape_entry_id','toGodam_id','plantType_id','plantName_id',
         'shift_id','tape_type','tape_qty_in_kg','total_in_kg',
         'loading','running','bypass_wast','dana_in_kg',
-        'created_at','updated_at'
+        'created_at','updated_at',"cause"
     ];
 
     public function tapeentry(){

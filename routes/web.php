@@ -516,6 +516,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
+    //fabric opening
+    Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
+    Route::post("fabric/opening/store",[FabricStockController::class,"openingStore"])->name("fabric.opening.store");
+
     //fabric stock
 
     Route::get('fabrics/getstock/index',[FabricStockController::class,'index'])->name('fabric-stock.index');
@@ -931,6 +935,9 @@ Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajax
     // tapeentrystock
 Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
 /**************tape entry end*************/
+Route::get("tape/opening",[TapeEntryController::class,"openingcreate"])->name("tape.opening");
+Route::post("tape/opening/store",[TapeEntryController::class,"openingstore"])->name("tape.opening.store");
+
 
 //tapeentry stock
 Route::get('tape-entry/getstock/index',[TapeEntryStockController::class,'index'])->name('tapeentry-stock.index');

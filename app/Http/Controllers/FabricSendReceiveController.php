@@ -597,7 +597,6 @@ class FabricSendReceiveController extends Controller
 
             try{
                 DB::beginTransaction();
-
                 //deduction
                     $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)
                             ->where("from_godam_id",$autoloader_godam_selected)                
