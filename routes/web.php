@@ -561,7 +561,21 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
-    Route::get('openingtripal/getFabricType/List','Tripal\OpeningTripalController@getFabricTypeList')->name('openingtripal.getTripalFabricTypeList');
+
+    Route::post('openingtripal/getFabricType/List/storeData','Tripal\OpeningTripalController@storeData')->name('openingtripal.storeSingleStock');
+
+    Route::get('openingtripal/getFabricType/List/allData','Tripal\OpeningTripalController@getAllOpeningData')->name('openingtripal.getAllOpeningTripal');
+
+    //doubletriplaopening
+
+    Route::get('openingdoubletripal','Tripal\OpeningTripalController@getOpeningDoubleTripalIndex')->name('openingdoubletripal.index');
+
+    Route::post('openingdoubletripal/storeData','Tripal\OpeningTripalController@storeDoubleData')->name('openingdoubletripal.storeDoubleStock');
+
+    //final tripal
+    Route::get('openingfinaltripal','Tripal\OpeningTripalController@getOpeningFinalTripalIndex')->name('openingfinaltripal.index');
+    Route::post('openingfinaltripal/storeData','Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
+
 
 
 

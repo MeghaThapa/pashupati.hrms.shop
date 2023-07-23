@@ -994,7 +994,7 @@ sendforlamination
         deletefromunlamintedtable(id);
     });
 
-    function filltable(data){
+    function repo(data){
         // console.log(data,data.godam_id);
         // console.log(data.response,data);
         data.response.forEach(d => {

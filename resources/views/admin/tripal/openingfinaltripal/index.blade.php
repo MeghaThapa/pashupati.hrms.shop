@@ -334,6 +334,7 @@
     /************************* Form Submission *************************/
     $(document).ready(function(){
 
+
         $(document).on('click','#getfabricsrelated',function(e){
             e.preventDefault();
 
@@ -350,7 +351,7 @@
             // debugger;
 
            $.ajax({
-            url : "{{ route('openingtripal.storeSingleStock') }}",
+            url : "{{ route('openingfinaltripal.storeFinalStock') }}",
             method: 'post',
             dataType:"JSON",
             data:{
@@ -373,8 +374,9 @@
             },
        
             success:function(response){
+                alert('hlelo');
+                location.reload(true);
                 emptytable();
-                location.reload();
                 // if(response.response != '404'){
                 //     filltable(response);
                 // }else{

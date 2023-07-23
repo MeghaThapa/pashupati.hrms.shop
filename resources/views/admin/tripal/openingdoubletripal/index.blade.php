@@ -350,7 +350,7 @@
             // debugger;
 
            $.ajax({
-            url : "{{ route('openingtripal.storeSingleStock') }}",
+            url : "{{ route('openingdoubletripal.storeDoubleStock') }}",
             method: 'post',
             dataType:"JSON",
             data:{
