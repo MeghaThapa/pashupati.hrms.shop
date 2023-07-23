@@ -261,14 +261,14 @@ class FinalTripalController extends Controller
                     $presentQuantity = $stock->quantity;
                     $deduction = $presentQuantity - $consumption;
 
-                    // if($deduction == 0){
-                    //     $stock->delete();
-                    // }
-                    // else{
-                    //     $stock->update([
-                    //         "quantity" => $deduction
-                    //     ]);
-                    // }
+                    if($deduction == 0){
+                        $stock->delete();
+                    }
+                    else{
+                        $stock->update([
+                            "quantity" => $deduction
+                        ]);
+                    }
 
                     $getsinglesidelaminatedfabric = TripalEntry::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']); 
 

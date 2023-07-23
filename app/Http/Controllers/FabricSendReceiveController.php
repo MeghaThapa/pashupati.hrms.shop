@@ -70,13 +70,14 @@ class FabricSendReceiveController extends Controller
             $department_id =  $request->id;
 
             $planttype = ProcessingStep::where('godam_id',$department_id)->get();
-            // $godamfabric = Fabric::where('godam_id',$department_id)->distinct()->get(['name','id']);
-            $godamfabric = Fabric::where('godam_id',$department_id)->distinct()->get(['name','id']);
-            // $planttype = ProcessingStep::where('godam_id',$department_id)->where("name","like","lam"."%")->get();
-            // dd($planttype);
+            
+            $getAllfabrics = Fabric::where('status', '1')->where("godam_id",$department_id)->get();
+             $uniqueFabrics = $getAllfabrics->unique('name');
+    
+
             return response([
                 'planttype' => $planttype,
-                'godamfabrics' => $godamfabric
+                'godamfabrics' => $uniqueFabrics->values()->all()
             ]);
         }
     }

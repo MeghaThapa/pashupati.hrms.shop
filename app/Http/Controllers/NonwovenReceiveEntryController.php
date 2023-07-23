@@ -21,7 +21,7 @@ use Response;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\AppHelper;
 
-class FabricNonWovenReceiveEntryController extends Controller
+class NonwovenReceiveEntryController extends Controller
 {
     public function index(Request $request)
     {
@@ -37,20 +37,12 @@ class FabricNonWovenReceiveEntryController extends Controller
 
     public function create()
     {
-        //  $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
-        //     $query->select('id','name');
-        // }])
-        // ->select('from_godam_id')
-        // ->distinct()
-        // ->get();
+   
         $godams = Godam::get();
         $shifts = Shift::get();
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
 
         $getnetweight = FabricNonWovenReciveEntry::where('status','sent')->sum('net_weight');
-        // dd($getsumnetweight);
-      
-        // dd($nonwovenfabrics);
         $receipt_no = AppHelper::getNonWovenReceiveEntryReceiptNo();
         $dana = AutoLoadItemStock::get();
         return view('admin.nonwovenfabrics-receiveentry.create',compact('godams','shifts','nonwovenfabrics','receipt_no','getnetweight','dana'));
@@ -154,7 +146,6 @@ class FabricNonWovenReceiveEntryController extends Controller
 
                  $getdoublesidelaminatedfabric = FabricNonWovenReceiveEntryStock::where('receive_no',$request->bill)->update(['status' => 'completed']); 
 
-               
 
                 DB::commit();
 

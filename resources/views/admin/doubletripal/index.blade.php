@@ -383,6 +383,7 @@
                                 <strong>{{ $message }}</strong>
                             </span>
                             @enderror
+                            <input type="hidden" name="bill" id="bill" value="{{$bill_no}}">
                         </div>
                         <div>
                             <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
@@ -536,25 +537,27 @@
                                     <input class='form-control' type="text" name="laminated_gross_weight"
                                         id="laminated_gross_weight">
                                 </div>
+                              
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
+                                </div>
                                 <div class="col-md-2">
                                     <label for="">Net Weight</label>
                                     <input class='form-control' type="text" name="laminated_net_weight"
                                         id="laminated_net_weight">
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="">Average</label>
-                                    <input class='form-control' type="text" name="laminated_avg_weight"
-                                        id="laminated_avg_weight">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
-                                </div>
-
-                                <div class="col-md-2">
                                     <label for="">Meter</label>
                                     <input class='form-control' type="text" name="laminated_meter" id="laminated_meter">
                                 </div>
+                                <div class="col-md-2">
+                                    <label for="">Average</label>
+                                    <input class='form-control' type="text" name="laminated_avg_weight"
+                                        id="laminated_avg_weight" readonly>
+                                </div>
+
+                                
                             </div>
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
@@ -567,26 +570,28 @@
                                     <input class='form-control' type="text" name="laminated_gross_weight_2"
                                         id="laminated_gross_weight_2">
                                 </div>
-                                <div class="col-md-2">
-                                    <label for="">Net Weight</label>
-                                    <input class='form-control' type="text" name="laminated_net_weight_2"
-                                        id="laminated_net_weight_2">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Average</label>
-                                    <input class='form-control' type="text" name="laminated_avg_weight_2"
-                                        id="laminated_avg_weight_2">
-                                </div>
+                             
                                 <div class="col-md-2">
                                     <label for="">Gram</label>
                                     <input class='form-control' type="text" name="laminated_gram_2"
                                         id="laminated_gram_2">
                                 </div>
                                 <div class="col-md-2">
+                                    <label for="">Net Weight</label>
+                                    <input class='form-control' type="text" name="laminated_net_weight_2"
+                                        id="laminated_net_weight_2">
+                                </div>
+                                <div class="col-md-2">
                                     <label for="">Meter</label>
                                     <input class='form-control' type="text" name="laminated_meter_2"
                                         id="laminated_meter_2">
                                 </div>
+                                <div class="col-md-2">
+                                    <label for="">Average</label>
+                                    <input class='form-control' type="text" name="laminated_avg_weight_2"
+                                        id="laminated_avg_weight_2" readonly>
+                                </div>
+                                
                             </div>
                             <div class="row m-2 p-3 d-flex justify-content-center">
                                 <div class="col-md-2">
@@ -599,25 +604,27 @@
                                     <input class='form-control' type="text" name="laminated_gross_weight_3"
                                         id="laminated_gross_weight_3">
                                 </div>
+                              
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram_3"
+                                        id="laminated_gram_3">
+                                </div>
+                                
                                 <div class="col-md-2">
                                     <label for="">Net Weight</label>
                                     <input class='form-control' type="text" name="laminated_net_weight_3"
                                         id="laminated_net_weight_3">
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="">Average</label>
-                                    <input class='form-control' type="text" name="laminated_avg_weight_3"
-                                        id="laminated_avg_weight_3">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram_3"
-                                        id="laminated_gram_3">
-                                </div>
-                                <div class="col-md-2">
                                     <label for="">Meter</label>
                                     <input class='form-control' type="text" name="laminated_meter_3"
                                         id="laminated_meter_3">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Average</label>
+                                    <input class='form-control' type="text" name="laminated_avg_weight_3"
+                                        id="laminated_avg_weight_3" readonly>
                                 </div>
                             </div>
                             <hr>
@@ -733,14 +740,36 @@
     });
 
     /**************************** Ajax functions **************************/
+    $(document).ready(function(){
+        $(document).on('click','#getfabricsrelated',function(e){
+            e.preventDefault();
+            let formData = $(this).serialize();
 
-    function callunlaminatedfabricajax(){
-        $.ajax({
+            var bill_number = $('#bill_nos').val(),
+            bill_date = $('#bill_dates').val(),
+            godam_id = $('#godam_ids').val(),
+            plantype_id = $('#planttype_id').val(),
+            plantname_id = $('#plantname_id').val(),
+            shift_id = $('#shift_id').val(),
+            fabric_id = $('#fabricNameId').val(),
+            roll = $('#rollnumberfabric').val();
+
+           $.ajax({
             url : "{{ route('doubletripal.getSingleLaminatedFabric') }}",
             method: 'get',
-            beforeSend:function(){
-                console.log('getting unlaminated fabric');
+            type:"POST",
+            dataType:"JSON",
+            data:{
+                '_token' : $('meta[name="csrf-token"]').attr('content'),
+                'data' : formData,
+                'fabric_id' : fabric_id,
+                'roll' : roll
+
             },
+            beforeSend:function(){
+                console.log('sending form');
+            },
+          
             success:function(response){
                 emptytable();
                 if(response.response != '404'){
@@ -748,12 +777,16 @@
                 }else{
                     console.log(response.response);
                 }
-                
-            },error:function(error){
+
+            },
+            error:function(error){
                 console.log(error);
             }
+           });
         });
-    }
+    })
+
+
 
     function addplanttype(data){
         $("#plantType").empty();
@@ -783,6 +816,32 @@
             $("#fabricNameId").append(`<option value="${d.id}">${d.name}</option>`);
         });
     }
+
+    $(document).on("keyup","#laminated_meter",function(e){
+        let laminated_net_weight = parseInt($("#laminated_net_weight").val());
+        let laminated_meter = parseInt($("#laminated_meter").val());
+        let laminated_avg_weight =  (laminated_net_weight / laminated_meter) * 1000;
+        $("#laminated_avg_weight").val(laminated_avg_weight);
+
+    });
+
+    $(document).on("keyup","#laminated_meter_2",function(e){
+        let laminated_net_weight = parseInt($("#laminated_net_weight_2").val());
+        let laminated_meter = parseInt($("#laminated_meter_2").val());
+        let laminated_avg_weight =  (laminated_net_weight / laminated_meter) * 1000;
+        let final = round(laminated_avg_weight, 3);
+        $("#laminated_avg_weight_2").val(final);
+
+    });
+
+    $(document).on("keyup","#laminated_meter_3",function(e){
+        let laminated_net_weight = parseInt($("#laminated_net_weight_3").val());
+        let laminated_meter = parseInt($("#laminated_meter_3").val());
+        let laminated_avg_weight =  (laminated_net_weight / laminated_meter) * 1000;
+        let final = round(laminated_avg_weight, 3);
+        $("#laminated_avg_weight_3").val(final);
+
+    });
     /**************************** Ajax functions **************************/
 
     /************************* Form Submission *************************/
@@ -806,7 +865,7 @@
             },
             success:function(response){
                 emptytable();
-                callunlaminatedfabricajax();
+                // callunlaminatedfabricajax();
                 emptyform();
             },
             error:function(error){
@@ -847,11 +906,6 @@
         $('#rawMaterialItemTbody').empty();
     }
 
-    $(document).on('click','#deletesendforlamination',function(e){
-        e.preventDefault();
-        let id = $(this).attr('data-id');
-        deletefromunlamintedtable(id);
-    });
 
     function filltable(data){
         // console.log(data.response);
@@ -889,7 +943,6 @@
             success:function(response){
                 if(response.response == '200'){
                     emptytable();
-                    callunlaminatedfabricajax();
                 }else if(response.response == '400'){
                     alert('Not Allowed OR Data is no longer there');
                 }
@@ -969,7 +1022,7 @@
                 console.log('sending');
             },
             success:function(response){
-                callunlaminatedfabricajax();
+                
                 comparelamandunlam();
                 $('#staticBackdrop1').modal('hide');
                 console.log(response);
@@ -1100,6 +1153,7 @@
             let total_waste = $('#total_waste').val();
             let selectedDanaID = $("#selectedDanaID").val();
             let polo_waste = $("#polo_waste").val();
+            let bill = $("#bill").val();
 
             trimmedConsumption = consumption.trim();
             trimmedPoloWaste = polo_waste.trim();
@@ -1122,7 +1176,8 @@
                         "fabric_waste" : trimmedFabricWaste,
                         "polo_waste" : trimmedPoloWaste,
                         "total_waste" : trimmedTotalWaste,
-                        "selectedDanaID" : selectedDanaID
+                        "selectedDanaID" : selectedDanaID,
+                        "bill" : bill
                     },
                     beforeSend:function(){
                         console.log("Before Send");
