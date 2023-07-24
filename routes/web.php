@@ -1053,10 +1053,45 @@ Route::controller(BagSellingItemController::class)
 ->group(function(){
 
      Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
-     Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
+    // Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
      Route::post("store","store")->name('bagSellingItem.store');
 
 });
 Route::post("bagSellingItem/saveEntireBagSellingEntry",[BagSellingItemController::class,"saveEntireBagSellingEntry"])->name('bagSellingItem.saveEntireBagSellingEntry');
+Route::controller(PurchaseOrderController::class)
+->prefix('bagSellingItem')
+->group(function(){
+
+     Route::get("purchaseOrder","purchaseOrder")->name('purchaseOrder.index');
+
+});
+
 
 /*****************************Bag Selling end************************************/
+/**************************raw material opening**********************************/
+Route::controller(RawmaterialOpeningEntryController::class)
+->prefix('openingRawmaterialEntry')
+->group(function(){
+    Route::get("index","index")->name('openingRawmaterialEntry.index');
+    Route::get("create","create")->name('openingRawmaterialEntry.create');
+    Route::post("store","store")->name('openingRawmaterialEntry.store');
+    Route::get("getDanaGroupDanaName/{danaGroup_id}","getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
+    Route::post("saveEntire","saveEntire")->name('openingRawmaterialEntry.saveEntire');
+    Route::get("tableData","tableData")->name('rawMaterialOpening.tableData');
+    Route::get("edit/{rawMaterialOpening_id}","edit")->name('rawMaterialOpening.edit');
+    Route::post("update/{openingRawmaterialEntry_id}","update")->name('rawMaterialOpening.update');
+    Route::delete("delete/{openingRawmaterialEntry_id}","delete")->name('rawMaterialOpening.delete');
+
+});
+
+Route::controller(RawmaterialOpeningItemController::class)
+->prefix('openingRawmaterialItem')
+->group(function(){
+
+    Route::post("store","store")->name('openingRawmaterialItem.store');
+    Route::get("getRawmaterialItem","getRawmaterialItem")->name('openingRawmaterialEntry.getRawmaterialItem');
+
+    // Route::get("getDanaGroupDanaName/{danaGroup_id}","getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
+
+});
+/**************************raw material opening end**********************************/
