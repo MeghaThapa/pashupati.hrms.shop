@@ -59,8 +59,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
     </style>
 @endsection
 @section('content')
@@ -207,14 +207,15 @@
                     });
                 });
             }
-             function setErrorMsg(errorMessage) {
-            let errorContainer = document.getElementById('error_msg');
-            errorContainer.hidden = false;
-            errorContainer.innerHTML = errorMessage;
-            setTimeout(function() {
-                errorContainer.hidden = true;
-            }, 5000);
-        }
+
+            function setErrorMsg(errorMessage) {
+                let errorContainer = document.getElementById('error_msg');
+                errorContainer.hidden = false;
+                errorContainer.innerHTML = errorMessage;
+                setTimeout(function() {
+                    errorContainer.hidden = true;
+                }, 5000);
+            }
 
             let sn = 1;
             $('#danaGroupId').on('select2:select', function(e) {
@@ -292,10 +293,58 @@
                 sn++;
                 // Clearing the input fields
                 // clearInputFields();
-                // deleteEventBtn();
+                deleteEventBtn();
             }
 
-            
+            function deleteEventBtn() {
+                let dltButtons = document.getElementsByClassName('dltOpeningRawMaterialItem');
+
+                for (var i = 0; i < dltButtons.length; i++) {
+                    dltButtons[i].addEventListener('click', function(event) {
+                        let openingRawMaterialItemId = this.getAttribute('data-id');
+                        new swal({
+                            title: "Are you sure?",
+                            text: "Do you want to delete Item.",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                            closeOnClickOutside: false,
+                        }).then((willDelete) => {
+                            if (willDelete) {
+                                $.ajax({
+                                    url: '{{ route('openingRawmaterialItem.delete', ['id' => ':lol']) }}'
+                                        .replace(':lol', openingRawMaterialItemId),
+                                    type: "DELETE",
+                                    data: {
+                                        "_method": "DELETE",
+                                        "_token": "{{ csrf_token() }}",
+
+                                    },
+                                    success: function(result) {
+                                        console.log('delete :', result);
+                                        new swal
+                                            ({
+                                                text: "Poof! Your data has been deleted!",
+                                                title: "Deleted",
+                                                icon: "success",
+                                            });
+                                        location.reload();
+
+                                        refresh();
+
+                                    },
+                                    error: function(xhr, status, error) {
+                                        setErrorMessage('error_msg', xhr.responseJSON
+                                            .message)
+                                    }
+
+                                });
+                            };
+                        });
+                    })
+                }
+            }
+
             function setSuccessMessage(message) {
                 let successContainer = document.getElementById('success_msg');
                 //console.log(successContainer);

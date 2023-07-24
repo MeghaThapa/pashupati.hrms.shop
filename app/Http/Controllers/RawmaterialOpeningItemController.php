@@ -92,6 +92,10 @@ class RawmaterialOpeningItemController extends Controller
      * @param  \App\Models\rawmaterialOpeningItem  $rawmaterialOpeningItem
      * @return \Illuminate\Http\Response
      */
+    public function delete($id){
+        $openingRawmaterialItem=RawmaterialOpeningItem::find($id);
+        $openingRawmaterialItem->delete();
+    }
     public function destroy(rawmaterialOpeningItem $rawmaterialOpeningItem)
     {
         //

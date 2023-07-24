@@ -1090,7 +1090,7 @@ Route::controller(RawmaterialOpeningItemController::class)
 
     Route::post("store","store")->name('openingRawmaterialItem.store');
     Route::get("getRawmaterialItem","getRawmaterialItem")->name('openingRawmaterialEntry.getRawmaterialItem');
-
+    Route::delete("delete/{id}","delete")->name('openingRawmaterialItem.delete');
     // Route::get("getDanaGroupDanaName/{danaGroup_id}","getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
 
 });
