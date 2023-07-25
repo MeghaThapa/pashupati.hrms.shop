@@ -24,6 +24,8 @@ class NonWovenStockController extends Controller
        $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
        // $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
 
+        // dd($nonwoven_stocks);
+
         $godams=Godam::where('status','active')->get(['id','name']);
         $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
         $plantnames= ProcessingSubcat::where('status','active')->get(['id','name']);

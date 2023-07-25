@@ -20,34 +20,37 @@ use App\Models\TapeEntry;
 
 class TapeEntryController extends Controller
 {
-    // public function index(){
-    //         /************** for all data *********************/
-    //     // $department = Department::where('status','active')->get();
-    //     // $planttype =  ProcessingStep::where("status",'1')->get();
-    //     // $plantname = ProcessingSubcat::where('status','active')->get();
-    //     // $dananame = DanaName::where("status",'active')->get();
-
-    //         /************** for stock data *********************/
-    //     $department = AutoLoadItemStock::with(['fromGodam'])->get();
-    //     // $planttype = AutoLoadItemStock::with(['plantType'])->get();
-    //     // $plantname = AutoLoadItemStock::with(['plantName'])->get();
-    //     $shift = AutoLoadItemStock::with(['shift'])->get();
-    //     // $dananame = AutoLoadItemStock::with(['danaName'])->get();
-
-
-
-    //     // $department = Department::where('id',$departmentid)->get();
-    //     // $planttype = ProcessingStep::where('id',$planttypeid)->get();
-    //     // $plantname = ProcessingSubcat::where('id',$plantnameid)->get();
-    //     // $shift = Shift::where('id',$shift_id)->get();
-    //     // $dananame = DanaName::where('id',$dananame_id)->get();
-
-    //     // return view('admin.TapeEntry.index',compact('department','planttype','plantname','shift','dananame'));
-    //     return view('admin.TapeEntry.index',compact('department','shift'));
-    // }
+    public function openingcreate(){
+        $godam = Godam::where("status","active")->get(); 
+        return view("admin.TapeEntry.opening")->with([
+            "godam" => $godam,
+        ]);
+    }
+    public function openingstore(Request $request){
+        $request->validate([
+            "tape_quantity" => "numeric|required",
+            "opening_date" => "required",
+            "to_godam" => "required",
+            "receipt_number" => "required"
+        ]);
+        
+        TapeEntryStockModel::create([
+            "toGodam_id" => $request->to_godam,
+            "tape_type" => "Tape1",
+            "tape_qty_in_kg" => $request->tape_quantity,
+            "total_in_kg" => $request->tape_quantity,
+            'loading'=> "0",
+            'running' => '0',
+            'bypass_wast' => "0",
+            "cause" => "opening"
+        ]);
+        return  back()->with([
+            "message" => "Tape Opening added successfully"
+        ]);
+    }
 
     public function index(){
-        $tapeentries = TapeEntry::orderBy('created_at','DESC')->get();
+        $tapeentries = TapeEntry::orderBy('updated_at','DESC')->get();
         return view('admin.TapeEntry.index',compact('tapeentries'));
     }
 
@@ -248,24 +251,24 @@ class TapeEntryController extends Controller
             ]);
 
             $getEarlierData = TapeEntryStockModel::where("toGodam_id",$department)
-                                ->where("planttype_id",$planttype)
-                                ->where("plantname_id",$plantname)
-                                ->where("shift_id",$shift)
+                                // ->where("planttype_id",$planttype)
+                                // ->where("plantname_id",$plantname)
+                                // ->where("shift_id",$shift)
                                 ->first();
             if($getEarlierData == null){
                 $tesm = TapeEntryStockModel::create([
-                    'tape_entry_id'=>$tape_entry_id,
+                    // 'tape_entry_id'=>$tape_entry_id,
                     'toGodam_id'=>$department,
-                    'plantType_id'=>$planttype,
-                    'plantName_id'=>$plantname,
-                    'shift_id'=>$shift,
+                    // 'plantType_id'=>$planttype,
+                    // 'plantName_id'=>$plantname,
+                    // 'shift_id'=>$shift,
                     'tape_type'=>$tapetype,
                     'tape_qty_in_kg'=>$tape_qty_in_kg,
                     'total_in_kg'=>$total_in_kg,
                     'loading'=>$loading,
                     'running'=>$running,
                     'bypass_wast'=>$bypass_wast,
-                    'dana_in_kg'=>$dana_in_kg,
+                    // 'dana_in_kg'=>$dana_in_kg,
                 ]);
             }else{
                 $new_tape_qty_in_kg = $getEarlierData->tape_qty_in_kg + $tape_qty_in_kg;
@@ -276,18 +279,18 @@ class TapeEntryController extends Controller
                 $new_dana_in_kg = $getEarlierData->dana_in_kg + $dana_in_kg;
 
                 $tesm =  $getEarlierData->update([
-                    'tape_entry_id'=>$tape_entry_id,
+                    // 'tape_entry_id'=>$tape_entry_id,
                     'toGodam_id'=>$department,
-                    'plantType_id'=>$planttype,
-                    'plantName_id'=>$plantname,
-                    'shift_id'=>$shift,
+                    // 'plantType_id'=>$planttype,
+                    // 'plantName_id'=>$plantname,
+                    // 'shift_id'=>$shift,
                     'tape_type'=>$tapetype,
                     'tape_qty_in_kg'=>$new_tape_qty_in_kg,
                     'total_in_kg'=>$new_total_in_kg,
                     'loading'=>$new_loading,
                     'running'=>$new_running,
                     'bypass_wast'=>$new_bypass_wast,
-                    'dana_in_kg'=>$new_dana_in_kg,
+                    // 'dana_in_kg'=>$new_dana_in_kg,
                 ]);
             }
 
@@ -310,15 +313,19 @@ class TapeEntryController extends Controller
         }
         catch(Exception $e){
             DB::rollBack();
+            dd($e->getMessage());
             return "exception :".$e->getMessage();
         }
     }
 
     function wastemgmt($totalwaste,$department,$wastetype){
+        
+        $wastage_type = Wastages::where("name" ,"like" , "raffia"."%")->value("id");
+        
         WasteStock::create([
             'godam_id' => $department,
             'quantity_in_kg' => $totalwaste,
-            'waste_id' => '1'
+            'waste_id' => $wastage_type
         ]);
     }
 }

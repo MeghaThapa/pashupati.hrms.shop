@@ -72,6 +72,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             'average_wt' => $row['grams'],
             'godam_id' => $this->godam_id,
             'bill_no' => $bill_no,
+            'fabric_id' => $fabric->id
         ]);
            
        }

@@ -32,6 +32,7 @@ use App\Http\Controllers\ItemsOfStoreinController;
 
 use App\Http\Controllers\FabricNonWovenController;
 use App\Http\Controllers\NonWovenStockController;
+use App\Http\Controllers\FabricNonWovenReceiveEntryController;
 
 use App\Http\Controllers\FabricStockController;
 
@@ -42,6 +43,7 @@ use App\Http\Controllers\StoreoutDepartmentController;
 use App\Http\Controllers\Tripal\TripalController;
 use App\Http\Controllers\Tripal\SingleTripalStockController;
 use App\Http\Controllers\Tripal\DoubleTripalStockController;
+use App\Http\Controllers\Tripal\FinalTripalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
@@ -466,27 +468,35 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
     //fabric send receive contoller
-    /************* aile baki xa **************/
-        Route::get('/fabricSendReceive/create', 'FabricSendReceiveController@create')->name('fabricSendReceive.create');
-        Route::post('/fabricSendReceive/store', 'FabricSendReceiveController@store')->name('fabricSendReceive.store');
-    /************* aile baki xa **************/
-    Route::get('/fabricSendReceive/index', 'FabricSendReceiveController@index')->name('fabricSendReceive.index');
-    Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
-    Route::get('/fabricSendReceive/ajax/get/plantname/{id}', 'FabricSendReceiveController@getplantname')->name('fabricSendReceive.get.plantname');
-    Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
-    Route::post("fabric/send/unlaminated/store",[FabricSendReceiveController::class,'sendunlaminated'])->name("fabricSendReceive.send.unlaminated");
-    Route::get('fabric/send/unlaminated/delete/{id}',[FabricSendReceiveController::class,'sendunlaminateddelete'])->name('fabricSendReceive.send.unlaminated.delete');
-    //getting unlaminated into form
-    Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
-    Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
-    //sending for lamination
-    // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+        /************* aile baki xa **************/
+            Route::get('/fabricSendReceive/create', 'FabricSendReceiveController@create')->name('fabricSendReceive.create');
+            Route::post('/fabricSendReceive/store', 'FabricSendReceiveController@store')->name('fabricSendReceive.store');
+        /************* aile baki xa **************/
+        Route::get('/fabricSendReceive/index', 'FabricSendReceiveController@index')->name('fabricSendReceive.index');
+        Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
+        Route::get('/fabricSendReceive/ajax/get/plantname/{id}', 'FabricSendReceiveController@getplantname')->name('fabricSendReceive.get.plantname');
+        Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
+        Route::post("fabric/send/unlaminated/store",[FabricSendReceiveController::class,'sendunlaminated'])->name("fabricSendReceive.send.unlaminated");
+        Route::get('fabric/send/unlaminated/delete/{id}',[FabricSendReceiveController::class,'sendunlaminateddelete'])->name('fabricSendReceive.send.unlaminated.delete');
+        Route::post("fabric/send/unlaminated/store/revised",[FabricSendReceiveController::class,'sendunlaminatedrevised'])->name("fabricSendReceive.send.unlaminated.revised");
 
-    Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
 
-    Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
-    Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
-    Route::post('final/submit/fsr',[FabricSendReceiveController::class,'finalsubmitfsr'])->name("final.submit.fsr");
+        //getting unlaminated into form
+        Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
+        Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+        Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name");  
+
+        Route::get('get/autoloader/godam/id/into/fsr/{godamId}',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
+        
+        //sending for lamination
+        // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
+
+        Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
+
+        Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
+        Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
+        Route::post('final/submit/fsr',[FabricSendReceiveController::class,'finalsubmitfsr'])->name("final.submit.fsr");
+    //fabric send receive contoller End
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
@@ -506,6 +516,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.detailStore');
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
+
+    //fabric opening
+    Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
+    Route::post("fabric/opening/store",[FabricStockController::class,"openingStore"])->name("fabric.opening.store");
 
     //fabric stock
 
@@ -540,6 +554,34 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //doubletripal stock
     Route::get('double-tripal/getstock/index',[DoubleTripalStockController::class,'index'])->name('doubletripal-stock.index');
 
+    //openingtripal
+
+    Route::resource('openingtripal', 'Tripal\OpeningTripalController', [
+        'names' => [
+            'index' => 'openingtripal.index',
+            'create' => 'openingtripal.create',
+            'store' => 'openingtripal.store',
+            'edit' => 'openingtripal.edit',
+            'update' => 'openingtripal.update',
+        ]
+    ]);
+
+
+    Route::post('openingtripal/getFabricType/List/storeData','Tripal\OpeningTripalController@storeData')->name('openingtripal.storeSingleStock');
+
+    Route::get('openingtripal/getFabricType/List/allData','Tripal\OpeningTripalController@getAllOpeningData')->name('openingtripal.getAllOpeningTripal');
+
+    //doubletriplaopening
+
+    Route::get('openingdoubletripal','Tripal\OpeningTripalController@getOpeningDoubleTripalIndex')->name('openingdoubletripal.index');
+
+    Route::post('openingdoubletripal/storeData','Tripal\OpeningTripalController@storeDoubleData')->name('openingdoubletripal.storeDoubleStock');
+
+    //final tripal
+    Route::get('openingfinaltripal','Tripal\OpeningTripalController@getOpeningFinalTripalIndex')->name('openingfinaltripal.index');
+    Route::post('openingfinaltripal/storeData','Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
+
+
 
 
     //double laminated tripal
@@ -555,6 +597,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
 
 
+
     Route::get('doubletripal/getSingleLaminatedFabric/List','Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
 
     Route::get('doubletripals/{id}/status', 'Tripal\DoubleTripalController@changeStatus')->name('doubletripal.status');
@@ -567,6 +610,30 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //for checking the quantity of data
 
     Route::post('dana/autoload/checkQuantity', 'Tripal\TripalController@checkAutoloadQuantity')->name('dana.autoload.checkAutoloadQuantity');
+
+    //finl tripal
+
+    Route::resource('finaltripal', 'Tripal\FinalTripalController', [
+        'names' => [
+            'index' => 'finaltripal.index',
+            'create' => 'finaltripal.create',
+            'store' => 'finaltripal.store',
+            'edit' => 'finaltripal.edit',
+            'update' => 'finaltripal.update',
+        ]
+    ]);
+    //get doublelamlist
+
+    Route::get('tripal/getDoubleFabricStockList/final', 'Tripal\FinalTripalController@getDoubleFabricStockList')->name('finaltripal.getDoubleFabricStockList');
+
+    Route::post('tripal/store/tripalEntry', 'Tripal\FinalTripalController@storeTripalEntry')->name('tripalEntryStore');
+
+    Route::get('final/tripal/getTripalFabricEntry', 'Tripal\FinalTripalController@getTripalFabricEntry')->name('finaltripal.getTripalFabricEntry');
+
+    Route::post('finaltripal/name/store', 'Tripal\FinalTripalController@storeTripalName')->name('finaltripal.storeName');
+
+    Route::post('finaltripal/wastage/submit','Tripal\FinalTripalController@getWastageStore')->name("finaltripal.wastage.submit");
+
 
 
 
@@ -589,7 +656,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
     Route::get('nonwovenfabrics/{id}/delete', 'FabricNonWovenController@destroy')->name('nonwovenfabrics.delete');
 
-    Route::resource('nonwovenfabrics-receiveentry', 'FabricNonWovenReceiveEntryController', [
+    Route::resource('nonwovenfabrics-receiveentry', 'NonwovenReceiveEntryController', [
         'names' => [
             'index' => 'nonwovenfabrics-receiveentry.index',
             'create' => 'nonwovenfabrics-receiveentry.create',
@@ -599,26 +666,30 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
-    Route::post('nonwovenfabrics-receiveentry/store', 'FabricNonWovenReceiveEntryController@storeWaste')->name('storeWastage');
+    Route::post('nonwovenfabrics-receiveentry/store', 'NonwovenReceiveEntryController@storeWaste')->name('storeWastage');
 
     //getnonwovenreceiveentries
-    Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'FabricNonWovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
+    Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'NonwovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
 
     Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
 
-    Route::get('nonwovenfabrics-receiveentry/{id}/status', 'FabricNonWovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
-    Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'FabricNonWovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
-    Route::post('nonwovenfabrics-receiveentry/getDataList', 'FabricNonWovenReceiveEntryController@getDataList')->name('getDataList');
+    Route::get('nonwovenfabrics-receiveentry/{id}/status', 'NonwovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
+    Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'NonwovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
+    Route::post('nonwovenfabrics-receiveentry/getDataList', 'NonwovenReceiveEntryController@getDataList')->name('getDataList');
 
-    Route::post('nonwovenfabric/getFabricNameList', 'FabricNonWovenReceiveEntryController@getFabricNameList')->name('getFabricNameList');
-    Route::post('nonwovenfabric/getFabricNameColorList', 'FabricNonWovenReceiveEntryController@getFabricNameColorList')->name('getFabricNameColorList');
+    Route::post('nonwovenfabric/getFabricNameList', 'NonwovenReceiveEntryController@getFabricNameList')->name('getFabricNameList');
+    Route::post('nonwovenfabric/getFabricNameColorList', 'NonwovenReceiveEntryController@getFabricNameColorList')->name('getFabricNameColorList');
 
-    Route::post('nonwovenfabrics-receiveentry/getDanaList', 'FabricNonWovenReceiveEntryController@getDanaList')->name('getDanaList');
+    Route::post('nonwovenfabrics-receiveentry/getDanaList', 'NonwovenReceiveEntryController@getDanaList')->name('getDanaList');
 
     //nonwoven stock
 
     Route::get('nonwovenfabrics-receiveentry/getstock/index',[NonWovenStockController::class,'index'])->name('nonwovenfabrics-receiveentrystock.index');
      // Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('tapeentry-stock.filterStock');
+
+    //
+    Route::get('opening/nonwovenfabrics', 'Opening\NonWovenController@index')->name('openingnonwoven.index');
+    Route::post('opening/nonwovenfabrics/store', 'Opening\NonWovenController@store')->name('openingnonwoven.store');
 
 
     Route::post('department/getPlantTypeList', 'FabricNonWovenReceiveEntryController@getPlantTypeList')->name('getPlantTypeList');
@@ -869,6 +940,9 @@ Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajax
     // tapeentrystock
 Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
 /**************tape entry end*************/
+Route::get("tape/opening",[TapeEntryController::class,"openingcreate"])->name("tape.opening");
+Route::post("tape/opening/store",[TapeEntryController::class,"openingstore"])->name("tape.opening.store");
+
 
 //tapeentry stock
 Route::get('tape-entry/getstock/index',[TapeEntryStockController::class,'index'])->name('tapeentry-stock.index');

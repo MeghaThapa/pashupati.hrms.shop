@@ -7,6 +7,10 @@ use App\Libraries\Nepali_Calendar;
 use App\Models\RawMaterial;
 use App\Models\AutoLoad;
 use App\Models\Storeout;
+use App\Models\Singlesidelaminatedfabric;
+use App\Models\DoubleSideLaminatedFabricStock;
+use App\Models\FinalTripalStock;
+use App\Models\FabricNonWovenReceiveEntryStock;
 use Carbon\Carbon;
 
 class AppHelper
@@ -88,13 +92,17 @@ class AppHelper
         $splitDate = explode("-", $date);
         $cal = new Nepali_Calendar();
         $nep = $cal->eng_to_nep($splitDate[0], $splitDate[1], $splitDate[2]);
+
         return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' .str_pad($nep["date"], 2, '0', STR_PAD_LEFT) );
+
     }
 
     public static function getTodayNepaliDate()
     {
+
         $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
         return getNepaliDate($currentDate);
+
     }
 
     // return formatted currency
@@ -150,5 +158,73 @@ class AppHelper
     public static function instance()
     {
         return new AppHelper();
+    }
+
+    public static function getSingleTripalReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+
+        $singletripal = Singlesidelaminatedfabric::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'TRP'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'TRP'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
+    }
+
+
+    public static function getDoubleTripalReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+        // dd($todayEnglishDate,$date);
+
+        $singletripal = DoubleSideLaminatedFabricStock::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'DTRP'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'DTRP'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
+    }
+
+    public static function getFinalTripalReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+        // dd($todayEnglishDate,$date);
+
+        $singletripal = FinalTripalStock::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'FTRP'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'FTRP'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
+    }
+
+    public static function getNonWovenReceiveEntryReceiptNo()
+    {
+        $todayEnglishDate = Carbon::now()->format('Y-n-j');
+        $date = self::getNepaliDate($todayEnglishDate);
+        // dd($todayEnglishDate,$date);
+
+        $singletripal = FabricNonWovenReceiveEntryStock::where('status','completed')->latest()->first();
+        $receipt = "";
+        if (!$singletripal) {
+            $receipt = 'NFRE'.'-'.$date . '-' . '1';
+            return $receipt;
+        } else {
+            $receipt = 'NFRE'.'-'.$date . '-' . $singletripal->id + 1;
+            return $receipt;
+        }
     }
 }
