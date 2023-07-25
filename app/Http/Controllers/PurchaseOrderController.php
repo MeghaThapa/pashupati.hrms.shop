@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BagBundelStock;
+use App\Models\PurchaseOrder;
 use Illuminate\Http\Request;
-use App\Helpers\AppHelper;
-use Yajra\DataTables\Facades\DataTables;
 
-class BagBundelStockController extends Controller
+class PurchaseOrderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,19 +14,9 @@ class BagBundelStockController extends Controller
      */
     public function index()
     {
-        $helper= new AppHelper();
-        $settings= $helper->getGeneralSettigns();
-        return view('admin.bag.stock.bagBundelIndex',compact('settings'));
+        return view('admin.purchaseOrder.index');
     }
 
-    public function bagBundellingYajraDatatables(){
-
-        $bagBundelStocks=BagBundelStock::with(['group','bagBrand'])
-        ->get(['group_id','bag_brand_id','bundle_no','qty_pcs','qty_in_kg','average_weight']);
-         return DataTables::of($bagBundelStocks)
-          ->addIndexColumn()
-            ->make(true);
-    }
     /**
      * Show the form for creating a new resource.
      *
@@ -53,10 +41,10 @@ class BagBundelStockController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\BagBundelStock  $bagBundelStock
+     * @param  \App\Models\PurchaseOrder  $purchaseOrder
      * @return \Illuminate\Http\Response
      */
-    public function show(BagBundelStock $bagBundelStock)
+    public function show(PurchaseOrder $purchaseOrder)
     {
         //
     }
@@ -64,10 +52,10 @@ class BagBundelStockController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\BagBundelStock  $bagBundelStock
+     * @param  \App\Models\PurchaseOrder  $purchaseOrder
      * @return \Illuminate\Http\Response
      */
-    public function edit(BagBundelStock $bagBundelStock)
+    public function edit(PurchaseOrder $purchaseOrder)
     {
         //
     }
@@ -76,10 +64,10 @@ class BagBundelStockController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\BagBundelStock  $bagBundelStock
+     * @param  \App\Models\PurchaseOrder  $purchaseOrder
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, BagBundelStock $bagBundelStock)
+    public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
         //
     }
@@ -87,10 +75,10 @@ class BagBundelStockController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\BagBundelStock  $bagBundelStock
+     * @param  \App\Models\PurchaseOrder  $purchaseOrder
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BagBundelStock $bagBundelStock)
+    public function destroy(PurchaseOrder $purchaseOrder)
     {
         //
     }

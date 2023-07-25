@@ -667,7 +667,6 @@
             });
 
             $('#fabricId').on('select2:select', function(e) {
-
                 let fabric_id = e.params.data.id;
                 console.log('fabric_id', fabric_id);
             });

@@ -141,9 +141,6 @@ class StoreinController extends Controller
                         <i class="fas fa-file-invoice"></i>
                     </button>
                 </a>
-
-
-
                 '
                 ;
 
