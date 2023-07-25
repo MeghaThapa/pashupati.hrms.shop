@@ -37,7 +37,7 @@ class FinalTripalController extends Controller
         // $planttype = ProcessingStep::where('status','1')->get();
         // $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = AutoLoadItemStock::get();
-        $fabrics  = DoubleSideLaminatedFabricStock::get();
+        $fabrics  = DoubleSideLaminatedFabricStock::get()->unique('name')->values()->all();;
         $finaltripalname  = FinalTripalName::get();
         // dd($fabrics);
         return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname'));

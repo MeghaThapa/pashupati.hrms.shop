@@ -216,6 +216,14 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('openingnonwoven.index') }}"
+                        class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Opening Non Woven</p>
+                    </a>
+                </li>
+
                  
 
                  {{-- <li class="nav-item">
