@@ -77,7 +77,7 @@
 
 @section('content')
 <div class="card-body p-0 m-0">
-    <form id="createRawMaterial">
+    <form action="{{ route('openingtripal.storeSingleStock') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
@@ -103,7 +103,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('To Godam') }}
                 </label>
-                <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
+                <select class="advance-select-box form-control" id="godam_id" name="godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
                     @foreach ($godam as $data)
                     <option value="{{ $data->id }}">{{ $data->name }}
@@ -120,7 +120,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id"
+                <select class="advance-select-box form-control" id="fabric_id" name="fabric_id"
                     required>
                     <option value="">{{ __('Select Fabric Name') }}</option>
                    @foreach ($singlestocks as $singlestock)
@@ -140,7 +140,7 @@
                 <label for="size" class="col-form-label">{{ __('Roll') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="rollnumberfabric"
-                    data-number="1" name="roll_number" min="1" required>
+                    data-number="1" name="roll" min="1" required>
 
                 @error('fabric_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -199,7 +199,7 @@
             </div>
 
             <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('GSM') }}<span class="required-field">*</span>
+                <label for="size" class="col-form-label">{{ __('Gram') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="gram"
                     data-number="1" name="gram" min="1" required>
@@ -211,7 +211,7 @@
                 @enderror
             </div>
             <div>
-                <button id="getfabricsrelated" class="btn btn-primary mt-4">
+                <button type="submit" class="btn btn-primary mt-4">
                     Add
                 </button>
             </div>
@@ -326,79 +326,5 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
-<script>
 
-
-
-
-    /************************* Form Submission *************************/
-    $(document).ready(function(){
-
-        $(document).on('click','#getfabricsrelated',function(e){
-            e.preventDefault();
-
-            var bill_number = $('#billnumber').val(),
-            bill_date = $('#billDate').val(),
-            godam_id = $('#toGodam').val(),
-            fabric_id = $('#fabricNameId').val(),
-            roll = $('#rollnumberfabric').val(),
-            gram_wt = $('#gram_wt').val(),
-            net_wt = $('#net_wt').val(),
-            meter = $('#meter').val(),
-            average = $('#average').val(),
-            gram = $('#gram').val();
-            // debugger;
-
-           $.ajax({
-            url : "{{ route('openingtripal.storeSingleStock') }}",
-            method: 'post',
-            dataType:"JSON",
-            data:{
-                '_token' : $('meta[name="csrf-token"]').attr('content'),
-                'fabric_id' : fabric_id,
-                'roll' : roll,
-                'bill_number' : bill_number,
-                'bill_date' : bill_date,
-                'godam_id' : godam_id,
-                'gram_wt' : gram_wt,
-                'net_wt' : net_wt,
-                'meter' : meter,
-                'average' : average,
-                'gram' : gram,
-
-
-            },
-            beforeSend:function(){
-                console.log('sending form');
-            },
-       
-            success:function(response){
-                emptytable();
-                location.reload();
-                // if(response.response != '404'){
-                //     filltable(response);
-                // }else{
-                //     console.log(response.response);
-                // }
-
-            },
-            error:function(error){
-                console.log(error);
-            }
-           });
-        });
-    })
-
-  
-    /************************* Form Submission *************************/
-
-
-
-    function emptytable(){
-        $('#rawMaterialItemTbody').empty();
-    }
- 
-
-
-</script>
 @endsection

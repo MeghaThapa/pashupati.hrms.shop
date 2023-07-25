@@ -151,10 +151,7 @@ class OpeningTripalController extends Controller
                 "fabric_id" => $find_data->fabric_id,
             ]);
 
-            return response()->json([
-                'message' => 'Added Successfully',
-
-            ], 400);
+            return back();
 
         }
         
@@ -224,11 +221,7 @@ class OpeningTripalController extends Controller
                 "date_en" => date('Y-m-d'),
                 "date_np" => date('Y-m-d'),
             ]);
-
-            return response()->json([
-                'message' => 'Added Successfully',
-
-            ], 400);
+            return back();
 
         }
         

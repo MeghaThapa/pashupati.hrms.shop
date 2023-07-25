@@ -36,7 +36,7 @@ class DoubleTripalController extends Controller
 {
     public function index()
     {
-        $id = UnlaminatedFabric::latest()->value('id');
+
         $bill_no = AppHelper::getDoubleTripalReceiptNo();
         $bill_date = date('Y-m-d');
         $shifts = Shift::where('status','active')->get();
@@ -44,7 +44,7 @@ class DoubleTripalController extends Controller
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = AutoLoadItemStock::get();
-        $fabrics = Singlesidelaminatedfabricstock::get();
+        $fabrics = Singlesidelaminatedfabricstock::get()->unique('name')->values()->all();
         // dd($fabrics);
         return view('admin.doubletripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date'));
     }
@@ -53,8 +53,8 @@ class DoubleTripalController extends Controller
     public function getSingleLamFabric(Request $request){
         // dd($request);
         if($request->ajax()){
-            $getAllfabrics = SinglesidelaminatedfabricStock::get();
-             $fabrics = $getAllfabrics->unique('name');
+            $getAllfabrics = SinglesidelaminatedfabricStock::where('fabric_id',$request->fabric_id)->value('name');
+            $fabrics = SinglesidelaminatedfabricStock::where('name',$getAllfabrics)->get();
             
             // dd($fabrics);
             return response(['response'=>$fabrics]);
