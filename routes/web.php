@@ -43,6 +43,7 @@ use App\Http\Controllers\StoreoutDepartmentController;
 use App\Http\Controllers\Tripal\TripalController;
 use App\Http\Controllers\Tripal\SingleTripalStockController;
 use App\Http\Controllers\Tripal\DoubleTripalStockController;
+use App\Http\Controllers\Tripal\FinalTripalStockController;
 use App\Http\Controllers\Tripal\FinalTripalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
@@ -554,6 +555,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //doubletripal stock
     Route::get('double-tripal/getstock/index',[DoubleTripalStockController::class,'index'])->name('doubletripal-stock.index');
 
+    //finaltripal stock
+    Route::get('final-tripal/getstock/index',[FinalTripalStockController::class,'index'])->name('finaltripal-stock.index');
+
     //openingtripal
 
     Route::resource('openingtripal', 'Tripal\OpeningTripalController', [
@@ -671,7 +675,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //getnonwovenreceiveentries
     Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'NonwovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
 
-    Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
+    Route::get('nonwovenfabrics/getOpeningNonwoven/List', 'Opening\NonWovenController@getOpeningNonwoven')->name('nonwovenfabric.getOpeningNonwovenData');
+
+    Route::get('nonwovenfabrics-receiveentry/getAllData/list', 'NonwovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
 
     Route::get('nonwovenfabrics-receiveentry/{id}/status', 'NonwovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
     Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'NonwovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
