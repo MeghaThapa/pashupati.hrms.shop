@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Str;
 use App\Models\Singlesidelaminatedfabric;
-use App\Models\SinglesidelaminatedfabricStock;
+use App\Models\Singlesidelaminatedfabricstock;
 use App\Models\AutoLoadItemStock;
 use App\Models\Godam;
 use App\Models\Shift;
@@ -31,13 +31,13 @@ class OpeningTripalController extends Controller
         $bill = AppHelper::getFinalTripalReceiptNo();
         $bill_date = date('Y-m-d');
         $godam= Godam::where('status','active')->get();
-        $singlestocks  = SinglesidelaminatedfabricStock::where('bill_number' ,'!=', 'Opening')->get();
-        $openingstock  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->sum('net_wt');
+        $singlestocks  = Singlesidelaminatedfabricstock::where('bill_number' ,'!=', 'Opening')->get();
+        $openingstock  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->sum('net_wt');
 
-        $openingstocks  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->get();
+        $openingstocks  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->get();
 
-        $total_net  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->sum('net_wt');
-        $total_meter  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->sum('meter');
+        $total_net  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->sum('net_wt');
+        $total_meter  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->sum('meter');
 
         return view('admin.tripal.openingtripal.index',compact('bill','bill_date','godam','singlestocks','openingstock','openingstocks','total_meter','total_net'));
     }
@@ -57,7 +57,7 @@ class OpeningTripalController extends Controller
        }
        else{
 
-           $final_net_wt = $find_data->net_wt - $request['net_wt'];
+           $final_net_wt = $find_data->net_wt + $request['net_wt'];
            $find_data->net_wt = $final_net_wt;
            $find_data->update();
            // dd($final_net_wt);
@@ -125,7 +125,7 @@ class OpeningTripalController extends Controller
         else{
 
 
-            $final_net_wt = $find_data->net_wt - $request['net_wt'];
+            $final_net_wt = $find_data->net_wt + $request['net_wt'];
             $find_data->net_wt = $final_net_wt;
             $find_data->update();
             // dd($final_net_wt);
@@ -192,7 +192,7 @@ class OpeningTripalController extends Controller
         else{
 
 
-            $final_net_wt = $find_data->net_wt - $request['net_wt'];
+            $final_net_wt = $find_data->net_wt + $request['net_wt'];
             $find_data->net_wt = $final_net_wt;
             $find_data->update();
             // dd($final_net_wt);
