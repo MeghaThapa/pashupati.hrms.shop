@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('qty_pcs');
             $table->string('qty_in_kg');
             $table->string('average_weight');
+            $table->enum('type',['transaction','opening'])->default('transaction');
             $table->timestamps();
         });
     }

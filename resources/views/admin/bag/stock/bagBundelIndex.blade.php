@@ -4,6 +4,11 @@
     <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
 @endsection
 @section('content')
+   <a href="javascript:void(0)">
+     <button class="btn btn-primary"  data-toggle="modal" data-target="#importstock">
+        Import Stock
+     </button>
+   </a>
     <div style="display: flex;
     justify-content: space-evenly;
     flex-direction: column;
@@ -90,6 +95,29 @@
                 {{ $rawMaterialStocks->links() }}
             @endif --}}
         </div>
+    </div>
+
+    <div class="modal fade" id="importstock" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Import Stock Here</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                <form action="{{ route('import.bundlestock') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input class="form-control form-input" name="file" id="file" type="file"/>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+             </form>
+          </div>
+        </div>
+      </div>
     </div>
 @endsection
 @section('extra-script')

@@ -288,7 +288,7 @@
                     @csrf
                   <div class="row p-2">
                     <div class="col-md-3">
-                        <label for="size" class="col-form-label">{{ __('tripal:') }}<span class="required-field">*</span>
+                        <label for="size" class="col-form-label">{{ __('Tripal:') }}<span class="required-field">*</span>
                         </label>
                       
                         <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
@@ -313,7 +313,7 @@
                     <div class="col-md-3">
                         <label for="size" class="col-form-label">{{ __('Roll Number:') }}<span class="required-field">*</span>
                         </label>
-                        <input type="number" step="any" min="0" class="form-control" id="roll"
+                        <input type="text" step="any" min="0" class="form-control" id="roll"
                             data-number="1" name="roll" min="1" required>
                         @error('roll')
                         <span class="invalid-feedback" role="alert">
@@ -328,6 +328,20 @@
                         <input type="number" step="any" min="0" class="form-control" id="gross_weight"
                             data-number="1" name="gross_weight" min="1" required>
                         @error('gross_weight')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    
+
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('Net Weight:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="net_wt"
+                            data-number="1" name="net_wt" min="1" required>
+                        @error('net_wt')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -350,7 +364,7 @@
                         <label for="size" class="col-form-label">{{ __('Average:') }}<span class="required-field">*</span>
                         </label>
                         <input type="number" step="any" min="0" class="form-control" id="average"
-                            data-number="1" name="average" min="1" required>
+                            data-number="1" name="average" min="1" required readonly>
                         @error('average')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -362,7 +376,7 @@
                         <label for="size" class="col-form-label">{{ __('GSM:') }}<span class="required-field">*</span>
                         </label>
                         <input type="number" step="any" min="0" class="form-control" id="gsm"
-                            data-number="1" name="gsm" min="1" required>
+                            data-number="1" name="gsm" min="1" required readonly>
                         @error('gsm')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -370,17 +384,7 @@
                         @enderror
                     </div>
 
-                    <div class="col-md-3">
-                        <label for="size" class="col-form-label">{{ __('Net Weight:') }}<span class="required-field">*</span>
-                        </label>
-                        <input type="number" step="any" min="0" class="form-control" id="net_wt"
-                            data-number="1" name="net_wt" min="1" required>
-                        @error('net_wt')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-                    </div>
+                    
 
                     <div class="col-md-3">
                         <button class=" form-control btn btn-primary" id='add_dana_consumption' type="submit">
@@ -625,7 +629,7 @@
 
             <div class="modal-header">
 
-                <h5 class="modal-title" id="exampleModalcat">Add Group</h5>
+                <h5 class="modal-title" id="exampleModalcat">Add FinalTripal Name</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -634,18 +638,18 @@
 
             </div>
            
-            <form id="createGroupModel">
+            <form action="{{ route('finaltripal.storeName') }}" method="post" id="tripal_form">
                 @csrf
                 <div class="modal-body">
                     <div class="card-body">
                         <div id="storeinTypeError" class="alert alert-danger" hidden>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label for="name">{{ __('name') }}<span
+                            <div class="col-md-12 form-group">
+                                <label for="name">{{ __('Final TripalName') }}<span
                                         class="required-field">*</span></label>
                                 <input type="text" class="form-control @error('placement') is-invalid @enderror"
-                                    id="name" name="name" placeholder="{{ __('Placement') }}"
+                                    id="name" name="name" placeholder="{{ __('Enter Final Tripal Name') }}"
                                     value="{{ old('storein_type_name') }}" required>
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -661,7 +665,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                    <button type="submit" id="register" class="btn btn-primary"><i class="fas fa-save"></i>
                         {{ __('Save') }}</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         Close
@@ -673,12 +677,7 @@
     </div>
 </div>
 
-
-
-
 <!-- Modal -->
-sendforlamination
-
 
 @endsection
 @section('extra-script')
@@ -688,98 +687,36 @@ sendforlamination
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
 <script>
-        // $('#groupModel').modal('show');
 
+    $(document).on("keyup","#meter",function(e){
 
-    document.getElementById('createGroupModel').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // $('#groupModel').modal('show');
-        
+        let net_wt = parseInt($("#net_wt").val());
+        let meter = parseInt($("#meter").val());
+        let average = (net_wt / meter) * 1000;
+        $("#average").val(average);
 
-        const form = e.target;
-        let name = form.elements['name'];
-        $.ajax({
-            url: "{{ route('finaltripal.storeName') }}",
-            method: 'POST',
-            data: {
-                _token: "{{ csrf_token() }}",
-                name: name.value,
-            },
-            success: function(response) {
-
-                $('#groupModel').modal('hide');
-                console.log('group', response);
-                // setSuccessMessage(response.message);
-                // setOptionInSelect('groupNameModel', response.group.id,
-                //     response.group.name);
-                // setOptionInSelect('group', response.group.id,
-                //     response.group.name);
-            },
-            error: function(xhr, status, error) {
-                setErrorMsg(xhr.responseJSON.message);
-            }
-        });
     });
-    // document.getElementById('modelFormTripalname').addEventListener('submit', function(
-    //     e) {
-    //     e.preventDefault();
-    //     const form = event.target;
-    //     let name = form.elements['name'];
-     
-    //     $.ajax({
-    //         url: "{{ route('finaltripal.storeName') }}",
-    //         method: 'POST',
-    //         data: {
-    //             _token: "{{ csrf_token() }}",
-    //             name: name.value,
-    //         },
-    //         success: function(response) {
-    //             $('#TripalNameModel').modal('hide');
-    //             setSuccessMessage(response.message);
-               
-    //         },
-    //         error: function(xhr, status, error) {
-    //             // console.log();
-    //             // console.log(xhr.responseText.message);
-    //             let errorMsg = xhr.responseJSON.message;
-    //             console.log(errorMsg);
-    //             if (errorMsg) {
-    //                 setErrorMessage('danaName-create-form-error',
-    //                     errorMsg);
-    //             } else {
 
-    //                 setErrorMessage('danaName-create-form-error',
-    //                     'Something went wrong');
-    //             }
+    $(document).on("keyup","#net_wt",function(e){
 
-    //         }
-    //     });
+        let net_wt = parseInt($("#net_wt").val());
+        let meter = parseInt($("#meter").val());
+        let average = (net_wt / meter) * 1000;
+        $("#average").val(average);
 
-        //success message
-        // function setSuccessMessage(message) {
-        //     let successContainer = document.getElementById('success_msg');
-        //     //console.log(successContainer);
-        //     successContainer.hidden = false;
-        //     successContainer.innerHTML = message;
-        //     setTimeout(function() {
-        //         successContainer.hidden = true;
-        //     }, 2000); // 5000 milliseconds = 5 seconds
-        // }
-        // // errror message inside of model
-        // function setErrorMessage(element_id, message) {
-        //     let errorContainer = document.getElementById(element_id);
-        //     errorContainer.hidden = false;
-        //     errorContainer.innerHTML = message;
-        //     setTimeout(function() {
-        //         errorContainer.hidden = true;
-        //     }, 2000);
-        // }
-    // });
+    });
+
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
         // callunlaminatedfabricajax();
          // $('#fabricNameId').prop('disabled',true);
         comparelamandunlam();
+
+        $('#tripal_form').on('submit', function () {
+           $('#register').attr('disabled', 'true'); 
+        });
+
+       
 
         $("body").on("submit","#wastesubmit", function(event){
             // Pace.start();
@@ -1068,6 +1005,10 @@ sendforlamination
     /************************* Other Functionalities ***********************/
 
     /************************* Send for lamination **************************/
+
+     // $('#tripal_form').on('submit', function () {
+     //       $('#register').attr('disabled', 'true'); 
+     //    });
     $(document).ready(function(){
         $(document).on('click',"#sendforlamination",function(e){
             e.preventDefault();
@@ -1100,6 +1041,8 @@ sendforlamination
                     console.log("Before Send");
                 },
                 success:function(response){
+                    location.reload();
+                    $('#sendforlamination').attr('disabled', 'true'); 
                     console.log(response);
                     if(response == '200'){
                         location.reload();

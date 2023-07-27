@@ -929,6 +929,9 @@ Route::post('import/stock',[StockImportController::class,"import"])->name('impor
 //import fabric
 Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
 
+//import bundle stock
+Route::post('import/bundlestock', 'BagBundelStockController@import')->name('import.bundlestock');
+
 /*****************tape entry**************/
 Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');
 Route::post('tape-entry/store',[TapeEntryController::class,"tapeentrystore"])->name("tape.entry.store");

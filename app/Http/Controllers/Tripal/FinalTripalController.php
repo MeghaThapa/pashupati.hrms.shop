@@ -28,7 +28,6 @@ class FinalTripalController extends Controller
     public function index()
     {
         
-        // $id = UnlaminatedFabric::latest()->value('id');
         $bill_no = AppHelper::getFinalTripalReceiptNo();
         $bill_date = date('Y-m-d');
         // $shifts = Shift::where('status','active')->get();
@@ -150,15 +149,11 @@ class FinalTripalController extends Controller
             'date_en' => $todayEnglishDate,
             'date_np' => $todayEnglishDate,
         ]);
+         return back();
 
-        return response()->json([
-                 'message' =>'group Created Successfully',
-                 // 'group' => $group,
-             ],201);
+    
 
-        //  return response()->json([
-        //     'message' => 'Trpal Name created successfully ',
-        // ]);
+   
     }
 
 
