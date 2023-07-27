@@ -289,6 +289,14 @@
                         <p>{{ __('Raw Material Stock') }}</p>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('wastageStock.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-boxes"></i>
+                        <p>{{ __('Wastage Stock') }}</p>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('purchaseOrder.index') }}"
                         class="nav-link {{ request()->is('purchaseOrder.index*') ? 'active' : '' }}">

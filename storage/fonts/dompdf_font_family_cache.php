@@ -79,9 +79,9 @@ return array (
     'normal' => $rootDir . '/lib/fonts/DejaVuSerif',
   ),
   'sen' => array(
-    'normal' => $fontDir . '/sen_normal_fd89208492f0a1936467700409e7b892',
-    'bold' => $fontDir . '/sen_bold_62826575f4a74ab3abe3abd98b26427a',
-    '800' => $fontDir . '/sen_800_3ce30a25875b067eb14ea4e71ded4b92',
+    'normal' => $fontDir . '/sen_normal_7ab1c026be685f0f0bb923c9ed030577',
+    'bold' => $fontDir . '/sen_bold_033c055f76d939b0f7b49ebb34f000c9',
+    '800' => $fontDir . '/sen_800_0b5d5dc5c2416506756c413728484340',
   ),
 );
 }; ?>
