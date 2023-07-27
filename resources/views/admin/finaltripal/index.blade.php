@@ -178,6 +178,10 @@
                 <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id"
                     required>
                     <option value="">{{ __('Select Fabric Name') }}</option>
+                   @foreach ($fabrics as $fabric)
+                    <option value="{{ $fabric->id }}">{{ $fabric->name }}
+                    </option>
+                    @endforeach
                 </select>
                 @error('fabric_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -231,6 +235,12 @@
 
                 <tbody id="rawMaterialItemTbody">
                 </tbody>
+                <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+                <input type="hidden" name="godam_id" id="godam_data">
+                <input type="hidden" name="planttype_id" id="planttype_data">
+                <input type="hidden" name="plantname_id" id="plantname_data">
+                <input type="hidden" name="shift_id" id="shift_data">
 
             </table>
         </div>
@@ -243,7 +253,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <p style="font-weight: bold;">Unlaminated</p>
+                <p style="font-weight: bold;">Tripal</p>
             </div>
             <div class="card-body table-responsive" style="padding:opx !important">
                 <table class="table table-bordered" id="compareunlamtable">
@@ -262,6 +272,7 @@
 
                     <tbody id="compareunlamtbody">
                     </tbody>
+                  
 
                 </table>
             </div>
@@ -270,10 +281,128 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <p style="font-weight: bold;">Single Laminated</p>
+                <p style="font-weight: bold;"></p>
             </div>
             <div class="card-body table-responsive">
-                <table class="table table-bordered" id="comparelamtable">
+                <form action='{{ route("finaltripal.store") }}' method="post">
+                    @csrf
+                  <div class="row p-2">
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('tripal:') }}<span class="required-field">*</span>
+                        </label>
+                      
+                        <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                            tabindex="-1" data-target="#groupModel"
+                            style="margin-top:0 !important; top:8px;float:right;">
+                            <i class="fas fa-plus"
+                                style="display:flex;align-items: center;justify-content: center;"></i>
+                        </a>
+                        <select class="advance-select-box form-control" id="tripal" name="tripal" required>
+                            <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
+                            @foreach ($finaltripalname as $tripalname)
+                            <option value="{{ $tripalname->id }}">{{ $tripalname->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('tripal')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('Roll Number:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="roll"
+                            data-number="1" name="roll" min="1" required>
+                        @error('roll')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('Gross Weight:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="gross_weight"
+                            data-number="1" name="gross_weight" min="1" required>
+                        @error('gross_weight')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('Meter:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="meter"
+                            data-number="1" name="meter" min="1" required>
+                        @error('meter')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('Average:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="average"
+                            data-number="1" name="average" min="1" required>
+                        @error('average')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('GSM:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="gsm"
+                            data-number="1" name="gsm" min="1" required>
+                        @error('gsm')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="size" class="col-form-label">{{ __('Net Weight:') }}<span class="required-field">*</span>
+                        </label>
+                        <input type="number" step="any" min="0" class="form-control" id="net_wt"
+                            data-number="1" name="net_wt" min="1" required>
+                        @error('net_wt')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <button class=" form-control btn btn-primary" id='add_dana_consumption' type="submit">
+                            Add
+                        </button>
+                    </div>
+                  </div>
+                  <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
+                  <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <p style="font-weight: bold;">FinalTripal</p>
+            </div>
+            <div class="card-body table-responsive" style="padding:opx !important">
+                <table class="table table-bordered" id="finaltripal">
                     <thead>
                         <tr>
                             <th>{{ __('Sr.No') }}</th>
@@ -287,8 +416,9 @@
                         </tr>
                     </thead>
 
-                    <tbody id="comparelamtbody">
+                    <tbody id="compareunlamtbody">
                     </tbody>
+                  
 
                 </table>
             </div>
@@ -298,6 +428,7 @@
         {{-- <button class="btn btn-danger discard">Discard</button> --}}
     </div>
 </div>
+
 <hr>
 <div class="row">
     <div class="col-md-5">
@@ -332,7 +463,7 @@
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <button class=" form-control btn btn-primary" id='add_dana_consumption' disabled>
+                        <button class=" form-control btn btn-primary" id='add_dana_consumption' >
                             Add
                         </button>
                     </div>
@@ -342,13 +473,16 @@
             </div>
         </div>
     </div>
+    <div id="success_msg" class="alert alert-success mt-2" hidden>
+
+    </div>
     <div class="card col-md-7">
         <div class="card-body m-2 p-5">
             <div class="col-md-12" style="height: 100%;">
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total DS Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_in_mtr"
@@ -360,7 +494,7 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Ul Net Wt:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total DS Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_net_wt"
@@ -371,7 +505,7 @@
                             </span>
                             @enderror
                         </div>
-                        <div>
+                        {{-- <div>
                             <label for="size" class="col-form-label">{{ __('Polo Was:') }}<span class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="polo_waste" data-number="1"
@@ -381,8 +515,7 @@
                                 <strong>{{ $message }}</strong>
                             </span>
                             @enderror
-                            <input type="hidden" name="bill" id="bill" value="{{$bill_no}}">
-                        </div>
+                        </div> --}}
                         <div>
                             <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
                                     class="required-field">*</span>
@@ -395,12 +528,13 @@
                             </span>
                             @enderror
                         </div>
+                        <input type="hidden" name="bill" id="bill" value="{{$bill_no}}">
         
                     </div>
         
                     <div class="col-md-4 form-group">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Total SingleLam Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Tripal Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_in_mtr"
@@ -412,7 +546,7 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total SingleLam Net Wt:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Tripal Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_net_wt"
@@ -450,7 +584,7 @@
         
                     <div class="col-md-4" style="margin-top:70px;">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Diff UL Lam Meter :') }}<span
+                            <label for="size" class="col-form-label">{{ __('Diff DS-Tripal Meter :') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="diff_unLam_lamNw"
@@ -484,169 +618,66 @@
         </div>
     </div>
 </div>
-
-
-<!-- Modal -->
-<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<div class="modal fade" id="groupModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h4 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <h5 class="modal-title" id="exampleModalcat">Add Group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body">
-                <form id='sendtolaminationform' action='{{ route("tripal.store") }}' method="post">
-                    @csrf
-                    <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
-                    <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
-                    <input type="hidden" name="godam_id" id="godam_ids">
-                    <input type="hidden" name="planttype_id" id="planttype_id">
-                    <input type="hidden" name="plantname_id" id="plantname_id">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row m-2 p-3">
-                                <div class="col-md-6">
-                                    <label for="">Fabric</label>
-                                    <input class='form-control' type="text" name="laminated_fabric_name"
-                                        id="laminated_fabric_name" readonly>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="">Group</label>
-                                    <input class='form-control' type="text" name="laminated_fabric_group"
-                                        id="laminated_fabric_group" readonly>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="">standard weight gram</label>
-                                    <input class='form-control' type="text" name="standard_weight_gram"
-                                        id="standard_weight_gram" readonly>
-                                </div>
-                            </div>
-                            <hr>
-                            
-                            <div class="row m-2 p-3 d-flex justify-content-center">
-                                <div class="col-md-2">
-                                    <label for="">Roll</label>
-                                    <input class='form-control' type="text" name="laminated_roll_no"
-                                        id="laminated_roll_no">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Gross Weight</label>
-                                    <input class='form-control' type="text" name="laminated_gross_weight"
-                                        id="laminated_gross_weight">
-                                </div>
-                                
-                                
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Net Weight</label>
-                                    <input class='form-control' type="text" name="laminated_net_weight"
-                                        id="laminated_net_weight">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Meter</label>
-                                    <input class='form-control' type="text" name="laminated_meter" id="laminated_meter">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Average</label>
-                                    <input class='form-control' type="text" name="laminated_avg_weight"
-                                        id="laminated_avg_weight" readonly>
-                                </div>
-                            </div>
-                            <div class="row m-2 p-3 d-flex justify-content-center">
-                                <div class="col-md-2">
-                                    <label for="">Roll</label>
-                                    <input class='form-control' type="text" name="laminated_roll_no_2"
-                                        id="laminated_roll_no_2">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Gross Weight</label>
-                                    <input class='form-control' type="text" name="laminated_gross_weight_2"
-                                        id="laminated_gross_weight_2">
-                                </div>
-                                
-                                
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram_2"
-                                        id="laminated_gram_2">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Net Weight</label>
-                                    <input class='form-control' type="text" name="laminated_net_weight_2"
-                                        id="laminated_net_weight_2">
-                                </div>
+            <div id="error_msg" class="alert alert-danger mt-2" hidden>
 
-                                <div class="col-md-2">
-                                    <label for="">Meter</label>
-                                    <input class='form-control' type="text" name="laminated_meter_2"
-                                        id="laminated_meter_2">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Average</label>
-                                    <input class='form-control' type="text" name="laminated_avg_weight_2"
-                                        id="laminated_avg_weight_2" readonly>
-                                </div>
-                            </div>
-                            <div class="row m-2 p-3 d-flex justify-content-center">
-                                <div class="col-md-2">
-                                    <label for="">Roll</label>
-                                    <input class='form-control' type="text" name="laminated_roll_no_3"
-                                        id="laminated_roll_no_3">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Gross Weight</label>
-                                    <input class='form-control' type="text" name="laminated_gross_weight_3"
-                                        id="laminated_gross_weight_3">
-                                </div>
-                                
-                                
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram_3"
-                                        id="laminated_gram_3">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Net Weight</label>
-                                    <input class='form-control' type="text" name="laminated_net_weight_3"
-                                        id="laminated_net_weight_3">
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label for="">Meter</label>
-                                    <input class='form-control' type="text" name="laminated_meter_3"
-                                        id="laminated_meter_3">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="">Average</label>
-                                    <input class='form-control' type="text" name="laminated_avg_weight_3"
-                                        id="laminated_avg_weight_3" readonly>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row d-flex justify-content-center text-center mb-2-">
-                                {{-- <div class="col-md-6">
-                                    <button type='submit' class="btn btn-info">Create Group</button>
-                                </div> --}}
-                                <div class="col-md-6">
-                                    <button type='submit' class="btn btn-info">Update</button>
-                                </div>
-                                <input type="hidden" name="fabricsid"
-                                    id="fabricsid">
-                            </div>
+            </div>
+           
+            <form id="createGroupModel">
+                @csrf
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div id="storeinTypeError" class="alert alert-danger" hidden>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label for="name">{{ __('name') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('placement') is-invalid @enderror"
+                                    id="name" name="name" placeholder="{{ __('Placement') }}"
+                                    value="{{ old('storein_type_name') }}" required>
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            
+                        </div>
+                        
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+                    <!-- /.card-body -->
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                        {{ __('Save') }}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+
+
+
+<!-- Modal -->
+sendforlamination
 
 
 @endsection
@@ -657,6 +688,93 @@
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
 <script>
+        // $('#groupModel').modal('show');
+
+
+    document.getElementById('createGroupModel').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // $('#groupModel').modal('show');
+        
+
+        const form = e.target;
+        let name = form.elements['name'];
+        $.ajax({
+            url: "{{ route('finaltripal.storeName') }}",
+            method: 'POST',
+            data: {
+                _token: "{{ csrf_token() }}",
+                name: name.value,
+            },
+            success: function(response) {
+
+                $('#groupModel').modal('hide');
+                console.log('group', response);
+                // setSuccessMessage(response.message);
+                // setOptionInSelect('groupNameModel', response.group.id,
+                //     response.group.name);
+                // setOptionInSelect('group', response.group.id,
+                //     response.group.name);
+            },
+            error: function(xhr, status, error) {
+                setErrorMsg(xhr.responseJSON.message);
+            }
+        });
+    });
+    // document.getElementById('modelFormTripalname').addEventListener('submit', function(
+    //     e) {
+    //     e.preventDefault();
+    //     const form = event.target;
+    //     let name = form.elements['name'];
+     
+    //     $.ajax({
+    //         url: "{{ route('finaltripal.storeName') }}",
+    //         method: 'POST',
+    //         data: {
+    //             _token: "{{ csrf_token() }}",
+    //             name: name.value,
+    //         },
+    //         success: function(response) {
+    //             $('#TripalNameModel').modal('hide');
+    //             setSuccessMessage(response.message);
+               
+    //         },
+    //         error: function(xhr, status, error) {
+    //             // console.log();
+    //             // console.log(xhr.responseText.message);
+    //             let errorMsg = xhr.responseJSON.message;
+    //             console.log(errorMsg);
+    //             if (errorMsg) {
+    //                 setErrorMessage('danaName-create-form-error',
+    //                     errorMsg);
+    //             } else {
+
+    //                 setErrorMessage('danaName-create-form-error',
+    //                     'Something went wrong');
+    //             }
+
+    //         }
+    //     });
+
+        //success message
+        // function setSuccessMessage(message) {
+        //     let successContainer = document.getElementById('success_msg');
+        //     //console.log(successContainer);
+        //     successContainer.hidden = false;
+        //     successContainer.innerHTML = message;
+        //     setTimeout(function() {
+        //         successContainer.hidden = true;
+        //     }, 2000); // 5000 milliseconds = 5 seconds
+        // }
+        // // errror message inside of model
+        // function setErrorMessage(element_id, message) {
+        //     let errorContainer = document.getElementById(element_id);
+        //     errorContainer.hidden = false;
+        //     errorContainer.innerHTML = message;
+        //     setTimeout(function() {
+        //         errorContainer.hidden = true;
+        //     }, 2000);
+        // }
+    // });
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
         // callunlaminatedfabricajax();
@@ -696,7 +814,7 @@
 
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
-            $("#godam_ids").val(department_id);
+            $("#godam_data").val(department_id);
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -704,7 +822,7 @@
                 },
                 success:function(response){
                     addplanttype(response);
-                    addfabrictype(response);
+                
                 },
                 error:function(error){
                     console.log(error);
@@ -717,7 +835,7 @@
         $("#plantType").change(function(e){
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.plantname',['id'=>':id']) }}";
-            $("#planttype_id").val(department_id);
+            $("#planttype_data").val(department_id);
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -734,7 +852,13 @@
 
         $("#plantName").change(function(e){
             let department_id =  $(this).val();
-            $("#plantname_id").val(department_id);
+            $("#plantname_data").val(department_id);
+        
+        });
+
+        $("#shiftName").change(function(e){
+            let shift_id =  $(this).val();
+            $("#shift_data").val(shift_id);
         
         });
 
@@ -756,21 +880,12 @@
         });
     }
 
-    function addfabrictype(data){
-        $("#fabricNameId").empty();
-        $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
-        data.godamfabrics.forEach( d => {
-            $('#fabricNameId').append(`<option value="${d.id}">${d.name}</option>`);
-        });
-    }
-
     function addplantname(data){
         $("#plantName").empty();
         $('#plantName').append(`<option value="" disabled selected>--Select Plant Name--</option>`);
         data.plantname.forEach( d => {
             // if(d.name == '')
             $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
-
 
         });
     }
@@ -780,19 +895,23 @@
     $(document).ready(function(){
         $(document).on('click','#getfabricsrelated',function(e){
             e.preventDefault();
+            // debugger;
+            let action = $(this).attr('action');
+            let method = $(this).attr('method');
             let formData = $(this).serialize();
 
             var bill_number = $('#bill_nos').val(),
             bill_date = $('#bill_dates').val(),
-            godam_id = $('#godam_ids').val(),
-            plantype_id = $('#planttype_id').val(),
-            plantname_id = $('#plantname_id').val(),
-            shift_id = $('#shift_id').val(),
+            godam_id = $('#godam_data').val(),
+            plantype_id = $('#planttype_data').val(),
+            plantname_id = $('#plantname_data').val(),
+            shift_id = $('#shift_data').val(),
             fabric_id = $('#fabricNameId').val(),
             roll = $('#rollnumberfabric').val();
+            // debugger;
 
            $.ajax({
-            url : "{{ route('tripal.getFabric') }}",
+            url : "{{ route('finaltripal.getDoubleFabricStockList') }}",
             method: 'get',
             type:"POST",
             dataType:"JSON",
@@ -800,13 +919,24 @@
                 '_token' : $('meta[name="csrf-token"]').attr('content'),
                 'data' : formData,
                 'fabric_id' : fabric_id,
-                'roll' : roll
+                'roll' : roll,
+                'bill_number' : bill_number,
+                'bill_date' : bill_date,
+                'godam_id' : godam_id,
+                'plantype_id' : plantype_id,
+                'plantname_id' : plantname_id,
+                'shift_id' : shift_id,
+
 
             },
             beforeSend:function(){
                 console.log('sending form');
             },
-          
+            // success:function(response){
+            //     emptytable();
+            //     callunlaminatedfabricajax();
+            //     emptyform();
+            // },
             success:function(response){
                 emptytable();
                 if(response.response != '404'){
@@ -823,7 +953,7 @@
         });
     })
 
- 
+  
     /************************* Form Submission *************************/
 
     /************************* Other Functionalities ***********************/
@@ -858,11 +988,19 @@
         $('#rawMaterialItemTbody').empty();
     }
 
+    $(document).on('click','#deletesendforlamination',function(e){
+        e.preventDefault();
+        let id = $(this).attr('data-id');
+        deletefromunlamintedtable(id);
+    });
 
     function filltable(data){
-        // console.log(data.response);
+        // console.log(data,data.godam_id);
+        // console.log(data.response,data);
         data.response.forEach(d => {
-            console.log(d.name);
+            console.log(data,d,'hey');
+        // console.log(d.godam_id,d.plantype_id,data.shift_id,'hey');
+            
             let title = d.name;
             let group = d.average_wt.split('-')[0];
             let result = parseFloat(title) * parseFloat(group);
@@ -877,7 +1015,9 @@
             tr.append(`<td>${d.meter}</td>`)
             tr.append(`<td>${d.meter}</td>`);
             tr.append(`<td>${d.average_wt}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.average_wt}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a></div></td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.average_wt}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" bill_number = "${data.bill_number}" bill_date = "${data.bill_date}"  plantname_id = "${data.plantname_id}" godam_id = "${data.godam_id}" plantype_id = "${data.plantype_id}" shift_id = "${data.shift_id}" class="btn btn-info">Send</a></div></td>`);
+
+
         });
     }
 
@@ -885,23 +1025,104 @@
         $("#createRawMaterial")[0].reset();
     }
 
+
+
+    function deletefromunlamintedtable(data){
+        $.ajax({
+            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
+            method:'get',
+            beforeSend:function(){
+                console.log('deleteing from unlamintaed table');
+            },
+            success:function(response){
+                if(response.response == '200'){
+                    emptytable();
+                    callunlaminatedfabricajax();
+                }else if(response.response == '400'){
+                    alert('Not Allowed OR Data is no longer there');
+                }
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+    }
+
+    $(".discard").click(function(e){
+        $.ajax({
+            url:"{{ route('discard') }}",
+            method:"get",
+            success:function(response){
+                if(response.message == "200"){
+                    location.reload(true);
+                }
+                else{
+                    alert(response.message);
+                }
+            },
+            error:function(response){
+                console.log(response);
+            }
+        });
+    });
     /************************* Other Functionalities ***********************/
 
     /************************* Send for lamination **************************/
     $(document).ready(function(){
         $(document).on('click',"#sendforlamination",function(e){
             e.preventDefault();
-            $('#staticBackdrop1').modal('show');
-            let titleold = $('#staticBackdropLabel').text('');
-            let title = $(this).attr('data-title');
-            let id = $(this).attr('data-id');
-            $("#laminated_fabric_name").val(title+"(SingleLam)");
-            let laminated_fabric_group = $(this).attr('data-group');
-            $("#laminated_fabric_group").val(laminated_fabric_group);
-            let standard_weight_gram = $(this).attr('data-standard');
-            $("#standard_weight_gram").val(standard_weight_gram);
-            $('#staticBackdropLabel').text(title+" -> id = "+id);
-            $("#fabricsid").val(id);
+               let data_id = $(this).attr('href');
+               let bill_number =  $(this).attr('bill_number');
+               let bill_date =  $(this).attr('bill_date');
+               let godam_id =  $(this).attr('godam_id');
+               let plantype_id =  $(this).attr('plantype_id');
+               let plantname_id =  $(this).attr('plantname_id');
+               let shift_id =  $(this).attr('shift_id');
+            
+               // console.log(data);
+
+            // debugger;
+            $.ajax({
+                url : "{{ route('tripalEntryStore') }}",
+                method: "post",
+                data:{
+                    "_token" : $('meta[name="csrf-token"]').attr('content'),
+                    // "doublefabric_id" : ,
+                    "data_id" : data_id,
+                    'bill_number' : bill_number,
+                    'bill_date' : bill_date,
+                    'godam_id' : godam_id,
+                    'plantype_id' : plantype_id,
+                    'plantname_id' : plantname_id,
+                    'shift_id' : shift_id,
+                },
+                beforeSend:function(){
+                    console.log("Before Send");
+                },
+                success:function(response){
+                    console.log(response);
+                    if(response == '200'){
+                        location.reload();
+                    }else{
+
+                    }
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            }); 
+            // $('#staticBackdrop1').modal('show');
+            // let titleold = $('#staticBackdropLabel').text('');
+            // let title = $(this).attr('data-title');
+            // let id = $(this).attr('data-id');
+            // $("#laminated_fabric_name").val(title+"(SingleLam)");
+            // let laminated_fabric_group = $(this).attr('data-group');
+            // $("#laminated_fabric_group").val(laminated_fabric_group);
+            // let standard_weight_gram = $(this).attr('data-standard');
+            // $("#standard_weight_gram").val(standard_weight_gram);
+            // $('#staticBackdropLabel').text(title+" -> id = "+id);
+            // $("#fabricsid").val(id);
+
             // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
             // $('#sendtolaminationform').attr('action',action);
             // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
@@ -952,13 +1173,14 @@
 
     function comparelamandunlam(){
         $.ajax({
-            url : "{{ route('tripal.getUnlamSingleLam') }}",
+            url : "{{ route('finaltripal.getTripalFabricEntry') }}",
             method:"get",
             success:function(response){
+                console.log(response);
                 emptycomparelamtbody();
                 emptycompareunlamtbody();
                 putonlamtbody(response);
-                $("#sendtolaminationform")[0].reset();
+                // $("#sendtolaminationform")[0].reset();
                 weightdiffs(response);
             },
             error:function(error){
@@ -978,8 +1200,20 @@
 
     function putonlamtbody(response){
         console.log(response);
-        response.lam.forEach(element => {
-            let tr = $("<tr></tr>").appendTo("#comparelamtbody");
+        // response.lam.forEach(element => {
+        //     let tr = $("<tr></tr>").appendTo("#comparelamtbody");
+        //     tr.append(`<td>#</td>`);
+        //     tr.append(`<td>${element.name}</td>`);
+        //     tr.append(`<td>${element.roll_no}</td>`);
+        //     tr.append(`<td>${element.net_wt}</td>`);
+        //     tr.append(`<td>${element.gross_wt}</td>`);
+        //     tr.append(`<td>${element.meter}</td>`);
+        //     tr.append(`<td>${element.average_wt}</td>`);
+        //     tr.append(`<td>${element.gram}</td>`);
+        // });
+
+        response.tripalentry.forEach(element => {
+            let tr = $("<tr></tr>").appendTo("#compareunlamtbody");
             tr.append(`<td>#</td>`);
             tr.append(`<td>${element.name}</td>`);
             tr.append(`<td>${element.roll_no}</td>`);
@@ -990,17 +1224,19 @@
             tr.append(`<td>${element.gram}</td>`);
         });
 
-        response.unlam.forEach(element => {
-            let tr = $("<tr></tr>").appendTo("#compareunlamtbody");
+        response.finaltripal.forEach(element => {
+            let tr = $("<tr></tr>").appendTo("#finaltripal");
             tr.append(`<td>#</td>`);
-            tr.append(`<td>${element.fabric.name}</td>`);
+            tr.append(`<td>${element.name}</td>`);
             tr.append(`<td>${element.roll_no}</td>`);
             tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.gross_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
-            tr.append(`<td>${element.average}</td>`);
+            tr.append(`<td>${element.average_wt}</td>`);
             tr.append(`<td>${element.gram}</td>`);
         });
+
+        weightdiffs(response);
         
     }
     /********** put on tbodys *********************/
@@ -1032,6 +1268,7 @@
 
 
     $(document).on("keyup","#add_dana_consumption_quantity",function(e){
+        // debugger;
         $("#add_dana_consumption").prop("disabled",false);
     });
 
@@ -1074,7 +1311,7 @@
                 // }
              
                 if (consumption.trim() === '') {
-                    alert("add quantity");
+                    // alert("add quantity");
                 }else{
                     $("#totl_dana").val(consumption);
 
@@ -1098,41 +1335,12 @@
 
 
     $(document).on("keyup","#fabric_waste",function(e){
-        let polo_waste = parseInt($("#polo_waste").val());
+        // let polo_waste = parseInt($("#polo_waste").val());
         let fabric_waste = parseInt($("#fabric_waste").val());
-        let total_waste = polo_waste + fabric_waste;
+        let total_waste =  fabric_waste;
         $("#total_waste").val(total_waste);
 
     });
-
-
-
-    $(document).on("keyup","#laminated_meter",function(e){
-        let laminated_net_weight = parseInt($("#laminated_net_weight").val());
-        let laminated_meter = parseInt($("#laminated_meter").val());
-        let laminated_avg_weight =  (laminated_net_weight / laminated_meter) * 1000;
-        $("#laminated_avg_weight").val(laminated_avg_weight);
-
-    });
-
-    $(document).on("keyup","#laminated_meter_2",function(e){
-        let laminated_net_weight = parseInt($("#laminated_net_weight_2").val());
-        let laminated_meter = parseInt($("#laminated_meter_2").val());
-        let laminated_avg_weight =  (laminated_net_weight / laminated_meter) * 1000;
-        let final = round(laminated_avg_weight, 3);
-        $("#laminated_avg_weight_2").val(final);
-
-    });
-
-    $(document).on("keyup","#laminated_meter_3",function(e){
-        let laminated_net_weight = parseInt($("#laminated_net_weight_3").val());
-        let laminated_meter = parseInt($("#laminated_meter_3").val());
-        let laminated_avg_weight =  (laminated_net_weight / laminated_meter) * 1000;
-        let final = round(laminated_avg_weight, 3);
-        $("#laminated_avg_weight_3").val(final);
-
-    });
-
     /********************** dana consumption and wastage and differences ******************************/
 
     /************************** Check weights matches for consumption and lamination and final submit   **********************************/
@@ -1149,28 +1357,27 @@
             let selectedDanaID = $("#selectedDanaID").val();
             let polo_waste = $("#polo_waste").val();
             let godam_id = $("#toGodam").val();
-            let bill = $("#bill").val();
+            let bill =  $("#bill").val();
             // console.log(godam_id);
+            // debugger;
 
             trimmedConsumption = consumption.trim();
-            trimmedPoloWaste = polo_waste.trim();
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
 
-            if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
+            if(trimmedConsumption == '' || trimmedFabricWaste == ''){
                 alert('Waste and Consumption cannot be null');
             }else{
             // subtractformautolad(danaNameId,consumption);
                 $.ajax({
-                    url : "{{ route('tripal.wastage.submit') }}",
+                    url : "{{ route('finaltripal.wastage.submit') }}",
                     method: "post",
                     data:{
                         "_token" : $('meta[name="csrf-token"]').attr('content'),
                         "danaNameID" : danaNameId,
                         "consumption" : trimmedConsumption,
                         "fabric_waste" : trimmedFabricWaste,
-                        "polo_waste" : trimmedPoloWaste,
                         "total_waste" : trimmedTotalWaste,
                         "selectedDanaID" : selectedDanaID,
                         "bill" : bill

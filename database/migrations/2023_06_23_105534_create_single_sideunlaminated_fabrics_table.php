@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('meter');
             $table->string('average')->nullable();
             $table->string('gram');
-            $table->enum("status",['pending',"sent"])->default("pending");
+            $table->enum("status",['pending',"sent","completed"])->default("pending");
             $table->unsignedBigInteger('department_id');
             $table->foreign('department_id')->references('id')->on("godam")->onDelete('cascade');
             $table->unsignedBigInteger('planttype_id');

@@ -21,7 +21,7 @@ class TapeEntryStockController extends Controller
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
 
-       $tapeststocks = TapeEntryStockModel::get();
+       $tapeststocks = TapeEntryStockModel::paginate(35);
 
         $godams=Godam::where('status','active')->get(['id','name']);
         $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
@@ -44,25 +44,14 @@ class TapeEntryStockController extends Controller
         $plantnames= ProcessingSubcat::where('status','active')->get(['id','name']);
 
         $godam_id = $request->godam_id ?? null ;
-        $planttypes_id = $request->planttypes_id ?? null;
-        $plantname_id = $request->plantname_id ??null;
 
-          $tapeststocks = TapeEntryStockModel::get();
-          // dd($tapeststocks);
+        $tapeststocks = TapeEntryStockModel::paginate(35);
 
-            if ($godam_id  != null) {
-                $tapeststocks->where('godam_id',$godam_id);
-            }
-            if($planttypes_id !=null){
-                $tapeststocks->where('plantType_id', $planttypes_id);
-            }
-            if($plantname_id !=null){
-                $tapeststocks->where('plantName_id', $plantname_id);
-            }
-
-            $tapeststocks= $tapeststocks;
-            // dd($tapeststocks);
-
+        if ($godam_id  != null) {
+            $tapeststocks = TapeEntryStockModel::where('toGodam_id',$godam_id)->paginate(35);
+        }
+        
+        $tapeststocks= $tapeststocks;
 
         return view('admin.tapeentrystock.index',
         compact('settings','tapeststocks','godams','planttypes','plantnames'));

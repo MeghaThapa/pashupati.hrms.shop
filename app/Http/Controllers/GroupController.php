@@ -44,7 +44,7 @@ class GroupController extends Controller
         $group->status= $request->status;
         $group->save();
        return response()->json([
-                'message' =>'group Created Successfully',
+                'message' =>'group Name Created Successfully',
                 'group' => $group,
             ],201);
     }

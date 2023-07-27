@@ -76,7 +76,7 @@
 
 @section('content')
 <div class="card-body p-0 m-0">
-    <form id="createRawMaterial">
+    <form action="{{ route('openingnonwoven.store') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
@@ -88,7 +88,7 @@
 
             <div class="col-md-2 form-group">
                 <label for="receive_no">Receipt Number</label>
-                <input type="text" value="{{$receipt_no}}" id="receipt_number_1_repeat"
+                <input type="text" value="Opening" id="receipt_number_1_repeat"
                     name="receive_no" class="form-control" readonly required />
             </div>
 
@@ -109,54 +109,9 @@
                 </span>
                 @enderror
             </div>
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Plant Type') }}
-                </label>
-                <select class="advance-select-box form-control" id="plantType" name="planttype_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
-                </select>
-                @error('planttype_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-            </div>
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Plant Name') }}
-                </label>
-                <select class="advance-select-box form-control" id="plantName" name="plantname_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
-                </select>
-                @error('plantname_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-            </div>
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Shift') }}
-                </label>
-                <select class="advance-select-box form-control" id="shiftName" name="shift_id" disabled required>
-                    <option value="" selected disabled>{{ __('Select Shift Name') }}</option>
-                     @foreach ($shifts as $shift)
-                        <option value="{{ $shift->id }}">{{ $shift->name }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('shift_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-            </div>
+            
+            
+            
             {{-- <div>
                 <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
                     Add
@@ -209,7 +164,7 @@
 
             
             <div>
-                <button id="getfabricsrelated" class="btn btn-primary mt-4">
+                <button type="submit" class="btn btn-primary mt-4">
                     Add
                 </button>
             </div>
@@ -423,266 +378,14 @@
     </div> --}}
 </div>
 
-  
-  <!-- Modal -->
- {{--  <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h4>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form id='sendtolaminationform' method="post">
-                @csrf
-                <div class="card">
-                    <div class="card-body">
-                       <table class="table table-bordered" id="tape_entry_dana_table"
-                           style="background:rgba(241, 214, 147,0.2)">
-                           <thead class="table-warning">
-                               <tr>
-                                   <th style="width:100px">Sr No</th>
-                                   <th>Dana</th>
-                                   <th>Quantity</th>
-                               </tr>
-                           </thead>
-                           <tbody id="dana_list"></tbody>
-                           
-                       </table>
-                        <div class="row d-flex justify-content-center text-center mb-2-">
-                            <div class="col-md-6">
-                                <button type='submit' class="btn btn-info">Create Group</button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type='submit' class="btn btn-info">Update</button>
-                            </div>
-                            <input type="text" name="idoffabricforsendtolamination" id="idoffabricforsendtolamination">
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div> --}}
-
 
 @endsection
 @section('extra-script')
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-<script>
 
 
-    $("#danaNameId").on("change",function(e){
-        var danaid = $(this).val(); 
-        $("#add_dana_consumption_quantity").prop("disabled",false);
-    });
-
-
-    $(document).on("keyup","#add_dana_consumption_quantity",function(e){
-        $("#add_dana_consumption").prop("disabled",false);
-    });
-
-    $(document).on("keyup","#filter",function(e){
-        $("#finalUpdate").prop("disabled",false);
-    });
-
-    $(document).on("click","#add_dana_consumption",function(e){
-        // debugger;
-        let dana = $("#danaNameId").val();
-        let consumption = $("#add_dana_consumption_quantity").val();
-        $("#dana_quanity").val(consumption);
-    
-        $.ajax({
-            url:"{{ route('dana.autoload.checkAutoloadQuantity') }}",
-            method : 'post',
-            data:{
-                '_token' : $('meta[name="csrf-token"]').attr('content'),
-                'danaid' : dana
-            },
-            beforeSend:function(){
-                console.log('Getting Plant type');
-            },
-            success:function(response){
-             
-                if (consumption.trim() === '') {
-                    alert("add quantity");
-                }else{
-                    $("#totl_dana").val(consumption);
-
-                    $("#selectedDanaID").val(dana);
-                }   
-             
-            },
-            error:function(error){
-                console.log(error);
-            }
-
-        });
-
-    });
-    $('#filter').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        // var nettotal = total_fee - amount_received - parseInt(discount) + parseInt(fine);
-
-        $("#wastage").val(filter);
-       
-      }
-    });
-
-    $('#filament').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        var nettotal = parseInt(filter) + parseInt(filament);
-
-        $("#wastage").val(nettotal);
-       
-      }
-    });
-
-    $('#roalcoast').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast);
-
-        $("#wastage").val(nettotal);
-       
-      }
-    });
-
-    $('#strip').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast) + parseInt(strip);
-
-        $("#wastage").val(nettotal);
-       
-      }
-    });
-</script>
-<script type="text/javascript">
-  // $('.add_wastage').click(function(event){
-  //   var wastage = $("#wastage").val(),
-  //       netweight = $("#netweight").val(),
-  //       danaquantity = $("#dana_quanity").val(),
-  //       dana = $("#dana").val();
-  //   debugger;
-  //   var  token = $('meta[name="csrf-token"]').attr('content');
-  //   $.ajax({
-  //     type:"POST",
-  //     dataType:"html",
-  //     url:"{{route('storeWastage')}}",
-  //     data:{
-  //       _token:token,
-  //       wastage: wastage,
-  //       netweight: netweight,
-  //       godam_id: '1',
-  //       danaquantity: danaquantity,
-  //       dana: dana,
-  //     },
-  //     success: function(response){
-  //       $('#dana_list').append(response);
-  //       $('table').on('click','#cross',function(e){
-  //         e.preventDefault();
-  //         $(this).closest('tr').remove();
-  //       });
-  //       $("#dana_quanity").val(quantity);
-
-        
-
-  //       // $("#submit").addClass('d-none');
-  //       // $("#calculate").removeClass('d-none');
-  //       // $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
-  //     },
-  //     error:function(event){
-  //       alert('Error');
-  //       return false;
-  //     }
-  //   })
-  // })
-
-   $(document).on("click","#finalUpdate",function(e){
-
-      let danaNameId = $("#selectedDanaID").val();
-      let consumption = $("#add_dana_consumption_quantity").val();
-      let wastage = $("#wastage").val();
-      // let total_waste = $('#total_waste').val();
-      let selectedDanaID = $("#selectedDanaID").val();
-      let filter = $("#filter").val();
-      let filament = $("#filament").val();
-      let roalcoast = $("#roalcoast").val();
-      let strip = $("#strip").val();
-      let godam_id = $("#toGodam").val();
-      let bill = $("#billno").val();
-      // console.log(godam_id);
-      // debugger;
-
-      trimmedConsumption = consumption.trim();
-      trimmedFilter = filter.trim();
-      // trimmedFabricWaste = fabric_waste.trim();
-      trimmedTotalWaste = wastage.trim();
-
-      // debugger;
-
-      if(trimmedConsumption == '' || trimmedFilter == '' || trimmedTotalWaste == ''){
-          alert('Waste and Consumption cannot be null');
-      }else{
-      // subtractformautolad(danaNameId,consumption);
-          $.ajax({
-              url : "{{ route('storeWastage') }}",
-              method: "post",
-              data:{
-                  "_token" : $('meta[name="csrf-token"]').attr('content'),
-                  "danaNameID" : danaNameId,
-                  "consumption" : trimmedConsumption,
-                  "total_waste" : trimmedTotalWaste,
-                  "selectedDanaID" : selectedDanaID,
-                  "bill" : bill
-              },
-              beforeSend:function(){
-                  console.log("Before Send");
-              },
-              success:function(response){
-                  console.log(response);
-                  if(response == '200'){
-                      location.reload();
-                  }else{
-
-                  }
-              },
-              error:function(error){
-                  console.log(error);
-              }
-          }); 
-      }
-  });
-</script>
 
 <script>
     $(document).ready(function(){

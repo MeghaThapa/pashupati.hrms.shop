@@ -248,6 +248,54 @@
                     </a>
                 </div>
 
+                 <div class="col-md-4 col-sm-6 col-12">
+                    <a href="{{ route('singletripal-stock.index') }}">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success">
+                                <i class="fas fa-wallet"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">{{ __('SINGLETRIPALSTOCK') }}</span>
+                                <span class="info-box-number text-bold">{{ App\Models\Godam::count() }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </a>
+                </div>
+
+                 <div class="col-md-4 col-sm-6 col-12">
+                    <a href="{{ route('nonwovenfabrics-receiveentrystock.index') }}">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success">
+                                <i class="fas fa-wallet"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">{{ __('NONWOVENSTOCK') }}</span>
+                                <span class="info-box-number text-bold">{{ App\Models\Godam::count() }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </a>
+                </div>
+
+                 <div class="col-md-4 col-sm-6 col-12">
+                    <a href="{{ route('doubletripal-stock.index') }}">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success">
+                                <i class="fas fa-wallet"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">{{ __('DOUBLETRIPALSTOCK') }}</span>
+                                <span class="info-box-number text-bold">{{ App\Models\Godam::count() }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </a>
+                </div>
+
                 {{-- Yo Chaidaina --}}
                 {{-- <div class="col-md-4 col-sm-6 col-12">
                     <a href="{{ route('processing.categories') }}">

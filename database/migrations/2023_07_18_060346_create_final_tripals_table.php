@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('double_side_laminated_fabric_stocks', function (Blueprint $table) {
+        Schema::create('final_tripals', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->unsignedBigInteger('doublefabric_id');
+            $table->foreign('doublefabric_id')->references("id")->on('double_side_laminated_fabric_stocks')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('fabric_id');
+            $table->foreign('fabric_id')->references("id")->on('fabrics')->onDelete('cascade')->onUpdate('cascade');
             
             $table->unsignedBigInteger('planttype_id');
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade');
@@ -26,9 +31,8 @@ return new class extends Migration
 
             $table->bigInteger('department_id')->unsigned()->index();
             $table->foreign('department_id')->references('id')->on('godam')->onDelete('cascade');
-
-            $table->bigInteger('doublelamfabric_id')->unsigned()->index();
-            $table->foreign('doublelamfabric_id')->references('id')->on('double_side_laminated_fabrics')->onDelete('cascade');
+            $table->bigInteger('finaltripalname_id')->unsigned()->index();
+            $table->foreign('finaltripalname_id')->references('id')->on('final_tripal_names')->onDelete('cascade');
             
             $table->string('gram');
             $table->string('gross_wt');
@@ -39,8 +43,9 @@ return new class extends Migration
             $table->string('average_wt');
             $table->string('bill_number');
             $table->string('bill_date');
-            $table->enum("type_lam",["single","double"])->default("single");
             $table->enum("status",["sent","pending","completed"])->default("pending");
+            $table->string('date_en');
+            $table->string('date_np');
             $table->timestamps();
         });
     }
@@ -52,6 +57,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('double_side_laminated_fabric_stocks');
+        Schema::dropIfExists('final_tripals');
     }
 };

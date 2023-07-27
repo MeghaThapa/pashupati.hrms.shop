@@ -30,20 +30,21 @@ use App\Models\Singlesidelaminatedfabric;
 use App\Models\Singlesidelaminatedfabricstock;
 use App\Models\DoubleSideLaminatedFabric;
 use App\Models\DoubleSideLaminatedFabricStock;
+use App\Helpers\AppHelper;
 
 class DoubleTripalController extends Controller
 {
     public function index()
     {
-        $id = UnlaminatedFabric::latest()->value('id');
-        $bill_no = "TRP"."-".getNepaliDate(date('Y-m-d'))."-".$id+1;
+
+        $bill_no = AppHelper::getDoubleTripalReceiptNo();
         $bill_date = date('Y-m-d');
         $shifts = Shift::where('status','active')->get();
         $godam = Godam::where('status','active')->get();
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = AutoLoadItemStock::get();
-        $fabrics = Singlesidelaminatedfabricstock::get();
+        $fabrics = Singlesidelaminatedfabricstock::get()->unique('name')->values()->all();
         // dd($fabrics);
         return view('admin.doubletripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date'));
     }
@@ -52,7 +53,9 @@ class DoubleTripalController extends Controller
     public function getSingleLamFabric(Request $request){
         // dd($request);
         if($request->ajax()){
-            $fabrics = SinglesidelaminatedfabricStock::get();
+            $getAllfabrics = SinglesidelaminatedfabricStock::where('fabric_id',$request->fabric_id)->value('name');
+            $fabrics = SinglesidelaminatedfabricStock::where('name',$getAllfabrics)->get();
+            
             // dd($fabrics);
             return response(['response'=>$fabrics]);
             // return response([
@@ -178,14 +181,17 @@ class DoubleTripalController extends Controller
 
             $data = [];
             parse_str($request->data,$data);
-            // dd($data);
             
             $fabric_ids = $data['fabricsid'];
+            //thiis fabric id is singlesidestockid
 
-            // dd($fabric_id);
-            $fabric_data = Singlesidelaminatedfabric::find($fabric_ids);
-            $fabric_id = $fabric_data->fabric_id;
-            // dd($fabric_data,'lol');
+            $fabric_data = Singlesidelaminatedfabricstock::find($fabric_ids);
+            $getdata = Singlesidelaminatedfabric::where('id',$fabric_data->singlelamfabric_id)->value('fabric_id');
+            $fabric_id = $getdata;
+
+           DB::beginTransaction();
+
+      
 
             SingleSideunlaminatedFabric::create([
                 'bill_number' => $data['bill_no'],
@@ -205,15 +211,15 @@ class DoubleTripalController extends Controller
 
             // dd('hello');
 
-            $fabricstock =  SingleSideunlaminatedFabric::with('fabric')->where('id',$fabric_id)->first(); //where('id',$idoffabricforsendtolamination)->
-            $fabric_id = $fabricstock->fabric_id;
-            $department_id = $fabricstock->department_id;
-            $planttype_id = $fabricstock->planttype_id;
-            $plantname_id = $fabricstock->plantname_id;
-            $bill_number = $fabricstock->bill_number;
-            $bill_date = $fabricstock->bill_date; 
-            $meter = $fabricstock->meter;
-            $fabricgroup_id = $fabricstock->fabric->id;
+            $fabricstock =  SingleSideunlaminatedFabric::with('fabric')->where('id',$fabric_id)->where('bill_number',$data['bill_no'])->latest()->first(); //where('id',$idoffabricforsendtolamination)->
+            // dd($fabricstock);
+            $department_id = $data['godam_id'];
+            $planttype_id = $data['planttype_id'];
+            $plantname_id = $data['plantname_id'];
+            $bill_number = $data['bill_no'];
+            $bill_date = $data['bill_date']; 
+            // $meter = $fabricstock->meter;
+            // $fabricgroup_id = $fabricstock->fabric->id;
 
             $lamimated_roll_no = $data['laminated_roll_no'];
             $lamimated_roll_no_2 = $data['laminated_roll_no_2'];
@@ -240,15 +246,18 @@ class DoubleTripalController extends Controller
             $laminated_gram = $data['laminated_gram'];
             $laminated_gram_2 = $data['laminated_gram_2'];
             $laminated_gram_3 = $data['laminated_gram_3'];
+
+            $laminated_meter = $data['laminated_meter'];
+            $laminated_meter_2 = $data['laminated_meter_2'];
+            $laminated_meter_3 = $data['laminated_meter_3'];
         
 
             $fabricmodelquery = Fabric::where('id',$fabric_id)->first();
-            // dd($fabricmodelquery);
 
-           DB::beginTransaction();
            // dd('lol');
                 
                 $fabric =  SingleSideunlaminatedFabric::with('fabric')->where('id',$fabric_id)->first();
+
                 // $updatetosent = $fabric->update([
                 //     "status" => "sent"
                 // ]);
@@ -267,7 +276,7 @@ class DoubleTripalController extends Controller
                         'gross_wt' => $laminated_gross_weight,
                         "roll_no" => $lamimated_roll_no,
                         'net_wt' => $laminated_net_weight,
-                        "meter" => $fabricmodelquery->meter,
+                        "meter" => $laminated_meter,
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
@@ -290,13 +299,26 @@ class DoubleTripalController extends Controller
                         'gross_wt' => $laminated_gross_weight,
                         "roll_no" => $lamimated_roll_no,
                         'net_wt' => $laminated_net_weight,
-                        "meter" => $fabricmodelquery->meter,
+                        "meter" => $laminated_meter,
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
                         "status" => "sent"
                     ]);
+
+                    $stock = Singlesidelaminatedfabricstock::where('id',$fabric_id)->value('net_wt');
+                    $fabrics_id = Singlesidelaminatedfabricstock::where('id',$fabric_id)->value('id');
+
+                    if($laminated_net_weight != null){
+                      $finalstock = $stock - $laminated_net_weight ;
+                      // dd($stock,$laminated_net_weight);
+                      $find_fabric = Singlesidelaminatedfabricstock::find($fabrics_id);
+                      $find_fabric->net_wt = $finalstock;
+                      $find_fabric->update();
+
+                    }
+                }
 
                 // if($lamimated_roll_no_2 != null && $laminated_gross_weight_2 != null && $laminated_net_weight_2 != null && $laminated_avg_weight_2 != null && $laminated_gram_2 != null){
 
@@ -390,7 +412,6 @@ class DoubleTripalController extends Controller
                 // }
 
              
-            }
 
                 
            DB::commit();
@@ -405,6 +426,7 @@ class DoubleTripalController extends Controller
     
     public function getUnlamSingleDoubleLam(Request $request){
         if($request->ajax()){
+            // dd('ll');
             $unlam = SingleSideunlaminatedFabric::with('fabric')->where('status',"sent")->get();
             $ul_mtr_total=0;
             $ul_net_wt_total = 0;
@@ -413,7 +435,7 @@ class DoubleTripalController extends Controller
             $unlamnet_wt = SingleSideunlaminatedFabric::with('fabric')->where('status',"sent")->sum('net_wt');
             $unlamnet_meter = SingleSideunlaminatedFabric::with('fabric')->where('status',"sent")->sum('meter');
          
-            $lam = DoubleSidelaminatedfabricstock::all();
+            $lam = DoubleSidelaminatedfabricstock::where('status','sent')->get();
             // dd($lam);
 
             $lam_mtr_total = DoubleSidelaminatedfabricstock::with('fabric')->where('status',"sent")->sum('net_wt');
@@ -480,6 +502,10 @@ class DoubleTripalController extends Controller
             try{
                 DB::beginTransaction();
 
+                  $getFabricLastId = DoubleSideLaminatedFabricStock::where('bill_number',$request->bill)->where('status','sent')->latest()->first();
+
+                  // dd($getFabricLastId);
+
                     $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
 
                     $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
@@ -495,6 +521,14 @@ class DoubleTripalController extends Controller
                             "quantity" => $deduction
                         ]);
                     }
+
+                    $getsinglesidelaminatedfabric = SingleSideunlaminatedFabric::where('bill_number',$request->bill)->update(['status' => 'completed']); 
+
+                    $getdoublesidelaminatedfabric = DoubleSideLaminatedFabric::where('bill_number',$request->bill)->update(['status' => 'completed']); 
+
+                    $getdoublesidelaminatedfabricstock = DoubleSideLaminatedFabricStock::where('bill_number',$request->bill)->update(['status' => 'completed']); 
+
+                    // $unlaminatedfabrictripal = SingleSideunlaminatedFabric::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']);
                 
                 //fabric stock creation
                     // UnlaminatedFabric::where('status','sent')->delete();
