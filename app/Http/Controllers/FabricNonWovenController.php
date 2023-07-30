@@ -31,35 +31,29 @@ class FabricNonWovenController extends Controller
 
     public function store(Request $request)
     {
-        // dd('hello');
-        //validate form
-
 
         $validator = $request->validate([
             'name' => 'required|string|max:60',
             'gsm' => 'required|numeric',
             'color' => 'required',
         ]);
+        $slug = Str::slug($request['name']);
 
-        $fabric = NonWovenFabric::create([
-            'name' => $request['name'],
-            'slug' => Str::slug($request['name']),
-            'gsm' => $request['gsm'],
-            'color' => $request['color'],
-        ]);
+        $count =  NonWovenFabric::where('slug',$slug)->where('gsm',$request->gsm)->where('color',$request->color)->count();
+        // dd($count);
+
+        if($count == 0){
+            $fabric = NonWovenFabric::create([
+                'name' => $request['name'],
+                'slug' => Str::slug($request['name']),
+                'gsm' => $request['gsm'],
+                'color' => $request['color'],
+            ]);
 
 
-        // store subcategory
-        // $fabric = Fabric::create([
-        //     'name' => $request['name'],
-        //     'roll_no' => $request['roll_no'],
-        //     'loom_no' => $request['loom_no'],
-        //     'fabricgroup_id' => $request['fabricgroup_id'],
-        //     'gross_wt' => $request['gross_wt'],
-        //     'net_wt' => $request['net_wt'],
-        //     'meter' => $request['meter'],
-        //     'gram' => '00',
-        // ]);
+        }
+
+
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
 

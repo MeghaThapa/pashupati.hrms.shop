@@ -62,6 +62,8 @@
                         </a>
                     </li>
 
+                    
+
                     <li class="nav-item">
                         <a href="{{ route('fabric.opening') }}" class="nav-link {{ request()->routeIs('admin.fabric.opening') ? "active" : ""}}">
                                 <i class="nav-icon fas fa-tags"></i>
@@ -184,6 +186,30 @@
                     
                   </ul>
                 </li>
+
+                <li class="nav-item has-treeview {{ (request()->is('home/main-entry/*')) ? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('home/main-entry/*')) ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-star"></i>
+                    <p>
+                      Sale
+                      <i class="fas fa-angle-left right"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview ">
+                    <li class="nav-item">
+                        <a href="{{ route('salefinaltripal.index') }}"
+                            class="nav-link {{ request()->is('admin/salefinaltripal*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>{{ __('Sales FinalTripal') }}</p>
+                        </a>
+                    </li>
+
+                    
+                    
+                  </ul>
+                </li>
+
+                
 
                 
                 {{-- <li class="nav-item">

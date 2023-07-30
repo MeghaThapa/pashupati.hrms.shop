@@ -38,12 +38,19 @@ class FabricStockController extends Controller
         try{
             $fabricImport = new FabricOpeningImport($godam,$type);
             $import = Excel::import($fabricImport,$file);
-            $importException = $fabricImport->getExceptionMessage();
-            if($importException){
-                return $importException->getMessage();
+
+            if($import){
+                return back()->with(["message"=>"Data imported successfully!"]);
             }else{
-                return "Import Successful";
+                return "Unsuccessful";
             }
+            
+            // $importException = $fabricImport->getExceptionMessage();
+            // if($importException){
+            //     return $importException->getMessage();
+            // }else{
+            //     return "Import Successful";
+            // }
             
         }catch(Throwable $th){
             return $th->getMessage();
@@ -60,11 +67,47 @@ class FabricStockController extends Controller
        $godams=Godam::where('status','active')->get(['id','name']);
        $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
        $plantnames= ProcessingSubcat::where('status','active')->get(['id','name']);
+       $sum = 0;
 
        // dd($fabric_stock);
 
 
        return view('admin.fabric.fabric_stock.index',
-       compact('settings','fabric_stock','godams','planttypes','plantnames'));
+       compact('settings','fabric_stock','godams','planttypes','plantnames','sum'));
+    }
+
+      public function filterStock(Request $request){
+        // dd($request);
+
+        $helper= new AppHelper();
+        $settings= $helper->getGeneralSettigns();
+        $godam_id = $request->godam_id ?? null ;
+        $type = $request->type ?? null ;
+        $name = $request->name ?? null ;
+        $godams=Godam::where('status','active')->get(['id','name']);
+
+        $fabrics = FabricStock::where('status',1);
+
+
+            if ($godam_id  || $godam_id  != null) {
+                $fabrics = $fabrics->where('godam_id',$godam_id);
+                $sum = $fabrics->sum('net_wt');
+            }
+            if($type || $type !=null){
+                $fabrics = $fabrics->where('is_laminated', $type);
+                $sum = $fabrics->sum('net_wt');
+            }
+
+            if($name || $name !=null){
+                $fabrics = $fabrics->where('name', 'LIKE', '%'.$name.'%');
+                $sum = $fabrics->sum('net_wt');
+            }
+
+
+            $fabric_stock= $fabrics->paginate(35);
+
+
+        return view('admin.fabric.fabric_stock.index',
+        compact('settings','fabric_stock','sum','godams'));
     }
 }

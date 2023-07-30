@@ -45,6 +45,7 @@ use App\Http\Controllers\Tripal\SingleTripalStockController;
 use App\Http\Controllers\Tripal\DoubleTripalStockController;
 use App\Http\Controllers\Tripal\FinalTripalStockController;
 use App\Http\Controllers\Tripal\FinalTripalController;
+use App\Http\Controllers\Tripal\SaleFinalTripalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
@@ -518,6 +519,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
+    Route::post('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
+
     //fabric opening
     Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
     Route::post("fabric/opening/store",[FabricStockController::class,"openingStore"])->name("fabric.opening.store");
@@ -584,6 +587,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //final tripal
     Route::get('openingfinaltripal','Tripal\OpeningTripalController@getOpeningFinalTripalIndex')->name('openingfinaltripal.index');
     Route::post('openingfinaltripal/storeData','Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
+
+    //sale final tripal
+    Route::get('salefinaltripal','Tripal\SaleFinalTripalController@index')->name('salefinaltripal.index');
+    Route::get('salefinaltripal/getSaleFinalTripalStockList','Tripal\SaleFinalTripalController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
+
+    Route::post('salefinaltripal/store','Tripal\SaleFinalTripalController@store')->name('salefinaltripal.store');
 
 
 
