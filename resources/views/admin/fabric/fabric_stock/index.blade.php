@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
                 <label for="">Godam</label>
-                <select class="advance-select-box form-control" id="danaGroupId_model" name="godam_id">
+                <select class="advance-select-box form-control" id="toGodam" name="godam_id">
                     <option value="" selected disabled>{{ __('Select Godam') }}</option>
                     @foreach ($godams as $godam)
                         <option value="{{ $godam->id }}">{{ $godam->name }}</option>
@@ -39,7 +39,12 @@
 
             <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
                 <label for="">Name</label>
-                <input type="text" name="name" id="name" class="form-control">
+
+                <select class="advance-select-box form-control" id="fabricNameId" name="name">
+                    <option value="" selected disabled>{{ __('Select Fabric') }}</option>
+
+                </select>
+
 
             </div>
             
@@ -109,4 +114,34 @@
 @endsection
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+    <script>
+        $("#toGodam").change(function(e){
+
+            let department_id =  $(this).val();
+            let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
+            $("#godam_ids").val(department_id);
+            $.ajax({
+                url:geturl.replace(':id',department_id),
+                beforeSend:function(){
+                    console.log('Getting Plant type');
+                },
+                success:function(response){
+                    addfabrictype(response);
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        });
+
+        function addfabrictype(data){
+            $("#fabricNameId").empty();
+            $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
+            data.godamfabrics.forEach( d => {
+                $('#fabricNameId').append(`<option value="${d.id}">${d.name}</option>`);
+            });
+        }
+
+    </script>
+
 @endsection

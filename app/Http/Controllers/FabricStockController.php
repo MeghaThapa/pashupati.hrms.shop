@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\AppHelper;
 use App\Models\FabricStock;
+use App\Models\Fabric;
 use App\Models\DanaName;
 use App\Models\DanaGroup;
 use App\Models\Department;
@@ -77,7 +78,8 @@ class FabricStockController extends Controller
     }
 
       public function filterStock(Request $request){
-        // dd($request);
+        
+        $getname = Fabric::where('id',$request->name)->value('name');
 
         $helper= new AppHelper();
         $settings= $helper->getGeneralSettigns();
@@ -87,7 +89,6 @@ class FabricStockController extends Controller
         $godams=Godam::where('status','active')->get(['id','name']);
 
         $fabrics = FabricStock::where('status',1);
-
 
             if ($godam_id  || $godam_id  != null) {
                 $fabrics = $fabrics->where('godam_id',$godam_id);
@@ -99,7 +100,7 @@ class FabricStockController extends Controller
             }
 
             if($name || $name !=null){
-                $fabrics = $fabrics->where('name', 'LIKE', '%'.$name.'%');
+                $fabrics = $fabrics->where('name', 'LIKE', '%'.$getname.'%');
                 $sum = $fabrics->sum('net_wt');
             }
 

@@ -41,7 +41,7 @@ class NonWovenController extends Controller
     public function store(Request $request){
         // dd($request->fabric_name);
         $find_name = NonWovenFabric::where('slug',$request->fabric_name)->where('gsm',$request->fabric_gsm)->where('color',$request->fabric_color)->value('name');
-        // dd($find_name);
+        // dd($find_name,$request);
 
        $fabricnon = NonwovenOpeningStock::create([
            'receive_date' => $request['receive_date'],

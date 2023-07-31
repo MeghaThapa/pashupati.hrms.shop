@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\AppHelper;
 use App\Models\FabricNonWovenReceiveEntryStock;
+use App\Models\NonwovenOpeningStock;
 use App\Models\RawMaterialStock;
 use App\Models\DanaName;
 use App\Models\DanaGroup;
@@ -21,7 +22,7 @@ class NonWovenStockController extends Controller
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
 
-       $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
+       $nonwoven_stocks = NonwovenOpeningStock::paginate(35);
        // $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
 
         // dd($nonwoven_stocks);
@@ -30,7 +31,7 @@ class NonWovenStockController extends Controller
         $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
         $plantnames= ProcessingSubcat::where('status','active')->get(['id','name']);
 
-        return view('admin.nonwovenstock.index',
+        return view('admin.nonwovenstock.getstock',
         compact('settings','nonwoven_stocks','godams','planttypes','plantnames'));
 
     }

@@ -57,9 +57,9 @@ class FabricNonWovenController extends Controller
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
 
-    public function edit($slug)
+    public function edit($id)
     {
-        $nonwovenfabrics = NonWovenFabric::where('slug', $slug)->first();
+        $nonwovenfabrics = NonWovenFabric::where('id', $id)->first();
         return view('admin.nonwovenfabric.edit', compact('nonwovenfabrics'));
     }
 
@@ -70,9 +70,9 @@ class FabricNonWovenController extends Controller
      * @param  string  $slug
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $slug)
+    public function update(Request $request, $id)
     {
-        $fabric = NonWovenFabric::where('slug', $slug)->first();
+        $fabric = NonWovenFabric::where('id', $id)->first();
 
         //validate form
         $validator = $request->validate([

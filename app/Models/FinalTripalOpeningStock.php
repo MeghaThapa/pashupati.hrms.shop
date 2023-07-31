@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class NonwovenOpeningStock extends Model
+class FinalTripalOpeningStock extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'receive_date', 'receive_no', 'fabric_roll', 'fabric_gsm','fabric_name','fabric_color','length','gross_weight','net_weight','godam_id'
+        'bill_number','bill_date','godam_id','name','slug','finaltripalname_id'
+        ,'roll_no','gram','net_wt','meter','average','gsm','created_at','updated_at','date_en','date_np','type'
     ];
 
     public function getGodam()

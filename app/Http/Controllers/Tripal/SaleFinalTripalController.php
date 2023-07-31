@@ -52,7 +52,7 @@ class SaleFinalTripalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd('lol');
     }
 
     /**

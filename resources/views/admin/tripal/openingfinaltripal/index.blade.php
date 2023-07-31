@@ -252,10 +252,10 @@
                             <td>{{ ++$key }}</td>
                             <td>{{ $fabric->name }} </td>
                             <td>{{ $fabric->roll_no }} </td>
-                            <td>{{ $fabric->gross_wt}} </td>
+                            <td>{{ $fabric->gram}} </td>
                             <td>{{ $fabric->net_wt }}</td>
                             <td>{{ $fabric->meter }}</td>
-                            <td>{{$fabric->average_wt}}</td>
+                            <td>{{$fabric->average}}</td>
 
                         </tr>
                     @endforeach
