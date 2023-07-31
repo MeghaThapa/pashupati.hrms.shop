@@ -51,6 +51,7 @@ use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
+use Symfony\Component\Routing\RouteCollection;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -935,6 +936,11 @@ Route::post('tape-entry/store',[TapeEntryController::class,"tapeentrystore"])->n
 Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"])->name("tape.entry.receive.create");
 Route::get('tape-entry/receive/view/{id}',[TapeEntryController::class,"view"])->name("tape.entry.receive.view");
 Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"deleteTape"])->name("tape.entry.receive.delete");
+
+//tapre report
+Route::get("tape/report",[TapeEntryController::class,"tape_report"])->name("tape.report");
+Route::get("tape/report/ajax",[TapeEntryController::class,"tape_report_ajax"])->name("tape.report.ajax");
+
     //reteieve planttype
 Route::get('tape-entry/ajax-request/{godam_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
     //reteieve plantname
@@ -945,9 +951,10 @@ Route::get('tape-entry/ajax-request/shift/{plantname_id}/{godam_id}/{plantType_i
 Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajaxrequestdanainfo"])->name('tape.entry.ajax.get.danainfo');
     // tapeentrystock
 Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
-/**************tape entry end*************/
 Route::get("tape/opening",[TapeEntryController::class,"openingcreate"])->name("tape.opening");
 Route::post("tape/opening/store",[TapeEntryController::class,"openingstore"])->name("tape.opening.store");
+/**************tape entry end*************/
+
 
 
 //tapeentry stock
