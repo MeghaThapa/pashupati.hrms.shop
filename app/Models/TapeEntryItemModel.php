@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Godam;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +19,10 @@ class TapeEntryItemModel extends Model
     ];
 
     public function tapeentry(){
-        return $this->belongsTo(TapeEntry::class);
+        return $this->belongsTo(TapeEntry::class,"tape_entry_id","id");
+    }
+    public function godam(){
+        return $this->belongsTo(Godam::class,"toGodam_id","id");
     }
 
  

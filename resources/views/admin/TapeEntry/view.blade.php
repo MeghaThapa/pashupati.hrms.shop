@@ -71,8 +71,95 @@
 @endsection
 
 @section('content')
-
+<!-- Content Header (Page header) -->
+<div class="content-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-sm-6 mt-2">
+            <h4 ><strong>Tape Receive Entry</strong></h4>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                    <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
+                </li>
+                <li class="breadcrumb-item active">{{ __('Tape Entry') }}</li>
+            </ol>
+        </div>
+    </div>
+</div>
+<!-- /.content-header -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <label for="">Godam</label>
+                <select name="" id="">
+                    <option value="psi">PSI</option> 
+                    <option value="new psi">New PSI</option> 
+                    <option value="bsw">BSW</option> 
+                </select>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-striped table-hover table-bordered w-100">
+                    <thead>
+                        <th>SN</th>
+                        <th>Godam</th>
+                        <th>Receipt Number</th>
+                        <th>Receipt Date</th>
+                        <th>Wastage</th>
+                        <th>Dana Consumption</th>
+                        <th>Tape Quantity</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                        <th>SN</th>
+                        <th>Godam</th>
+                        <th>Receipt Number</th>
+                        <th>Receipt Date</th>
+                        <th>Wastage</th>
+                        <th>Dana Consumption</th>
+                        <th>Tape Quantity</th>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="card-footer row">
+                <div class="col-md-4">
+                    <label for="">Dana Consumption</label>
+                    <input type="text" class="form-control" value="{{ $dana_consumption }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label for="">Wastage</label>
+                    <input type="text" class="form-control" value="{{ $wastage }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label for="">Tape Quantity</label>
+                    <input type="text" class="form-control" value="{{ $tape_quantity }}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('extra-script')
-
+<script>
+    $(document).ready(function(){
+        let table = $(".table").DataTable({
+            serverside : true,
+            processing : true,
+            searchable : true,
+            orderable : true,
+            ajax : "{{ route('tape.report.ajax') }}",
+            columns : [
+                { data:"DT_RowIndex" , name: "DT_RowIndex"},
+                { data:"godam" , name: "godam"},
+                { data:"receipt_number" , name: "receipt_number"},
+                { data:"receipt_entry_date" , name: "receipt_entry_date"},
+                { data:"wastage" , name: "wastage"},
+                { data : "dana_in_kg" , name: "dana_in_kg" },
+                { data : "tape_qty_in_kg" , name: "tape_qty_in_kg" },
+            ]
+        })
+    })
+</script>
 @endsection
