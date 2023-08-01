@@ -940,6 +940,7 @@ Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"delete
 //tapre report
 Route::get("tape/report",[TapeEntryController::class,"tape_report"])->name("tape.report");
 Route::get("tape/report/ajax",[TapeEntryController::class,"tape_report_ajax"])->name("tape.report.ajax");
+Route::get("tape/report/amounts/{godam}",[TapeEntryController::class,"tape_report_amounts_ajax"])->name("tape.report.amounts.ajax");
 
     //reteieve planttype
 Route::get('tape-entry/ajax-request/{godam_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');

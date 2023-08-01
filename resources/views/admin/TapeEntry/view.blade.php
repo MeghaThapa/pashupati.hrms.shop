@@ -93,10 +93,11 @@
         <div class="card">
             <div class="card-header">
                 <label for="">Godam</label>
-                <select name="" id="">
-                    <option value="psi">PSI</option> 
-                    <option value="new psi">New PSI</option> 
-                    <option value="bsw">BSW</option> 
+                <select name="godam" id="godam" class="advance-select-box">
+                    <option selected disabled>{{ __('--select godam--') }}</option>
+                    @foreach($godams as $data)
+                        <option value="{{ $data->id }}">{{ $data->name }}</option> 
+                    @endforeach
                 </select>
             </div>
             <div class="card-body table-responsive">
@@ -126,15 +127,15 @@
             <div class="card-footer row">
                 <div class="col-md-4">
                     <label for="">Dana Consumption</label>
-                    <input type="text" class="form-control" value="{{ $dana_consumption }}" readonly>
+                    <input type="text" class="form-control dana_consumption" value="{{ $dana_consumption }}" readonly>
                 </div>
                 <div class="col-md-4">
                     <label for="">Wastage</label>
-                    <input type="text" class="form-control" value="{{ $wastage }}" readonly>
+                    <input type="text" class="form-control wastage" value="{{ $wastage }}" readonly>
                 </div>
                 <div class="col-md-4">
                     <label for="">Tape Quantity</label>
-                    <input type="text" class="form-control" value="{{ $tape_quantity }}" readonly>
+                    <input type="text" class="form-control tape" value="{{ $tape_quantity }}" readonly>
                 </div>
             </div>
         </div>
@@ -149,7 +150,12 @@
             processing : true,
             searchable : true,
             orderable : true,
-            ajax : "{{ route('tape.report.ajax') }}",
+            ajax : {
+                url : "{{ route('tape.report.ajax') }}",
+                data : function(data){
+                    data.godam = $("#godam").val()
+                }
+            },
             columns : [
                 { data:"DT_RowIndex" , name: "DT_RowIndex"},
                 { data:"godam" , name: "godam"},
@@ -159,6 +165,22 @@
                 { data : "dana_in_kg" , name: "dana_in_kg" },
                 { data : "tape_qty_in_kg" , name: "tape_qty_in_kg" },
             ]
+        })
+        $("#godam").change(function(){
+            table.ajax.reload()
+            let godam = $(this).val()
+            $.ajax({
+                url : "{{ route('tape.report.amounts.ajax',['godam' => ':godam']) }}".replace(":godam",godam),
+                method : "get",
+                success:function(response){
+                    $(".dana_consumption").val(response.dana_consumption)
+                    $(".wastage").val(response.wastage)
+                    $(".tape").val(response.tape_quantity)
+                },
+                error:function(error){
+                    console.log(error)
+                }
+            })
         })
     })
 </script>
