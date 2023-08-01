@@ -527,19 +527,18 @@ class TripalController extends Controller
 
                     $unlaminatedfabrictripal = Unlaminatedfabrictripal::where('bill_number',$request->bill)->update(['status' => 'completed']);
 
-
-
-                    // WasteStock::create([
-                    //     'department_id' => $department_id,
-                    //     'waste_id' => '1',
-                    //     'quantity_in_kg' => $total_waste,
-                    // ]);
+                    $find_godam = SinglesidelaminatedfabricStock::where('bill_number',$request->bill)->latest()->first();
 
                     // $wastage = Wastages::create([
                     //  'name' => 'tripal',
                     
                     // ]);
 
+                    // WasteStock::create([
+                    //     'department_id' => $find_godam->department_id,
+                    //     'waste_id' => $wastage->id,
+                    //     'quantity_in_kg' => $total_waste,
+                    // ]);
      
 
                 DB::commit();

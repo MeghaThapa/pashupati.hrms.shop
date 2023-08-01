@@ -32,6 +32,8 @@ return new class extends Migration
             $table->string('bill_no')->nullable();
             $table->boolean('status')->nullable()->default(1);
             $table->enum("is_laminated",["true","false"])->default('false');
+            $table->bigInteger('fabric_id')->unsigned()->index();
+            $table->foreign('fabric_id')->references('id')->on('fabrics')->onDelete('cascade');
             $table->timestamps();
         });
     }

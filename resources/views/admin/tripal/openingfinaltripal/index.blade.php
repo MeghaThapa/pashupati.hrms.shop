@@ -118,11 +118,11 @@
             </div>
             
             <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
+                <label for="size" class="col-form-label">{{ __('FinalTripal Name') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="fabric_id" name="fabric_id"
+                <select class="advance-select-box form-control" id="tripal" name="fabric_id"
                     required>
-                    <option value="">{{ __('Select Fabric Name') }}</option>
+                    <option value="">{{ __('Select FinalTripal Name') }}</option>
                    @foreach ($singlestocks as $singlestock)
                     <option value="{{ $singlestock->id }}">{{ $singlestock->name }}
                     </option>
@@ -189,7 +189,7 @@
                 <label for="size" class="col-form-label">{{ __('Average') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="average"
-                    data-number="1" name="average" min="1" required>
+                    data-number="1" name="average" min="1" required readonly>
 
                 @error('average')
                 <span class="invalid-feedback" role="alert">
@@ -201,29 +201,21 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('GSM') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" step="any" min="0" class="form-control calculator" id="gram"
-                    data-number="1" name="gram" min="1" required>
+                <input type="text" step="any" min="0" class="form-control calculator" id="gsm"
+                    data-number="1" name="gsm" min="1" required readonly>
 
                 @error('gram')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
                 @enderror
+                <input type="hidden" name="tripal_decimalname" id="tripal_decimalname">
             </div>
             <div>
-                {{-- <button type="submit" class="btn btn-primary">Create Opening</button> --}}
                 <button type="submit" class="btn btn-primary mt-4">
                     Add
                 </button>
             </div>
-            
-            
-            
-            {{-- <div>
-                <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                    Add
-                </button>
-            </div> --}}
 
         </div>
         
@@ -236,12 +228,13 @@
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
-                        <th>{{ __('Fabric Name') }}</th>
+                        <th>{{ __('FinalTripal Name') }}</th>
                         <th>{{ __('Roll No') }}</th>
                         <th>{{ __('G.W') }}</th>
                         <th>{{ __('N.W') }}</th>
                         <th>{{ __('Meter') }}</th>
                         <th>{{ __('Avg') }}</th>
+                        <th>{{ __('GSM') }}</th>
                     </tr>
                 </thead>
 
@@ -252,24 +245,26 @@
                             <td>{{ ++$key }}</td>
                             <td>{{ $fabric->name }} </td>
                             <td>{{ $fabric->roll_no }} </td>
-                            <td>{{ $fabric->gross_wt}} </td>
+                            <td>{{ $fabric->gram}} </td>
                             <td>{{ $fabric->net_wt }}</td>
                             <td>{{ $fabric->meter }}</td>
                             <td>{{$fabric->average_wt}}</td>
+                            <td>{{$fabric->gsm}}</td>
 
                         </tr>
                     @endforeach
 
                 </tbody>
-         
+
 
             </table>
+
         </div>
+        {{ $openingstocks->links() }}
 
     </div>
 </div>
 <hr>
-{{-- <h1 class='text-center'>Compare Lam and Unlam</h1> --}}
 
 <hr>
 <div class="row">
@@ -284,7 +279,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_in_mtr"
-                                data-number="1" name="total_ul_in_mtr" min="1" readonly required value="{{$total_net}}">
+                                data-number="1" name="total_ul_in_mtr" min="1" readonly required value="{{$total_meter}}">
                             @error('total_ul_in_mtr')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -301,7 +296,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_in_mtr"
-                                data-number="1" name="total_lam_in_mtr" min="1" readonly required value="{{$total_meter}}">
+                                data-number="1" name="total_lam_in_mtr" min="1" readonly required value="{{$total_net}}">
                             @error('total_lam_in_mtr')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -326,6 +321,63 @@
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+</script>
+<script type="text/javascript">
+  $("body").on("change","#tripal", function(event){
+    var tripal = $('#tripal').val(),
+        token = $('meta[name="csrf-token"]').attr('content');
+
+        // debugger;
+    $.ajax({
+      type:"POST",
+      dataType:"JSON",
+      url:"{{route('getFilterTripalList')}}",
+      data:{
+        _token: token,
+        tripal: tripal,
+      },
+      success: function(response){
+        $('#tripal_decimalname').val(response.name);
+
+      },
+      error: function(event){
+        alert("Sorry");
+      }
+    });
+  });
+</script>
+<script>
+    $(document).on("keyup","#meter",function(e){
+
+        let net_wt = parseInt($("#net_wt").val());
+        let meter = parseInt($("#meter").val());
+        let test = (net_wt / meter) * 1000;
+        let average = Math.round(test);
+        $("#average").val(average);
+
+        let tripal_decimalname = parseInt($("#tripal_decimalname").val());
+
+        let data = (tripal_decimalname / 39.37);
+        let datas = data.toFixed(2);
+
+        let gsm = (average) / datas;
+        console.log(tripal_decimalname,data,gsm);
+        let finalgsm = gsm.toFixed(2);
+
+
+        $("#gsm").val(finalgsm);
+
+    });
+
+    $(document).on("keyup","#net_wt",function(e){
+
+        let net_wt = parseInt($("#net_wt").val());
+        let meter = parseInt($("#meter").val());
+        let average = (net_wt / meter) * 1000;
+        $("#average").val(average);
+
+    });
+
 </script>
 
 @endsection

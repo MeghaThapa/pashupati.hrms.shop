@@ -13,45 +13,49 @@
         <img class="lg-logo" src="{{ $settings->logo }}" alt="{{ $settings->companyName }}" width="250" height="50">
         <h3>Fabric Stock</h3>
     </div>
-{{--     <form action="{{ route('tapeentry-stock.filterStock') }}" method="POST">
+ <form action="{{ route('fabric-stock.filterStock') }}" method="POST">
         @csrf
         <div class="row">
             <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
                 <label for="">Godam</label>
-                <select class="advance-select-box form-control" id="danaGroupId_model" name="godam_id">
+                <select class="advance-select-box form-control" id="toGodam" name="godam_id">
                     <option value="" selected disabled>{{ __('Select Godam') }}</option>
                     @foreach ($godams as $godam)
                         <option value="{{ $godam->id }}">{{ $godam->name }}</option>
                     @endforeach
                 </select>
             </div>
+            
+
             <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Type</label>
-                <select class="advance-select-box form-control" id="planttype_id" name="planttypes_id">
-                    <option value="" selected disabled>{{ __('Select Plant Type') }}</option>
-                    @foreach ($planttypes as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
-                    @endforeach
+                <label for="">Name</label>
+
+                <select class="advance-select-box form-control" id="fabricNameId" name="name">
+                    <option value="" selected disabled>{{ __('Select Fabric') }}</option>
+
+                </select>
+
+
+            </div>
+
+            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+                <label for="">Type</label>
+                <select class="advance-select-box form-control" id="type" name="type">
+                    <option value="" selected disabled>{{ __('Select Type') }}</option>
+                    <option value="true">Lam</option>
+                    <option value="false">UnLam</option>
+                    {{-- <option value="3">Opening</option> --}}
 
                 </select>
 
             </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Name</label>
-                <select class="advance-select-box form-control" id="plantname_id" name="plantname_id">
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    @foreach ($plantnames as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
-                    @endforeach
-                </select>
-
-            </div>
+            
             <div class="col-md-3">
                 <button class="btn btn-primary" style="width:200px" type="submit">Show Report</button>
 
             </div>
         </div>
-    </form> --}}
+    </form> 
 
     <div class="row">
         <div class="col-md-12">
@@ -60,15 +64,14 @@
                     <thead>
                         <tr>
                             <th>{{ __('S.No') }}</th>
-                            <th>{{ __('Godam') }}</th>
+                            <th>{{ __('Roll Number') }}</th>
+                            <th>{{ __('Loom Number') }}</th>
                             <th>{{ __('Name') }}</th>
-                            <th>{{ __('Average Weight') }}</th>
-                            <th>{{ __('Gram Weight') }}</th>
                             <th>{{ __('Gross Weight') }}</th>
                             <th>{{ __('Net Weight') }}</th>
                             <th>{{ __('Meter') }}</th>
-                            <th>{{ __('Roll Number') }}</th>
-                            <th>{{ __('Loom Number') }}</th>
+                            <th>{{ __('Average Weight') }}</th>
+                            <th>{{ __('Gram Weight') }}</th>
                             <th>{{ __('Bill Number') }}</th>
                         </tr>
                     </thead>
@@ -78,20 +81,30 @@
                             @foreach ($fabric_stock as $i => $stock)
                                 <tr>
                                     <td>{{ ++$i }}</td>
-                                    <td>{{ $stock->getGodam->name }}</td>
-                                    <td>{{ $stock->name }}</td>
-                                    <td>{{ $stock->average_wt }}</td>
-                                    <td>{{ $stock->gram_wt }}</td>
+                                     <td>{{ $stock->roll_no }}</td>
+                                     <td>{{ $stock->loom_no }}</td>
+                                    <td>{{ $stock->name }} ({{$stock->fabricgroup->name}})</td>
                                      <td>{{ $stock->gross_wt }}</td>
                                      <td>{{ $stock->net_wt }}</td>
                                      <td>{{ $stock->meter }}</td>
-                                     <td>{{ $stock->roll_no }}</td>
-                                     <td>{{ $stock->loom_no }}</td>
+                                     <td>{{round($stock->average_wt, 2)}}</td>
+
+                                     <td>{{ round((round($stock->average_wt, 2) /  (int) filter_var($stock->name, FILTER_SANITIZE_NUMBER_INT) ),2) }}</td>
+
+                                   
                                      <td>{{ $stock->bill_no }}</td>
                                 </tr>
                             @endforeach
                         @endif
                     </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Total:</th>
+                      
+                        <td class="text-right">{{ $sum}}</td>
+                      </tr>
+                      
+                    </tfoot>
 
                 </table>
             </div>
@@ -103,4 +116,34 @@
 @endsection
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+    <script>
+        $("#toGodam").change(function(e){
+
+            let department_id =  $(this).val();
+            let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
+            $("#godam_ids").val(department_id);
+            $.ajax({
+                url:geturl.replace(':id',department_id),
+                beforeSend:function(){
+                    console.log('Getting Plant type');
+                },
+                success:function(response){
+                    addfabrictype(response);
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        });
+
+        function addfabrictype(data){
+            $("#fabricNameId").empty();
+            $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
+            data.godamfabrics.forEach( d => {
+                $('#fabricNameId').append(`<option value="${d.id}">${d.name}</option>`);
+            });
+        }
+
+    </script>
+
 @endsection

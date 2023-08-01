@@ -27,15 +27,11 @@ class FinalTripalController extends Controller
 {
     public function index()
     {
-        
-        // $id = UnlaminatedFabric::latest()->value('id');
+
         $bill_no = AppHelper::getFinalTripalReceiptNo();
         $bill_date = date('Y-m-d');
-        // $shifts = Shift::where('status','active')->get();
         $godam= Godam::where('status','active')->get();
         $shifts = Shift::where('status','active')->get();
-        // $planttype = ProcessingStep::where('status','1')->get();
-        // $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = AutoLoadItemStock::get();
         $fabrics  = DoubleSideLaminatedFabricStock::get()->unique('name')->values()->all();;
         $finaltripalname  = FinalTripalName::get();
@@ -43,8 +39,26 @@ class FinalTripalController extends Controller
         return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname'));
     }
 
+    public function getfilter(Request $request){
+        
+        $tripal_id = $request->tripal;
+        $find_data = FinalTripalName::find($tripal_id);
+        
+        $input = $find_data->name;
+        $parts = explode(' ', $input);
+        $firstString = $parts[0];   
+                
+        $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        
+        return response([
+            'name' => $find_name,
+        ]);
+
+
+    }
+
     public function getDoubleFabricStockList(Request $request){
-        // dd($request);
+        
         if($request->ajax()){
             if($request->fabric_id != null){
               $fabric_name = DoubleSideLaminatedFabricStock::where('id',$request->fabric_id)->value('name');
@@ -74,7 +88,7 @@ class FinalTripalController extends Controller
         $getfabric = DoubleSideLaminatedFabricStock::find($request['data_id']);
         $fabric_id = DoubleSideLaminatedFabric::where('id',$getfabric->doublelamfabric_id)->value('fabric_id');
 
-        // dd($getfabric,$fabric_id);
+       
 
         $double_lamfabric = TripalEntry::create([
             "name" => $getfabric->name,
@@ -150,15 +164,11 @@ class FinalTripalController extends Controller
             'date_en' => $todayEnglishDate,
             'date_np' => $todayEnglishDate,
         ]);
+         return back();
 
-        return response()->json([
-                 'message' =>'group Created Successfully',
-                 // 'group' => $group,
-             ],201);
+    
 
-        //  return response()->json([
-        //     'message' => 'Trpal Name created successfully ',
-        // ]);
+   
     }
 
 

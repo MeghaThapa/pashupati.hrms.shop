@@ -1,39 +1,32 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tripal;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Exception;
+use Str;
+use App\Models\Shift;
+use App\Models\Supplier;
+use App\Models\FinalTripalStock;
 use App\Helpers\AppHelper;
-use App\Models\FabricNonWovenReceiveEntryStock;
-use App\Models\NonwovenOpeningStock;
-use App\Models\RawMaterialStock;
-use App\Models\DanaName;
-use App\Models\DanaGroup;
-use App\Models\Department;
-use App\Models\Godam;
-use App\Models\ProcessingStep;
-use App\Models\ProcessingSubcat;
-use DB;
+use Carbon\Carbon;
 
-class NonWovenStockController extends Controller
+class SaleFinalTripalController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-       $helper= new AppHelper();
-       $settings= $helper->getGeneralSettigns();
-
-       $nonwoven_stocks = NonwovenOpeningStock::paginate(35);
-       // $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
-
-        // dd($nonwoven_stocks);
-
-        $godams=Godam::where('status','active')->get(['id','name']);
-        $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
-        $plantnames= ProcessingSubcat::where('status','active')->get(['id','name']);
-
-        return view('admin.nonwovenstock.getstock',
-        compact('settings','nonwoven_stocks','godams','planttypes','plantnames'));
-
+        $bill_no = AppHelper::getFinalTripalReceiptNo();
+        $bill_date = date('Y-m-d');
+        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
+        $partyname = Supplier::where('status',1)->get();
+        return view('admin.tripal.salefinaltripal.index',compact('bill_no','bill_date','fabrics','partyname'));
     }
 
     /**
@@ -41,9 +34,14 @@ class NonWovenStockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getSaleFinalTripalStockList(Request $request)
     {
-        //
+        $fabric_id = $request->fabric_id;
+        $getName = FinalTripalStock::where('id',$fabric_id)->value('name');
+        $fabrics = FinalTripalStock::where('name',$getName)->get();
+
+        return response(['response'=>$fabrics]);
+
     }
 
     /**
@@ -54,7 +52,7 @@ class NonWovenStockController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd('lol');
     }
 
     /**

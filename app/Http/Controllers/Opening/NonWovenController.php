@@ -39,6 +39,9 @@ class NonWovenController extends Controller
     }
 
     public function store(Request $request){
+        // dd($request->fabric_name);
+        $find_name = NonWovenFabric::where('slug',$request->fabric_name)->where('gsm',$request->fabric_gsm)->where('color',$request->fabric_color)->value('name');
+        // dd($find_name,$request);
 
        $fabricnon = NonwovenOpeningStock::create([
            'receive_date' => $request['receive_date'],
@@ -46,7 +49,7 @@ class NonWovenController extends Controller
            'godam_id' => $request['to_godam_id'],
            'fabric_roll' => $request['fabric_roll'],
            'fabric_gsm' => $request['fabric_gsm'],
-           'fabric_name' => $request['fabric_name'],
+           'fabric_name' => $find_name,
            'fabric_color' => $request['fabric_color'],
            'length' => $request['fabric_length'],
            'gross_weight' => $request['gross_weight'],

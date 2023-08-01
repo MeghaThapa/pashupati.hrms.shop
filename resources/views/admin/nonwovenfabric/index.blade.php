@@ -91,18 +91,18 @@
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             @if ($nonwovenfabric->isActive())
-                                                <a href="{{ route('nonwovenfabrics.status', $nonwovenfabric->slug) }}"
+                                                <a href="{{ route('nonwovenfabrics.status', $nonwovenfabric->id) }}"
                                                     class="dropdown-item"><i class="fas fa-window-close"></i>
                                                     {{ __('Inactive') }}</a>
                                             @else
-                                                <a href="{{ route('nonwovenfabrics.status', $nonwovenfabric->slug) }}"
+                                                <a href="{{ route('nonwovenfabrics.status', $nonwovenfabric->id) }}"
                                                     class="dropdown-item"><i class="fas fa-check-square"></i>
                                                     {{ __('Active') }}</a>
                                             @endif
-                                            <a href="{{ route('nonwovenfabrics.edit', $nonwovenfabric->slug) }}"
+                                            <a href="{{ route('nonwovenfabrics.edit', $nonwovenfabric->id) }}"
                                                 class="dropdown-item"><i class="fas fa-edit"></i>
                                                 {{ __('Edit') }}</a>
-                                            <a href="{{ route('nonwovenfabrics.delete', $nonwovenfabric->slug) }}"
+                                            <a href="{{ route('nonwovenfabrics.delete', $nonwovenfabric->id) }}"
                                                 class="dropdown-item delete-btn"
                                                 data-msg="{{ __('Are you sure you want to delete this sub category?') }}"><i
                                                     class="fas fa-trash"></i> {{ __('Delete') }}</a>

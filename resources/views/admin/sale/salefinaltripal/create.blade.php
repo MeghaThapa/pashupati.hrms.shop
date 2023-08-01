@@ -77,19 +77,19 @@
 
 @section('content')
 <div class="card-body p-0 m-0">
-    <form id="createRawMaterial">
+    <form action="{{ route('openingfinaltripal.storeFinalStock') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Bill No') }}<span class="required-field">*</span>
+            <div class="col-md-3 form-group">
+                <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="billnumber" value="{{ $bill_no }}" name="bill_number"
                     required /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
             </div>
 
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Bill Date') }}
+            <div class="col-md-3 form-group">
+                <label for="size" class="col-form-label">{{ __('Invoice Date') }}
                 </label>
                 <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
                     id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
@@ -100,31 +100,16 @@
                 </span>
                 @enderror
             </div>
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('To Godam') }}
+            
+            <div class="col-md-6 form-group">
+                <label for="size" class="col-form-label">{{ __('PartyName') }}
                 </label>
-                <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
-                    <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                    @foreach ($godam as $data)
-                    <option value="{{ $data->id }}">{{ $data->name }}
+                <select class="advance-select-box form-control" id="partyname" name="partyname" required>
+                    <option value="" selected disabled>{{ __('Select PartyName') }}</option>
+                    @foreach ($partyname as $party)
+                    <option value="{{ $party->id }}">{{ $party->name }}
                     </option>
                     @endforeach
-                </select>
-                @error('to_godam_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-            </div>
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Plant Type') }}
-                </label>
-                <select class="advance-select-box form-control" id="plantType" name="plant_type_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
                 </select>
                 @error('plant_type_id')
                 <span class="invalid-feedback" role="alert">
@@ -133,36 +118,43 @@
                 @enderror
             </div>
             <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Plant Name') }}
+                <label for="size" class="col-form-label">{{ __('BillFor') }}
                 </label>
-                <select class="advance-select-box form-control" id="plantName" name="plant_name_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
+                <select class="advance-select-box form-control" id="billfor" name="bill_for" required>
+                    <option value="" selected disabled>{{ __('Select BillFor') }}</option>
+                    <option value="local">Local</option>
+                    <option value="export">Export</option>
                 </select>
-                @error('gp_no')
+                @error('bill_for')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
                 @enderror
             </div>
+            
             <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Shift') }}
+                <label for="size" class="col-form-label">{{ __('Lorry No') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="shiftName" name="shift_name_id" disabled required>
-                    <option value="" selected disabled>{{ __('Select Shift Name') }}</option>
-                    @foreach ($shifts as $shift)
-                    <option value="{{ $shift->id }}">{{ $shift->name }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('shift_name_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
+                <input type="text" class="form-control" id="lory_number"  name="lory_number"
+                    required /> 
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('Dp No') }}<span class="required-field">*</span>
+                </label>
+                <input type="text" class="form-control" id="dp_number" name="dp_number"
+                    required /> 
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('GP No') }}<span class="required-field">*</span>
+                </label>
+                <input type="text" class="form-control" id="gp_number" name="gp_number"
+                    required /> 
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('Remarks') }}<span class="required-field">*</span>
+                </label>
+                <input type="text" class="form-control" id="remarks" name="remarks"
+                    required /> 
             </div>
             {{-- <div>
                 <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
@@ -175,9 +167,9 @@
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="fabricNameId" name="fabric_name_id"
+                <select class="advance-select-box form-control" id="fabric_id" name="fabric_id"
                     required>
-                    <option value="">{{ __('Select Fabric Name') }}</option>
+                    <option value="">{{ __('Select Tripal Name') }}</option>
                    @foreach ($fabrics as $fabric)
                     <option value="{{ $fabric->id }}">{{ $fabric->name }}
                     </option>
@@ -299,10 +291,10 @@
                         </a>
                         <select class="advance-select-box form-control" id="tripal" name="tripal" required>
                             <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
-                            @foreach ($finaltripalname as $tripalname)
+                           {{--  @foreach ($finaltripalname as $tripalname)
                             <option value="{{ $tripalname->id }}">{{ $tripalname->name }}
                             </option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                         @error('tripal')
                         <span class="invalid-feedback" role="alert">
@@ -382,7 +374,6 @@
                             <strong>{{ $message }}</strong>
                         </span>
                         @enderror
-                        <input type="hidden" name="tripal_decimalname" id="tripal_decimalname"> 
                     </div>
 
                     
@@ -445,10 +436,10 @@
                         </label>
                         <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
                             <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
-                            @foreach ($dana as $dana)
+                           {{--  @foreach ($dana as $dana)
                             <option value="{{ $dana->id }}">{{ $dana->danaName->name }}
                             </option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                         @error('total_ul_in_mtr')
                         <span class="invalid-feedback" role="alert">
@@ -687,62 +678,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
-<script type="text/javascript">
-  $("body").on("change","#tripal", function(event){
-    var tripal = $('#tripal').val(),
-        token = $('meta[name="csrf-token"]').attr('content');
-
-        // debugger;
-    $.ajax({
-      type:"POST",
-      dataType:"JSON",
-      url:"{{route('getFilterTripalList')}}",
-      data:{
-        _token: token,
-        tripal: tripal,
-      },
-      success: function(response){
-        $('#tripal_decimalname').val(response.name);
-
-      },
-      error: function(event){
-        alert("Sorry");
-      }
-    });
-  });
-</script>
 <script>
-
-    $(document).on("keyup","#meter",function(e){
-
-        let net_wt = parseInt($("#net_wt").val());
-        let meter = parseInt($("#meter").val());
-        let test = (net_wt / meter) * 1000;
-        let average = Math.round(test);
-        $("#average").val(average);
-
-        let tripal_decimalname = parseInt($("#tripal_decimalname").val());
-
-        let data = tripal_decimalname / 39.37;
-        let datas = data.toFixed(2);
-
-        let gsm = (average) / datas;
-        let finalgsm = gsm.toFixed(2);
-
-
-        $("#gsm").val(finalgsm);
-
-    });
-
-    $(document).on("keyup","#net_wt",function(e){
-
-        let net_wt = parseInt($("#net_wt").val());
-        let meter = parseInt($("#meter").val());
-        let average = (net_wt / meter) * 1000;
-        $("#average").val(average);
-
-    });
-
 
 
     $(document).ready(function(){
@@ -786,57 +722,10 @@
         });
         });
 
-        $("#toGodam").change(function(e){
-
-            let department_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
-            $("#godam_data").val(department_id);
-            $.ajax({
-                url:geturl.replace(':id',department_id),
-                beforeSend:function(){
-                    console.log('Getting Plant type');
-                },
-                success:function(response){
-                    addplanttype(response);
-                
-                },
-                error:function(error){
-                    console.log(error);
-                }
-            });
-        });
+      
 
 
-
-        $("#plantType").change(function(e){
-            let department_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.plantname',['id'=>':id']) }}";
-            $("#planttype_data").val(department_id);
-            $.ajax({
-                url:geturl.replace(':id',department_id),
-                beforeSend:function(){
-                    console.log('Getting Plant Name');
-                },
-                success:function(response){
-                    addplantname(response);
-                },
-                error:function(error){
-                    console.log(error);
-                }
-            });
-        });
-
-        $("#plantName").change(function(e){
-            let department_id =  $(this).val();
-            $("#plantname_data").val(department_id);
-        
-        });
-
-        $("#shiftName").change(function(e){
-            let shift_id =  $(this).val();
-            $("#shift_data").val(shift_id);
-        
-        });
+     
 
 
 
@@ -848,46 +737,29 @@
 
  
 
-    function addplanttype(data){
-        $("#plantType").empty();
-        $('#plantType').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
-        data.planttype.forEach( d => {
-            $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
-        });
-    }
 
-    function addplantname(data){
-        $("#plantName").empty();
-        $('#plantName').append(`<option value="" disabled selected>--Select Plant Name--</option>`);
-        data.plantname.forEach( d => {
-            // if(d.name == '')
-            $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
-
-        });
-    }
-    /**************************** Ajax functions **************************/
 
     /************************* Form Submission *************************/
     $(document).ready(function(){
         $(document).on('click','#getfabricsrelated',function(e){
             e.preventDefault();
             // debugger;
-            let action = $(this).attr('action');
-            let method = $(this).attr('method');
             let formData = $(this).serialize();
 
             var bill_number = $('#bill_nos').val(),
             bill_date = $('#bill_dates').val(),
-            godam_id = $('#godam_data').val(),
-            plantype_id = $('#planttype_data').val(),
-            plantname_id = $('#plantname_data').val(),
-            shift_id = $('#shift_data').val(),
-            fabric_id = $('#fabricNameId').val(),
-            roll = $('#rollnumberfabric').val();
-            // debugger;
+            partyname = $('#partyname').val(),
+            bill_for = $('#billfor').val(),
+            lorry_no = $('#lory_number').val(),
+            dp_no = $('#dp_number').val(),
+            gp_no = $('#gp_number').val(),
+            remarks = $('#remarks').val(),
+            fabric_id = $('#fabric_id').val();
+            debugger;
+          
 
            $.ajax({
-            url : "{{ route('finaltripal.getDoubleFabricStockList') }}",
+            url : "{{ route('salefinaltripal.getSaleFinalTripalStockList') }}",
             method: 'get',
             type:"POST",
             dataType:"JSON",
@@ -895,14 +767,14 @@
                 '_token' : $('meta[name="csrf-token"]').attr('content'),
                 'data' : formData,
                 'fabric_id' : fabric_id,
-                'roll' : roll,
                 'bill_number' : bill_number,
                 'bill_date' : bill_date,
-                'godam_id' : godam_id,
-                'plantype_id' : plantype_id,
-                'plantname_id' : plantname_id,
-                'shift_id' : shift_id,
-
+                'partyname' : partyname,
+                'bill_for' : bill_for,
+                'lorry_no' : lorry_no,
+                'dp_no' : dp_no,
+                'gp_no' : gp_no,
+                'remarks' : remarks,
 
             },
             beforeSend:function(){
@@ -914,9 +786,13 @@
             //     emptyform();
             // },
             success:function(response){
+                console.log(response);
+                // console.log('heyyyy');
                 emptytable();
+                filltable(response);
+                // console.log(data.fabric,response.fabric,'lol');
                 if(response.response != '404'){
-                    filltable(response);
+                    filltable(response.response);
                 }else{
                     console.log(response.response);
                 }
@@ -933,14 +809,7 @@
     /************************* Form Submission *************************/
 
     /************************* Other Functionalities ***********************/
-    $("#plantName").change(function(e){
-        $('#shiftName').prop('disabled',false);
-        $('#createRawMaterial').attr({
-            'action' : "{{ route('fabricSendReceive.send.unlaminated') }}",
-            'method' : "post"
-        });
-        $("#rollnumberfabric").prop('disabled',false);
-    });
+ 
 
     $("#fabricNameId").change(function(e){
         getfabricsrelated_enable();
@@ -950,12 +819,7 @@
 
 
 
-    $("#rollnumberfabric").keyup(function(e){
-        getfabricsrelated_enable();
-        $("#fabricNameId").prop('disabled',true);
-        $("#fabricNameId").prop('required',false);
-    });
-
+ 
     function getfabricsrelated_enable(){
         $('#getfabricsrelated').prop('disabled',false);
     }
@@ -964,19 +828,10 @@
         $('#rawMaterialItemTbody').empty();
     }
 
-    $(document).on('click','#deletesendforlamination',function(e){
-        e.preventDefault();
-        let id = $(this).attr('data-id');
-        deletefromunlamintedtable(id);
-    });
+ 
 
     function filltable(data){
-        // console.log(data,data.godam_id);
-        // console.log(data.response,data);
         data.response.forEach(d => {
-            console.log(data,d,'hey');
-        // console.log(d.godam_id,d.plantype_id,data.shift_id,'hey');
-            
             let title = d.name;
             let group = d.average_wt.split('-')[0];
             let result = parseFloat(title) * parseFloat(group);
@@ -1002,52 +857,6 @@
     }
 
 
-
-    function deletefromunlamintedtable(data){
-        $.ajax({
-            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
-            method:'get',
-            beforeSend:function(){
-                console.log('deleteing from unlamintaed table');
-            },
-            success:function(response){
-                if(response.response == '200'){
-                    emptytable();
-                    callunlaminatedfabricajax();
-                }else if(response.response == '400'){
-                    alert('Not Allowed OR Data is no longer there');
-                }
-            },
-            error:function(error){
-                console.log(error);
-            }
-        });
-    }
-
-    $(".discard").click(function(e){
-        $.ajax({
-            url:"{{ route('discard') }}",
-            method:"get",
-            success:function(response){
-                if(response.message == "200"){
-                    location.reload(true);
-                }
-                else{
-                    alert(response.message);
-                }
-            },
-            error:function(response){
-                console.log(response);
-            }
-        });
-    });
-    /************************* Other Functionalities ***********************/
-
-    /************************* Send for lamination **************************/
-
-     // $('#tripal_form').on('submit', function () {
-     //       $('#register').attr('disabled', 'true'); 
-     //    });
     $(document).ready(function(){
         $(document).on('click',"#sendforlamination",function(e){
             e.preventDefault();

@@ -40,7 +40,7 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body p-0">
-                <form class="form-horizontal" action="{{ route('nonwovenfabrics.update', $nonwovenfabrics->slug) }}" method="post" enctype="multipart/form-data">
+                <form class="form-horizontal" action="{{ route('nonwovenfabrics.update', $nonwovenfabrics->id) }}" method="post" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="card-body">

@@ -146,14 +146,14 @@ class AutoloadItemsController extends Controller
 
         $autoLoadItemStock->quantity -= $autoloadItem->quantity;
 
-        if($autoLoadItemStock-> quantity <=0){
+        if($autoLoadItemStock->quantity <=0){
             $autoLoadItemStock->delete();
         }
         else{
             $autoLoadItemStock->save();
         }
 
-        $rawMaterialStock=RawMaterialStock::where('department_id',$autoloadItem->from_godam_id)
+        $rawMaterialStock=RawMaterialStock::where('godam_id',$autoloadItem->from_godam_id)
         ->where('dana_group_id',$autoloadItem->dana_group_id)
         ->where('dana_name_id',$autoloadItem->dana_name_id)
         ->first();
@@ -170,7 +170,7 @@ class AutoloadItemsController extends Controller
 
             }else{
 
-                $rawMaterialStock-> quantity += $autoloadItem->quantity;
+                $rawMaterialStock->quantity += $autoloadItem->quantity;
                 $rawMaterialStock->save();
 
             }
