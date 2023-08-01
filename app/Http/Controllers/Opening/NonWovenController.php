@@ -9,6 +9,7 @@ use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
 use App\Models\FabricNonWovenReciveEntry;
 use App\Models\FabricNonWovenReceiveEntryStock;
+use App\Models\NonwovenOpeningStock;
 use App\Models\Godam;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
@@ -38,36 +39,37 @@ class NonWovenController extends Controller
     }
 
     public function store(Request $request){
-        try{
-            DB::beginTransaction();
-            dd($request);
+        // dd($request->fabric_name);
+        $find_name = NonWovenFabric::where('slug',$request->fabric_name)->where('gsm',$request->fabric_gsm)->where('color',$request->fabric_color)->value('name');
+        // dd($find_name,$request);
 
-            $fabricnon = FabricNonWovenReceiveEntryStock::create([
-                'nonfabric_id' => '1',
-                'receive_date' => $request['receive_date'],
-                'receive_no' => $request['receive_no'],
-                'godam_id' => $request['to_godam_id'],
-                'planttype_id' => '1',
-                'plantname_id' => '1',
-                'shift_id' => '1',
-                'fabric_roll' => $request['fabric_roll'],
-                'fabric_gsm' => $request['fabric_gsm'],
-                'fabric_name' => $request['fabric_name'],
-                'fabric_color' => $request['fabric_color'],
-                'length' => $request['fabric_length'],
-                'gross_weight' => $request['gross_weight'],
-                'net_weight' => $request['net_weight'],
+       $fabricnon = NonwovenOpeningStock::create([
+           'receive_date' => $request['receive_date'],
+           'receive_no' => $request['receive_no'],
+           'godam_id' => $request['to_godam_id'],
+           'fabric_roll' => $request['fabric_roll'],
+           'fabric_gsm' => $request['fabric_gsm'],
+           'fabric_name' => $find_name,
+           'fabric_color' => $request['fabric_color'],
+           'length' => $request['fabric_length'],
+           'gross_weight' => $request['gross_weight'],
+           'net_weight' => $request['net_weight'],
+       ]);
+
+       return back();
+
+    }
+
+    public function getOpeningNonwoven(Request $request){
+
+        if ($request->ajax()){
+            $datas = NonwovenOpeningStock::get();
+            
+            return response([
+              "response" => $datas
             ]);
-
-            return back();
-           
-
-       
-       DB::commit();
-         }catch(Exception $e){
-                DB::rollBack();
-                return $e;
         }
+
 
     }
 

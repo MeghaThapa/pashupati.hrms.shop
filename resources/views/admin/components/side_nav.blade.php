@@ -22,13 +22,196 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-header text-bold">{{ __('ACTIVITY') }}</li>
-                <li class="nav-item">
-                    <a href="{{ route('openingRawmaterialEntry.index') }}"
-                        class="nav-link  {{ request()->is('openingRawmaterialEntry.index') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-home"></i>
-                        <p>{{ __('Opening RawMaterial') }}</p>
-                    </a>
+                <li class="nav-item has-treeview {{ (request()->is('home/main-entry/*')) ? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('home/main-entry/*')) ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-star"></i>
+                    <p>
+                      Opening
+                      <i class="fas fa-angle-left right"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview ">
+                    <li class="nav-item">
+                      <a href="{{ route('openingRawmaterialEntry.index')}}" class="nav-link {{ (request()->is('openingRawmaterialEntry.index')) ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>{{ __(' RawMaterial Opening') }}</p>
+                      </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('openingtripal.index') }}"
+                            class="nav-link {{ request()->is('admin/openingtripal*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>{{ __(' SingleTripal Opening') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('openingdoubletripal.index') }}"
+                            class="nav-link {{ request()->is('admin/openingdoubletripal*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>{{ __('DoubleTripal Opening ') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('openingfinaltripal.index') }}"
+                            class="nav-link {{ request()->is('admin/openingfinaltripal*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>{{ __('FinalTripal Opening ') }}</p>
+                        </a>
+                    </li>
+
+
+
+                    <li class="nav-item">
+                        <a href="{{ route('fabric.opening') }}" class="nav-link {{ request()->routeIs('admin.fabric.opening') ? "active" : ""}}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Fabric Opening</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('openingnonwoven.index') }}"
+                            class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>NonWoven Opening</p>
+                        </a>
+                    </li>
+
+
+
+                  </ul>
                 </li>
+
+                <li class="nav-item has-treeview {{ (request()->is('home/main-entry/*')) ? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('home/main-entry/*')) ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-star"></i>
+                    <p>
+                      Stock
+                      <i class="fas fa-angle-left right"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview ">
+                    <li class="nav-item">
+                        <a href="{{ route('autoloadStock.index') }}"
+                            class="nav-link {{ request()->is('autoloadStock/index*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-spinner"></i>
+
+                            <p>{{ __('Auto Loader Stock') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('rawMaterialStock.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-boxes"></i>
+                            <p>{{ __('Raw Material Stock') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('fabric-stock.index') }}"
+                            class="nav-link {{ request()->is('admin/fabric-stock*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Fabric Stock</p>
+                            {{-- <p>{{ __('Categories') }}</p> --}}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('tapeentry-stock.index') }}"
+                            class="nav-link {{ request()->is('admin/tape-entry-stock/index') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-random"></i>
+                            <p>{{ __('Tape EntryStock') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('stock.index') }}"
+                            class="nav-link {{ request()->is('stock/index*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-boxes"></i>
+                            <p>{{ __('Storein Stock') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('bagBundelStock.index') }}"
+                            class="nav-link {{ request()->routeIs('bagBundelStock.index') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('Bundle Stock') }}</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('bagSalesStock.index') }}"
+                            class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('Bag Sales Stock') }}</p>
+                        </a>
+                    </li>
+
+
+
+                    <li class="nav-item">
+                        <a href="{{ route('nonwovenfabrics-receiveentrystock.index') }}"
+                            class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('NonwovenReceive Stock') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('singletripal-stock.index') }}"
+                            class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('SingleTripal Stock') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('doubletripal-stock.index') }}"
+                            class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('DoubleTripal Stock') }}</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('finaltripal-stock.index') }}"
+                            class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>{{ __('FinalTripal Stock') }}</p>
+                        </a>
+                    </li>
+
+
+                  </ul>
+                </li>
+
+                <li class="nav-item has-treeview {{ (request()->is('home/main-entry/*')) ? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('home/main-entry/*')) ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-star"></i>
+                    <p>
+                      Sale
+                      <i class="fas fa-angle-left right"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview ">
+                    <li class="nav-item">
+                        <a href="{{ route('salefinaltripal.index') }}"
+                            class="nav-link {{ request()->is('admin/salefinaltripal*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>{{ __('Sales FinalTripal') }}</p>
+                        </a>
+                    </li>
+
+
+
+                  </ul>
+                </li>
+
+
+
+
                 {{-- <li class="nav-item">
                     <a href="{{ route('dashboard') }}"
                         class="nav-link  {{ request()->is('admin/dashboard') ? 'active' : '' }}">
@@ -132,40 +315,13 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('openingtripal.index') }}"
-                        class="nav-link {{ request()->is('admin/openingtripal*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>{{ __('Opening single') }}</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ route('openingdoubletripal.index') }}"
-                        class="nav-link {{ request()->is('admin/openingdoubletripal*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>{{ __('Opening Double') }}</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ route('openingfinaltripal.index') }}"
-                        class="nav-link {{ request()->is('admin/openingfinaltripal*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>{{ __('Opening FinalTripal') }}</p>
-                    </a>
-                </li>
 
 
-                
+
+
 
             <li class="nav-header text-bold">{{ __('Fabric') }}</li>
-            <li class="nav-item">
-                    <a href="{{ route('fabric.opening') }}" class="nav-link {{ request()->routeIs('admin.fabric.opening') ? "active" : ""}}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric Opening</p>
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('fabric-groups.index') }}"
                         class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">
@@ -185,14 +341,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('fabric-stock.index') }}"
-                        class="nav-link {{ request()->is('admin/fabric-stock*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric Stock</p>
-                        {{-- <p>{{ __('Categories') }}</p> --}}
-                    </a>
-                </li>
+
 
 
                 <li class="nav-item">
@@ -223,13 +372,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('openingnonwoven.index') }}"
-                        class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Opening Non Woven</p>
-                    </a>
-                </li>
+
 
                 {{-- <li class="nav-item">
                       <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
@@ -295,32 +438,12 @@
                         <p>{{ __('Auto Loader') }}</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('autoloadStock.index') }}"
-                        class="nav-link {{ request()->is('autoloadStock/index*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-spinner"></i>
 
-                        <p>{{ __('Auto Loader Stock') }}</p>
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a href="{{ route('rawMaterial.index') }}"
                         class="nav-link {{ request()->is('rawMaterial/index*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-shopping-basket"></i>
                         <p>{{ __('Raw Material') }}</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('rawMaterialStock.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-boxes"></i>
-                        <p>{{ __('Raw Material Stock') }}</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ route('wastageStock.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-boxes"></i>
-                        <p>{{ __('Wastage Stock') }}</p>
                     </a>
                 </li>
 
@@ -339,13 +462,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('stock.index') }}"
-                        class="nav-link {{ request()->is('stock/index*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-boxes"></i>
-                        <p>{{ __('Storein Stock') }}</p>
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('storeout.index') }}"
                         class="nav-link {{ request()->is('storeout/index*') ? 'active' : '' }}">
@@ -370,13 +487,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('tapeentry-stock.index') }}"
-                        class="nav-link {{ request()->is('admin/tape-entry-stock/index') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-random"></i>
-                        <p>{{ __('Tape EntryStock') }}</p>
-                    </a>
-                </li>
+
 
                 <!-------------  Bag --------------------------->
                 <li class="nav-header text-bold">{{ __('Bags') }}</li>
@@ -402,13 +513,7 @@
                         <p>{{ __('Bundle Making') }}</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('bagBundelStock.index') }}"
-                        class="nav-link {{ request()->routeIs('bagBundelStock.index') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-chart-area"></i>
-                        <p>{{ __('Bundle Stock') }}</p>
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('bagSelling.index') }}"
                         class="nav-link {{ request()->routeIs('bagSelling.index') ? 'active' : '' }}">
@@ -416,13 +521,7 @@
                         <p>{{ __('Bundle Selling') }}</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('bagSalesStock.index') }}"
-                        class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-chart-area"></i>
-                        <p>{{ __('Bag Sales Stock') }}</p>
-                    </a>
-                </li>
+
                 <!-------------  Bag --------------------------->
                 <li class="nav-header text-bold">{{ __('Purchase Reports') }}</li>
                 <li class="nav-item">

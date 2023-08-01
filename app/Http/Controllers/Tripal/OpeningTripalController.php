@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Str;
 use App\Models\Singlesidelaminatedfabric;
-use App\Models\SinglesidelaminatedfabricStock;
+use App\Models\Singlesidelaminatedfabricstock;
 use App\Models\AutoLoadItemStock;
 use App\Models\Godam;
 use App\Models\Shift;
@@ -20,6 +20,7 @@ use App\Models\TripalEntry;
 use App\Models\FinalTripalName;
 use App\Models\FinalTripal;
 use App\Models\FinalTripalStock;
+use App\Models\FinalTripalOpeningStock;
 use App\Helpers\AppHelper;
 use Carbon\Carbon;
 
@@ -31,13 +32,13 @@ class OpeningTripalController extends Controller
         $bill = AppHelper::getFinalTripalReceiptNo();
         $bill_date = date('Y-m-d');
         $godam= Godam::where('status','active')->get();
-        $singlestocks  = SinglesidelaminatedfabricStock::where('bill_number' ,'!=', 'Opening')->get();
-        $openingstock  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->sum('net_wt');
+        $singlestocks  = Singlesidelaminatedfabricstock::where('bill_number' ,'!=', 'Opening')->get();
+        $openingstock  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->sum('net_wt');
 
-        $openingstocks  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->get();
+        $openingstocks  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->get();
 
-        $total_net  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->sum('net_wt');
-        $total_meter  = SinglesidelaminatedfabricStock::where('bill_number' , 'Opening')->sum('meter');
+        $total_net  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->sum('net_wt');
+        $total_meter  = Singlesidelaminatedfabricstock::where('bill_number' , 'Opening')->sum('meter');
 
         return view('admin.tripal.openingtripal.index',compact('bill','bill_date','godam','singlestocks','openingstock','openingstocks','total_meter','total_net'));
     }
@@ -57,7 +58,7 @@ class OpeningTripalController extends Controller
        }
        else{
 
-           $final_net_wt = $find_data->net_wt - $request['net_wt'];
+           $final_net_wt = $find_data->net_wt + $request['net_wt'];
            $find_data->net_wt = $final_net_wt;
            $find_data->update();
            // dd($final_net_wt);
@@ -125,7 +126,7 @@ class OpeningTripalController extends Controller
         else{
 
 
-            $final_net_wt = $find_data->net_wt - $request['net_wt'];
+            $final_net_wt = $find_data->net_wt + $request['net_wt'];
             $find_data->net_wt = $final_net_wt;
             $find_data->update();
             // dd($final_net_wt);
@@ -167,10 +168,11 @@ class OpeningTripalController extends Controller
         
         $bill_date = date('Y-m-d');
         $godam= Godam::where('status','active')->get();
-        $singlestocks  = FinalTripalStock::where('bill_number' ,'!=', 'Opening')->get();
+        $singlestocks  = FinalTripalName::get();
         $openingstock  = FinalTripalStock::where('bill_number' , 'Opening')->sum('net_wt');
 
-        $openingstocks  = FinalTripalStock::where('bill_number' , 'Opening')->get();
+        $openingstocks  = FinalTripalStock::where('bill_number' , 'Opening')->paginate(10);
+        // dd($openingstocks);
 
         $total_net  = FinalTripalStock::where('bill_number' , 'Opening')->sum('net_wt');
         $total_meter  = FinalTripalStock::where('bill_number' , 'Opening')->sum('meter');
@@ -181,49 +183,49 @@ class OpeningTripalController extends Controller
     public function storeFinalData(Request $request)
     {
         // dd($request);
-        $find_data = FinalTripalStock::find($request->fabric_id);
+        $find_data = FinalTripalName::find($request->fabric_id);
         // dd($find_data);
-        if($request['net_wt'] > $find_data->net_wt){
-            return response()->json([
-                'message' => 'Not Enough Stock',
-            ], 400);
+        // $single_stock = FinalTripalOpeningStock::create([
+        //     "finaltripalname_id" => $request->fabric_id,
+        //     "name" => $find_data->name,
+        //     "slug" => $find_data->slug,
+        //     "roll_no" => $request['roll'], 
+        //     "godam_id" => $request['godam_id'],
+        //     "bill_number" => $request['bill_number'],
+        //     'bill_date' => $request['bill_date'],
+        //     "gram" =>  $request['gram'],
+        //     "average" => $request['average'],
+        //     "roll" => $request['roll'],
+        //     'net_wt' => $request['net_wt'],
+        //     "meter" => $request['meter'],
+          
+        //     "date_en" => date('Y-m-d'),
+        //     "date_np" => date('Y-m-d'),
+        // ]);
 
-        }
-        else{
+        $finaltripalstock = FinalTripalStock::create([
+            "name" => $find_data->name,
+            "slug" => $find_data->slug,
+            "bill_number" => $request['bill_number'],
+            'bill_date' => $request['bill_date'],
+            "department_id" => $request['godam_id'],
+            "finaltripalname_id" => $request->fabric_id,
+            "loom_no" => '0',
+            'gross_wt' => '0',
+            "roll_no" => $request['roll'],
+            "gram" =>  $request['gram_wt'],
+            'net_wt' => $request['net_wt'],
+            "meter" => $request['meter'],
+            "average_wt" => $request['average'],
+            "gsm" => $request['gsm'],
+            // "finaltripal_id" => $finaltripal->id,
+            "date_en" => date('Y-m-d'),
+            "date_np" => date('Y-m-d'),
 
+            "status" => "sent"
+        ]);
 
-            $final_net_wt = $find_data->net_wt - $request['net_wt'];
-            $find_data->net_wt = $final_net_wt;
-            $find_data->update();
-            // dd($final_net_wt);
-
-            $single_stock = FinalTripalStock::create([
-                "finaltripalname_id" => $find_data->finaltripalname_id,
-                "finaltripal_id" => $find_data->finaltripal_id,
-                "doublefabric_id" => $find_data->doublefabric_id,
-                "name" => $find_data->name,
-                "slug" => $find_data->slug,
-                "roll_no" => $request['roll'], 
-                "department_id" => $request['godam_id'],
-                "bill_number" => $request['bill_number'],
-                'bill_date' => $request['bill_date'],
-                "gram" =>  $request['gram_wt'],
-                "average_wt" => $request['average'],
-                "roll_no" => $request['roll'],
-                'net_wt' => $request['net_wt'],
-                "meter" => $request['meter'],
-                "loom_no" => $find_data->loom_no,
-                'gross_wt' => $find_data->gross_wt,
-              
-                "planttype_id" => $find_data->planttype_id,
-                "plantname_id" => $find_data->plantname_id,
-                "fabric_id" => $find_data->fabric_id,
-                "date_en" => date('Y-m-d'),
-                "date_np" => date('Y-m-d'),
-            ]);
-            return back();
-
-        }
+        return back();
         
        
     }

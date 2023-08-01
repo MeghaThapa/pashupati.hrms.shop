@@ -43,13 +43,16 @@ use App\Http\Controllers\StoreoutDepartmentController;
 use App\Http\Controllers\Tripal\TripalController;
 use App\Http\Controllers\Tripal\SingleTripalStockController;
 use App\Http\Controllers\Tripal\DoubleTripalStockController;
+use App\Http\Controllers\Tripal\FinalTripalStockController;
 use App\Http\Controllers\Tripal\FinalTripalController;
+use App\Http\Controllers\Sale\SaleFinalTripalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
+use Symfony\Component\Routing\RouteCollection;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -517,6 +520,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
+    Route::post('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
+
     //fabric opening
     Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
     Route::post("fabric/opening/store",[FabricStockController::class,"openingStore"])->name("fabric.opening.store");
@@ -554,6 +559,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //doubletripal stock
     Route::get('double-tripal/getstock/index',[DoubleTripalStockController::class,'index'])->name('doubletripal-stock.index');
 
+    //finaltripal stock
+    Route::get('final-tripal/getstock/index',[FinalTripalStockController::class,'index'])->name('finaltripal-stock.index');
+
+    Route::post("getfilter/tripal/list",[FinalTripalController::class,"getFilter"])->name("getFilterTripalList");
+
     //openingtripal
 
     Route::resource('openingtripal', 'Tripal\OpeningTripalController', [
@@ -580,6 +590,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //final tripal
     Route::get('openingfinaltripal','Tripal\OpeningTripalController@getOpeningFinalTripalIndex')->name('openingfinaltripal.index');
     Route::post('openingfinaltripal/storeData','Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
+
+    //sale final tripal
+    Route::get('salefinaltripal','Sale\SaleFinalTripalController@index')->name('salefinaltripal.index');
+    Route::get('salefinaltripal/getSaleFinalTripalStockList','Sale\SaleFinalTripalController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
+
+    Route::post('salefinaltripal/store','Sale\SaleFinalTripalController@store')->name('salefinaltripal.store');
+
+    Route::get('salefinaltripal/addTripal/{id}','Sale\SaleFinalTripalController@addTripal')->name('salefinaltripals.addTripal');
 
 
 
@@ -671,7 +689,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //getnonwovenreceiveentries
     Route::get('nonwovenfabrics-receiveentry/getReceiveEntries/list', 'NonwovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
 
-    Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
+    Route::get('nonwovenfabrics/getOpeningNonwoven/List', 'Opening\NonWovenController@getOpeningNonwoven')->name('nonwovenfabric.getOpeningNonwovenData');
+
+    Route::get('nonwovenfabrics-receiveentry/getAllData/list', 'NonwovenReceiveEntryController@getnonwovenentries')->name('nonwovenfabric.getReceiveEntryData');
 
     Route::get('nonwovenfabrics-receiveentry/{id}/status', 'NonwovenReceiveEntryController@changeStatus')->name('nonwovenfabrics-receiveentry.status');
     Route::get('nonwovenfabrics-receiveentry/{id}/delete', 'NonwovenReceiveEntryController@destroy')->name('nonwovenfabrics-receiveentry.delete');
@@ -923,12 +943,20 @@ Route::post('import/stock',[StockImportController::class,"import"])->name('impor
 //import fabric
 Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
 
+//import bundle stock
+Route::post('import/bundlestock', 'BagBundelStockController@import')->name('import.bundlestock');
+
 /*****************tape entry**************/
 Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');
 Route::post('tape-entry/store',[TapeEntryController::class,"tapeentrystore"])->name("tape.entry.store");
 Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"])->name("tape.entry.receive.create");
 Route::get('tape-entry/receive/view/{id}',[TapeEntryController::class,"view"])->name("tape.entry.receive.view");
 Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"deleteTape"])->name("tape.entry.receive.delete");
+
+//tapre report
+Route::get("tape/report",[TapeEntryController::class,"tape_report"])->name("tape.report");
+Route::get("tape/report/ajax",[TapeEntryController::class,"tape_report_ajax"])->name("tape.report.ajax");
+
     //reteieve planttype
 Route::get('tape-entry/ajax-request/{godam_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
     //reteieve plantname
@@ -939,9 +967,10 @@ Route::get('tape-entry/ajax-request/shift/{plantname_id}/{godam_id}/{plantType_i
 Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajaxrequestdanainfo"])->name('tape.entry.ajax.get.danainfo');
     // tapeentrystock
 Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
-/**************tape entry end*************/
 Route::get("tape/opening",[TapeEntryController::class,"openingcreate"])->name("tape.opening");
 Route::post("tape/opening/store",[TapeEntryController::class,"openingstore"])->name("tape.opening.store");
+/**************tape entry end*************/
+
 
 
 //tapeentry stock

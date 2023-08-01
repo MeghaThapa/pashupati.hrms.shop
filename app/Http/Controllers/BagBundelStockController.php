@@ -6,6 +6,8 @@ use App\Models\BagBundelStock;
 use Illuminate\Http\Request;
 use App\Helpers\AppHelper;
 use Yajra\DataTables\Facades\DataTables;
+use App\Imports\BundleStockImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BagBundelStockController extends Controller
 {
@@ -29,11 +31,21 @@ class BagBundelStockController extends Controller
           ->addIndexColumn()
             ->make(true);
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    public function import(Request $request){
+        $request->validate([
+            "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
+        ]);
+        $file = $request->file('file');
+        $import = Excel::import(new BundleStockImport, $file );
+        if($import){
+            return back()->with(["message"=>"Data imported successfully!"]);
+        }else{
+            return "Unsuccessful";
+        }
+    }
+
+  
     public function create()
     {
         //

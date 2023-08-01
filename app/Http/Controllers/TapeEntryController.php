@@ -17,6 +17,7 @@ use App\Models\AutoLoadItemStock;
 use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\TapeEntry;
+use Yajra\DataTables\DataTables;
 
 class TapeEntryController extends Controller
 {
@@ -328,4 +329,53 @@ class TapeEntryController extends Controller
             'waste_id' => $wastage_type
         ]);
     }
+
+    public function tape_report(){
+        $tape_entries= TapeEntryItemModel::get();
+        $dana_in_kg = 0;
+        $wastage = 0 ;
+        $tape_qty = 0;
+        foreach($tape_entries as $data){
+            $dana_in_kg += $data->dana_in_kg;
+
+            $loading = $data->loading;
+            $bypass_wast = $data->bypass_wast;
+            $running = $data->running;
+            $total = $loading + $bypass_wast + $running;
+
+            $wastage += $total;
+
+            $tape_qty += $data->tape_qty_in_kg;
+
+        }
+        return view("admin.TapeEntry.view")->with([
+            "wastage" => $wastage,
+            "dana_consumption" => $dana_in_kg,
+            "tape_quantity" => $tape_qty,
+        ]);
+    }
+    public function tape_report_ajax(Request $request){
+        if($request->ajax()){
+            $tape_entries= TapeEntryItemModel::with(["tapeentry","godam"])->get();
+            return DataTables::of($tape_entries)
+                ->addIndexColumn()
+                ->addColumn("receipt_entry_date",function($row){
+                    return $row->tapeentry->tape_entry_date;
+                })
+                ->addColumn("receipt_number",function($row){
+                    return $row->tapeentry->receipt_number;
+                })
+                ->addColumn("godam",function($row){
+                    return $row->godam->name;
+                })
+                ->addColumn("wastage",function($row){
+                    $loading = $row->loading;
+                    $bypass_wast = $row->bypass_wast;
+                    $running = $row->running;
+                    return $total = $loading + $bypass_wast + $running;
+                })
+                ->rawColumns(["receipt_entry_date","receipt_number","wastage","godam"])
+                ->make(true);
+        }
+    }   
 }

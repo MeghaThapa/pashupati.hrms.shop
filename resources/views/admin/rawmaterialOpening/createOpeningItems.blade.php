@@ -120,6 +120,10 @@
                     </div>
                     <div class="col-md-3">
                         <label for="gross_weight">Dana Group</label>
+                        <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                            data-target="#addDanaGroupModel" style="margin-top:0 !important; top:0;float:right;">
+                            <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                        </a>
                         <select class="advance-select-box form-control" id="danaGroupId" name="dana_group_id" required>
                             <option value=" " selected disabled>{{ __('Select a group') }}</option>
                             @foreach ($danaGroups as $danaGroup)
@@ -132,6 +136,10 @@
                 <div class="row">
                     <div class="col-md-3">
                         <label for="Date NP">Dana Name</label>
+                        <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                            data-target="#addDanaNameModel" style="margin-top:0 !important; top:0;float:right;">
+                            <i class="fas fa-plus" style="display:flex;align-items: center;justify-content: center;"></i>
+                        </a>
                         <select class="advance-select-box form-control" id="danaNameId" name="dana_name_id" required>
                             <option value=" " selected disabled>{{ __('Select a group') }}</option>
                             {{-- @foreach ($danaNames as $danaName)
@@ -172,6 +180,161 @@
         </div>
     </div>
 
+    </div>
+    <div class="modal fade" id="addDanaNameModel" tabindex="-1" role="dialog" aria-labelledby="exampleModaltax"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModaltax">Add Dana Name</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="modelFormDanaName">
+                        @csrf
+                        <div class="card-body">
+                            <div id="danaName-create-form-error" class="alert alert-danger" hidden>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label for="status" class="col-form-label">{{ __('Dana Name') }}
+                                        <span class="required-field">*</span>
+                                    </label>
+                                    {{-- <select class="advance-select-box form-control" id="danaNameModel"
+                                        name="dana_name_model_id" required>
+                                        <option value="" selected disabled>{{ __('Select dana Name') }}</option>
+                                        @foreach ($danaNames as $danaName)
+                                            <option value="{{ $danaName->id }}">{{ $danaName->name }}
+                                            </option>
+                                        @endforeach
+                                    </select> --}}
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        placeholder="{{ __('Dana Name') }}" value="{{ old('placement') }}" required>
+                                    @error('name')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label for="status" class="col-form-label">{{ __('Dana Group Name') }}
+                                        <span class="required-field">*</span>
+                                    </label>
+                                    <select class="advance-select-box form-control" id="danaGroupId_model"
+                                        name="dana_group_id" required>
+                                        <option value="" selected disabled>{{ __('Select dana Group') }}
+                                        </option>
+                                        @foreach ($danaGroups as $danaGroup)
+                                            <option value="{{ $danaGroup->id }}">{{ $danaGroup->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('department')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label for="status" class="col-form-label">{{ __('Status') }}</label>
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="1">{{ __('Active') }}</option>
+                                        <option value="0">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                </div>
+                <div class="modal-footer">
+                    <div class="row" style="gap:10px;">
+                        <div>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                {{ __('Save Dana Name') }}</button>
+                        </div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addDanaGroupModel" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form class="form-horizontal" id="createDanaGroup">
+                    @csrf
+                    <div id="edit-form-error" class="alert alert-danger" hidden>
+
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addDepartmentModel">Add Dana Group</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <div class="card-body">
+                            <div class="row form-group">
+                                <label for="email" class="col-form-label">{{ __('Dana Group Name') }}</label>
+                                <input type="text" class="form-control @error('email') is-invalid @enderror"
+                                    id="DanaGroupName" name="dana_group_name" placeholder="{{ __('Dana Group Name') }}"
+                                    value="{{ old('dana_group_name') }}">
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="row form-group">
+                                <label for="status" class="col-form-label">{{ __('Status') }}</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="active">{{ __('Active') }}</option>
+                                    <option value="inactive">{{ __('Inactive') }}</option>
+                                </select>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-sm-7 ">
+
+                                </div>
+                                <div class="col-sm-5 ">
+
+                                    <button type="submit" class="btn btn-primary float-right"><i
+                                            class="fas fa-save"></i>
+                                        {{ __('Save') }}</button>
+
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                        Close
+                                    </button>
+
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+
+                        </div>
+                </form>
+            </div>
+        </div>
     </div>
 @endsection
 @section('extra-script')
@@ -344,6 +507,87 @@
                     })
                 }
             }
+
+            document.getElementById('modelFormDanaName').addEventListener('submit', function(
+                e) {
+                e.preventDefault();
+                const form = event.target;
+                let name = form.elements['name'];
+                let dana_group_id = form.elements['danaGroupId_model'];
+                let status = form.elements['status'];
+
+                $.ajax({
+                    url: "{{ route('danaName.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: name.value,
+                        dana_group_id: dana_group_id.value,
+                        status: status.value,
+                    },
+                    success: function(response) {
+                        $('#addDanaNameModel').modal('hide');
+                        setSuccessMessage(response.message);
+                        console.log(response.danaName.name)
+                        setOptionInSelect(
+                            'danaName',
+                            response.danaName.id,
+                            response.danaName.name);
+                    },
+                    error: function(xhr, status, error) {
+                        // console.log();
+                        // console.log(xhr.responseText.message);
+                        let errorMsg = xhr.responseJSON.message;
+                        console.log(errorMsg);
+                        if (errorMsg) {
+                            setErrorMessage('danaName-create-form-error',
+                                errorMsg);
+                        } else {
+
+                            setErrorMessage('danaName-create-form-error',
+                                'Something went wrong');
+                        }
+
+                    }
+                });
+            });
+
+            document.getElementById('createDanaGroup').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = event.target;
+                let name = form.elements['dana_group_name'];
+                let status = form.elements['status'];
+                $.ajax({
+                    url: "{{ route('danaGroup.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        dana_group_name: name.value,
+                        status: status.value,
+                    },
+                    success: function(response) {
+                        $('#addDanaGroupModel').modal('hide');
+                        setSuccessMessage(response.message);
+                        console.log(response.danaGroup.name)
+                        setOptionInSelect(
+                            'danaGroupId_model',
+                            response.danaGroup.id,
+                            response.danaGroup.name);
+                        // console.log(response);
+                        setOptionInSelect(
+                            'danaGroup',
+                            response.danaGroup.id,
+                            response.danaGroup.name);
+
+
+
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMessage('edit-form-error',
+                            'Please Fill out all fields')
+                    }
+                });
+            });
 
             function setSuccessMessage(message) {
                 let successContainer = document.getElementById('success_msg');

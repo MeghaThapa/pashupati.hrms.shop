@@ -17,21 +17,24 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->unsignedBigInteger('doublefabric_id');
+            $table->unsignedBigInteger('doublefabric_id')->nullable();
             $table->foreign('doublefabric_id')->references("id")->on('double_side_laminated_fabric_stocks')->onDelete('cascade')->onUpdate('cascade');
-            $table->unsignedBigInteger('finaltripal_id');
-            $table->foreign('finaltripal_id')->references("id")->on('final_tripals')->onUpdate('cascade');
+
+
+            $table->unsignedBigInteger('finaltripal_id')->nullable();
+            $table->foreign('finaltripal_id')->references("id")->on('final_tripals')->onDelete('cascade');
+           
 
             $table->bigInteger('finaltripalname_id')->unsigned()->index();
             $table->foreign('finaltripalname_id')->references('id')->on('final_tripal_names')->onDelete('cascade');
 
-            $table->unsignedBigInteger('fabric_id');
+            $table->unsignedBigInteger('fabric_id')->nullable();
             $table->foreign('fabric_id')->references("id")->on('fabrics')->onUpdate('cascade');
             
-            $table->unsignedBigInteger('planttype_id');
+            $table->unsignedBigInteger('planttype_id')->nullable();
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade');
 
-            $table->unsignedBigInteger('plantname_id');
+            $table->unsignedBigInteger('plantname_id')->nullable();
             $table->foreign('plantname_id')->references("id")->on('processing_subcats')->onDelete('cascade');
 
             $table->bigInteger('department_id')->unsigned()->index();
@@ -41,6 +44,7 @@ return new class extends Migration
             $table->string('gross_wt');
             $table->string('net_wt');
             $table->string('meter');
+            $table->string('gsm');
             $table->string('roll_no');
             $table->string('loom_no');
             $table->string('average_wt');

@@ -25,7 +25,10 @@
     <!-- /.content-header -->
     <div class="content">
         <div class="container-fluid">
-            <div class="card">
+            <div class="bg-light text-right rounded">
+                <a href="{{ route('tape.report') }}" class="rounded-pill btn btn-primary text-light">View Detailed Report</a>
+            </div>
+            <div class="card mt-3">
                 <div class="card-header">
                     <h4>Create Tape Entries</h4>
                 </div>
@@ -51,6 +54,7 @@
             <div class="card">
                 <div class="card-header">
                     <h4>Tape Entries</h4>
+
                 </div>
                 <div class="card-body table-responsive">
                     <table class="table table-bordered table-hover table-striped" id="myTable">
@@ -77,7 +81,7 @@
                                                         <button type="submit" class="btn btn-danger ml-2"><i class="fa fa-trash"></i></button>
                                                     </form>
                                                 @elseif($data->status == 'created')
-                                                    <a href="{{ route('tape.entry.receive.view',['id'=>$data->id]) }}" type="submit" class="btn btn-info"><i class="fa fa-eye"></i></a>
+                                                    <a data-url="{{ route('tape.entry.receive.view',['id'=>$data->id]) }}" type="submit" class="btn btn-info tape_info_production"><i class="fa fa-eye"></i></a>
                                                 @endif
                                             </div>
                                         </td>
@@ -94,6 +98,29 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 @endsection
 
 @section('extra-script')
@@ -107,6 +134,27 @@
 @endif
 <script>
     let table = new DataTable('#myTable');
+</script>
+<script>
+    $(document).ready(function() {
+        $(".tape_info_production").click(function(){
+            let url = $(this).data("url") 
+            $.ajax({
+                url : url,
+                method : "get",
+                success:function(response){
+                    $("#modelId").modal("show")
+                    $(".modal-body").append(`
+                        <p>${response}</p>
+                    `)
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        })
+
+     })
 </script>
 <script>
    $("#trash").submit(function(e){
