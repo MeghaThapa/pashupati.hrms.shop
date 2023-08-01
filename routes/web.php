@@ -45,7 +45,7 @@ use App\Http\Controllers\Tripal\SingleTripalStockController;
 use App\Http\Controllers\Tripal\DoubleTripalStockController;
 use App\Http\Controllers\Tripal\FinalTripalStockController;
 use App\Http\Controllers\Tripal\FinalTripalController;
-use App\Http\Controllers\Tripal\SaleFinalTripalController;
+use App\Http\Controllers\Sale\SaleFinalTripalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BagBrandController;
 use App\Http\Controllers\PrintingAndCuttingBagItemController;
@@ -561,6 +561,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //finaltripal stock
     Route::get('final-tripal/getstock/index',[FinalTripalStockController::class,'index'])->name('finaltripal-stock.index');
 
+    Route::post("getfilter/tripal/list",[FinalTripalController::class,"getFilter"])->name("getFilterTripalList");
+
     //openingtripal
 
     Route::resource('openingtripal', 'Tripal\OpeningTripalController', [
@@ -589,10 +591,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('openingfinaltripal/storeData','Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
 
     //sale final tripal
-    Route::get('salefinaltripal','Tripal\SaleFinalTripalController@index')->name('salefinaltripal.index');
-    Route::get('salefinaltripal/getSaleFinalTripalStockList','Tripal\SaleFinalTripalController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
+    Route::get('salefinaltripal','Sale\SaleFinalTripalController@index')->name('salefinaltripal.index');
+    Route::get('salefinaltripal/getSaleFinalTripalStockList','Sale\SaleFinalTripalController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
 
-    Route::post('salefinaltripal/store','Tripal\SaleFinalTripalController@store')->name('salefinaltripal.store');
+    Route::post('salefinaltripal/store','Sale\SaleFinalTripalController@store')->name('salefinaltripal.store');
+
+    Route::get('salefinaltripal/addTripal/{id}','Sale\SaleFinalTripalController@addTripal')->name('salefinaltripals.addTripal');
 
 
 

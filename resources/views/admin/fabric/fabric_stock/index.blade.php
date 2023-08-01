@@ -25,17 +25,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Type</label>
-                <select class="advance-select-box form-control" id="type" name="type">
-                    <option value="" selected disabled>{{ __('Select Type') }}</option>
-                    <option value="true">Lam</option>
-                    <option value="false">UnLam</option>
-                    {{-- <option value="3">Opening</option> --}}
-
-                </select>
-
-            </div>
+            
 
             <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
                 <label for="">Name</label>
@@ -45,6 +35,18 @@
 
                 </select>
 
+
+            </div>
+
+            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+                <label for="">Type</label>
+                <select class="advance-select-box form-control" id="type" name="type">
+                    <option value="" selected disabled>{{ __('Select Type') }}</option>
+                    <option value="true">Lam</option>
+                    <option value="false">UnLam</option>
+                    {{-- <option value="3">Opening</option> --}}
+
+                </select>
 
             </div>
             

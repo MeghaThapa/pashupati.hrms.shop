@@ -17,7 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('bill_no');
             $table->string('bill_date');
-            $table->enum('bill_for',['local','export'])->default('export');
+            $table->bigInteger('partyname_id')->unsigned()->index();
+            $table->foreign('partyname_id')->references('id')->on('suppliers')->onDelete('cascade');
+            $table->enum('bill_for',['local','export','none'])->default('none');
             $table->string('lorry_no');
             $table->string('gp_no');
             $table->string('do_no');

@@ -94,15 +94,20 @@ class FabricStockController extends Controller
                 $fabrics = $fabrics->where('godam_id',$godam_id);
                 $sum = $fabrics->sum('net_wt');
             }
-            if($type || $type !=null){
-                $fabrics = $fabrics->where('is_laminated', $type);
-                $sum = $fabrics->sum('net_wt');
-            }
 
             if($name || $name !=null){
                 $fabrics = $fabrics->where('name', 'LIKE', '%'.$getname.'%');
                 $sum = $fabrics->sum('net_wt');
             }
+
+            // dd($type);
+
+            if($type || $type !=null){
+                $fabrics = $fabrics->where('is_laminated', $type);
+                $sum = $fabrics->sum('net_wt');
+            }
+
+      
 
 
             $fabric_stock= $fabrics->paginate(35);

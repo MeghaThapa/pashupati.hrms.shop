@@ -169,13 +169,13 @@ class OpeningTripalController extends Controller
         $bill_date = date('Y-m-d');
         $godam= Godam::where('status','active')->get();
         $singlestocks  = FinalTripalName::get();
-        $openingstock  = FinalTripalOpeningStock::where('type' , 'opening')->sum('net_wt');
+        $openingstock  = FinalTripalStock::where('bill_number' , 'Opening')->sum('net_wt');
 
-        $openingstocks  = FinalTripalOpeningStock::where('type' , 'opening')->get();
+        $openingstocks  = FinalTripalStock::where('bill_number' , 'Opening')->paginate(10);
         // dd($openingstocks);
 
-        $total_net  = FinalTripalOpeningStock::where('type' , 'opening')->sum('net_wt');
-        $total_meter  = FinalTripalOpeningStock::where('type' , 'opening')->sum('meter');
+        $total_net  = FinalTripalStock::where('bill_number' , 'Opening')->sum('net_wt');
+        $total_meter  = FinalTripalStock::where('bill_number' , 'Opening')->sum('meter');
 
         return view('admin.tripal.openingfinaltripal.index',compact('bill_date','godam','singlestocks','openingstock','openingstocks','total_meter','total_net'));
     }
@@ -184,24 +184,47 @@ class OpeningTripalController extends Controller
     {
         // dd($request);
         $find_data = FinalTripalName::find($request->fabric_id);
-        // dd($getdata);
-        $single_stock = FinalTripalOpeningStock::create([
-            "finaltripalname_id" => $request->fabric_id,
+        // dd($find_data);
+        // $single_stock = FinalTripalOpeningStock::create([
+        //     "finaltripalname_id" => $request->fabric_id,
+        //     "name" => $find_data->name,
+        //     "slug" => $find_data->slug,
+        //     "roll_no" => $request['roll'], 
+        //     "godam_id" => $request['godam_id'],
+        //     "bill_number" => $request['bill_number'],
+        //     'bill_date' => $request['bill_date'],
+        //     "gram" =>  $request['gram'],
+        //     "average" => $request['average'],
+        //     "roll" => $request['roll'],
+        //     'net_wt' => $request['net_wt'],
+        //     "meter" => $request['meter'],
+          
+        //     "date_en" => date('Y-m-d'),
+        //     "date_np" => date('Y-m-d'),
+        // ]);
+
+        $finaltripalstock = FinalTripalStock::create([
             "name" => $find_data->name,
             "slug" => $find_data->slug,
-            "roll_no" => $request['roll'], 
-            "godam_id" => $request['godam_id'],
             "bill_number" => $request['bill_number'],
             'bill_date' => $request['bill_date'],
-            "gram" =>  $request['gram'],
-            "average" => $request['average'],
-            "roll" => $request['roll'],
+            "department_id" => $request['godam_id'],
+            "finaltripalname_id" => $request->fabric_id,
+            "loom_no" => '0',
+            'gross_wt' => '0',
+            "roll_no" => $request['roll'],
+            "gram" =>  $request['gram_wt'],
             'net_wt' => $request['net_wt'],
             "meter" => $request['meter'],
-          
+            "average_wt" => $request['average'],
+            "gsm" => $request['gsm'],
+            // "finaltripal_id" => $finaltripal->id,
             "date_en" => date('Y-m-d'),
             "date_np" => date('Y-m-d'),
+
+            "status" => "sent"
         ]);
+
         return back();
         
        
