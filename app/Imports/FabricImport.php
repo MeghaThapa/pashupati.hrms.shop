@@ -10,6 +10,7 @@ use App\Models\FabricGroup;
 use Illuminate\Support\Str;
 use App\Models\FabricStock;
 use App\Models\TapeEntryStockModel;
+use App\Models\FabricDetail;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 
 class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
@@ -33,92 +34,92 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
       $findTape = TapeEntryStockModel::find($gettapeQuantity);
       // dd($findTape->tape_qty_in_kg);    
-      dd($rows[0]['roll_no']);
+      // dd($rows[0]['roll_no']);
 
-      $totalwastage = $request['total_wastage'];
-      $totalnetWeight = $request['total_netweight'];
+      $totalwastage = $rows[0]['pipecutting'] + $rows[0]['bdwastage'] + $rows[0]['otherwastage'];
+      $totalnetWeight = $rows[0]['totalnet'];
       $finalWastage = $totalwastage + $totalnetWeight;
 
 
       // dd($finalWastage,$findTape->tape_qty_in_kg);
-      // if($totalnetWeight < $findTape->tape_qty_in_kg){
+      if($totalnetWeight < $findTape->tape_qty_in_kg){
 
-      //     $final = $findTape->tape_qty_in_kg - $finalWastage;
-      //     $findTape->tape_qty_in_kg = $final;
-      //     $findTape->update();
+          $final = $findTape->tape_qty_in_kg - $finalWastage;
+          $findTape->tape_qty_in_kg = $final;
+          $findTape->update();
 
-      //     $countData = FabricDetail::where('bill_number',$bill_no)->count();
-      //     if($countData != 1){
-      //         // store subcategory
-      //         $fabric = FabricDetail::create([
-      //             'bill_number' => $bill_no,
-      //             'bill_date' => '0',
-      //             'pipe_cutting' => $request['pipe_cutting'],
-      //             'bd_wastage' => $request['bd_wastage'],
-      //             'other_wastage' => $request['other_wastage'],
-      //             'total_wastage' => $request['total_wastage'],
-      //             'total_netweight' => $request['total_netweight'],
-      //             'total_meter' => $request['total_meter'],
-      //             'total_weightinkg' => $request['total_weightinkg'],
-      //             'total_wastageinpercent' => $request['total_wastageinpercent'],
-      //             'run_loom' => $request['run_loom'],
-      //             'wrapping' => $request['wrapping'],
-      //         ]);
+          $countData = FabricDetail::where('bill_number',$bill_no)->count();
+          if($countData != 1){
+              // store subcategory
+              $fabric = FabricDetail::create([
+                  'bill_number' => $bill_no,
+                  'bill_date' => date('Y-m-d'),
+                  'pipe_cutting' => $rows[0]['pipecutting'],
+                  'bd_wastage' => $rows[0]['bdwastage'],
+                  'other_wastage' => $rows[0]['otherwastage'],
+                  'total_wastage' => $totalwastage,
+                  'total_netweight' => $totalnetWeight,
+                  'total_meter' => $rows[0]['totalmeter'],
+                  'total_weightinkg' => $rows[0]['totalweightkg'],
+                  'total_wastageinpercent' => $rows[0]['wastagepercent'],
+                  'run_loom' => $rows[0]['runloom'],
+                  'wrapping' => $rows[0]['wrapping'],
+              ]);
 
-      //     }
-      //  }
-
-
-       foreach ($rows as $row) {
-           // dd($row);
-           $size = trim($row['size']);
-           $slug = $row['gram'];
-
-           $fabricgroup = FabricGroup::firstOrCreate([
-               'slug' => $slug
-           ], [
-               'name' => $row['gram'],
-               'slug' => $slug,
-               'is_active' => '1',
-               
-           ]);
-           $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
-
-           $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
-
-
-           $fabric = Fabric::firstOrCreate([
-               'roll_no' => $row['roll_no']
-           ], [
-               'name' => $size,
-               'roll_no' => $row['roll_no'],
-               'loom_no' => $row['loom_no'],
-               'fabricgroup_id' => $fabricgroup_id,
-               'gross_wt' => $row['gross_wt'],
-               'net_wt' => $row['net_wt'],
-               'meter' => $row['meter'],
-               'gram_wt' => $gram_wt,
-               'average_wt' => $row['grams'],
-               'godam_id' => $this->godam_id,
-               'bill_no' => $bill_no,
-               
-           ]);
-
-           $fabricstock = FabricStock::firstOrCreate([
-            'name' => $size,
-            'roll_no' => $row['roll_no'],
-            'loom_no' => $row['loom_no'],
-            'fabricgroup_id' => $fabricgroup_id,
-            'gross_wt' => $row['gross_wt'],
-            'net_wt' => $row['net_wt'],
-            'meter' => $row['meter'],
-            'gram_wt' => $gram_wt,
-            'average_wt' => $row['grams'],
-            'godam_id' => $this->godam_id,
-            'bill_no' => $bill_no,
-            'fabric_id' => $fabric->id
-        ]);
-           
+          }
        }
+
+
+       // foreach ($rows as $row) {
+       //     // dd($row);
+       //     $size = trim($row['size']);
+       //     $slug = $row['gram'];
+
+       //     $fabricgroup = FabricGroup::firstOrCreate([
+       //         'slug' => $slug
+       //     ], [
+       //         'name' => $row['gram'],
+       //         'slug' => $slug,
+       //         'is_active' => '1',
+               
+       //     ]);
+       //     $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
+
+       //     $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
+
+
+       //     $fabric = Fabric::firstOrCreate([
+       //         'roll_no' => $row['roll_no']
+       //     ], [
+       //         'name' => $size,
+       //         'roll_no' => $row['roll_no'],
+       //         'loom_no' => $row['loom_no'],
+       //         'fabricgroup_id' => $fabricgroup_id,
+       //         'gross_wt' => $row['gross_wt'],
+       //         'net_wt' => $row['net_wt'],
+       //         'meter' => $row['meter'],
+       //         'gram_wt' => $gram_wt,
+       //         'average_wt' => $row['grams'],
+       //         'godam_id' => $this->godam_id,
+       //         'bill_no' => $bill_no,
+               
+       //     ]);
+
+       //     $fabricstock = FabricStock::firstOrCreate([
+       //      'name' => $size,
+       //      'roll_no' => $row['roll_no'],
+       //      'loom_no' => $row['loom_no'],
+       //      'fabricgroup_id' => $fabricgroup_id,
+       //      'gross_wt' => $row['gross_wt'],
+       //      'net_wt' => $row['net_wt'],
+       //      'meter' => $row['meter'],
+       //      'gram_wt' => $gram_wt,
+       //      'average_wt' => $row['grams'],
+       //      'godam_id' => $this->godam_id,
+       //      'bill_no' => $bill_no,
+       //      'fabric_id' => $fabric->id
+       //  ]);
+           
+       // }
    }
 }

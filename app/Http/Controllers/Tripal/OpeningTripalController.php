@@ -230,5 +230,87 @@ class OpeningTripalController extends Controller
        
     }
 
+    //edit section for tripal
+
+
+    public function getOpeningFinalTripalEdit($id)
+    {
+        $finaltripalstocks = FinalTripalStock::find($id);
+        // dd($finaltripalstocks);
+        $finaltripalname = FinalTripalName::get();
+        $godam= Godam::where('status','active')->get();
+        return view('admin.tripal.openingfinaltripal.edit', compact('finaltripalstocks','godam','finaltripalname'));
+    }
+
+    /**
+     * Update the specified category in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $slug
+     * @return \Illuminate\Http\Response
+     */
+    public function getOpeningFinalTripalUpdate(Request $request, $id)
+    {
+        // dd($request);
+
+        //validate form
+        // $validator = $request->validate([
+        //     'godam_id' => 'required',
+        //     'tripal' => 'required',
+        //     'roll' => 'required',
+        //     'gram' => 'required',
+        //     'net_wt' => 'required',
+        //     'meter' => 'required',
+        //     'average' => 'required',
+        //     'gsm' => 'required',
+        // ]);
+
+        $finaltripal = FinalTripalStock::find($id);
+
+
+        $tripalname = FinalTripalName::find($request->fabric_id);
+
+
+        $finaltripal->update([
+            "name" => $tripalname->name,
+            "slug" => $tripalname->slug,
+            "bill_number" => $request['bill_number'],
+            'bill_date' => $request['bill_date'],
+            "department_id" => $request['godam_id'],
+            "finaltripalname_id" => $request->fabric_id,
+            "loom_no" => '0',
+            'gross_wt' => '0',
+            "roll_no" => $request['roll'],
+            "gram" =>  $request['gram_wt'],
+            'net_wt' => $request['net_wt'],
+            "meter" => $request['meter'],
+            "average_wt" => $request['average'],
+            "gsm" => $request['gsm'],
+            // "finaltripal_id" => $finaltripal->id,
+            "date_en" => $request['bill_date'],
+            "date_np" => date('Y-m-d'),
+
+            "status" => "sent"
+        ]);
+
+
+        return redirect()->route('openingfinaltripal.index')->withSuccess('Tripal updated successfully!');
+    }
+
+    /**
+     * Remove the specified category from storage.
+     *
+     * @param  string  $slug
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyTripal($id)
+    {
+        // dd('kk');
+        $category = FinalTripalStock::find($id);
+        // destroy category
+        $category->delete();
+        return redirect()->route('openingfinaltripal.index')->withSuccess('Fabric deleted successfully!');
+    }
+
   
 }
