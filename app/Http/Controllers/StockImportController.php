@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Imports\StockImport;
+use App\Imports\OpeningRawmaterialImport;
+use App\Imports\OpeningWastageImport;
 
 //for silent creations
 class StockImportController extends Controller
@@ -20,6 +22,39 @@ class StockImportController extends Controller
         }else{
             return "Unsuccessful";
         }
+    }
+
+    public function openingRawmaterialImport(Request $request){
+        $request->validate([
+            "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
+        ]);
+        $file = $request->file('file');
+
+        $import = Excel::import(new OpeningRawmaterialImport, $file );
+        // return $import;
+        if($import){
+            return back()->with(["message"=>"Data imported successfully!"]);
+        }else{
+            return "Unsuccessful";
+        }
+    }
+
+
+
+    public function openingWastageImport(Request $request){
+         $request->validate([
+            "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
+        ]);
+        $file = $request->file('file');
+
+        $import = Excel::import(new OpeningWastageImport, $file );
+        // return $import;
+        if($import){
+            return back()->with(["message"=>"Data imported successfully!"]);
+        }else{
+            return "Unsuccessful";
+        }
+    //
     }
 }
 
@@ -37,7 +72,7 @@ class StockImportController extends Controller
 
 //         try {
 //             Excel::import($import, $file);
-//         } 
+//         }
 //         // catch (\Throwable $e) {
 //         //     return back()->with(["message_err" => [$e->getMessage()]]);
 //         //     //  return back()->with(["message_err" => $e->getMessage()]);

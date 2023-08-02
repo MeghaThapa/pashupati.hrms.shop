@@ -1187,6 +1187,7 @@ Route::controller(RawmaterialOpeningEntryController::class)
     Route::delete("delete/{openingRawmaterialEntry_id}","delete")->name('rawMaterialOpening.delete');
 
 });
+Route::post('openingRawMaterial/import',[StockImportController::class,"openingRawmaterialImport"])->name('openingRawMaterial.openingRawmaterialImport');
 
 Route::controller(RawmaterialOpeningItemController::class)
 ->prefix('openingRawmaterialItem')
@@ -1198,4 +1199,16 @@ Route::controller(RawmaterialOpeningItemController::class)
     // Route::get("getDanaGroupDanaName/{danaGroup_id}","getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
 
 });
+
 /**************************raw material opening end**********************************/
+
+/**************************wastage stock start***************************************/
+Route::controller(WastageStockController::class)
+->prefix('wastageStock')
+->group(function(){
+     Route::get("index","index")->name('wastageStock.index');
+    Route::get("yajraDatatables","yajraDatatables")->name('wastageStock.yajraDatatables');
+});
+Route::post('openingWastage/import',[StockImportController::class,"openingWastageImport"])->name('openingWastage.openingWastageImport');
+
+/**************************wastage stock end****************************************/

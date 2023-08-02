@@ -62,7 +62,7 @@
                         </a>
                     </li>
 
-                    
+
 
                     <li class="nav-item">
                         <a href="{{ route('fabric.opening') }}" class="nav-link {{ request()->routeIs('admin.fabric.opening') ? "active" : ""}}">
@@ -79,8 +79,8 @@
                         </a>
                     </li>
 
-                    
-                    
+
+
                   </ul>
                 </li>
 
@@ -101,7 +101,7 @@
                             <p>{{ __('Auto Loader Stock') }}</p>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item">
                         <a href="{{ route('rawMaterialStock.index') }}" class="nav-link">
                             <i class="nav-icon fas fa-boxes"></i>
@@ -149,7 +149,7 @@
                         </a>
                     </li>
 
-                    
+
 
                     <li class="nav-item">
                         <a href="{{ route('nonwovenfabrics-receiveentrystock.index') }}"
@@ -183,7 +183,7 @@
                         </a>
                     </li>
 
-                    
+
                   </ul>
                 </li>
 
@@ -204,14 +204,14 @@
                         </a>
                     </li>
 
-                    
-                    
+
+
                   </ul>
                 </li>
 
-                
 
-                
+
+
                 {{-- <li class="nav-item">
                     <a href="{{ route('dashboard') }}"
                         class="nav-link  {{ request()->is('admin/dashboard') ? 'active' : '' }}">
@@ -315,13 +315,13 @@
                     </a>
                 </li>
 
-            
 
 
-                
+
+
 
             <li class="nav-header text-bold">{{ __('Fabric') }}</li>
-            
+
                 <li class="nav-item">
                     <a href="{{ route('fabric-groups.index') }}"
                         class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">
@@ -341,7 +341,7 @@
                     </a>
                 </li>
 
-                
+
 
 
                 <li class="nav-item">
@@ -372,7 +372,7 @@
                     </a>
                 </li>
 
-                
+
 
                 {{-- <li class="nav-item">
                       <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
@@ -438,7 +438,7 @@
                         <p>{{ __('Auto Loader') }}</p>
                     </a>
                 </li>
-                
+
                 <li class="nav-item">
                     <a href="{{ route('rawMaterial.index') }}"
                         class="nav-link {{ request()->is('rawMaterial/index*') ? 'active' : '' }}">
@@ -446,7 +446,7 @@
                         <p>{{ __('Raw Material') }}</p>
                     </a>
                 </li>
-                
+
                 <li class="nav-item">
                     <a href="{{ route('purchaseOrder.index') }}"
                         class="nav-link {{ request()->is('purchaseOrder.index*') ? 'active' : '' }}">
@@ -462,7 +462,7 @@
                     </a>
                 </li>
 
-                
+
                 <li class="nav-item">
                     <a href="{{ route('storeout.index') }}"
                         class="nav-link {{ request()->is('storeout/index*') ? 'active' : '' }}">
@@ -487,7 +487,7 @@
                     </a>
                 </li>
 
-                
+
 
                 <!-------------  Bag --------------------------->
                 <li class="nav-header text-bold">{{ __('Bags') }}</li>
@@ -513,7 +513,7 @@
                         <p>{{ __('Bundle Making') }}</p>
                     </a>
                 </li>
-                
+
                 <li class="nav-item">
                     <a href="{{ route('bagSelling.index') }}"
                         class="nav-link {{ request()->routeIs('bagSelling.index') ? 'active' : '' }}">
@@ -521,7 +521,7 @@
                         <p>{{ __('Bundle Selling') }}</p>
                     </a>
                 </li>
-                
+
                 <!-------------  Bag --------------------------->
                 <li class="nav-header text-bold">{{ __('Purchase Reports') }}</li>
                 <li class="nav-item">

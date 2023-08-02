@@ -14,7 +14,13 @@ class WasteStock extends Model
     protected $fillable = [
         'godam_id','waste_id','quantity_in_kg','created_at','updated_at'
     ];
+
     public function wastage(){
-        return  $this->belongsTo(Wastages::class);
+        return  $this->belongsTo(Wastages::class,'waste_id', "id");
+    }
+
+    public function godam()
+    {
+        return $this->belongsTo('App\Models\Godam', 'godam_id', "id");
     }
 }

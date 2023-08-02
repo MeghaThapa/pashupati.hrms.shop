@@ -5,12 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DanaGroup extends Model
+class OpeningWastage extends Model
 {
     use HasFactory;
-    protected $table = "dana_groups";
-      protected $fillable = [
-        'name','status'
-    ];
-
 }
