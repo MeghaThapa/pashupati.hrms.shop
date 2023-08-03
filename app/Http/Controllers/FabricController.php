@@ -18,12 +18,14 @@ class FabricController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Fabric::query();
-        if (request('term')) {
-            $term = request('term');
-            $query->where('name', 'Like', '%' . $term . '%');
-        }
-        $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
+        // $query = Fabric::query();
+        // if (request('term')) {
+        //     $term = request('term');
+        //     $query->where('name', 'Like', '%' . $term . '%');
+        // }
+        // $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
+
+        $fabrics = FabricDetail::paginate(15);
 
         $departments = Godam::get();
         $shifts = Shift::get();
@@ -92,7 +94,7 @@ class FabricController extends Controller
             "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
         ]);
         $file = $request->file('file');
-        $import = Excel::import(new FabricImport($request->godam_id), $file);
+        $import = Excel::import(new FabricImport($request->godam_id,$request->date_np), $file);
         if($import){
             return back()->with(["message"=>"Data imported successfully!"]);
         }else{
