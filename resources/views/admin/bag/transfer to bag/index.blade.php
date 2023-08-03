@@ -307,11 +307,11 @@
         });
 
         function putfabricsonplace(data) {
-            console.log(data);
+            // console.log(data,'mm');
             $("#fabric_name").empty();
             $("<option disbled>--Select Fabric--</option>").appendTo("#fabric_name")
             data.data.forEach(d => {
-                let option = $(`<option value=${d.id}>${d.name}</option>`).appendTo("#fabric_name");
+                let option = $(`<option value=${d.id}>${d.name}(${d.fabricgroup.name})</option>`).appendTo("#fabric_name");
 
             });
         }
@@ -319,18 +319,20 @@
         function putfabricsontable(data) {
             $("#tbody").empty();
             data.data.forEach(d => {
+                // console.log(d.fabricgroup.name,'lol');
+                // console.log('hello');
 
                 let average = (d.meter / d.net_wt).toFixed(4);
 
                 let tr = $('<tr></tr>').appendTo("#tbody");
                 tr.append(`<td>${d.id}</td>`);
-                tr.append(`<td>${d.name}</td>`);
+                tr.append(`<td>${d.name} (${d.fabricgroup.name})</td>`);
                 tr.append(`<td>${d.roll_no}</td>`);
                 tr.append(`<td>${d.gross_wt}</td>`);
                 tr.append(`<td>${d.net_wt}</td>`);
                 tr.append(`<td>${d.meter}</td>`);
-                tr.append(`<td>${d.average}</td>`);
-                tr.append(`<td>${d.gram}</td>`);
+                tr.append(`<td>${d.average_wt}</td>`);
+                tr.append(`<td>${d.gram_wt}</td>`);
                 tr.append(`<a class="btn btn-primary sendFabLower" href="${d.id}" data-id="${d.id}">send</a>`);
             });
         }
@@ -381,8 +383,8 @@
                 tr.append(`<td>${d.gross_wt}</td>`);
                 tr.append(`<td>${d.net_wt}</td>`);
                 tr.append(`<td>${d.meter}</td>`);
-                tr.append(`<td>${average}</td>`);
-                tr.append(`<td>${d.gram}</td>`);
+                tr.append(`<td>${d.average_wt}</td>`);
+                tr.append(`<td>${d.gram_wt}</td>`);
                 tr.append(`<a class="btn btn-danger lowerData" href="${d.id}" data-id="${d.id}">delete</a>`);
             });
         }
