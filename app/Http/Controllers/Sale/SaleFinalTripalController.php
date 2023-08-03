@@ -69,7 +69,7 @@ class SaleFinalTripalController extends Controller
     {
         $bill_no = AppHelper::getFinalTripalReceiptNo();
         $bill_date = date('Y-m-d');
-        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
+        $fabrics = FinalTripalStock::get();
         $partyname = Supplier::where('status',1)->get();
         $salefinaltripals = SaleFinalTripal::paginate(20);
         return view('admin.sale.salefinaltripal.addtripal',compact('bill_no','bill_date','fabrics','partyname','salefinaltripals'));

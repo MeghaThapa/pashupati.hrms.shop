@@ -19,8 +19,8 @@ class BundleStockImport implements ToCollection,WithHeadingRow,WithCalculatedFor
     {
 
         foreach ($rows as $row) {
-            $groups = $row['group'];
-
+            $groups = trim($row['group']);
+           
             $group = Group::firstOrCreate([
                 'name' => $groups
             ], [
@@ -41,9 +41,20 @@ class BundleStockImport implements ToCollection,WithHeadingRow,WithCalculatedFor
             $brand_id = BagBrand::where('name',$row['brand'])->value('id');
           
 
-            $fabric = BagBundelStock::firstOrCreate([
-                'bundle_no' => $row['bundle_no']
-            ], [
+            // $fabric = BagBundelStock::firstOrCreate([
+            //     'bundle_no' => $row['bundle_no']
+            // ], [
+            //     'group_id' => $group_id,
+            //     'bag_brand_id' => $brand_id,
+            //     'bundle_no' => $row['bundle_no'],
+            //     'qty_pcs' => $row['pcs'],
+            //     'qty_in_kg' => $row['weight'],
+            //     'average_weight' => $row['avgwt'],
+            //     'type' => $row['type'],
+                
+            // ]);
+
+            $fabric = BagBundelStock::create([
                 'group_id' => $group_id,
                 'bag_brand_id' => $brand_id,
                 'bundle_no' => $row['bundle_no'],

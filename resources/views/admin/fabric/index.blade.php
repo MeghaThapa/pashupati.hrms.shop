@@ -1,4 +1,7 @@
 @extends('layouts.admin')
+@section('extra-style')
+    <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
+@endsection
 
 @section('content')
     <!-- Content Header (Page header) -->
@@ -55,6 +58,13 @@
 
                         <form action="{{ route('import.fabric') }}" method="POST" enctype="multipart/form-data">
                           @csrf
+
+                          <div class=" form-group">
+                            
+                              <label for="receipt_number">Date Np</label>
+                              <input type="text" name="date_np" class="form-control"
+                                  id="date_np">
+                          </div>
                           
                           <div class=" form-group">
                               <label for="size" class="col-form-label">{{ __('To Godam') }}
@@ -99,17 +109,10 @@
                     <thead>
                     <tr>
                         <th>@lang('#')</th>
-                        <th>{{ __('Roll NO') }}</th>
-                        <th>{{ __('Loom NO') }}</th>
-                        <th>{{ __('Name') }}</th>
-                        <th>{{ __('Gross weight') }}</th>
+                        <th>{{ __('Godam') }}</th>
+                        <th>{{ __('BillNO') }}</th>
+                        <th>{{ __('Date Np') }}</th>
                         <th>{{ __('Net Weight') }}</th>
-                        <th>{{ __('Meter') }}</th>
-                        <th>{{ __('Average Weight') }}</th>
-                        <th>{{ __('Gram Weight') }}</th>
-                        <th>{{ __('Status') }}</th>
-                        <th>{{ __('Created') }}</th>
-                        <th class="text-right">{{ __('Action') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -118,65 +121,14 @@
                         @foreach ($fabrics as $key => $fabric)
                             <tr>
                                 <td>{{ ++$key }}</td>
-                                <td>{{ $fabric->roll_no }} </td>
-                                <td>{{ $fabric->loom_no }} </td>
-                                <td>{{ $fabric->name }} ({{$fabric->fabricgroup->name}}) </td>
-                                <td>{{ $fabric->gross_wt}} </td>
-                                <td>{{ $fabric->net_wt }}</td>
-                                <td>{{ $fabric->meter }}</td>
-                                <td>{{round($fabric->average_wt, 2)}}</td>
+                                <td>{{ $fabric->getGodam->name }}</td>
+                                <td>{{ $fabric->bill_number }} </td>
+                                <td>{{ $fabric->bill_date }} </td>
+                                <td>{{ $fabric->total_netweight}} </td>
 
-                                <td>{{(round($fabric->average_wt, 2) /  (int) filter_var($fabric->name, FILTER_SANITIZE_NUMBER_INT) )}}</td>
-                                <td>
-                                    @if ($fabric->isActive())
-                                        <span class="badge badge-success">{{ __('Active') }}</span>
-                                    @else
-                                        <span class="badge badge-warning">{{ __('Inactive') }}</span>
-                                    @endif
-                                </td>
-                                <td>{{ \Carbon\Carbon::parse($fabric->created_at)->format('d-M-Y') }}</td>
-                                <td class="text-right">
-                                    <div class="btn-group">
-                                        <button type="button"
-                                                class="btn btn-secondary dropdown-toggle action-dropdown-toggle"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            @if ($fabric->isActive())
-                                                <a href="{{ route('fabrics.status', $fabric->slug) }}"
-                                                    class="dropdown-item"><i class="fas fa-window-close"></i>
-                                                    {{ __('Inactive') }}</a>
-                                            @else
-                                                <a href="{{ route('fabrics.status', $fabric->slug) }}"
-                                                    class="dropdown-item"><i class="fas fa-check-square"></i>
-                                                    {{ __('Active') }}</a>
-                                            @endif
-                                            <a href="{{ route('fabrics.edit', $fabric->slug) }}"
-                                                class="dropdown-item"><i class="fas fa-edit"></i>
-                                                {{ __('Edit') }}</a>
-                                            <a href="{{ route('fabrics.delete', $fabric->slug) }}"
-                                                class="dropdown-item delete-btn"
-                                                data-msg="{{ __('Are you sure you want to delete this sub category?') }}"><i
-                                                    class="fas fa-trash"></i> {{ __('Delete') }}</a>
-                                        </div>
-                                    </div>
-                                </td>
                             </tr>
                         @endforeach
-                    @else
-                        <tr>
-                            <td colspan="10">
-                                <div class="data_empty">
-                                    <img src="{{ asset('img/result-not-found.svg') }}" alt="" title="">
-                                    <p>{{ __('Sorry, no sub category found in the database. Create your very first sub category.') }}
-                                    </p>
-                                    <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
-                                        {{ __('Add Sub Category') }} <i class="fas fa-plus-circle"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                   
                     @endif
 
 
@@ -189,7 +141,7 @@
             <!-- pagination start -->
             {{ $fabrics->links() }}
 
-            <div class="card-body p-0">
+           {{--  <div class="card-body p-0">
                 <form class="form-horizontal" action="{{ route('fabricDetail') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
@@ -210,43 +162,7 @@
                                 </span>
                                 @enderror
                             </div>
-                            {{-- <div class="col-md-3 form-group">
-                                <label for="size" class="col-form-label">{{ __('Plant Type') }}
-                                </label>
-                                <select class="advance-select-box form-control" id="plantType" name="planttype_id" required>
-                                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                                </select>
-                                @error('planttype_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div> --}}
-                            {{-- <div class="col-md-3 form-group">
-                                <label for="size" class="col-form-label">{{ __('Plant Name') }}
-                                </label>
-                                <select class="advance-select-box form-control" id="plantName" name="plantname_id" required>
-                                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                                </select>
-                                @error('plantname_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div> --}}
-                            
-
-                            {{-- <div class=" form-group col-md-3">
-                                <label for="size" class="col-form-label">{{ __('Shift') }}
-                                </label>
-                                <select class="advance-select-box form-control" id="shift_id" name="shift_id" required>
-                                    <option value="" selected disabled>{{ __('Select Shift') }}</option>
-                                   @foreach ($shifts as $data)
-                                        <option value="{{ $data->id }}">{{ $data->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
+                   
 
                         </div>
                         <div class="row">
@@ -356,7 +272,7 @@
                     </div>
                     <!-- /.card-body -->
                 </form>
-            </div>
+            </div> --}}
 
 
             <!-- pagination end -->
@@ -367,9 +283,24 @@
 @endsection
 
 @section('extra-script')
+<script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
+  $('#date_np').val(currentDate);
+  $('#date_np').nepaliDatePicker({
+    ndpYear: true,
+    ndpMonth: true,
+    disableAfter: currentDate,
+    });
+  
+  });
+</script>
+
 <script>
 
 
