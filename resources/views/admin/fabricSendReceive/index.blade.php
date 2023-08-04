@@ -904,7 +904,7 @@
         let average_wt = $(this).data("average_wt")
         let gram_wt = $(this).data("gram_wt")
         let bill_no = $(this).data("bill_no")
-        let billDate = $("#billDateFSR
+        let billDate = $("#billDateFSR")
         let id = $(this).data("id") 
 
         console.log(godam,plantName,plantType,shiftName,gram_wt)
