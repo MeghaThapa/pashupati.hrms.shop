@@ -25,6 +25,7 @@ use Illuminate\Http\Request;
 use Str;
 use App\Models\Godam;
 use Throwable;
+use Yajra\DataTables\DataTables;
 
 class FabricSendReceiveController extends Controller
 {
@@ -123,14 +124,48 @@ class FabricSendReceiveController extends Controller
         }
     }
 
+    // public function getfabricwithsamename(Request $request){
+    //     if($request->ajax()){
+    //         $fabric_name_id = $request->fabric_name_id;
+    //         $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
+    //         $fabrics = FabricStock::where("name",$fabric_name)->get();
+    //         return response()->json([
+    //             "fabrics" => $fabrics
+    //         ]);
+    //     }
+    // }
+
     public function getfabricwithsamename(Request $request){
         if($request->ajax()){
             $fabric_name_id = $request->fabric_name_id;
             $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
             $fabrics = FabricStock::where("name",$fabric_name)->get();
-            return response()->json([
-                "fabrics" => $fabrics
-            ]);
+
+            return DataTables::of($fabrics)
+                    ->addIndexColumn()
+                    ->addColumn("gram_wt",function($row){
+                        return $row->fabricgroup->name;
+                    })
+                    ->addColumn("action",function($row){
+                        return "
+                        <a class='btn btn-primary send_to_lower'  
+                                 data-name='{$row->name}' 
+                                 data-gross_wt='{$row->gross_wt}' 
+                                 data-roll_no='{$row->roll_no}'  
+                                 data-id='{$row->id}' 
+                                 data-net_wt = '{$row->net_wt}'
+                                 data-meter = '{$row->meter}'
+                                 data-average_wt = '{$row->average_wt}'
+                                 data-gram_wt = '{$row->fabricgroup->name}' 
+                                 data-bill_no = '{$row->bill_no}'
+                                 href='{$row->id}'>Send</a>";
+                    })
+                    ->rawColumns(["action","gram_wt"])
+                    ->make(true);
+
+            // return response()->json([
+            //     "fabrics" => $fabrics
+            // ]);
         }
     }
 
@@ -213,7 +248,7 @@ class FabricSendReceiveController extends Controller
 
     public function sendunlaminatedrevised(Request $request){
         if($request->ajax()){
-
+            // return $request->all();
             $gram_wt = $request->gram_wt;
             $net_wt = $request->net_wt;
             $gross_wt  =  $request->gross_wt;
@@ -316,6 +351,7 @@ class FabricSendReceiveController extends Controller
             $lamimated_roll_no = $data['laminated_roll_no'];
             $lamimated_roll_no_2 = $data['laminated_roll_no_2'];
             $lamimated_roll_no_3 = $data['laminated_roll_no_3'];
+            $meter1 = $data['meter1'];
             // $roll_no = [
             //     "lamimated_roll_no" => $lamimated_roll_no,
             //     "lamimated_roll_no_2" => $lamimated_roll_no_2,
@@ -325,6 +361,7 @@ class FabricSendReceiveController extends Controller
             $laminated_gross_weight = $data['laminated_gross_weight'];
             $laminated_gross_weight_2 = $data['laminated_gross_weight_2'];
             $laminated_gross_weight_3 = $data['laminated_gross_weight_3'];
+            $meter2 = $data['meter2'];
             // $total_gross_weight = $laminated_gross_weight + $laminated_gross_weight_2  + $laminated_gross_weight_3;
             // $gross_weight = [
             //     "laminated_gross_weight" => $laminated_gross_weight,
@@ -337,6 +374,7 @@ class FabricSendReceiveController extends Controller
             $laminated_net_weight = $data['laminated_net_weight'];
             $laminated_net_weight_2 = $data['laminated_net_weight_2'];
             $laminated_net_weight_3 = $data['laminated_net_weight_3'];
+            $meter3 = $data['meter3'];
             // $total_net_weight = floatval($data['laminated_net_weight']) + floatval($data['laminated_net_weight_2']) + floatval($data['laminated_net_weight_3']);
             // $net_weight = [
             //     "laminated_net_weight" => $data['laminated_net_weight'],
@@ -391,7 +429,7 @@ class FabricSendReceiveController extends Controller
                         'gross_wt' => $laminated_gross_weight,
                         "roll_no" => $lamimated_roll_no,
                         'net_wt' => $laminated_net_weight,
-                        "meter" => $fabricmodelquery->meter,
+                        "meter" => $meter1,
                         "status" => "1"
                     ]);
 
@@ -406,7 +444,7 @@ class FabricSendReceiveController extends Controller
                         "net_wt" => $laminated_net_weight,
                         "average" => $laminated_avg_weight,
                         "gram" => $laminated_gram,
-                        "meter" => $meter,
+                        "meter" => $meter1,
 
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
@@ -428,7 +466,7 @@ class FabricSendReceiveController extends Controller
                         'gross_wt' => $laminated_gross_weight_2,
                         "roll_no" => $lamimated_roll_no_2,
                         'net_wt' => $laminated_net_weight_2,
-                        "meter" => $fabricmodelquery->meter,
+                        "meter" => $meter2,
                         "status" => "1"
                     ]);
 
@@ -443,7 +481,7 @@ class FabricSendReceiveController extends Controller
                         "net_wt" => $laminated_net_weight_2,
                         "average" => $laminated_avg_weight_2,
                         "gram" => $laminated_gram_2,
-                        "meter" => $meter,
+                        "meter" => $meter2,
 
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
@@ -466,7 +504,7 @@ class FabricSendReceiveController extends Controller
                         'gross_wt' => $laminated_gross_weight_3,
                         "roll_no" => $lamimated_roll_no_3,
                         'net_wt' => $laminated_net_weight_3,
-                        "meter" => $fabricmodelquery->meter,
+                        "meter" => $meter3,
                         "status" => "1"
                     ]);
 
@@ -481,7 +519,7 @@ class FabricSendReceiveController extends Controller
                         "net_wt" => $laminated_net_weight_3,
                         "average" => $laminated_avg_weight_3,
                         "gram" => $laminated_gram_3,
-                        "meter" => $meter,
+                        "meter" => $meter3,
 
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
