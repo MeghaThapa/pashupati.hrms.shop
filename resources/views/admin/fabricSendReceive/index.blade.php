@@ -910,40 +910,39 @@
         console.log(godam,plantName,plantType,shiftName,gram_wt)
         if(godam == null || plantName == null || plantType == null || shiftName == null){
             alert("Godam or plantName or PlanType or Shift cannnot be null");
-        }else{
-            $.ajax({
-                url  : "{{ route('fabricSendReceive.send.unlaminated.revised') }}",
-                method : "post",
-                data:{
-                    "_token" : $("meta[name='csrf-token']").attr("content"),
-                    "name" : name,
-                    "gross_wt" : gross_wt,
-                    "net_wt" : net_wt,
-                    "roll_no" : roll_no,
-                    "meter" : meter,
-                    "average_wt" : average_wt,
-                    "gram_wt" : gram_wt,
-                    "bill_no" : bill_no,
-                    "billDate" : billDate,
-                    "godam" : godam,
-                    "plantType" : plantType,
-                    "plantName" : plantName,
-                    "shiftName" : shiftName,
-                    "fabric_id" : id
-                },
-                beforeSend:function(){
-                    console.log("sending")
-                },
-                success:function(response){
-                    emptytable();
-                    callunlaminatedfabricajax();
-                    emptyform();
-                },
-                error:function(error){
-                    console.log("error",error);
-                }
-            })
         }
+        $.ajax({
+            url  : "{{ route('fabricSendReceive.send.unlaminated.revised') }}",
+            method : "post",
+            data:{
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "name" : name,
+                "gross_wt" : gross_wt,
+                "net_wt" : net_wt,
+                "roll_no" : roll_no,
+                "meter" : meter,
+                "average_wt" : average_wt,
+                "gram_wt" : gram_wt,
+                "bill_no" : bill_no,
+                "billDate" : billDate,
+                "godam" : godam,
+                "plantType" : plantType,
+                "plantName" : plantName,
+                "shiftName" : shiftName,
+                "fabric_id" : id
+            },
+            beforeSend:function(){
+                console.log("sending")
+            },
+            success:function(response){
+                emptytable();
+                callunlaminatedfabricajax();
+                emptyform();
+            },
+            error:function(error){
+                console.log("error",error);
+            }
+        })
     })
 
     $(document).ready(function(){
