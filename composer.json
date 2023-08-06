@@ -19,6 +19,7 @@
         "maatwebsite/excel": "^3.1.48",
         "mews/purifier": "^3.2",
         "rachidlaasri/laravel-installer": "^4.1",
+        "spatie/db-dumper": "^3.4",
         "thiagocordeiro/laravel-translator": "^1.2",
         "vemcogroup/laravel-translation": "^3.0",
         "yajra/laravel-datatables": "9.0"
