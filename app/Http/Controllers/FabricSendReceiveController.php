@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AutoLoadItemStock;
 use App\Models\DanaName;
 use App\Models\Department;
+use App\Models\FabricFSRDanaConsumption;
 use App\Models\FabricLaminatedSentFSR;
 use App\Models\FabricStock;
 use App\Models\FabricTemporaryForLam;
@@ -289,8 +290,6 @@ class FabricSendReceiveController extends Controller
                 ]);
             }
         }
-
-
     }
 
     public function getunlaminated(){
@@ -632,6 +631,7 @@ class FabricSendReceiveController extends Controller
             $lamFabricToDelete = [];
             $lamFabricTempToDelete = [];
             $department = [];
+            $danaData = [];
 
             try{
                 DB::beginTransaction();
@@ -639,7 +639,16 @@ class FabricSendReceiveController extends Controller
                     $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)
                             ->where("from_godam_id",$autoloader_godam_selected)
                             ->first();
-                    $presentQuantity = $stock->quantity;
+
+                    $autoloaderDanaData['dana_name_id'] = $stock->dana_name_id;
+                    $autoloaderDanaData["id"] = $stock->id;
+                    $autoloaderDanaData['dana_group_id'] = $stock->dana_group_id;
+                    $autoloaderDanaData['consumption'] = $consumption;
+
+                    // dd($autoloaderDanaData);
+
+                    $presentQuantity = $stock->quantity; 
+
                     $deduction = $presentQuantity - $consumption;
 
                     if($deduction == 0){
@@ -691,7 +700,7 @@ class FabricSendReceiveController extends Controller
                             "is_laminated" => "true"
                         ]);
 
-                        FabricLaminatedSentFSR::create([
+                        $letlaminatedsentfsr = FabricLaminatedSentFSR::create([
                             'name'=> $data->lamfabric->name,
                             'slug' => $data->lamfabric->slug,
                             'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
@@ -707,6 +716,13 @@ class FabricSendReceiveController extends Controller
                             'planttype_id' => $data->planttype_id,
                             'bill_number' => $data->bill_number,
                             'bill_date' => $data->bill_date
+                        ]);
+
+                        FabricFSRDanaConsumption::create([
+                            "fabric_laminated_sent_fsr_id" => $letlaminatedsentfsr->id,
+                            "dana_name_id" =>  $autoloaderDanaData['dana_name_id'],
+                            "dana_group_id" => $autoloaderDanaData['dana_group_id'],
+                            "consumption_quantity" => $autoloaderDanaData['consumption']
                         ]);
 
                         $lamFabricToDelete[] = $data->id;
