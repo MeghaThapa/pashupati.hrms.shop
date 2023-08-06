@@ -77,8 +77,9 @@
 
 @section('content')
 <div class="card-body p-0 m-0">
-    <form action="{{ route('openingfinaltripal.storeFinalStock') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('openingfinaltripal.update', $finaltripalstocks->id)  }}" method="post" enctype="multipart/form-data">
         @csrf
+        @method('PUT')
 
         <div class="row">
             <div class="col-md-2 form-group">
@@ -91,7 +92,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
+                <input type="date" value="{{ $finaltripalstocks->date_en }}" step="any" min="0" class="form-control calculator"
                     id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
 
                 @error('bill_date')
@@ -106,7 +107,7 @@
                 <select class="advance-select-box form-control" id="godama_id" name="godam_id" required>
                     <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
                     @foreach ($godam as $data)
-                    <option value="{{ $data->id }}">{{ $data->name }}
+                    <option value="{{ $data->id }}" {{$finaltripalstocks->godam_id == $data->godam_id ? 'selected' : ''}}>{{ $data->name }}
                     </option>
                     @endforeach
                 </select>
@@ -123,12 +124,12 @@
                 <select class="advance-select-box form-control" id="tripal" name="fabric_id"
                     required>
                     <option value="">{{ __('Select FinalTripal Name') }}</option>
-                   @foreach ($singlestocks as $singlestock)
-                    <option value="{{ $singlestock->id }}">{{ $singlestock->name }}
+                   @foreach ($finaltripalname as $singlestock)
+                    <option value="{{ $singlestock->id }}" {{$finaltripalstocks->finaltripalname_id == $singlestock->id ? 'selected' : ''}}>{{ $singlestock->name }}
                     </option>
                     @endforeach
                 </select>
-                @error('fabric_name_id')
+                @error('tripal')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -140,9 +141,9 @@
                 <label for="size" class="col-form-label">{{ __('Roll') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="rollnumberfabric"
-                    data-number="1" name="roll" min="1" required>
+                    data-number="1" name="roll" min="1" value="{{$finaltripalstocks->roll_no}}">
 
-                @error('fabric_name_id')
+                @error('roll')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -152,9 +153,9 @@
                 <label for="size" class="col-form-label">{{ __('Gram Weight') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="gram_wt"
-                    data-number="1" name="gram_wt" min="1" required>
+                    data-number="1" name="gram_wt" min="1" value="{{$finaltripalstocks->gram}}">
 
-                @error('gram_wt')
+                @error('gram')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -164,7 +165,7 @@
                 <label for="size" class="col-form-label">{{ __('Net Weight') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="net_wt"
-                    data-number="1" name="net_wt" min="1" required>
+                    data-number="1" name="net_wt" min="1"  value="{{$finaltripalstocks->net_wt}}">
 
                 @error('net_wt')
                 <span class="invalid-feedback" role="alert">
@@ -176,7 +177,7 @@
                 <label for="size" class="col-form-label">{{ __('Meter') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="meter"
-                    data-number="1" name="meter" min="1" required>
+                    data-number="1" name="meter" min="1" value="{{$finaltripalstocks->meter}}">
 
                 @error('meter')
                 <span class="invalid-feedback" role="alert">
@@ -189,7 +190,7 @@
                 <label for="size" class="col-form-label">{{ __('Average') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="average"
-                    data-number="1" name="average" min="1" required readonly>
+                    data-number="1" name="average" min="1" readonly value="{{$finaltripalstocks->average_wt}}">
 
                 @error('average')
                 <span class="invalid-feedback" role="alert">
@@ -202,9 +203,9 @@
                 <label for="size" class="col-form-label">{{ __('GSM') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="gsm"
-                    data-number="1" name="gsm" min="1" required readonly>
+                    data-number="1" name="gsm" min="1" required readonly value="{{$finaltripalstocks->gsm}}">
 
-                @error('gram')
+                @error('gsm')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -213,7 +214,7 @@
             </div>
             <div>
                 <button type="submit" class="btn btn-primary mt-4">
-                    Add
+                    Update
                 </button>
             </div>
 
@@ -221,120 +222,6 @@
         
     </form>
 </div>
-<div class="row">
-    <div class="Ajaxdata col-md-12">
-        <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable" >
-                <thead>
-                    <tr>
-                        <th>{{ __('Sr.No') }}</th>
-                        <th>{{ __('FinalTripal Name') }}</th>
-                        <th>{{ __('Roll No') }}</th>
-                        <th>{{ __('G.W') }}</th>
-                        <th>{{ __('N.W') }}</th>
-                        <th>{{ __('Meter') }}</th>
-                        <th>{{ __('Avg') }}</th>
-                        <th>{{ __('GSM') }}</th>
-                        <th>{{ __('Action') }}</th>
-                    </tr>
-                </thead>
-
-                <tbody id="rawMaterialItemTbody">
-
-                    @foreach ($openingstocks as $key => $fabric)
-                        <tr>
-                            <td>{{ ++$key }}</td>
-                            <td>{{ $fabric->name }} </td>
-                            <td>{{ $fabric->roll_no }} </td>
-                            <td>{{ $fabric->gram}} </td>
-                            <td>{{ $fabric->net_wt }}</td>
-                            <td>{{ $fabric->meter }}</td>
-                            <td>{{$fabric->average_wt}}</td>
-                            <td>{{$fabric->gsm}}</td>
-                            <td class="text-right">
-                                <div class="btn-group">
-                                    <button type="button"
-                                            class="btn btn-secondary dropdown-toggle action-dropdown-toggle"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                      
-                                        <a href="{{ route('openingfinaltripal.edit', $fabric->id) }}"
-                                            class="dropdown-item"><i class="fas fa-edit"></i>
-                                            {{ __('Edit') }}</a>
-                                        <a href="{{ route('openingfinaltripal.delete', $fabric->id) }}"
-                                            class="dropdown-item delete-btn"
-                                            data-msg="{{ __('Are you sure you want to delete this sub category?') }}"><i
-                                                class="fas fa-trash"></i> {{ __('Delete') }}</a>
-                                    </div>
-                                </div>
-                            </td>
-
-
-                        </tr>
-                    @endforeach
-
-                </tbody>
-
-
-            </table>
-
-        </div>
-        {{ $openingstocks->links() }}
-
-    </div>
-</div>
-<hr>
-
-<hr>
-<div class="row">
-    
-    <div class="card col-md-12">
-        <div class="card-body m-2 p-5">
-            <div class="col-md-12" style="height: 100%;">
-                <div class="row">
-                    <div class="col-md-4 form-group">
-                        <div>
-                            <label for="size" class="col-form-label">{{ __('Total Mtr:') }}<span
-                                    class="required-field">*</span>
-                            </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="total_ul_in_mtr"
-                                data-number="1" name="total_ul_in_mtr" min="1" readonly required value="{{$total_meter}}">
-                            @error('total_ul_in_mtr')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                      
-        
-                    </div>
-        
-                    <div class="col-md-4 form-group">
-                        <div>
-                            <label for="size" class="col-form-label">{{ __('Total Netwt:') }}<span
-                                    class="required-field">*</span>
-                            </label>
-                            <input type="text" step="any" min="0" class="form-control calculator" id="total_lam_in_mtr"
-                                data-number="1" name="total_lam_in_mtr" min="1" readonly required value="{{$total_net}}">
-                            @error('total_lam_in_mtr')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                        
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        
-    </div>
-</div>
-
-
 
 @endsection
 @section('extra-script')

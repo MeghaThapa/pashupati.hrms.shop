@@ -51,8 +51,10 @@ class TapeEntryController extends Controller
     }
 
     public function index(){
+        $latest = TapeEntry::latest("id")->value("id");
+        $receipt_number = 'TR'.'-'.getNepaliDate(date('Y-m-d')).'-'.$latest+1;
         $tapeentries = TapeEntry::orderBy('updated_at','DESC')->get();
-        return view('admin.TapeEntry.index',compact('tapeentries'));
+        return view('admin.TapeEntry.index',compact('tapeentries',"receipt_number"));
     }
 
     public function tapeentrystore(Request $request){
@@ -331,6 +333,7 @@ class TapeEntryController extends Controller
     }
 
     public function tape_report(){
+        $godams = Godam::where("status","active")->get();
         $tape_entries= TapeEntryItemModel::get();
         $dana_in_kg = 0;
         $wastage = 0 ;
@@ -352,11 +355,17 @@ class TapeEntryController extends Controller
             "wastage" => $wastage,
             "dana_consumption" => $dana_in_kg,
             "tape_quantity" => $tape_qty,
+            "godams" => $godams
         ]);
     }
     public function tape_report_ajax(Request $request){
         if($request->ajax()){
-            $tape_entries= TapeEntryItemModel::with(["tapeentry","godam"])->get();
+            $tape_entries= TapeEntryItemModel::query();
+            if($request->godam){
+                $tape_entries->with(["tapeentry","godam"])->where("toGodam_id",$request->godam);
+            }
+            $tape_entries->with(["tapeentry","godam"])->get();
+
             return DataTables::of($tape_entries)
                 ->addIndexColumn()
                 ->addColumn("receipt_entry_date",function($row){
@@ -378,4 +387,28 @@ class TapeEntryController extends Controller
                 ->make(true);
         }
     }   
+
+    public function tape_report_amounts_ajax($godam){
+        $tape_entries= TapeEntryItemModel::where("toGodam_id",$godam)->get();
+        $dana_in_kg = 0;
+        $wastage = 0 ;
+        $tape_qty = 0;
+        foreach($tape_entries as $data){
+            $dana_in_kg += $data->dana_in_kg;
+
+            $loading = $data->loading;
+            $bypass_wast = $data->bypass_wast;
+            $running = $data->running;
+            $total = $loading + $bypass_wast + $running;
+
+            $wastage += $total;
+
+            $tape_qty += $data->tape_qty_in_kg;
+        }
+        return response([
+            "wastage" => $wastage,
+            "dana_consumption" => $dana_in_kg,
+            "tape_quantity" => $tape_qty,
+        ],200);
+    }
 }

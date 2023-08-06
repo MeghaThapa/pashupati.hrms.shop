@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('loom_no');
 
             $table->string('bill_no')->nullable();
+            $table->string('date_np')->nullable();
             $table->boolean('status')->nullable()->default(1);
             $table->enum("is_laminated",["true","false"])->default('false');
             $table->bigInteger('fabric_id')->unsigned()->index();
