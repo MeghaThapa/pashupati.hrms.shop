@@ -904,10 +904,11 @@
         let average_wt = $(this).data("average_wt")
         let gram_wt = $(this).data("gram_wt")
         let bill_no = $(this).data("bill_no")
-        let billDate = $("#billDateFSR")
+        let billDate = $("#billDate").val()
         let id = $(this).data("id") 
 
-        console.log(godam,plantName,plantType,shiftName,gram_wt)
+        console.log(godam,plantName,plantType,shiftName,gram_wt,billDate,id)
+        console.log(name,gross_wt,net_wt,roll_no,meter,average_wt,bill_no)
         if(godam == null || plantName == null || plantType == null || shiftName == null){
             alert("Godam or plantName or PlanType or Shift cannnot be null");
         }
