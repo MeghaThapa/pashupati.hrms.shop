@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PrintedFabDanaConsumpt;
+use App\Models\AutoLoadItemStock;
 use Illuminate\Http\Request;
 
 class PrintedFabDanaConsumptController extends Controller
@@ -88,7 +89,13 @@ class PrintedFabDanaConsumptController extends Controller
         $printedFabDanaConsumpt =PrintedFabDanaConsumpt::with(['godam:id,name','danaName:id,name'])
         ->where('bswfabEntry_id',$request->bsw_lam_fab_for_printing_entry_id)
         ->get();
-        return $printedFabDanaConsumpt;
+        $totalQuantity = $printedFabDanaConsumpt->sum('quantity');
+        $data = [
+        'printedFabDanaConsumpt' => $printedFabDanaConsumpt,
+        'totalQuantity' => $totalQuantity,
+        ];
+        return $data;
+        // return $printedFabDanaConsumpt;
     }
     /**
      * Show the form for editing the specified resource.

@@ -1270,4 +1270,11 @@ Route::controller(SqlDumpController::class)
     // Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
 });
 
+Route::controller(BswLamFabForPrintingEntryController::class)
+->prefix('fabPrintingEntry')
+->group(function(){
+    Route::post("saveEntire","saveEntire")->name('fabPrintingEntry.saveEntire');
+    // Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
+});
+
 /***********************************END SQL DUMP*************************************/
