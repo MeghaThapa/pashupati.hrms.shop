@@ -591,6 +591,13 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('openingfinaltripal','Tripal\OpeningTripalController@getOpeningFinalTripalIndex')->name('openingfinaltripal.index');
     Route::post('openingfinaltripal/storeData','Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
 
+    //final tripal edit section
+
+    Route::get('openingfinaltripal/edit/{id}','Tripal\OpeningTripalController@getOpeningFinalTripalEdit')->name('openingfinaltripal.edit');
+    Route::put('openingfinaltripal/update/{id}','Tripal\OpeningTripalController@getOpeningFinalTripalUpdate')->name('openingfinaltripal.update');
+    Route::get('openingfinaltripal/delete/{id}','Tripal\OpeningTripalController@destroyTripal')->name('openingfinaltripal.delete');
+   
+
     //sale final tripal
     Route::get('salefinaltripal','Sale\SaleFinalTripalController@index')->name('salefinaltripal.index');
     Route::get('salefinaltripal/getSaleFinalTripalStockList','Sale\SaleFinalTripalController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
@@ -956,6 +963,7 @@ Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"delete
 //tapre report
 Route::get("tape/report",[TapeEntryController::class,"tape_report"])->name("tape.report");
 Route::get("tape/report/ajax",[TapeEntryController::class,"tape_report_ajax"])->name("tape.report.ajax");
+Route::get("tape/report/amounts/{godam}",[TapeEntryController::class,"tape_report_amounts_ajax"])->name("tape.report.amounts.ajax");
 
     //reteieve planttype
 Route::get('tape-entry/ajax-request/{godam_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');

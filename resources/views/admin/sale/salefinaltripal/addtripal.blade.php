@@ -104,6 +104,7 @@
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
+                
                 <select class="advance-select-box form-control" id="fabric_id" name="fabric_id"
                     required>
                     <option value="">{{ __('Select Tripal Name') }}</option>

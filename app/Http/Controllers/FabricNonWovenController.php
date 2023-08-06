@@ -101,7 +101,8 @@ class FabricNonWovenController extends Controller
      */
     public function destroy($slug)
     {
-        $category = NonWovenFabric::where('slug', $slug)->first();
+        $category = NonWovenFabric::find($slug);
+        // dd($category);
         // destroy category
         $category->delete();
         return redirect()->route('nonwovenfabrics.index')->withSuccess('Fabric deleted successfully!');
