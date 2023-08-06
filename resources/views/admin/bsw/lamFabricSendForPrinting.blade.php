@@ -346,17 +346,17 @@
             </table>
         </div>
     </div>
-    <div class="card col-md-7">
+    <div class="card col-md-12">
         <div class="card-body m-2 p-5">
             <div class="col-md-12" style="height: 100%;">
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Total Ul Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator"
-                                id="total_ul_in_mtr" data-number="1" name="total_ul_in_mtr" min="1" readonly
+                                id="totalLamMeter" data-number="1" name="total_lam_meter" min="1" readonly
                                 required>
                             @error('total_ul_in_mtr')
                                 <span class="invalid-feedback" role="alert">
@@ -365,11 +365,11 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Ul Net Wt:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Lam Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator"
-                                id="total_ul_net_wt" data-number="1" name="total_ul_net_wt" min="1" readonly
+                                id="totalLamNetWt" data-number="1" name="total_lam_net_wt" min="1" readonly
                                 required>
                             @error('total_ul_net_wt')
                                 <span class="invalid-feedback" role="alert">
@@ -378,11 +378,11 @@
                             @enderror
                         </div>
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Polo Was:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Trimming wst:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator"
-                                id="polo_waste" data-number="1" name="polo_waste" min="1" required>
+                                id="trimmingWst" data-number="1" name="trimming_waste" min="1" required>
                             @error('polo_waste')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -390,11 +390,33 @@
                             @enderror
                         </div>
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
+                            <label for="size" class="col-form-label">{{ __('waste to godam') }}<span
+                                    class="required-field">*</span>
+                            </label>
+                            <select class="advance-select-box form-control  @error('godam_id') is-invalid @enderror"
+                                id="godamIdWaste" name="godam_id_waste" required>
+                                <option value=" " selected disabled>{{ __('Select Godam') }}</option>
+                                <?php
+                                $wasteGodams = \App\Models\Godam::where('status', 'active')->get();
+                                ?>
+                                @foreach ($wasteGodams as $godam)
+                                    <option value="{{ $godam->id }}">
+                                        {{ $godam->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('polo_waste')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="size" class="col-form-label">{{ __('Total Item:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="number" step="any" min="0" class="form-control calculator"
-                                id="totl_dana" data-number="1" name="totl_dana" min="1" readonly required>
+                                id="totalItem" data-number="1" name="total_item" min="1" readonly required>
                             @error('polo_waste')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -406,11 +428,11 @@
 
                     <div class="col-md-4 form-group">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Total Lam Mtr:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Print Mtr:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator"
-                                id="total_lam_in_mtr" data-number="1" name="total_lam_in_mtr" min="1" readonly
+                                id="totalPrintInmtr" data-number="1" name="total_print_in_mtr" min="1" readonly
                                 required>
                             @error('total_lam_in_mtr')
                                 <span class="invalid-feedback" role="alert">
@@ -419,11 +441,11 @@
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Lam Net Wt:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Print Net Wt:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator"
-                                id="total_lam_net_wt" data-number="1" name="total_lam_net_wt" min="1" readonly
+                                id="totalPrintNetWt" data-number="1" name="total_print_net_wt" min="1" readonly
                                 required>
                             @error('total_lam_net_wt')
                                 <span class="invalid-feedback" role="alert">
@@ -432,6 +454,7 @@
                             @enderror
                         </div>
                         <div>
+                            {{-- meg --}}
                             <label for="size" class="col-form-label">{{ __('Fabric Was:') }}<span
                                     class="required-field">*</span>
                             </label>
@@ -459,20 +482,20 @@
 
                     <div class="col-md-4" style="margin-top:70px;">
                         <div>
-                            <label for="size" class="col-form-label">{{ __('Diff UL Lam Meter :') }}<span
+                            <label for="size" class="col-form-label">{{ __('Diff Lam/Print NW :') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator"
-                                id="diff_unLam_lamNw" data-number="1" name="diff_unLam_lamNw" min="1" readonly
+                                id="diffLamPrintednw" data-number="1" name="diff_lam_printednw" min="1" readonly
                                 required>
-                            @error('diff_unLam_lamNw')
+                            @error('diff_lam_printednw')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
                         </div>
                         <div class="mb-4">
-                            <label for="size" class="col-form-label">{{ __('Total Diff Net Weight:') }}<span
+                            <label for="size" class="col-form-label">{{ __('Total Diff:') }}<span
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator"
@@ -488,8 +511,8 @@
             </div>
         </div>
         <div class="card-footer">
-            <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
-            <button class="btn btn-info" id="finalUpdate">Update</button>
+            <input type="hidden" name="selectedDanaID" class="form-control" id="LamSendForPrinting" readonly>
+            <button class="btn btn-info" id="printedFabEntireSave">Update</button>
             <input type="hidden" name="godam_id" id="godam_id" required />
             <input type="hidden" name="autoloader_godam_selected" id="autoloader_godam_selected" required>
         </div>
@@ -661,6 +684,35 @@
             getDataOfBswSentLam();
             getDataOfPrintedLamFab();
             getDataOfDanaConsumption();
+            $('#trimmingWst, #fabric_waste').on('input', calculateResult);
+
+            $('#printedFabEntireSave').on('click', function() {
+                let bswfabEntry_id = {!! json_encode($bswLamFabForPrintingEntry->id) !!};
+                console.log('i am here');
+                $.ajax({
+                    url: "{{ route('fabPrintingEntry.saveEntire') }}",
+                    method: 'post',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        bswfabEntry_id: bswfabEntry_id,
+                    },
+                    success: function(response) {
+                        window.location.href =
+                            "{{ route('BswLamFabSendForPrinting.index') }}";
+
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+            });
+
+            function calculateResult() {
+                var trimmingWaste = parseFloat($('#trimmingWst').val()) || 0; // Parse as float or default to 0
+                var fabricWaste = parseFloat($('#fabric_waste').val()) || 0; // Parse as float or default to 0
+                var resultValue = trimmingWaste + fabricWaste; // Perform your desired calculation here
+                $('#total_waste').val(resultValue.toFixed(2)); // Display the result with 2 decimal places
+            }
             $('#laminatedFabricId').on('select2:select', function(e) {
                 handleSelectChange();
             });
@@ -729,6 +781,8 @@
                         },
                         success: function(response) {
                             console.log(response);
+                            getDataOfDanaConsumption();
+
                             // removeAllTableRows('danaConsumption');
                             // getdanaConsumptionData();
                             // setIntoConsumptionTable(response);
@@ -751,8 +805,8 @@
                         bsw_lam_fab_for_printing_entry_id: $bsw_lam_fab_for_printing_entry_id
                     },
                     success: function(response) {
-                        consumptTableData(response);
-                        // console.log('frtyhbvcfgh', response);
+                        consumptTableData(response.printedFabDanaConsumpt);
+                        document.getElementById('totalItem').value = response.totalQuantity;
                     },
                     error: function(error) {
                         // Handle the error if the AJAX request fails
@@ -905,8 +959,9 @@
                         bsw_lam_fab_for_printing_entry_id: $bsw_lam_fab_for_printing_entry_id
                     },
                     success: function(response) {
-                        printedTableData(response);
-                        // console.log('frtyhbvcfgh', response);
+                        printedTableData(response.bswLamPrintedFabricStocks);
+                        document.getElementById('totalPrintInmtr').value = response.totalMeter;
+                        document.getElementById('totalPrintNetWt').value = response.totalNetWt;
                     },
                     error: function(error) {
                         // Handle the error if the AJAX request fails
@@ -968,7 +1023,9 @@
                         bsw_lam_fab_for_printing_entry_id: $bsw_lam_fab_for_printing_entry_id
                     },
                     success: function(response) {
-                         tableData(response);
+                        tableData(response.bswSentLamFab);
+                        document.getElementById('totalLamMeter').value = response.totalMeter;
+                        document.getElementById('totalLamNetWt').value = response.totalNetWt;
                         // console.log('frtyhbvcfgh', response);
                     },
                     error: function(error) {
@@ -1058,13 +1115,13 @@
                         "bsw_lam_fab_for_printing_entry_id": $bsw_lam_fab_for_printing_entry_id
                     },
                     beforeSend: function() {
-                        console.log("sending")
+                        console.log("sending");
                     },
                     success: function(response) {
                         emptytable();
                         getDataOfBswSentLam();
                         //insertDataIntoTable(response);
-                        callunlaminatedfabricajax();
+                        // callunlaminatedfabricajax();
                         emptyform();
                     },
                     error: function(error) {

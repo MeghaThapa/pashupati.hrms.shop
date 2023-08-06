@@ -69,7 +69,7 @@ class FabricTransferEntryForBagController extends Controller
   public function getfabricsaccordinggodams(Request $request, $id)
   {
     if ($request->ajax()) {
-      $data = FabricStock::where("godam_id", $id)->orderBy('name', "asc")->get();
+      $data = FabricStock::where("godam_id", $id)->orderBy('name', "asc")->with('fabricgroup')->get();
       return response([
         "data" => $data
     ]);
@@ -79,7 +79,7 @@ class FabricTransferEntryForBagController extends Controller
   public function getspecificfabricdetails(Request $request, $id)
   {
     $name = FabricStock::where('id', $id)->first()->name;
-    $allfabswithsamenames = FabricStock::where("name", $name)->get();
+    $allfabswithsamenames = FabricStock::where("name", $name)->with('fabricgroup')->get();
     return response([
       "data" => $allfabswithsamenames
     ]);

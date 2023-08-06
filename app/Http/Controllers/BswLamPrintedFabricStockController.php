@@ -66,7 +66,15 @@ class BswLamPrintedFabricStockController extends Controller
         $bswLamPrintedFabricStocks=BswLamPrintedFabricStock::with('printedFabric:id,name')
         ->where('bswfabEntry_id',$request->bsw_lam_fab_for_printing_entry_id)
         ->get();
-        return $bswLamPrintedFabricStocks;
+        $totalMeter = $bswLamPrintedFabricStocks->sum('meter');
+        $totalNetWt= $bswLamPrintedFabricStocks->sum('net_weight');
+        $data = [
+        'bswLamPrintedFabricStocks' => $bswLamPrintedFabricStocks,
+        'totalMeter' => $totalMeter,
+        'totalNetWt' => $totalNetWt,
+        ];
+        return $data;
+        // return $bswLamPrintedFabricStocks;
     }
     /**
      * Display the specified resource.
