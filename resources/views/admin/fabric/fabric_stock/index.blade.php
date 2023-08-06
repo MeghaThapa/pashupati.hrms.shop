@@ -13,54 +13,62 @@
         <img class="lg-logo" src="{{ $settings->logo }}" alt="{{ $settings->companyName }}" width="250" height="50">
         <h3>Fabric Stock</h3>
     </div>
- <form action="{{ route('fabric-stock.filterStock') }}" method="POST">
-        @csrf
-        <div class="row">
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Godam</label>
-                <select class="advance-select-box form-control" id="toGodam" name="godam_id">
-                    <option value="" selected disabled>{{ __('Select Godam') }}</option>
-                    @foreach ($godams as $godam)
-                        <option value="{{ $godam->id }}">{{ $godam->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Name</label>
-
-                <select class="advance-select-box form-control" id="fabricNameId" name="name">
-                    <option value="" selected disabled>{{ __('Select Fabric') }}</option>
-
-                </select>
-
-
-            </div>
-
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Type</label>
-                <select class="advance-select-box form-control" id="type" name="type">
-                    <option value="" selected disabled>{{ __('Select Type') }}</option>
-                    <option value="true">Lam</option>
-                    <option value="false">UnLam</option>
-                    {{-- <option value="3">Opening</option> --}}
-
-                </select>
-
-            </div>
-            
-            <div class="col-md-3">
-                <button class="btn btn-primary" style="width:200px" type="submit">Show Report</button>
-
-            </div>
-        </div>
-    </form> 
-
+    
     <div class="row">
+        <div class="col-md-2" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+            <label for="">Godam</label>
+            <select class="advance-select-box form-control" id="godam_id" name="godam_id">
+                <option value="" selected disabled>{{ __('Select Godam') }}</option>
+                @foreach ($godams as $godam)
+                <option value="{{ $godam->id }}">{{ $godam->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        
+
+        <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+            <label for="">Name</label>
+
+            <select class="advance-select-box form-control" id="fabric_id" name="fabric_id">
+                <option value="" selected disabled>{{ __('Select Fabric') }}</option>
+
+            </select>
+
+
+        </div>
+
+        <div class="col-md-2" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+            <label for="">Type</label>
+            <select class="advance-select-box form-control" id="type" name="type">
+                <option value="" selected disabled>{{ __('Select Type') }}</option>
+                <option value="true">Lam</option>
+                <option value="false">UnLam</option>
+                {{-- <option value="3">Opening</option> --}}
+
+            </select>
+
+        </div>
+
+        <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+            <label for="">Group</label>
+            <select class="advance-select-box form-control" id="fabricgroup_id" name="fabricgroup_id">
+                <option value="" selected disabled>{{ __('Select Group') }}</option>
+                @foreach ($fabricgroups as $group)
+                <option value="{{ $group->id }}">{{ $group->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        
+        <div class="col-md-1">
+            <button class="btn btn-primary" style="width:150px"  id="fabricStockSearch">Show Report</button>
+
+        </div>
+    </div>
+
+    <div class="row" id="replaceTable">
         <div class="col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table" id="rawMaterialStockTable">
+                <table class="table" >
                     <thead>
                         <tr>
                             <th>{{ __('S.No') }}</th>
@@ -110,6 +118,7 @@
             </div>
             @if ($fabric_stock)
                 {{ $fabric_stock->links() }}
+
             @endif 
         </div>
     </div>
@@ -117,7 +126,7 @@
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script>
-        $("#toGodam").change(function(e){
+        $("#godam_id").change(function(e){
 
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
@@ -137,12 +146,68 @@
         });
 
         function addfabrictype(data){
-            $("#fabricNameId").empty();
-            $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
+            $("#fabric_id").empty();
+            $('#fabric_id').append(`<option value="" disabled selected>--Select Fabric--</option>`);
             data.godamfabrics.forEach( d => {
-                $('#fabricNameId').append(`<option value="${d.id}">${d.name}</option>`);
+                $('#fabric_id').append(`<option value="${d.id}">${d.name}</option>`);
             });
         }
+
+    </script>
+
+    <script type="text/javascript">
+      $("body").on("click", "#fabricStockSearch", function(event){
+        searchFunction();
+      });
+      // $('#search_data').keypress(function(event){
+      //   var keycode = (event.keyCode ? event.keyCode : event.which);
+      //   if(keycode == '13'){
+      //     // alert('You pressed a "enter" key in textbox'); 
+      //     searchFunction();
+      //   }
+      // });
+      function searchFunction(){
+        var godam_id = $('#godam_id').val(),
+        fabric_id = $('#fabric_id').val(),
+        fabricgroup_id = $('#fabricgroup_id').val(),
+        type = $('#type').val();
+        var token = $('meta[name="csrf-token"]').attr('content');
+
+
+        $.ajax({
+          type:"GET",
+          dataType:"html",
+          url: "{{route('fabric-stock.filterStock')}}",
+          data: {
+            _token: token,
+            godam_id: godam_id,
+            fabric_id: fabric_id,
+            type: type,
+            fabricgroup_id: fabricgroup_id,
+          },
+          success:function(response){
+            $('#replaceTable').html("");
+            $('#replaceTable').html(response);
+          },
+          error: function (e) {
+            alert('Sorry! we cannot load data this time');
+            return false;
+          }
+        });
+      }
+      $("body").on("click", "#replaceTable a.page-link", function(event){
+        $.get($(this).attr('href'),function(data){
+          $('#replaceTable').html("");
+          $('#replaceTable').html(data);
+        })
+        return false;
+      });
+      $('#reset').click(function(){
+        $('#shift_data').val('');
+        $('#class_data').val('');
+        $('#section_data').val('');
+        $('#search_data').val('');
+      });
 
     </script>
 
