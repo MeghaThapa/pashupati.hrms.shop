@@ -49,8 +49,8 @@
     <script src="{{ asset('js/app.js') }} "></script>
     {{-- toster --}}
     <script src="
-    https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js
-    "></script>
+            https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js
+            "></script>
     @yield('extra-style')
 
 </head>
@@ -88,7 +88,7 @@
     @stack('scripts')
 
     <!-- REQUIRED SCRIPTS -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script> --}}
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     {{-- <script src="https://cdn.datatables.net/1.11.4/js/dataTables.   4.min.js"></script> --}}
     <script src="{{ asset('js/main.js') }} "></script>

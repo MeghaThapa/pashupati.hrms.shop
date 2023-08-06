@@ -27,21 +27,21 @@ class FabricController extends Controller
 
         $departments = Godam::get();
         $shifts = Shift::get();
+$fabric_netweight = 0;
+        // $getFabricLastId = Fabric::latest()->first();
 
-        $getFabricLastId = Fabric::latest()->first();
-        
 
-        // dd($getFabricLastId); 
+        // // dd($getFabricLastId);
 
-        if($getFabricLastId != null)
-        {
-         $fabric_netweight = Fabric::where('bill_no',$getFabricLastId->bill_no)->sum('net_wt');
+        // if($getFabricLastId != null)
+        // {
+        //  $fabric_netweight = Fabric::where('bill_no',$getFabricLastId->bill_no)->sum('net_wt');
 
-        }
+        // }
 
-        else{
-            $fabric_netweight = 0;
-        }
+        // else{
+        //
+        // }
 
 
         return view('admin.fabric.index', compact('fabrics','departments','shifts','fabric_netweight'));
@@ -216,7 +216,7 @@ class FabricController extends Controller
                                               // dd($gettapeQuantity);
 
         $findTape = TapeEntryStockModel::find($gettapeQuantity);
-        dd($findTape->tape_qty_in_kg);                                      
+        dd($findTape->tape_qty_in_kg);
         $totalwastage = $request['total_wastage'];
         $totalnetWeight = $request['total_netweight'];
         $finalWastage = $totalwastage + $totalnetWeight;
@@ -263,5 +263,5 @@ class FabricController extends Controller
         return back();
     }
 
- 
+
 }
