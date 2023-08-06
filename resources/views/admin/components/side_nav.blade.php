@@ -350,6 +350,15 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('fabricgodams.index') }}"
+                        class="nav-link {{ request()->is('admin/fabricgodams*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>FabricGodamTransfer</p>
+                        {{-- <p>{{ __('Categories') }}</p> --}}
+                    </a>
+                </li>
+
 
 
 

@@ -30,6 +30,7 @@ use App\Models\Singlesidelaminatedfabric;
 use App\Models\Singlesidelaminatedfabricstock;
 use App\Models\DoubleSideLaminatedFabric;
 use App\Models\DoubleSideLaminatedFabricStock;
+use App\Models\DoubleTripalName;
 use App\Helpers\AppHelper;
 
 class DoubleTripalController extends Controller
@@ -44,7 +45,7 @@ class DoubleTripalController extends Controller
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = AutoLoadItemStock::get();
-        $fabrics = Singlesidelaminatedfabricstock::get()->unique('name')->values()->all();
+        $fabrics = Singlesidelaminatedfabricstock::where('bill_number','!=','opening')->get()->unique('name')->values()->all();
         // dd($fabrics);
         return view('admin.doubletripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date'));
     }
@@ -53,7 +54,7 @@ class DoubleTripalController extends Controller
     public function getSingleLamFabric(Request $request){
         // dd($request);
         if($request->ajax()){
-            $getAllfabrics = SinglesidelaminatedfabricStock::where('fabric_id',$request->fabric_id)->value('name');
+            $getAllfabrics = SinglesidelaminatedfabricStock::where('id',$request->fabric_id)->value('name');
             $fabrics = SinglesidelaminatedfabricStock::where('name',$getAllfabrics)->get();
             
             // dd($fabrics);
@@ -654,5 +655,66 @@ class DoubleTripalController extends Controller
                 ]
             ],200);
         }
+    }
+
+    public function storeTripalName(Request $request){
+        // dd('hey',$request);
+        // $validator = $request->validate([
+        //     'name'    => 'required|unique:final_tripal_names,name',
+        // ]);
+
+        $date_np = AppHelper::getTodayNepaliDate();
+        $date_en = date('Y-m-d');
+        // dd($date_np,$date_en);
+
+        DoubleTripalName::create([
+            'name' => $request['name'],
+            'slug' => $request['name'],
+            'date_en' => $date_en,
+            'date_np' => $date_np,
+        ]);
+         return back();
+
+    
+    }
+
+    public function getDoubleFilterData(Request $request){
+        
+        $tripal_id = $request->doubletripal;
+        $find_data = DoubleTripalName::find($tripal_id);
+        
+        $input = $find_data->name;
+        $parts = explode(' ', $input);
+        $firstString = $parts[0];   
+                
+        $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        
+        return response([
+            'name' => $find_name,
+        ]);
+
+
+    }
+
+    //singlefilterdata for single
+
+    public function getFilterDoubleFabricTripalList(Request $request){
+        // dd($request);
+        
+        $tripal_id = $request->ids;
+        $find_data = Singlesidelaminatedfabricstock::find($tripal_id);
+        // dd($find_data);
+        
+        $input = $find_data->name;
+        $parts = explode(' ', $input);
+        $firstString = $parts[0];   
+                
+        $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        
+        return response([
+            'name' => $find_name,
+        ]);
+
+
     }
 }

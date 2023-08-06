@@ -76,6 +76,7 @@ Route::get('/', function () {
 });
 
 Route::get('artisandone',function(){
+    // singlesidelaminated
    // return bcrypt('matinsoftech');
     //$2y$10$sGQ5cB84msZ71W88Nf1Ji.nnPT2oF9ZQUZThLFRS7GFuNQG1sCddi
     // \Artisan::call("make:controller AutoloadItemsController");
@@ -520,7 +521,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
-    Route::post('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
+    Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
 
     //fabric opening
     Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
@@ -529,6 +530,28 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //fabric stock
 
     Route::get('fabrics/getstock/index',[FabricStockController::class,'index'])->name('fabric-stock.index');
+
+    //fabricgodam
+
+    Route::resource('fabricgodams', 'FabricGodamController', [
+        'names' => [
+            'index' => 'fabricgodams.index',
+            'create' => 'fabricgodams.create',
+            'store' => 'fabricgodams.store',
+            'edit' => 'fabricgodams.edit',
+            'update' => 'fabricgodams.update',
+        ]
+    ]);
+
+    Route::get('fabricGodam/dataTable', 'FabricGodamController@dataTable')->name('fabricGodam.dataTable');
+
+    Route::get('fabricGodam/transferFabricGodam/{fabricgodam_id}', 'FabricGodamController@transferFabric')->name('fabricgodams.transferFabric');
+
+    Route::get('fabricGodam/transferFabricGodamDetail/{fabricgodam_id}', 'FabricGodamController@transferFabricDetail')->name('fabricgodams.transferFabricDetail');
+
+    Route::get('fabricGodam/fabricStockList', 'FabricGodamController@getFabricStockList')->name('godamfabrics.getFabricStockList');
+
+    Route::post('fabric/godamTransfer/store','FabricGodamController@getFabricGodamStore')->name("getFabricGodamStore");
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [
@@ -562,7 +585,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //finaltripal stock
     Route::get('final-tripal/getstock/index',[FinalTripalStockController::class,'index'])->name('finaltripal-stock.index');
 
-    Route::post("getfilter/tripal/list",[FinalTripalController::class,"getFilter"])->name("getFilterTripalList");
+    Route::post("getfilter/tripal/list",[FinalTripalController::class,"getfilter"])->name("getFilterTripalList");
+
+    //filtersingletripallist get size name
+
+    Route::post("getfilter/singletripal/list",[TripalController::class,"getSingleFilterData"])->name("getFilterSingleTripalList");
+
+    Route::post("getfilter/doubletripal/list",'Tripal\DoubleTripalController@getDoubleFilterData')->name("getFilterDoubleTripalList");
+
+    Route::post("getfilter/tripal/fabric/list",[TripalController::class,"getSingleFabricFilterData"])->name("getFilterFabricTripalList");
+
+    Route::post("getfilter/doubletripal/fabric/list",'Tripal\DoubleTripalController@getFilterDoubleFabricTripalList')->name("getFilterDoubleFabricTripalList");
 
     //openingtripal
 
@@ -658,6 +691,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('finaltripal/name/store', 'Tripal\FinalTripalController@storeTripalName')->name('finaltripal.storeName');
 
     Route::post('finaltripal/wastage/submit','Tripal\FinalTripalController@getWastageStore')->name("finaltripal.wastage.submit");
+
+    //singletripal name
+    Route::post('singletripal/name/store', 'Tripal\TripalController@storeTripalName')->name('singletripal.storeName');
+
+    //doubletripal name
+    Route::post('doubletripal/name/store', 'Tripal\DoubleTripalController@storeTripalName')->name('doubletripal.storeName');
 
 
 

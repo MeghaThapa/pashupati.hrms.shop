@@ -18,17 +18,21 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             
-            $table->unsignedBigInteger('planttype_id');
+            $table->unsignedBigInteger('planttype_id')->nullable();
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade');
 
-            $table->unsignedBigInteger('plantname_id');
+            $table->unsignedBigInteger('plantname_id')->nullable();
             $table->foreign('plantname_id')->references("id")->on('processing_subcats')->onDelete('cascade');
 
             $table->bigInteger('department_id')->unsigned()->index();
             $table->foreign('department_id')->references('id')->on('godam')->onDelete('cascade');
 
-            $table->bigInteger('singlelamfabric_id')->unsigned()->index();
+            $table->bigInteger('singlelamfabric_id')->unsigned()->index()->nullable();
             $table->foreign('singlelamfabric_id')->references('id')->on('singlesidelaminatedfabrics')->onDelete('cascade');
+
+
+            $table->integer('singletripalname_id')->nullable();
+
             
             $table->string('gram');
             $table->string('gross_wt');

@@ -11,7 +11,7 @@ class Singlesidelaminatedfabricstock extends Model
 
     protected $fillable = [
         'roll_no','gross_wt','net_wt','meter','gram','created_at','updated_at',
-        'plantname_id','department_id','planttype_id','bill_number','bill_date',"status",'name','slug','loom_no','average_wt','singlelamfabric_id','type_lam','status','fabric_id'
+        'plantname_id','department_id','planttype_id','bill_number','bill_date',"status",'name','slug','loom_no','average_wt','singlelamfabric_id','type_lam','status','fabric_id','singletripalname_id'
     ];
 
     public function getGodam()
