@@ -10,7 +10,7 @@ class FabricGodamTransfer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bill_no', 'bill_date', 'fabricgodam_id','fromgodam_id','togodam_id','fabricstock_id','name','slug'
+        'bill_no', 'bill_date', 'fabricgodam_id','fromgodam_id','togodam_id','name','slug','roll'
     ];
 
     public function getFromGodam()

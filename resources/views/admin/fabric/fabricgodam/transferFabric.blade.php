@@ -153,20 +153,7 @@
                 @enderror
             </div>
 
-            <div class="col-md-2 form-group">
-                <label for="group">{{ __('Group') }}<span class="required-field">*</span></label>
-                <select class="advance-select-box form-control @error('group') is-invalid @enderror" id="group_id" name="group_id"  required>
-                    <option value="" selected disabled>{{ __('Select a group') }}</option>
-                    @foreach($groups as $key => $group)
-                        <option value="{{ $group->id }}">{{ $group->name }}</option>
-                    @endforeach
-                </select>
-                @error('togodam_id')
-                <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                @enderror
-            </div>
+            
             <div class="col-md-1 form-group">
                 <button id="getfabricsrelated" class="btn btn-sm btn-primary" style="margin-top:35px;">
                     Add
@@ -176,6 +163,26 @@
         </div>
         
     </form>
+</div>
+<div class="row">
+    <div class="table-responsive table-custom my-3">
+        <table class="table table-hover table-striped" id="sameFabricsTable">
+            <thead class="table-info">
+                <tr>
+                    <th>{{ __('Sr.No') }}</th>
+                    <th>{{ __('Fabric Name') }}</th>
+                    <th>{{ __('Roll No') }}</th>
+                    <th>{{ __('G.W') }}</th>
+                    <th>{{ __('N.W') }}</th>
+                    <th>{{ __('Meter') }}</th>
+                    <th>{{ __('Avg') }}</th>
+                    <th>{{ __('Gram') }}</th>
+                    <th>{{__('Send')}}</th>
+                </tr>
+            </thead>
+            <tbody id="same-fabrics"></tbody>
+        </table>
+    </div>
 </div>
 <div class="row">
     <div class="Ajaxdata col-md-12">
@@ -226,6 +233,50 @@ $(document).ready(function(){
   });
 </script>
 <script>
+    let fabricTable = null;
+
+    $("#fabricstock_id").change(function(e){
+        if (fabricTable !== null) {
+            fabricTable.destroy();
+        }
+
+        var bill_number = $('#bill_number').val(),
+        bill_date = $('#date_np').val(),
+        fromgodam_id = $('#fromgodam_id').val(),
+        togodam_id = $('#togodam_id').val(),
+        fabricstock_id = $('#fabricstock_id').val();
+
+        let fabric_name_id = $(this).val();
+        fabricTable = $("#sameFabricsTable").DataTable({
+            serverside : true,
+            processing : true,
+            ajax : {
+                url : "{{ route('get.fabric.same.name') }}",
+                method : "post",
+                data : function(data){
+                    data._token = $("meta[name='csrf-token']").attr("content"),
+                    data.fabric_name_id = fabric_name_id,
+                    data.bill_number = bill_number,
+                    data.bill_date = bill_date,
+                    data.fromgodam_id = fromgodam_id,
+                    data.togodam_id = togodam_id
+                    // data.fabricstock_id = fabricstock_id
+                }
+            },
+            columns:[
+                { data : "DT_RowIndex" , name : "DT_RowIndex" },
+                { data : "name" , name : "name" },
+                { data : "roll_no" , name : "roll_no" },
+                { data : "gross_wt" , name : "gross_wt" },
+                { data : "net_wt" , name : "net_wt" },
+                { data : "meter" , name : "meter" },
+                { data : "average_wt" , name : "average_wt" },
+                { data : "gram_wt" , name : "gram_wt" },
+                { data : "action" , name : "action" },
+            ]
+        });
+
+    })
 
 
 
@@ -265,85 +316,14 @@ $(document).ready(function(){
         });
     }
 
-    $(document).ready(function(){
-        $(document).on('click','#getfabricsrelated',function(e){
-            e.preventDefault();
-
-            var bill_number = $('#bill_nos').val(),
-            bill_date = $('#bill_dates').val(),
-            fromgodam_id = $('#fromgodam_id').val(),
-            togodam_id = $('#togodam_id').val(),
-            fabricstock_id = $('#fabricstock_id').val(),
-            group_id = $('#group_id').val(),
-            bill_no = $('#bill_number').val(),
-            bill_date = $('#date_np').val();
-            // debugger;
-
-           $.ajax({
-            url : "{{ route('godamfabrics.getFabricStockList') }}",
-            method: 'get',
-            type:"POST",
-            dataType:"JSON",
-            data:{
-                '_token' : $('meta[name="csrf-token"]').attr('content'),
-                'fabricstock_id' : fabricstock_id,
-                'group_id' : group_id,
-                'fromgodam_id' : fromgodam_id,
-                'togodam_id' : togodam_id,
-                'bill_no' : bill_no,
-                'bill_date' : bill_date,
-
-            },
-            beforeSend:function(){
-                console.log('sending form');
-            },
-          
-            success:function(response){
-                // alert(response.fabricstocks);
-                // emptytable();
-                filltable(response);
-                // if(response.response != '404'){
-                //     filltable(response);
-                // }else{
-                //     console.log(response.response);
-                // }
-
-            },
-            error:function(error){
-                console.log(error);
-            }
-           });
-        });
-    })
+   
 
 
 
-    function filltable(response){
-        // alert(response.fabricstocks);
-        // console.log(response,response.fabricstocks);
-        // debugger;
-        response.fabricstocks.forEach(d => {
-            // console.log(d.name);
-            let title = d.name;
-            let group = d.average_wt.split('-')[0];
-            let result = parseFloat(title) * parseFloat(group);
-
-            let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
-
-            tr.append(`<td>#</td>`);
-            tr.append(`<td>${d.name} (${d.fabricgroup.name})</td>`);
-            tr.append(`<td>${d.roll_no}</td>`);
-            tr.append(`<td>${d.gross_wt}</td>`);
-            tr.append(`<td>${d.net_wt}</td>`);
-            tr.append(`<td>${d.meter}</td>`)
-            tr.append(`<td>${d.meter}</td>`);
-            tr.append(`<td>${d.average_wt}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.fabricgroup.name}' data-standard='${d.net_wt}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" data-fromgodamid='${response.fromgodam_id}' data-togodamid='${response.togodam_id}' bill_no='${response.bill_no}' bill_date='${response.bill_date}'  class="btn btn-info sendforlamination">Send</a></div></td>`);
-        });
-    }
+    
 
     $(document).ready(function(){
-        $(document).on('click',"#sendforlamination",function(e){
+        $(document).on('click',".sendforlamination",function(e){
             e.preventDefault();
 
             var ids = $(this).attr('data-id'),

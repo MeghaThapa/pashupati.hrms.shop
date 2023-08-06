@@ -65,6 +65,37 @@ class FabricGodamController extends Controller
         return view('admin.fabric.fabricgodam.transferFabricDetail',compact('fabricdetails','find_data'));
     }
 
+    public function getfabricwithsamename(Request $request){
+        if($request->ajax()){
+            // dd($request);
+            $fabric_name_id = $request->fabric_name_id;
+            $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
+            $fabrics = FabricStock::where("name",$fabric_name)->get();
+
+            return DataTables::of($fabrics)
+                    ->addIndexColumn()
+                    ->addColumn("gram_wt",function($row){
+                        return $row->fabricgroup->name;
+                    })
+                    ->addColumn("action",function($row,Request $request){
+                        return "
+                        <a class='btn btn-primary sendforlamination'  
+                                 data-id='{$row->id}' 
+                                 data-fromgodamid='{$request->fromgodam_id}' 
+                                 data-togodamid='{$request->togodam_id}' 
+                                 bill_no='{$request->bill_number}'  
+                                 bill_date = '{$request->bill_date}'
+                                 href='{$row->id}'>Send</a>";
+                    })
+                    ->rawColumns(["action","gram_wt"])
+                    ->make(true);
+
+            // return response()->json([
+            //     "fabrics" => $fabrics
+            // ]);
+        }
+    }
+
     public function getFabricStockList(Request $request)
     {
         // dd($request);
@@ -108,31 +139,22 @@ class FabricGodamController extends Controller
 
     public function getFabricGodamStore(Request $request)
     {
-        //validate form
-        // $validator = $request->validate([
-        //     'bill_number' => 'required',
-        // ]);
-
-        // dd($request);
-        $find_name = FabricStock::find($request->ids);
-        // dd($find_name);
+        
 
         try{
-            $count = FabricGodamTransfer::where('fabricstock_id',$request->ids)
-                                        ->where('fabricgodam_id',$request->fabricgodam_id)
-                                        ->where('bill_no',$request->bill_no)
-                                        ->where('bill_date',$request->bill_date)
-                                        ->where('fromgodam_id',$request->fromgodam_id)
-                                        ->where('togodam_id',$request->togodam_id)
+            $find_name = FabricStock::find($request->ids);
+            // dd($find_name);
+
+            $count = FabricGodamTransfer::where('roll',$find_name->roll_no)
                                         ->count();
 
             // dd($count);
-            if($count != 1){
+            if($count == 0){
                 // store category
                 $fabricgodam = FabricGodamTransfer::create([
-                    'fabricstock_id' => $request->ids,
                     'name' => $find_name->name,
                     'slug' => $find_name->slug,
+                    'roll' => $find_name->roll_no,
                     'fabricgodam_id' => $request->fabricgodam_id,
                     'bill_no' => $request->bill_no,
                     'bill_date' => $request->bill_date,
@@ -140,25 +162,36 @@ class FabricGodamController extends Controller
                     'togodam_id' => $request->togodam_id,
                 ]);
 
-                // $fabricstock = FabricStock::create([
-                //     'name' => $find_name->name,
-                //     'roll_no' => $find_name->roll_no,
-                //     'loom_no' => $find_name->loom_no,
-                //     'fabricgroup_id' => $find_name->fabricgroup_id,
-                //     'gross_wt' => $find_name->gross_wt,
-                //     'net_wt' => $find_name->net_wt,
-                //     'meter' => $find_name->meter,
-                //     'gram_wt' => $find_name->gram_wt,
-                //     'average_wt' => $find_name->average_wt,
-                //     'godam_id' => $request->togodam_id,
-                //     'date_np' => $find_name->date_np,
-                //     'bill_no' => $find_name->bill_no,
-                //     'fabric_id' => $find_name->fabric_id
-                // ]);
+                $fabricstock = FabricStock::create([
+                    'name' => $find_name->name,
+                    'roll_no' => $find_name->roll_no,
+                    'loom_no' => $find_name->loom_no,
+                    'fabricgroup_id' => $find_name->fabricgroup_id,
+                    'gross_wt' => $find_name->gross_wt,
+                    'net_wt' => $find_name->net_wt,
+                    'meter' => $find_name->meter,
+                    'gram_wt' => $find_name->gram_wt,
+                    'average_wt' => $find_name->average_wt,
+                    'godam_id' => $request->togodam_id,
+                    'date_np' => $find_name->date_np,
+                    'bill_no' => $find_name->bill_no,
+                    'fabric_id' => $find_name->fabric_id
+                ]);
+
+                if($fabricstock){
+                    // dd('lol');
+
+                  FabricStock::where('id',$find_name->id)->delete();
+                }
+
 
                 // $find_name->delete();
 
-            }                            
+
+
+            }         
+
+
       
 
 

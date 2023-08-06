@@ -553,6 +553,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/godamTransfer/store','FabricGodamController@getFabricGodamStore')->name("getFabricGodamStore");
 
+    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("get.fabric.same.name");
+
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [
         'names' => [

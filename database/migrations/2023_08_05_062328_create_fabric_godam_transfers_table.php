@@ -19,14 +19,15 @@ return new class extends Migration
             $table->string('bill_date');
             $table->string('name');
             $table->string('slug');
+            $table->string('roll');
             $table->unsignedBigInteger('fabricgodam_id');
             $table->foreign('fabricgodam_id')->references("id")->on('fabric_godams')->onDelete('cascade');
             $table->unsignedBigInteger('fromgodam_id');
             $table->foreign('fromgodam_id')->references("id")->on('godam')->onDelete('cascade');
             $table->unsignedBigInteger('togodam_id');
             $table->foreign('togodam_id')->references("id")->on('godam')->onDelete('cascade');
-            $table->unsignedBigInteger('fabricstock_id')->nullable();
-            $table->foreign('fabricstock_id')->references("id")->on('fabric_stock')->onDelete('cascade');
+            // $table->unsignedBigInteger('fabricstock_id')->nullable();
+            // $table->foreign('fabricstock_id')->references("id")->on('fabric_stock')->onDelete('cascade');
            
             $table->timestamps();
         });
