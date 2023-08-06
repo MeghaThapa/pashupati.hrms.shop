@@ -72,10 +72,10 @@ class FabricSendReceiveController extends Controller
             $department_id =  $request->id;
 
             $planttype = ProcessingStep::where('godam_id',$department_id)->get();
-            
+
             $getAllfabrics = Fabric::where('status', '1')->where("godam_id",$department_id)->get();
              $uniqueFabrics = $getAllfabrics->unique('name');
-    
+
 
             return response([
                 'planttype' => $planttype,
@@ -87,10 +87,10 @@ class FabricSendReceiveController extends Controller
         if($request->ajax()){
             $department_id =  $request->id;
             $plantname = ProcessingSubcat::where('processing_steps_id',$department_id)->get();
-           
+
             return response([
                 'plantname' => $plantname
-               
+
             ]);
         }
     }
@@ -101,7 +101,7 @@ class FabricSendReceiveController extends Controller
     //         $fabrics = [];
 
     //         $getAllfabrics = FabricStock::where('status','1')->get();
-                       
+
     //         foreach($getAllfabrics as $data){
     //             $fabric_name = $data->name;
     //             if(!in_array($fabric_name,$fabrics)){
@@ -176,7 +176,7 @@ class FabricSendReceiveController extends Controller
         // if($request->ajax()){
         //     $data = [];
         //     parse_str($request->data,$data);
-           
+
         //     $fabricDetails = Fabric::where('id',$data['fabric_name_id'])->first();
         //     $name = $fabricDetails->name;
         //     $roll_number = $fabricDetails->roll_no;
@@ -213,18 +213,18 @@ class FabricSendReceiveController extends Controller
         //     }
         // }
 
-       
+
         if($request->ajax()){
             $data = [];
             parse_str($request->data,$data);
-            
+
             $bill_number = $data['bill_number'];
             $bill_date = $data['bill_date'];
             $to_godam_id = $data['to_godam_id'];
             $planttype_id = $data['plant_type_id'];
             $plantname_id =  $data['plant_name_id'];
             $roll_number = $data['roll_number'];
-            
+
             $details = Fabric::where("roll_no",$roll_number)->first();
             try{
                 UnlaminatedFabric::create([
@@ -279,7 +279,7 @@ class FabricSendReceiveController extends Controller
                     'department_id' =>$godam,
                     'planttype_id' => $plantType,
                     'plantname_id' =>  $plantName
-                    
+
                 ]);
 
                 DB::commit();
@@ -626,7 +626,7 @@ class FabricSendReceiveController extends Controller
             $polo_waste = $request->polo_waste;
             $selectedDanaID = $request->selectedDanaID;
             $total_waste  = $request->total_waste;
-            $godamId = $request->godam_id; 
+            $godamId = $request->godam_id;
             $autoloader_godam_selected = $request->autoloader_godam_selected;
             $lamFabricToDelete = [];
             $lamFabricTempToDelete = [];
@@ -637,8 +637,9 @@ class FabricSendReceiveController extends Controller
                 DB::beginTransaction();
                 //deduction
                     $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)
-                            ->where("from_godam_id",$autoloader_godam_selected)                
+                            ->where("from_godam_id",$autoloader_godam_selected)
                             ->first();
+
                     $autoloaderDanaData['dana_name_id'] = $stock->dana_name_id;
                     $autoloaderDanaData["id"] = $stock->id;
                     $autoloaderDanaData['dana_group_id'] = $stock->dana_group_id;
@@ -647,6 +648,7 @@ class FabricSendReceiveController extends Controller
                     // dd($autoloaderDanaData);
 
                     $presentQuantity = $stock->quantity; 
+
                     $deduction = $presentQuantity - $consumption;
 
                     if($deduction == 0){

@@ -86,10 +86,13 @@
                     </a> --}}
                     <select class="advance-select-box form-control" id="fromGodamId" name="from_godam_id" required>
                         <option value="" selected disabled>{{ __('Select From Godam') }}</option>
-                        @foreach ($fromGodams as $fromGodam)
-                            <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name }}
-                            </option>
-                        @endforeach
+                        @if (!empty($fromGodams))
+                            @foreach ($fromGodams as $fromGodam)
+                                @if ($fromGodam->godam)
+                                    <option value="{{ $fromGodam->godam->id }}">{{ $fromGodam->godam->name }}</option>
+                                @endif
+                            @endforeach
+                        @endif
                     </select>
                     @error('from_godam_id')
                         <span class="invalid-feedback" role="alert">

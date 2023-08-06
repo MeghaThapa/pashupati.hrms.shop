@@ -49,8 +49,8 @@
     <script src="{{ asset('js/app.js') }} "></script>
     {{-- toster --}}
     <script src="
-    https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js
-    "></script>
+            https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js
+            "></script>
     @yield('extra-style')
 
 </head>

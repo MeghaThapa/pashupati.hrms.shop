@@ -67,6 +67,7 @@ class BagBundelEntryController extends Controller
 
     public function getBrandBag(Request $request){
         $brandBags = PrintingAndCuttingBagStock::with(['bagBrand:id,name'])
+        ->where('group_id',$request->group_id)
         ->distinct('bag_brand_id')
         ->get(['bag_brand_id']);
         return response()->json([

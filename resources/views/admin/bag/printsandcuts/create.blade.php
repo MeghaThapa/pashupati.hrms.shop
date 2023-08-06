@@ -883,7 +883,7 @@
                             setErrorMsg(xhr.responseJSON.message);
                         }
                     });
-                });
+            });
             //current
             function updateStockQuantity() {
                 let godam_id = $('#godamId').val();
