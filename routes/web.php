@@ -488,10 +488,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         //getting unlaminated into form
         Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
         Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
-        Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name");  
+        Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name");
 
         Route::get('get/autoloader/godam/id/into/fsr/{godamId}',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
-        
+
         //sending for lamination
         // Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
 
@@ -1258,3 +1258,55 @@ Route::controller(WastageStockController::class)
 Route::post('openingWastage/import',[StockImportController::class,"openingWastageImport"])->name('openingWastage.openingWastageImport');
 
 /**************************wastage stock end****************************************/
+
+/*********************************BswSendLamFabForPrinting*************************************/
+Route::controller(BswSendLamFabForPrintingController::class)
+->prefix('BswLamFabSendForPrinting')
+->group(function(){
+    Route::get("index","index")->name('BswLamFabSendForPrinting.index');
+    Route::get("create","create")->name('BswLamFabSendForPrinting.create');
+    Route::post("saveEntry","saveEntry")->name('BswLamFabSendForPrinting.saveEntry');
+    Route::get("createItems/{id}","createItems")->name('BswLamFabSendForPrinting.createItems');
+    Route::get("yajraDatatables","yajraDatatables")->name('test.yajraDatatables');
+    Route::get("edit/{id}","edit")->name('BswLamFabSendForPrinting.edit');
+
+    Route::get("lamFabData","lamFabData")->name('BswLamFabSendForPrinting.lamFabData');
+    Route::get("getBrandBag","getBrandBag")->name('BswLamFabSendForPrinting.getBrandBag');
+});
+
+Route::controller(BswSentLamFabController::class)
+->prefix('bswSentLamFab')
+->group(function(){
+    Route::post("store","store")->name('bswSentLamFab.store');
+    Route::get("lamFabData","lamFabData")->name('bswSentLamFab.lamFabData');
+
+});
+Route::controller(PrintedFabricController::class)
+->prefix('printedFabric')
+->group(function(){
+    Route::post("store","store")->name('printedFabric.store');
+});
+
+Route::controller(BswLamPrintedFabricStockController::class)
+->prefix('bswLamPrintedFabStock')
+->group(function(){
+    Route::post("store","store")->name('bswLamPrintedFabStock.store');
+    Route::get("printedLamFabData","printedLamFabData")->name('bswLamPrintedFabStock.printedLamFabData');
+});
+
+Route::controller(PrintedFabDanaConsumptController::class)
+->prefix('printFabDanaConsumpt')
+->group(function(){
+    Route::post("store","store")->name('printFabDanaConsumpt.store');
+    Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
+});
+/*********************************BswSendLamFabForPrinting end*********************************/
+/*********************************SQL DUMP*********************************/
+Route::controller(SqlDumpController::class)
+->prefix('sqlDownload')
+->group(function(){
+    Route::get("download","download")->name('sqlDownload.download');
+    // Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
+});
+
+/***********************************END SQL DUMP*************************************/

@@ -215,7 +215,7 @@
 <hr>
 <div class="row">
     <div class="table-responsive table-custom my-3">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped" id="sameFabricsTable">
             <thead class="table-info">
                 <tr>
                     <th>{{ __('Sr.No') }}</th>
@@ -317,9 +317,9 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6 float-right ml-3">
+    {{-- <div class="col-md-6 float-right ml-3">
         <button class="btn btn-danger discard">Discard</button>
-    </div>
+    </div> --}}
 </div>
 <hr>
 <div class="row">
@@ -578,6 +578,11 @@
                                         id="laminated_net_weight">
                                 </div>
                                 <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="meter1"
+                                        id="meter">
+                                </div>
+                                <div class="col-md-2">
                                     <label for="">Average</label>
                                     <input class='form-control' type="text" name="laminated_avg_weight"
                                         id="laminated_avg_weight">
@@ -602,6 +607,11 @@
                                     <label for="">Net Weight</label>
                                     <input class='form-control' type="text" name="laminated_net_weight_2"
                                         id="laminated_net_weight_2">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="meter2"
+                                        id="meter2">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="">Average</label>
@@ -629,6 +639,11 @@
                                     <label for="">Net Weight</label>
                                     <input class='form-control' type="text" name="laminated_net_weight_3"
                                         id="laminated_net_weight_3">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Meter</label>
+                                    <input class='form-control' type="text" name="meter3"
+                                        id="meter3">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="">Average</label>
@@ -674,6 +689,7 @@
 </script>
 <script>
     $(document).ready(function(){
+        let fabricTable = null;
         /**************************** Ajax Calls **************************/
         callunlaminatedfabricajax();
         comparelamandunlam();
@@ -738,24 +754,52 @@
         });
 
         $("#fabricNameId").change(function(e){
+            if (fabricTable !== null) {
+                fabricTable.destroy();
+            }
+
             let fabric_name_id = $(this).val();
-            $.ajax({
-                url :" {{ route('get.fabric.same.name') }}",
-                method : "post",
-                data : {
-                    "_token" : $("meta[name='csrf-token']").attr("content"),
-                   "fabric_name_id" : fabric_name_id
+            fabricTable = $("#sameFabricsTable").DataTable({
+                serverside : true,
+                processing : true,
+                ajax : {
+                    url : "{{ route('get.fabric.same.name') }}",
+                    method : "post",
+                    data : function(data){
+                        data._token = $("meta[name='csrf-token']").attr("content"),
+                        data.fabric_name_id = fabric_name_id
+                    }
                 },
-                beforeSend:function(){
-                    console.log("getting data");
-                },
-                success:function(response){
-                    putsamefabricsontabledata(response)
-                    
-                },error:function(error){
-                    console.log(error);
-                }
+                columns:[
+                    { data : "DT_RowIndex" , name : "DT_RowIndex" },
+                    { data : "name" , name : "name" },
+                    { data : "roll_no" , name : "roll_no" },
+                    { data : "gross_wt" , name : "gross_wt" },
+                    { data : "net_wt" , name : "net_wt" },
+                    { data : "meter" , name : "meter" },
+                    { data : "average_wt" , name : "average_wt" },
+                    { data : "gram_wt" , name : "gram_wt" },
+                    { data : "action" , name : "action" },
+                ]
             });
+
+            // $.ajax({
+            //     url :" {{ route('get.fabric.same.name') }}",
+            //     method : "post",
+            //     data : {
+            //         "_token" : $("meta[name='csrf-token']").attr("content"),
+            //        "fabric_name_id" : fabric_name_id
+            //     },
+            //     beforeSend:function(){
+            //         console.log("getting data");
+            //     },
+            //     success:function(response){
+            //         putsamefabricsontabledata(response)
+                    
+            //     },error:function(error){
+            //         console.log(error);
+            //     }
+            // });
         })
         /**************************** Ajax Calls End **************************/
     });
@@ -813,34 +857,34 @@
     }
 
     
-    function putsamefabricsontabledata(data){
-        console.log(data)
-        $("#same-fabrics").empty();
-        data.fabrics.forEach((d,index) => {
-            let tr = $("<tr></tr>").appendTo("#same-fabrics");
-            tr.append(`<td>${index+1}</td>`);
-            tr.append(`<td>${d.name}</td>`);
-            tr.append(`<td>${d.roll_no}</td>`);
-            tr.append(`<td>${d.gross_wt}</td>`);
-            tr.append(`<td>${d.net_wt}</td>`);
-            tr.append(`<td>${d.meter}</td>`);
-            tr.append(`<td>${d.average_wt}</td>`);
-            tr.append(`<td>${d.gram_wt}</td>`);
-            tr.append(`<td>
-                            <a class="btn btn-primary send_to_lower"  
-                                data-name='${d.name}' 
-                                data-gross_wt="${d.gross_wt}" 
-                                data-roll_no="${d.roll_no}"  
-                                data-id="${d.id}" 
-                                data-net_wt = "${d.net_wt}"
-                                data-meter = "${d.meter}"
-                                data-average_wt = "${d.average_wt}"
-                                data-gram_wt = "${d.gram_wt}" 
-                                data-bill_no = "${d.bill_no}"
-                                href="${d.id}">Send</a>
-                        </td>`);
-        }) 
-    }
+    // function putsamefabricsontabledata(data){
+    //     console.log(data)
+    //     $("#same-fabrics").empty();
+    //     data.fabrics.forEach((d,index) => {
+    //         let tr = $("<tr></tr>").appendTo("#same-fabrics");
+    //         tr.append(`<td>${index+1}</td>`);
+    //         tr.append(`<td>${d.name}</td>`);
+    //         tr.append(`<td>${d.roll_no}</td>`);
+    //         tr.append(`<td>${d.gross_wt}</td>`);
+    //         tr.append(`<td>${d.net_wt}</td>`);
+    //         tr.append(`<td>${d.meter}</td>`);
+    //         tr.append(`<td>${d.average_wt}</td>`);
+    //         tr.append(`<td>${d.gram_wt}</td>`);
+    //         tr.append(`<td>
+    //                         <a class="btn btn-primary send_to_lower"  
+    //                             data-name='${d.name}' 
+    //                             data-gross_wt="${d.gross_wt}" 
+    //                             data-roll_no="${d.roll_no}"  
+    //                             data-id="${d.id}" 
+    //                             data-net_wt = "${d.net_wt}"
+    //                             data-meter = "${d.meter}"
+    //                             data-average_wt = "${d.average_wt}"
+    //                             data-gram_wt = "${d.gram_wt}" 
+    //                             data-bill_no = "${d.bill_no}"
+    //                             href="${d.id}">Send</a>
+    //                     </td>`);
+    //     }) 
+    // }
     /**************************** Ajax functions **************************/
 
     /************************* Form Submission *************************/
@@ -863,8 +907,11 @@
         let billDate = $("#billDate").val()
         let id = $(this).data("id") 
 
-        console.log(godam,plantName,plantType,shiftName)
-
+        console.log(godam,plantName,plantType,shiftName,gram_wt,billDate,id)
+        console.log(name,gross_wt,net_wt,roll_no,meter,average_wt,bill_no)
+        if(godam == null || plantName == null || plantType == null || shiftName == null){
+            alert("Godam or plantName or PlanType or Shift cannnot be null");
+        }
         $.ajax({
             url  : "{{ route('fabricSendReceive.send.unlaminated.revised') }}",
             method : "post",
@@ -984,13 +1031,14 @@
             tr.append(`<td>${d.net_wt}</td>`);
             tr.append(`<td>${d.meter}</td>`)
             tr.append(`<td>${d.fabric.average_wt}</td>`);
-            tr.append(`<td>${d.fabric.gram_wt}</td>`);
+            tr.append(`<td>${d.gram}</td>`);
             tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 
     function emptyform(){
-        $("#createRawMaterial")[0].reset();
+        // $("#createRawMaterial")[0].reset();
+        return;
     }
 
     function deletefromunlamintedtable(data){
@@ -1014,20 +1062,21 @@
     }
 
     $(".discard").click(function(e){
-        $.ajax({
-            url:"{{ route('discard') }}",
-            method:"get",
-            success:function(response){
-                if(response.message == "200"){
-                    location.reload(true);
-                }
-                else{
-                    alert(response.message);
-                }
-            },
-            error:function(response){
-            }
-        });
+        alert("Not Allowed")
+        // $.ajax({
+        //     url:"{{ route('discard') }}",
+        //     method:"get",
+        //     success:function(response){
+        //         if(response.message == "200"){
+        //             location.reload(true);
+        //         }
+        //         else{
+        //             alert(response.message);
+        //         }
+        //     },
+        //     error:function(response){
+        //     }
+        // });
     });
 
     $("#autoloader_godam").change(function(e){
@@ -1075,6 +1124,51 @@
     $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });
+
+    //calculations of average  avg ko formula nt wt/mtr*1000 //average / size  => For Gram
+    $("#meter").keyup(function(){
+        let net_wt_1 = $("#laminated_net_weight").val()
+        let meter1 = $("#meter").val();
+        let a = parseFloat(net_wt_1)
+        let b = parseFloat(meter1)
+        console.log(net_wt_1,meter1)
+        let count1 = parseFloat((a / b)*1000).toFixed(3)
+        $("#laminated_avg_weight").val(parseFloat(count1))
+
+        let data = parseInt($("#sendforlamination").data("title"));
+        let gram1 = (count1/data).toFixed(3);
+        $("#laminated_gram").val(gram1)
+    })
+
+    $("#meter2").keyup(function(){
+        let net_wt_1 = $("#laminated_net_weight_2").val()
+        let meter1 = $("#meter2").val();
+        let a = parseFloat(net_wt_1)
+        let b = parseFloat(meter1)
+        let count1 = parseFloat((a / b)*1000).toFixed(3)
+        $("#laminated_avg_weight_2").val(parseFloat(count1))
+
+        let data = parseInt($("#sendforlamination").data("title"));
+        let gram1 = (count1/data).toFixed(3);
+        $("#laminated_gram_2").val(gram1)
+    })
+
+    $("#meter3").keyup(function(){
+        let net_wt_3 = $("#laminated_net_weight_3").val()
+        let meter3 = $("#meter3").val();
+        let a = parseFloat(net_wt_3)
+        let b = parseFloat(meter3)
+        let count3 = parseFloat((a / b)*1000).toFixed(3)
+        $("#laminated_avg_weight_3").val(parseFloat(count3))
+
+        let data = parseInt($("#sendforlamination").data("title"));
+        let gram3 = (count3/data).toFixed(3);
+        $("#laminated_gram_3").val(gram3)
+    })
+    
+
+
+
 
     $("#sendtolaminationform").submit(function(e) {
         e.preventDefault();
@@ -1282,8 +1376,9 @@
                             setTimeout(function(){
                                 location.reload();
                             },500)
-                        }else{
-
+                        }
+                        if(response.status == '403'){
+                            alert(response.message)
                         }
                     },
                     error:function(error){

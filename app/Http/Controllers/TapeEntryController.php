@@ -51,8 +51,10 @@ class TapeEntryController extends Controller
     }
 
     public function index(){
+        $latest = TapeEntry::latest("id")->value("id");
+        $receipt_number = 'TR'.'-'.getNepaliDate(date('Y-m-d')).'-'.$latest+1;
         $tapeentries = TapeEntry::orderBy('updated_at','DESC')->get();
-        return view('admin.TapeEntry.index',compact('tapeentries'));
+        return view('admin.TapeEntry.index',compact('tapeentries',"receipt_number"));
     }
 
     public function tapeentrystore(Request $request){

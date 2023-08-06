@@ -42,7 +42,7 @@
                            </div>
                            <div class="col-md-6">
                                 <label for="receipt_number">Receipt Number</label>
-                                <input type="text" value="{{ 'TR'.'-'.getNepaliDate(date('Y-m-d')).'-'.rand(0,999) }}" name="receipt_number" class="form-control" required/>
+                                <input type="text" value="{{ $receipt_number }}" name="receipt_number" class="form-control" required/>
                            </div>
                            <div class="col-md-4 mt-2">
                                 <button class="btn btn-primary" type="submit">Create Tape Entry</button>

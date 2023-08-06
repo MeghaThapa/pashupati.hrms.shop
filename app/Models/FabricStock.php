@@ -34,6 +34,10 @@ class FabricStock extends Model
     {
         return $this->belongsTo(FabricGroup::class, 'fabricgroup_id', 'id');
     }
+     public function fabric()
+    {
+        return $this->belongsTo(Fabric::class, 'fabric_id', 'id');
+    }
 
     public function getGodam()
     {
