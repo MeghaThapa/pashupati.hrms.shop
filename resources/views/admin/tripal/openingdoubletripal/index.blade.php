@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('extra-style')
+<link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
 <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
 <style>
@@ -91,8 +92,8 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
-                    id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
+                <input type="text" name="bill_date" class="form-control"
+                    id="date_np">
 
                 @error('bill_date')
                 <span class="invalid-feedback" role="alert">
@@ -118,11 +119,17 @@
             </div>
             
             <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
+                <label for="size" class="col-form-label">{{ __('DoubleTripal Name') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="fabric_id" name="fabric_id"
+                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                    tabindex="-1" data-target="#groupModel"
+                    style="margin-top:0 !important; top:8px;float:right;">
+                    <i class="fas fa-plus"
+                        style="display:flex;align-items: center;justify-content: center;"></i>
+                </a>
+                <select class="advance-select-box form-control" id="doubletripal" name="fabric_id"
                     required>
-                    <option value="">{{ __('Select Fabric Name') }}</option>
+                    <option value="">{{ __('Select DoubleTripal Name') }}</option>
                    @foreach ($singlestocks as $singlestock)
                     <option value="{{ $singlestock->id }}">{{ $singlestock->name }}
                     </option>
@@ -189,7 +196,7 @@
                 <label for="size" class="col-form-label">{{ __('Average') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="average"
-                    data-number="1" name="average" min="1" required>
+                    data-number="1" name="average" min="1" required readonly>
 
                 @error('average')
                 <span class="invalid-feedback" role="alert">
@@ -202,13 +209,14 @@
                 <label for="size" class="col-form-label">{{ __('Gram') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="gram"
-                    data-number="1" name="gram" min="1" required>
+                    data-number="1" name="gram" min="1" required readonly>
 
                 @error('gram')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
                 @enderror
+                <input type="hidden" name="tripal_decimalname" id="tripal_decimalname">
             </div>
             <div>
                 <button type="submit" class="btn btn-primary mt-4">
@@ -235,7 +243,8 @@
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
-                        <th>{{ __('Fabric Name') }}</th>
+                        <th>{{ __('Date') }}</th>
+                        <th>{{ __('DoubleTripal Name') }}</th>
                         <th>{{ __('Roll No') }}</th>
                         <th>{{ __('G.W') }}</th>
                         <th>{{ __('N.W') }}</th>
@@ -249,6 +258,7 @@
                     @foreach ($openingstocks as $key => $fabric)
                         <tr>
                             <td>{{ ++$key }}</td>
+                            <td>{{ $fabric->bill_date }} </td>
                             <td>{{ $fabric->name }} </td>
                             <td>{{ $fabric->roll_no }} </td>
                             <td>{{ $fabric->gross_wt}} </td>
@@ -264,6 +274,7 @@
 
             </table>
         </div>
+       {{ $openingstocks->links() }}
 
     </div>
 </div>
@@ -317,14 +328,138 @@
     </div>
 </div>
 
+<div class="modal fade" id="groupModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalcat">Add FinalTripal Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="error_msg" class="alert alert-danger mt-2" hidden>
+
+            </div>
+           
+            <form action="{{ route('doubletripal.storeName') }}" method="post" id="tripal_form">
+                @csrf
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div id="storeinTypeError" class="alert alert-danger" hidden>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="name">{{ __(' DoubleTripalName') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('placement') is-invalid @enderror"
+                                    id="name" name="name" placeholder="{{ __('Enter DoubleTripalName') }}"
+                                    value="{{ old('storein_type_name') }}" required>
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- /.card-body -->
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="register" class="btn btn-primary"><i class="fas fa-save"></i>
+                        {{ __('Save') }}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 
 @endsection
 @section('extra-script')
+<script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
+  $('#date_np').val(currentDate);
+  $('#date_np').nepaliDatePicker({
+    ndpYear: true,
+    ndpMonth: true,
+    disableAfter: currentDate,
+    });
+  
+  });
+</script>
+<script type="text/javascript">
+  $("body").on("change","#doubletripal", function(event){
+    var doubletripal = $('#doubletripal').val(),
+        token = $('meta[name="csrf-token"]').attr('content');
+
+        // debugger;
+    $.ajax({
+      type:"POST",
+      dataType:"JSON",
+      url:"{{route('getFilterDoubleTripalList')}}",
+      data:{
+        _token: token,
+        doubletripal: doubletripal,
+      },
+      success: function(response){
+        $('#tripal_decimalname').val(response.name);
+
+      },
+      error: function(event){
+        alert("Sorry");
+      }
+    });
+  });
+</script>
+<script>
+    $(document).on("keyup","#meter",function(e){
+
+        let net_wt = parseInt($("#net_wt").val());
+        let meter = parseInt($("#meter").val());
+        let test = (net_wt / meter) * 1000;
+        let average = Math.round(test);
+        $("#average").val(average);
+
+        let tripal_decimalname = parseInt($("#tripal_decimalname").val());
+
+        let data = (tripal_decimalname / 2);
+        let datas = data.toFixed(2);
+
+        let gram = (average) / datas;
+        let finalgram = gram.toFixed(2);
+
+
+        $("#gram").val(finalgram);
+
+    });
+
+    $(document).on("keyup","#net_wt",function(e){
+
+        let net_wt = parseInt($("#net_wt").val());
+        let meter = parseInt($("#meter").val());
+        let average = (net_wt / meter) * 1000;
+        $("#average").val(average);
+
+    });
+
 </script>
 
 @endsection

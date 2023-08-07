@@ -18,17 +18,25 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             
-            $table->unsignedBigInteger('planttype_id');
+            $table->unsignedBigInteger('planttype_id')->nullable();
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade');
 
-            $table->unsignedBigInteger('plantname_id');
+            $table->unsignedBigInteger('plantname_id')->nullable();
             $table->foreign('plantname_id')->references("id")->on('processing_subcats')->onDelete('cascade');
 
             $table->bigInteger('department_id')->unsigned()->index();
             $table->foreign('department_id')->references('id')->on('godam')->onDelete('cascade');
 
-            $table->bigInteger('doublelamfabric_id')->unsigned()->index();
-            $table->foreign('doublelamfabric_id')->references('id')->on('double_side_laminated_fabrics')->onDelete('cascade');
+            $table->integer('doublelamfabric_id')->nullable();
+
+            // $table->bigInteger('doublelamfabric_id')->unsigned()->index()->nullable();
+            // $table->foreign('doublelamfabric_id')->references('id')->on('double_side_laminated_fabrics')->onDelete('cascade');
+
+            $table->bigInteger('doubletripalname_id')->unsigned()->index()->nullable();
+            $table->foreign('doubletripalname_id')->references('id')->on('double_tripal_names')->onDelete('cascade');
+
+            // $table->integer('doubletripalname_id')->nullable();
+
             
             $table->string('gram');
             $table->string('gross_wt');

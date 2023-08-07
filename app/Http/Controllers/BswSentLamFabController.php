@@ -66,7 +66,15 @@ class BswSentLamFabController extends Controller
 
     public function lamFabData(Request $request){
         $bswSentLamFab=BswSentLamFab::with('fabric:id,name')->where('bsw_lam_fab_for_printing_entry_id',$request->bsw_lam_fab_for_printing_entry_id)->get();
-        return $bswSentLamFab;
+
+        $totalMeter = $bswSentLamFab->sum('meter');
+        $totalNetWt= $bswSentLamFab->sum('net_wt');
+       $data = [
+        'bswSentLamFab' => $bswSentLamFab,
+        'totalMeter' => $totalMeter,
+        'totalNetWt' => $totalNetWt,
+    ];
+    return $data;
     }
     /**
      * Display the specified resource.

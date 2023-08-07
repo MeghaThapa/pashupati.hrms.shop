@@ -3,6 +3,7 @@
 @section('extra-style')
 <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
 <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
+<link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
 <style>
     .col-form-label {
         font-size: 12px !important;
@@ -91,8 +92,8 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
-                    id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
+                <input type="text" name="bill_date" class="form-control"
+                    id="date_np">
 
                 @error('bill_date')
                 <span class="invalid-feedback" role="alert">
@@ -118,6 +119,12 @@
             </div>
             
             <div class="col-md-2 form-group">
+                <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
+                    tabindex="-1" data-target="#groupModel"
+                    style="margin-top:0 !important; top:8px;float:right;">
+                    <i class="fas fa-plus"
+                        style="display:flex;align-items: center;justify-content: center;"></i>
+                </a>
                 <label for="size" class="col-form-label">{{ __('FinalTripal Name') }}<span class="required-field">*</span>
                 </label>
                 <select class="advance-select-box form-control" id="tripal" name="fabric_id"
@@ -334,6 +341,61 @@
     </div>
 </div>
 
+<div class="modal fade" id="groupModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalcat"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalcat">Add FinalTripal Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="error_msg" class="alert alert-danger mt-2" hidden>
+
+            </div>
+           
+            <form action="{{ route('finaltripal.storeName') }}" method="post" id="tripal_form">
+                @csrf
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div id="storeinTypeError" class="alert alert-danger" hidden>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="name">{{ __('Final TripalName') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('placement') is-invalid @enderror"
+                                    id="name" name="name" placeholder="{{ __('Enter Final Tripal Name') }}"
+                                    value="{{ old('storein_type_name') }}" required>
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- /.card-body -->
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="register" class="btn btn-primary"><i class="fas fa-save"></i>
+                        {{ __('Save') }}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 
 @endsection
@@ -342,6 +404,19 @@
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+</script>
+<script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
+  $('#date_np').val(currentDate);
+  $('#date_np').nepaliDatePicker({
+    ndpYear: true,
+    ndpMonth: true,
+    disableAfter: currentDate,
+    });
+  
+  });
 </script>
 <script type="text/javascript">
   $("body").on("change","#tripal", function(event){

@@ -505,6 +505,7 @@
                     <input type="hidden" name="godam_id" id="godam_ids">
                     <input type="hidden" name="planttype_id" id="planttype_id">
                     <input type="hidden" name="plantname_id" id="plantname_id">
+                    <input type="text" name="tripal_decimalname" id="tripal_decimalname">
                     <div class="card">
                         <div class="card-body">
                             <div class="row m-2 p-3">
@@ -538,10 +539,7 @@
                                         id="laminated_gross_weight">
                                 </div>
                               
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram" id="laminated_gram">
-                                </div>
+                                
                                 <div class="col-md-2">
                                     <label for="">Net Weight</label>
                                     <input class='form-control' type="text" name="laminated_net_weight"
@@ -555,6 +553,10 @@
                                     <label for="">Average</label>
                                     <input class='form-control' type="text" name="laminated_avg_weight"
                                         id="laminated_avg_weight" readonly>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram" id="laminated_gram" readonly>
                                 </div>
 
                                 
@@ -571,11 +573,7 @@
                                         id="laminated_gross_weight_2">
                                 </div>
                              
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram_2"
-                                        id="laminated_gram_2">
-                                </div>
+                                
                                 <div class="col-md-2">
                                     <label for="">Net Weight</label>
                                     <input class='form-control' type="text" name="laminated_net_weight_2"
@@ -591,6 +589,11 @@
                                     <input class='form-control' type="text" name="laminated_avg_weight_2"
                                         id="laminated_avg_weight_2" readonly>
                                 </div>
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram_2"
+                                        id="laminated_gram_2" readonly>
+                                </div>
                                 
                             </div>
                             <div class="row m-2 p-3 d-flex justify-content-center">
@@ -605,11 +608,7 @@
                                         id="laminated_gross_weight_3">
                                 </div>
                               
-                                <div class="col-md-2">
-                                    <label for="">Gram</label>
-                                    <input class='form-control' type="text" name="laminated_gram_3"
-                                        id="laminated_gram_3">
-                                </div>
+                                
                                 
                                 <div class="col-md-2">
                                     <label for="">Net Weight</label>
@@ -625,6 +624,11 @@
                                     <label for="">Average</label>
                                     <input class='form-control' type="text" name="laminated_avg_weight_3"
                                         id="laminated_avg_weight_3" readonly>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="">Gram</label>
+                                    <input class='form-control' type="text" name="laminated_gram_3"
+                                        id="laminated_gram_3" readonly>
                                 </div>
                             </div>
                             <hr>
@@ -656,6 +660,102 @@
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+</script>
+<script>
+    $(document).on("keyup","#laminated_meter",function(e){
+
+        let net_wt = parseInt($("#laminated_net_weight").val());
+        let meter = parseInt($("#laminated_meter").val());
+        let test = (net_wt / meter) * 1000;
+        let average = test.toFixed(2);
+        $("#laminated_avg_weight").val(average);
+
+
+        let tripal_decimalname = parseInt($("#tripal_decimalname").val());
+
+        let data = (tripal_decimalname / 2);
+        // let data = (tripal_decimalname / 2);
+        let datas = data.toFixed(2);
+
+        let gram = (average) / datas;
+        let finalgram = gram.toFixed(2);
+
+
+        $("#laminated_gram").val(finalgram);
+
+    });
+
+    $(document).on("keyup","#laminated_net_weight",function(e){
+
+        let net_wt = parseInt($("#laminated_net_weight").val());
+        let meter = parseInt($("#laminated_meter").val());
+        let average = (net_wt / meter) * 1000;
+        $("#laminated_avg_weight").val(average);
+
+    });
+
+    $(document).on("keyup","#laminated_meter_2",function(e){
+
+        let net_wt = parseInt($("#laminated_net_weight_2").val());
+        let meter = parseInt($("#laminated_meter_2").val());
+        let test = (net_wt / meter) * 1000;
+        let average = Math.round(test);
+        $("#laminated_avg_weight_2").val(average);
+
+        let tripal_decimalname = parseInt($("#tripal_decimalname").val());
+
+        let data = (tripal_decimalname / 2);
+        // let data = (tripal_decimalname / 2);
+        let datas = data.toFixed(2);
+
+        let gram = (average) / datas;
+        let finalgram = gram.toFixed(2);
+
+
+        $("#laminated_gram_2").val(finalgram);
+
+    });
+
+    $(document).on("keyup","#laminated_net_weight_2",function(e){
+
+        let net_wt = parseInt($("#laminated_net_weight_2").val());
+        let meter = parseInt($("#laminated_meter_2").val());
+        let average = (net_wt / meter) * 1000;
+        $("#laminated_avg_weight_2").val(average);
+
+    });
+
+    $(document).on("keyup","#laminated_meter_3",function(e){
+
+        let net_wt = parseInt($("#laminated_net_weight_3").val());
+        let meter = parseInt($("#laminated_meter_3").val());
+        let test = (net_wt / meter) * 1000;
+        let average = Math.round(test);
+        $("#laminated_avg_weight_3").val(average);
+
+        let tripal_decimalname = parseInt($("#tripal_decimalname").val());
+
+        let data = (tripal_decimalname / 2);
+        // let data = (tripal_decimalname / 2);
+        let datas = data.toFixed(2);
+
+        let gram = (average) / datas;
+        let finalgram = gram.toFixed(2);
+
+
+        $("#laminated_gram_3").val(finalgram);
+
+    });
+
+    $(document).on("keyup","#laminated_net_weight_3",function(e){
+
+        let net_wt = parseInt($("#laminated_net_weight_3").val());
+        let meter = parseInt($("#laminated_meter_3").val());
+        let average = (net_wt / meter) * 1000;
+        $("#laminated_avg_weight_3").val(average);
+
+    });
+
 </script>
 <script>
     $(document).ready(function(){
@@ -925,7 +1025,7 @@
             tr.append(`<td>${d.meter}</td>`)
             tr.append(`<td>${d.meter}</td>`);
             tr.append(`<td>${d.gram}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a></div></td>`);
         });
     }
 
@@ -987,11 +1087,31 @@
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
             $("#fabricsid").val(id);
-            // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
-            // $('#sendtolaminationform').attr('action',action);
-            // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
-            // action = action.slice(0, -2) + `${id}`;
-            // $('#sendtolaminationform').attr('action', action);
+
+            var titles = $(this).attr('data-title'),
+                ids = $(this).attr('data-id'),
+                token = $('meta[name="csrf-token"]').attr('content');
+
+                // debugger;
+
+                $.ajax({
+                  type:"POST",
+                  dataType:"JSON",
+                  url:"{{route('getFilterDoubleFabricTripalList')}}",
+                  data:{
+                    _token: token,
+                    titles: titles,
+                    ids: ids,
+                  },
+                  success: function(response){
+                    $('#tripal_decimalname').val(response.name);
+
+                  },
+                  error: function(event){
+                    alert("Sorry");
+                  }
+                });
+            
         });
     });
     // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {

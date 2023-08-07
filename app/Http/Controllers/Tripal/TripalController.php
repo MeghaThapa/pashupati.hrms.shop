@@ -22,6 +22,7 @@ use App\Models\Unlaminatedfabrictripal;
 use App\Models\UnlaminatedFabricStock;
 use App\Models\Wastages;
 use App\Models\WasteStock;
+use App\Models\Singletripalname;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
@@ -69,10 +70,10 @@ class TripalController extends Controller
             if($request->fabric_id != null){
               $fabric_name = FabricStock::where('id',$request->fabric_id)->where('status','1')->value('name');
 
-              $fabrics = FabricStock::where('name',$fabric_name)->get();
+              $fabrics = FabricStock::where('name',$fabric_name)->with('fabricgroup')->get();
             }
             if($request->roll){
-                $fabrics = FabricStock::where('roll_no' , $roll)->get();
+                $fabrics = FabricStock::where('roll_no' , $roll)->with('fabricgroup')->get();
             }
             
             return response(['response'=>$fabrics]);
@@ -286,7 +287,7 @@ class TripalController extends Controller
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
-                        "fabric_id" => $fabric_id,
+                        // "fabric_id" => $fabric_id,
                     ]);
 
                     $stock = FabricStock::where('fabric_id',$fabric_id)->value('net_wt');
@@ -571,5 +572,66 @@ class TripalController extends Controller
                 ]
             ],200);
         }
+    }
+
+    public function storeTripalName(Request $request){
+        // dd('hey',$request);
+        // $validator = $request->validate([
+        //     'name'    => 'required|unique:final_tripal_names,name',
+        // ]);
+
+        $date_np = AppHelper::getTodayNepaliDate();
+        $date_en = date('Y-m-d');
+        // dd($date_np,$date_en);
+
+        Singletripalname::create([
+            'name' => $request['name'],
+            'slug' => $request['name'],
+            'date_en' => $date_en,
+            'date_np' => $date_np,
+        ]);
+         return back();
+
+    
+    }
+
+    //singlefilterdata
+
+    public function getSingleFilterData(Request $request){
+        
+        $tripal_id = $request->singletripal;
+        $find_data = Singletripalname::find($tripal_id);
+        
+        $input = $find_data->name;
+        $parts = explode(' ', $input);
+        $firstString = $parts[0];   
+                
+        $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        
+        return response([
+            'name' => $find_name,
+        ]);
+
+
+    }
+
+    //singlefilterdata for single
+
+    public function getSingleFabricFilterData(Request $request){
+        
+        $tripal_id = $request->ids;
+        $find_data = FabricStock::find($tripal_id);
+        
+        $input = $find_data->name;
+        $parts = explode(' ', $input);
+        $firstString = $parts[0];   
+                
+        $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        
+        return response([
+            'name' => $find_name,
+        ]);
+
+
     }
 }
