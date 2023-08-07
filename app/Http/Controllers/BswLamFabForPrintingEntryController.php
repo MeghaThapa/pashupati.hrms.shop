@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\BswLamFabForPrintingEntry;
 use App\Models\BswLamPrintedFabricStock;
 use App\Models\BswSentLamFab;
+use App\Models\Wastages;
+use App\Models\WasteStock;
 use Illuminate\Http\Request;
 use DB;
 
@@ -20,8 +22,25 @@ class BswLamFabForPrintingEntryController extends Controller
         try{
         DB::beginTransaction();
         $bswLamFabForPrintingEntry =BswLamFabForPrintingEntry::find($request->bswfabEntry_id);
+        $bswLamFabForPrintingEntry->trimming_wst = $request->trimmimg_wastage;
+        $bswLamFabForPrintingEntry->fabric_wst = $request->fabric_waste;
         $bswLamFabForPrintingEntry->status= 'completed';
         $bswLamFabForPrintingEntry->save();
+
+        //saving waste
+        $wastage_id=Wastages::where('name','rafia')->first()->id;
+        $wasteStock = WasteStock::where('godam_id',$request->wastage_godam_id)->where('waste_id', $wastage_id)->first();
+        if($wasteStock!== null){
+            $wasteStock->quantity_in_kg = floatval($request->trimmimg_wastage) + floatval($request->fabric_waste);
+            $wasteStock->save();
+        }else{
+          $wasteStock= new WasteStock();
+          $wasteStock->godam_id =$request->wastage_godam_id;
+          $wasteStock->waste_id = $wastage_id;
+          $wasteStock->quantity_in_kg = floatval($request->trimmimg_wastage) + floatval($request->fabric_waste);
+          $wasteStock->save();
+        }
+
 
         $bswLamPrintedFabricStocks= BswLamPrintedFabricStock::where('bswfabEntry_id',$request->bswfabEntry_id)->get();
         if ($bswLamPrintedFabricStocks->isNotEmpty()) {
@@ -41,6 +60,7 @@ class BswLamFabForPrintingEntryController extends Controller
         }
         // return redirect()->route('BswLamFabSendForPrinting.index');
         DB::commit();
+        return true;
 
         }catch(Exception $ex){
              $errorMessage = 'An error occurred: ' . $ex->getMessage();

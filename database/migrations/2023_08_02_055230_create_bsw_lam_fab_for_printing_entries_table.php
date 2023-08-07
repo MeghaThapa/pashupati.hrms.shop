@@ -29,6 +29,9 @@ return new class extends Migration
             $table->foreign("group_id")->references("id")->on('groups')->onDelete('cascade');
              $table->unsignedBigInteger("bag_brands_id");
             $table->foreign("bag_brands_id")->references("id")->on('bag_brands')->onDelete('cascade');
+
+            $table->string('trimming_wst')->nullable();
+            $table->string('fabric_wst')->nullable();
             $table->enum('status',['running','completed']);
             $table->timestamps();
         });
