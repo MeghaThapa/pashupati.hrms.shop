@@ -521,6 +521,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
+    Route::get('fabricdetail/destroy/data/{id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
+
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
 
     //fabric opening

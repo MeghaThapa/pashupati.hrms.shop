@@ -61,8 +61,12 @@ class FabricGodamController extends Controller
     public function transferFabricDetail($fabricgodam_id)
     {
         $find_data = FabricGodam::find($fabricgodam_id);
-        $fabricdetails = FabricGodamTransfer::where('fabricgodam_id',$fabricgodam_id)->paginate(20);
-        $net_wt = FabricGodamTransfer::where('bill_no',$find_data->bill_no)->sum('net_wt');
+        $fabricdetails = FabricGodamTransfer::where('fabricgodam_id',$fabricgodam_id)->paginate(10);
+        $net_wt = 0;
+        if($find_data->bill_no != null){
+
+          $net_wt = FabricGodamTransfer::where('fabricgodam_id',$fabricgodam_id)->sum('net_wt');
+        }
         return view('admin.fabric.fabricgodam.transferFabricDetail',compact('fabricdetails','find_data','net_wt'));
     }
 
@@ -102,10 +106,10 @@ class FabricGodamController extends Controller
         try{
             $find_name = FabricStock::find($request->ids);
 
-            $count = FabricGodamTransfer::where('roll',$find_name->roll_no)
-                                        ->count();
+            // $count = FabricGodamTransfer::where('roll',$find_name->roll_no)
+                                        // ->count();
 
-            if($count == 0){
+            // if($count == 0){
                 // store category
                 $fabricgodam = FabricGodamTransfer::create([
                     'name' => $find_name->name,
@@ -140,7 +144,7 @@ class FabricGodamController extends Controller
                   FabricStock::where('id',$find_name->id)->delete();
                 }
 
-            }         
+            // }         
 
         return response(['message'=>'Godam Transferred Successfully']);
         }
