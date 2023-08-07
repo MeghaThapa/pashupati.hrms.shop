@@ -113,6 +113,7 @@
                         <th>{{ __('BillNO') }}</th>
                         <th>{{ __('Date Np') }}</th>
                         <th>{{ __('Net Weight') }}</th>
+                        <th>{{ __('Action') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -125,6 +126,11 @@
                                 <td>{{ $fabric->bill_number }} </td>
                                 <td>{{ $fabric->bill_date }} </td>
                                 <td>{{ $fabric->total_netweight}} </td>
+                                <td>
+                                    <a href="{{ route('fabricdetail.destroy', $fabric->id) }}"
+                                        class="dropdown-item"><i class="fas fa-edit"></i>
+                                        {{ __('Delete') }}</a>
+                                </td>
 
                             </tr>
                         @endforeach

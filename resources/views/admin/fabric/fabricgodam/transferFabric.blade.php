@@ -184,32 +184,7 @@
         </table>
     </div>
 </div>
-<div class="row">
-    <div class="Ajaxdata col-md-12">
-        <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable" >
-                <thead>
-                    <tr>
-                        <th>{{ __('Sr.No') }}</th>
-                        <th>{{ __('Fabric Name') }}</th>
-                        <th>{{ __('Roll No') }}</th>
-                        <th>{{ __('G.W') }}</th>
-                        <th>{{ __('N.W') }}</th>
-                        <th>{{ __('Meter') }}</th>
-                        <th>{{ __('Avg') }}</th>
-                        <th>{{ __('Gram') }}</th>
-                        <th>{{__('Send')}}</th>
-                    </tr>
-                </thead>
 
-                <tbody id="rawMaterialItemTbody">
-                </tbody>
-
-            </table>
-        </div>
-
-    </div>
-</div>
 
 
 @endsection
@@ -220,18 +195,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
-<script type="text/javascript">
-$(document).ready(function(){
-  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
-  $('#date_np').val(currentDate);
-  $('#date_np').nepaliDatePicker({
-    ndpYear: true,
-    ndpMonth: true,
-    disableAfter: currentDate,
-    });
-  
-  });
-</script>
+
 <script>
     let fabricTable = null;
 
