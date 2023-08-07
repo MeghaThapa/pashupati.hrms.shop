@@ -121,11 +121,12 @@
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
-                        <th>{{ __('Fabric Name') }}</th>
                         <th>{{ __('Bill No') }}</th>
                         <th>{{ __('Bill Date') }}</th>
-                        <th>{{ __('From Godam') }}</th>
-                        <th>{{ __('To Godam') }}</th>
+                        <th>{{ __('From') }}</th>
+                        <th>{{ __('To') }}</th>
+                        <th>{{ __('Fabric Name') }}</th>
+                        <th>{{ __('Net Wt') }}</th>
                     </tr>
                 </thead>
 
@@ -134,19 +135,28 @@
                     @foreach ($fabricdetails as $key => $fabricdetail)
                         <tr>
                             <td>{{ ++$key }}</td>
-                            <td>{{ $fabricdetail->name}} </td>
                             <td>{{ $fabricdetail->bill_no }}</td>
                             <td>{{ $fabricdetail->bill_date }}</td>
                             <td>{{ $fabricdetail->getFromGodam->name }}</td>
                             <td>{{ $fabricdetail->getToGodam->name }}</td>
+                            <td>{{ $fabricdetail->name}} </td>
+                            <td>{{ $fabricdetail->net_wt }}</td>
                             
                             
                         </tr>
                     @endforeach
                     
                 </tbody>
+                <tfoot>
+                   <tr>
+                     <td>Total Net</td>
+                     <td>{{$net_wt}}</td>
+                   </tr>
+                </tfoot>
 
             </table>
+                {{ $fabricdetails->links() }}
+            
         </div>
 
     </div>
@@ -161,144 +171,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
-<script type="text/javascript">
-$(document).ready(function(){
-  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
-  $('#date_np').val(currentDate);
-  $('#date_np').nepaliDatePicker({
-    ndpYear: true,
-    ndpMonth: true,
-    disableAfter: currentDate,
-    });
-  
-  });
-</script>
-<script>
-    $(document).ready(function(){
-        $(document).on('click','#getfabricsrelated',function(e){
-            e.preventDefault();
 
-            var bill_number = $('#bill_nos').val(),
-            bill_date = $('#bill_dates').val(),
-            fromgodam_id = $('#fromgodam_id').val(),
-            togodam_id = $('#togodam_id').val(),
-            fabricstock_id = $('#fabricstock_id').val(),
-            group_id = $('#group_id').val(),
-            bill_no = $('#bill_number').val(),
-            bill_date = $('#date_np').val();
-            // debugger;
 
-           $.ajax({
-            url : "{{ route('godamfabrics.getFabricStockList') }}",
-            method: 'get',
-            type:"POST",
-            dataType:"JSON",
-            data:{
-                '_token' : $('meta[name="csrf-token"]').attr('content'),
-                'fabricstock_id' : fabricstock_id,
-                'group_id' : group_id,
-                'fromgodam_id' : fromgodam_id,
-                'togodam_id' : togodam_id,
-                'bill_no' : bill_no,
-                'bill_date' : bill_date,
-
-            },
-            beforeSend:function(){
-                console.log('sending form');
-            },
-          
-            success:function(response){
-                // alert(response.fabricstocks);
-                // emptytable();
-                filltable(response);
-                // if(response.response != '404'){
-                //     filltable(response);
-                // }else{
-                //     console.log(response.response);
-                // }
-
-            },
-            error:function(error){
-                console.log(error);
-            }
-           });
-        });
-    })
-
-    function filltable(response){
-        // alert(response.fabricstocks);
-        // console.log(response,response.fabricstocks);
-        // debugger;
-        response.fabricstocks.forEach(d => {
-            // console.log(d.name);
-            let title = d.name;
-            let group = d.average_wt.split('-')[0];
-            let result = parseFloat(title) * parseFloat(group);
-
-            let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
-
-            tr.append(`<td>#</td>`);
-            tr.append(`<td>${d.name} (${d.fabricgroup.name})</td>`);
-            tr.append(`<td>${d.roll_no}</td>`);
-            tr.append(`<td>${d.gross_wt}</td>`);
-            tr.append(`<td>${d.net_wt}</td>`);
-            tr.append(`<td>${d.meter}</td>`)
-            tr.append(`<td>${d.meter}</td>`);
-            tr.append(`<td>${d.average_wt}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.fabricgroup.name}' data-standard='${d.net_wt}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" data-fromgodamid='${response.fromgodam_id}' data-togodamid='${response.togodam_id}' bill_no='${response.bill_no}' bill_date='${response.bill_date}'  class="btn btn-info">Send</a></div></td>`);
-        });
-    }
-
-    $(document).ready(function(){
-        $(document).on('click',"#sendforlamination",function(e){
-            e.preventDefault();
-           
-            // let title = $(this).attr('data-title');
-            // let id = $(this).attr('data-id');
-            // $("#laminated_fabric_name").val(title+"(SingleLam)");
-            // let laminated_fabric_group = $(this).attr('data-group');
-            // $("#laminated_fabric_group").val(laminated_fabric_group);
-            // let standard_weight_gram = $(this).attr('data-standard');
-            // $("#standard_weight_gram").val(standard_weight_gram);
-            // $('#staticBackdropLabel').text(title+" -> id = "+id);
-            // $("#fabricsid").val(id);
-
-            var ids = $(this).attr('data-id'),
-                fromgodam_id = $(this).attr('data-fromgodamid'),
-                togodam_id = $(this).attr('data-togodamid'),
-                bill_no = $(this).attr('bill_no'),
-                bill_date = $(this).attr('bill_date'),
-                fabricgodam_id = $('#fabricgodam_id').val(),
-                token = $('meta[name="csrf-token"]').attr('content');
-
-                // debugger;
-
-                $.ajax({
-                  type:"POST",
-                  dataType:"JSON",
-                  url:"{{route('getFabricGodamStore')}}",
-                  data:{
-                    _token: token,
-                    ids: ids,
-                    fromgodam_id: fromgodam_id,
-                    togodam_id: togodam_id,
-                    bill_no: bill_no,
-                    bill_date: bill_date,
-                    fabricgodam_id: fabricgodam_id,
-                  },
-                  success: function(response){
-                    $('#tripal_decimalname').val(response.name);
-
-                  },
-                  error: function(event){
-                    alert("Sorry");
-                  }
-                });
-
-         
-        });
-    });
-
-</script>
 
 @endsection

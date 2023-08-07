@@ -4,14 +4,14 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('Storein') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('FabricGodam') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('Storein') }}</li>
+                    <li class="breadcrumb-item active">{{ __('FabricGodam') }}</li>
                 </ol>
             </div>
         </div>
@@ -27,7 +27,7 @@
             <div id="RawMaterialError" class="alert alert-danger" hidden></div>
             <div class="row">
                 <div class="col-lg-3 col-md-5 col-6 mb-2">
-                    <form action="{{ route('storein.index') }}" method="GET" role="search">
+                    {{-- <form action="{{ route('storein.index') }}" method="GET" role="search">
                         <div class="input-group">
                             <input type="text" name="term" placeholder="{{ __('Type code or supplier or date ...') }}"
                                 class="form-control" autocomplete="off" value="{{ request('term') ? request('term') : '' }}"
@@ -36,16 +36,16 @@
                                 <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
                             </span>
                         </div>
-                    </form>
+                    </form> --}}
                 </div>
                 <div class="col-lg-9 col-md-7 col-6">
                     <div class="card-tools text-md-right">
-                        <a class="btn btn-secondary" href="{{ route('storein.pdf') }}">
+                        {{-- <a class="btn btn-secondary" href="{{ route('storein.pdf') }}">
                             <i class="fas fa-download"></i> @lang('Export')
-                        </a>
-                        <a href="{{ route('rawMaterial.godamTransferDetail') }}" class="btn btn-success">
+                        </a> --}}
+                        {{-- <a href="{{ route('rawMaterial.godamTransferDetail') }}" class="btn btn-success">
                             {{ __('Godam Transfer details') }}<i class="fas fa-plus-circle"></i>
-                        </a>
+                        </a> --}}
                         <a href="{{ route('fabricgodams.create') }}" class="btn btn-primary">
                             {{ __('Add FabricGodam') }} <i class="fas fa-plus-circle"></i>
                         </a>

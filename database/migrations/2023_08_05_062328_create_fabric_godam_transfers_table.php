@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('roll');
+            $table->string('net_wt');
             $table->unsignedBigInteger('fabricgodam_id');
             $table->foreign('fabricgodam_id')->references("id")->on('fabric_godams')->onDelete('cascade');
             $table->unsignedBigInteger('fromgodam_id');

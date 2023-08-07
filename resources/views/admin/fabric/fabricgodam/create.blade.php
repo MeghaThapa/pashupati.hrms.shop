@@ -77,6 +77,7 @@
 @endsection
 
 @section('content')
+
 <div class="card-body p-0 m-0">
     <form action="{{ route('fabricgodams.store') }}" method="post" enctype="multipart/form-data">
         @csrf
