@@ -181,8 +181,10 @@ class TripalController extends Controller
             parse_str($request->data,$data);
             
             
-            $fabric_id = $data['fabricsid'];
-            $fabric_data = Fabric::find($fabric_id);
+            $fabricstock_id = $data['fabricsid'];
+            $fabric_data = FabricStock::find($fabricstock_id);
+            $fabric_id = $fabric_data->fabric_id;
+
            DB::beginTransaction();
 
 
@@ -431,6 +433,7 @@ class TripalController extends Controller
     public function getUnlamSingleLam(Request $request){
         if($request->ajax()){
             $unlam = Unlaminatedfabrictripal::with('fabric')->where('status',"sent")->get();
+            // dd($unlam);
             $ul_mtr_total=0;
             $ul_net_wt_total = 0;
             // dd($unlam);
@@ -499,9 +502,11 @@ class TripalController extends Controller
             try{
                 DB::beginTransaction();
 
-                $getFabricLastId = Singlesidelaminatedfabric::where('bill_number',$request->bill)->where('status','sent')->latest()->first();
-                // dd($getFabricLastId);
+                $polowaste = $request->polo_waste;
+                $fabricwaste = $request->fabric_waste;
+                // dd($request);
 
+                $getFabricLastId = Singlesidelaminatedfabric::where('bill_number',$request->bill)->where('status','sent')->latest()->first();
                 
 
                 $department_id = Singlesidelaminatedfabric::value('department_id');
@@ -510,36 +515,102 @@ class TripalController extends Controller
 
                 $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
 
-                    $presentQuantity = $stock->quantity;
-                    $deduction = $presentQuantity - $consumption;
+                $presentQuantity = $stock->quantity;
+                $deduction = $presentQuantity - $consumption;
 
-                    if($deduction == 0){
-                        $stock->delete();
-                    }
-                    else{
-                        $stock->update([
-                            "quantity" => $deduction
-                        ]);
-                    }
+                if($deduction == 0){
+                    $stock->delete();
+                }
+                else{
+                    $stock->update([
+                        "quantity" => $deduction
+                    ]);
+                }
 
-                    $getSinglesidelaminatedfabric = Singlesidelaminatedfabric::where('bill_number',$request->bill)->update(['status' => 'completed']); 
+                $getSinglesidelaminatedfabric = Singlesidelaminatedfabric::where('bill_number',$request->bill)->update(['status' => 'completed']); 
 
-                    $getSinglesidelaminatedfabricstock = SinglesidelaminatedfabricStock::where('bill_number',$request->bill)->update(['status' => 'completed']); 
+                $getSinglesidelaminatedfabricstock = SinglesidelaminatedfabricStock::where('bill_number',$request->bill)->update(['status' => 'completed']); 
 
-                    $unlaminatedfabrictripal = Unlaminatedfabrictripal::where('bill_number',$request->bill)->update(['status' => 'completed']);
+                $unlaminatedfabrictripal = Unlaminatedfabrictripal::where('bill_number',$request->bill)->update(['status' => 'completed']);
 
-                    $find_godam = SinglesidelaminatedfabricStock::where('bill_number',$request->bill)->latest()->first();
-
-                    // $wastage = Wastages::create([
-                    //  'name' => 'tripal',
+                $find_godam = SinglesidelaminatedfabricStock::where('bill_number',$request->bill)->latest()->first();
                     
-                    // ]);
 
-                    // WasteStock::create([
-                    //     'department_id' => $find_godam->department_id,
-                    //     'waste_id' => $wastage->id,
-                    //     'quantity_in_kg' => $total_waste,
-                    // ]);
+
+
+                    if($polowaste != null){
+
+                        $wastename = 'lumps';
+
+                        $wastage = Wastages::firstOrCreate([
+                         'name' => 'lumps'
+                         ], [
+                         'name' => 'lumps',
+                         'is_active' => '1',
+
+                         ]);
+
+                        $waste_id = Wastages::where('name',$wastename)->value('id');
+
+                        $stock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->count();
+
+                        $getStock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->first();
+                        
+
+                        if ($stock == 1) {
+                            $getStock->quantity_in_kg += $polowaste;
+                            $getStock->save();
+                        } else {
+                            WasteStock::create([
+                                'godam_id' => $find_godam->department_id,
+                                'waste_id' => $wastage->id,
+                                'quantity_in_kg' => $polowaste,
+                            ]);
+                        }
+
+                    }
+
+
+
+                    if($fabricwaste != null){
+
+                        $wastename = 'tripal';
+
+                        $wastage = Wastages::firstOrCreate([
+                         'name' => 'tripal'
+                         ], [
+                         'name' => 'tripal',
+                         'is_active' => '1',
+
+                         ]);
+
+                        $waste_id = Wastages::where('name',$wastename)->value('id');
+
+                        $stock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->count();
+                        // dd($stock);
+
+                        $getStock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->first();
+                        
+
+                        if ($stock == 1) {
+                            $getStock->quantity_in_kg += $fabricwaste;
+                            $getStock->save();
+                        } else {
+                            WasteStock::create([
+                                'godam_id' => $find_godam->department_id,
+                                'waste_id' => $wastage->id,
+                                'quantity_in_kg' => $fabricwaste,
+                            ]);
+                        }
+
+
+                    }
+
+                
      
 
                 DB::commit();

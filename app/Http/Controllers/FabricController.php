@@ -256,7 +256,7 @@ $fabric_netweight = 0;
         return redirect()->back()->withSuccess('Sub category created successfully!');
     }
 
-    public function fabricDetailDestroy($id)
+    public function fabricDetailDestroy($fabricDetail_id)
     {
 
         try{
@@ -265,6 +265,8 @@ $fabric_netweight = 0;
            
 
             // dd('ll');
+            // dd($fabricDetail_id);
+            $id = $fabricDetail_id;
             $find_data = FabricDetail::find($id);
 
 

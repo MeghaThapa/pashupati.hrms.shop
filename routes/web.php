@@ -521,7 +521,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
-    Route::get('fabricdetail/destroy/data/{id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
+    Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
+    // Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
 
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
 
