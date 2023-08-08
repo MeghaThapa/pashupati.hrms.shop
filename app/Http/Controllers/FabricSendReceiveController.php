@@ -73,7 +73,7 @@ class FabricSendReceiveController extends Controller
 
             $planttype = ProcessingStep::where('godam_id',$department_id)->get();
 
-            $getAllfabrics = Fabric::where('status', '1')->where("godam_id",$department_id)->get();
+            $getAllfabrics = FabricStock::where('status', '1')->where("godam_id",$department_id)->get();
              $uniqueFabrics = $getAllfabrics->unique('name');
 
 

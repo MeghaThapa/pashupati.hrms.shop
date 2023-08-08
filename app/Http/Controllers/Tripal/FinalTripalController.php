@@ -133,7 +133,7 @@ class FinalTripalController extends Controller
             // dd($lam);
 
             $lam_mtr_total = FinalTripalStock::with('fabric')->where('status',"sent")->sum('net_wt');
-            // dd($net_wt);
+            // dd($lam_mtr_total);
             $lam_net_wt_total = FinalTripalStock::with('fabric')->where('status',"sent")->sum('meter');
             // dd($lam_mtr_total,$lam_net_wt_total);
             
@@ -286,20 +286,44 @@ class FinalTripalController extends Controller
 
                     $getdoublesidelaminatedfabricstock = FinalTripalStock::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']); 
 
-                
-            
+                    $find_godam = FinalTripalStock::where('bill_number',$request->bill)->latest()->first();
 
-                    // Wastages::create([
-                    //     'name' => 'doubletripal',
-                    //     'waste_id' => '1',
-                    //     'quantity_in_kg' => $total_waste,
-                    // ]);
+                    if($fabric_waste != null){
 
-                    // WasteStock::create([
-                    //     'department_id' => '1',
-                    //     'waste_id' => '1',
-                    //     'quantity_in_kg' => $total_waste,
-                    // ]);
+                        $wastename = 'tripal';
+
+                        $wastage = Wastages::firstOrCreate([
+                         'name' => 'tripal'
+                         ], [
+                         'name' => 'tripal',
+                         'is_active' => '1',
+
+                         ]);
+
+                        $waste_id = Wastages::where('name',$wastename)->value('id');
+
+                        $stock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->count();
+                        // dd($stock);
+
+                        $getStock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->first();
+                        
+
+                        if ($stock == 1) {
+                            $getStock->quantity_in_kg += $fabric_waste;
+                            $getStock->save();
+                        } else {
+                            WasteStock::create([
+                                'godam_id' => $find_godam->department_id,
+                                'waste_id' => $wastage->id,
+                                'quantity_in_kg' => $fabric_waste,
+                            ]);
+                        }
+
+
+                    }
+
 
 
                 DB::commit();

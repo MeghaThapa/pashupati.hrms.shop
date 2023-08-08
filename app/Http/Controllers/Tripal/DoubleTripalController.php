@@ -189,6 +189,7 @@ class DoubleTripalController extends Controller
             $fabric_data = Singlesidelaminatedfabricstock::find($fabric_ids);
             $getdata = Singlesidelaminatedfabric::where('id',$fabric_data->singlelamfabric_id)->value('fabric_id');
             $fabric_id = $getdata;
+            // dd($fabric_id,$getdata,$fabric_data);
 
            DB::beginTransaction();
 
@@ -308,13 +309,16 @@ class DoubleTripalController extends Controller
                         "status" => "sent"
                     ]);
 
-                    $stock = Singlesidelaminatedfabricstock::where('id',$fabric_id)->value('net_wt');
-                    $fabrics_id = Singlesidelaminatedfabricstock::where('id',$fabric_id)->value('id');
+                    $stock = Singlesidelaminatedfabricstock::where('id',$fabric_ids)->value('net_wt');
+                    // dd($stock);
+                    $fabrics_id = Singlesidelaminatedfabricstock::where('id',$fabric_ids)->value('id');
+                    // dd($stock);
 
                     if($laminated_net_weight != null){
                       $finalstock = $stock - $laminated_net_weight ;
                       // dd($stock,$laminated_net_weight);
                       $find_fabric = Singlesidelaminatedfabricstock::find($fabrics_id);
+                      // dd($find_fabric);
                       $find_fabric->net_wt = $finalstock;
                       $find_fabric->update();
 
@@ -502,6 +506,10 @@ class DoubleTripalController extends Controller
 
             try{
                 DB::beginTransaction();
+                // dd($request);
+
+                $polowaste = $request->polo_waste;
+                $fabricwaste = $request->fabric_waste;
 
                   $getFabricLastId = DoubleSideLaminatedFabricStock::where('bill_number',$request->bill)->where('status','sent')->latest()->first();
 
@@ -529,101 +537,80 @@ class DoubleTripalController extends Controller
 
                     $getdoublesidelaminatedfabricstock = DoubleSideLaminatedFabricStock::where('bill_number',$request->bill)->update(['status' => 'completed']); 
 
-                    // $unlaminatedfabrictripal = SingleSideunlaminatedFabric::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']);
-                
-                //fabric stock creation
-                    // UnlaminatedFabric::where('status','sent')->delete();
-                    // $lamFabric = LaminatedFabric::with('lamfabric')->get();
-                    // foreach($lamFabric as $data){
-                    //     Fabric::create([
-                    //         'name' => $data->lamfabric->name, 
-                    //         'slug' => $data->lamfabric->slug, 
-                    //         'fabricgroup_id' => $data->lamfabric->fabricgroup_id, 
-                    //         'status' => $data->lamfabric->status,
-                    //         'gram' => $data->gram,
-                    //         'gross_wt' => $data->gross_wt,
-                    //         'net_wt' => $data->net_wt,
-                    //         'meter' => $data->meter,
-                    //         'roll_no' => $data->roll_no,
-                    //         'loom_no' => $data->lamfabric->loom_no,
-                    //         "is_laminated" => "true"
-                    //     ]);
+                    $find_godam = DoubleSideLaminatedFabricStock::where('bill_number',$request->bill)->latest()->first();
 
-                    //     FabricStock::create([
-                    //         'name' => $data->lamfabric->name, 
-                    //         'slug' => $data->lamfabric->slug, 
-                    //         'fabricgroup_id' => $data->lamfabric->fabricgroup_id, 
-                    //         'status' => $data->lamfabric->status,
-                    //         'gram' => $data->gram,
-                    //         'gross_wt' => $data->gross_wt,
-                    //         'net_wt' => $data->net_wt,
-                    //         'meter' => $data->meter,
-                    //         'roll_no' => $data->roll_no,
-                    //         'loom_no' => $data->lamfabric->loom_no,
-                    //         "is_laminated" => "true"
-                    //     ]);
 
-                    //     FabricLaminatedSentFSR::create([
-                    //         'name'=> $data->lamfabric->name, 
-                    //         'slug' => $data->lamfabric->slug, 
-                    //         'fabricgroup_id' => $data->lamfabric->fabricgroup_id,
-                    //         'roll_no' => $data->roll_no,
-                    //         "loom_no" => $data->lamfabric->loom_no,
-                    //         'gross_wt' => $data->gross_wt,
-                    //         'net_wt' => $data->net_wt ,
-                    //         'meter' => $data->meter,
-                    //         'average' => $data->average,
-                    //         'gram' => $data->gram,
-                    //         'plantname_id' => $data->plantname_id,
-                    //         'department_id' => $data->department_id,
-                    //         'planttype_id' => $data->planttype_id,
-                    //         'bill_number' => $data->bill_number,
-                    //         'bill_date' => $data->bill_date
-                    //     ]);
+                    if($polowaste != null){
 
-                    //     $lamFabricToDelete[] = $data->id;
-                    //     $lamFabricTempToDelete[] = $data->lamfabric->id;
+                        $wastename = 'lumps';
 
-                    //     if (!in_array($data->department_id, $department)) {
-                    //         $department[] = $data->department_id;
-                    //     }
+                        $wastage = Wastages::firstOrCreate([
+                         'name' => 'lumps'
+                         ], [
+                         'name' => 'lumps',
+                         'is_active' => '1',
+
+                         ]);
+
+                        $waste_id = Wastages::where('name',$wastename)->value('id');
+
+                        $stock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->count();
+
+                        $getStock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->first();
                         
-                    // }
 
-                    // $unlamfabtripal = Unlaminatedfabrictripal::where('status','sent')->get();
-                    // $getalldata = Unlaminatedfabrictripal::where('bill_number',$unlamfabtripal[0]->bill_number)->get();
-                    // dd($getalldata);
-                    // dd($unlamfabtripal,$unlamfabtripal[0]->bill_number);
+                        if ($stock == 1) {
+                            $getStock->quantity_in_kg += $polowaste;
+                            $getStock->save();
+                        } else {
+                            WasteStock::create([
+                                'godam_id' => $find_godam->department_id,
+                                'waste_id' => $wastage->id,
+                                'quantity_in_kg' => $polowaste,
+                            ]);
+                        }
 
-                    // Tripal::create([
-                    //     'bill_number' => $unlamfabtripal[0]->bill_number, 
-                    //     'bill_date' => $unlamfabtripal[0]->bill_date, 
-                    //     'fabric_id' => $unlamfabtripal[0]->fabric_id, 
-                    //     'roll_no' => $unlamfabtripal[0]->roll_no, 
-                    //     'gross_wt' => $unlamfabtripal[0]->gross_wt, 
-                    //     'net_wt' => $unlamfabtripal[0]->net_wt, 
-                    //     'meter' => $unlamfabtripal[0]->meter, 
-                    //     'average' => $unlamfabtripal[0]->average, 
-                    //     'gram' => $unlamfabtripal[0]->gram, 
-                    //     'department_id' => $unlamfabtripal[0]->department_id, 
-                    //     'planttype_id' => $unlamfabtripal[0]->planttype_id, 
-                    //     'plantname_id' => $unlamfabtripal[0]->plantname_id, 
-                    //     // 'status' => $data->lamfabric->status,
-                    //     "type_lam" => "double"
-                    // ]);
+                    }
 
-                    // Wastages::create([
-                    //     'name' => 'doubletripal',
-                    //     'waste_id' => '1',
-                    //     'quantity_in_kg' => $total_waste,
-                    // ]);
 
-                    // WasteStock::create([
-                    //     'department_id' => '1',
-                    //     'waste_id' => '1',
-                    //     'quantity_in_kg' => $total_waste,
-                    // ]);
+                    if($fabricwaste != null){
 
+                        $wastename = 'tripal';
+
+                        $wastage = Wastages::firstOrCreate([
+                         'name' => 'tripal'
+                         ], [
+                         'name' => 'tripal',
+                         'is_active' => '1',
+
+                         ]);
+
+                        $waste_id = Wastages::where('name',$wastename)->value('id');
+
+                        $stock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->count();
+                        // dd($stock);
+
+                        $getStock = WasteStock::where('godam_id', $find_godam->department_id)
+                        ->where('waste_id', $wastage->id)->first();
+                        
+
+                        if ($stock == 1) {
+                            $getStock->quantity_in_kg += $fabricwaste;
+                            $getStock->save();
+                        } else {
+                            WasteStock::create([
+                                'godam_id' => $find_godam->department_id,
+                                'waste_id' => $wastage->id,
+                                'quantity_in_kg' => $fabricwaste,
+                            ]);
+                        }
+
+
+                    }
+               
 
                 DB::commit();
 
