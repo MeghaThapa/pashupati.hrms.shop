@@ -17,7 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('bill_number');
             $table->string('bill_date');
-            $table->unsignedBigInteger('fabric_id');
+            $table->string('name');
+            $table->string('slug');
+            $table->unsignedBigInteger('fabric_id')->nullable();
             $table->foreign('fabric_id')->references("id")->on('fabrics')->onDelete('cascade')->onUpdate('cascade');
             $table->string('roll_no');
             $table->string('gross_wt');
@@ -28,9 +30,9 @@ return new class extends Migration
             $table->enum("status",['pending',"sent","completed"])->default("pending");
             $table->unsignedBigInteger('department_id');
             $table->foreign('department_id')->references('id')->on("godam")->onDelete('cascade');
-            $table->unsignedBigInteger('planttype_id');
+            $table->unsignedBigInteger('planttype_id')->nullable();
             $table->foreign('planttype_id')->references('id')->on('processing_steps')->onDelete('cascade');
-            $table->unsignedBigInteger('plantname_id');
+            $table->unsignedBigInteger('plantname_id')->nullable();
             $table->foreign('plantname_id')->references('id')->on('processing_subcats')->onDelete('cascade');
             $table->timestamps();
         });

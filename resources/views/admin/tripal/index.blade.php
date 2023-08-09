@@ -76,6 +76,9 @@
 @endsection
 
 @section('content')
+<div id="error_msg" class="alert alert-danger mt-2" hidden>
+
+</div>
 <div class="card-body p-0 m-0">
     <form id="createRawMaterial">
         @csrf
@@ -300,49 +303,81 @@
 </div>
 <hr>
 <div class="row">
-    <div class="col-md-5">
-        <div class="card mt-2 p-5">
-            <div class="card-body">
-                <div class="row p-2">
-                    <div class="col-md-6">
-                        <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
-                        </label>
-                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
-                            <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
-                            @foreach ($dana as $dana)
-                            <option value="{{ $dana->id }}">{{ $dana->danaName->name }}
-                            </option>
+    <div class="col-md-7">
+        <form id="addSingleTripalDanaConsumption">
+            <div class="card p-2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="cut_length">Godam</label>
+                        <select
+                            class="advance-select-box form-control  @error('godam_id') is-invalid @enderror"
+                            id="godamId" name="godam_id" required>
+                            <option value=" " selected disabled>{{ __('Select Godam') }}</option>
+                            @foreach ($godams as $godam)
+                                <option value="{{ $godam->fromGodam->id }}">
+                                    {{ $godam->fromGodam->name }}
+                                </option>
                             @endforeach
+                            <input type="hidden" name="bill_no" value="{{$bill_no}}" id="bill_no">
                         </select>
-                        @error('total_ul_in_mtr')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
                     </div>
-                    <div class="col-md-6">
-                        <label for="size" class="col-form-label">{{ __('Qty:') }}<span class="required-field">*</span>
-                        </label>
-                        <input type="number" step="any" min="0" class="form-control" id="add_dana_consumption_quantity"
-                            data-number="1" name="total_ul_in_mtr" min="1" disabled required>
-                        @error('total_ul_in_mtr')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
+                    {{-- <div class="col-md-4">
+                        <label for="cut_length">Dana Group</label>
+                        <select
+                            class="advance-select-box form-control  @error('dana_group_id') is-invalid @enderror"
+                            id="danaGroupId" name="dana_group_id" required>
+                            <option value=" " selected disabled>{{ __('Select dana group') }}
+                            </option>
+                        </select>
+                    </div> --}}
+
+                    <div class="col-md-4">
+                        <label for="cut_length">Dana Name</label>
+                        <select
+                            class="advance-select-box form-control  @error('dana_name_id') is-invalid @enderror"
+                            id="danaNameId" name="dana_name_id" required>
+                        </select>
                     </div>
-                    <div class="col-md-6">
-                        <button class=" form-control btn btn-primary" id='add_dana_consumption' disabled>
-                            Add
-                        </button>
+                    <div class="col-md-4">
+                        <label for="cut_length">Available</label>
+                        <input type="text" class="form-control" id="avilableStock"
+                            name="avilable_stock" readonly>
                     </div>
                 </div>
-            
+                <div class="row">
 
+                    <div class="col-md-4">
+                        <label for="cut_length">Quantity</label>
+                        <input type="text" class="form-control" id="quantity" name="quantity">
+                    </div>
+                    <div class="col-md-2 mt-4">
+                        <button class="btn btn-primary ">Add</button>
+                    </div>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
-    <div class="card col-md-7">
+    <div class="col-md-5">
+        <table class="table table-bordered table-hover" id="danaConsumption">
+            <thead>
+                <tr>
+                    <th style="width:30px;">SN</th>
+                    <th>Godam</th>
+                    {{-- <th>Dana Group</th> --}}
+                    <th>Dana Name</th>
+                    <th>Quantity</th>
+
+                </tr>
+            </thead>
+            <tbody id="printsCutsDanaConsumpt">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    
+
+    <div class="card col-md-12">
         <div class="card-body m-2 p-5">
             <div class="col-md-12" style="height: 100%;">
                 <div class="row">
@@ -387,7 +422,7 @@
                             <label for="size" class="col-form-label">{{ __('Total Dana:') }}<span
                                     class="required-field">*</span>
                             </label>
-                            <input type="number" step="any" min="0" class="form-control calculator" id="totl_dana" data-number="1"
+                            <input type="number" step="any" min="0" class="form-control calculator" id="totl_dana" value="{{$sumdana}}" data-number="1"
                                 name="totl_dana" min="1" readonly required>
                             @error('polo_waste')
                             <span class="invalid-feedback" role="alert">
@@ -662,6 +697,10 @@
 </script>
 
 <script>
+
+
+ 
+
     $(document).on("keyup","#laminated_meter",function(e){
 
         let net_wt = parseInt($("#laminated_net_weight").val());
@@ -764,6 +803,28 @@
          // $('#fabricNameId').prop('disabled',true);
         comparelamandunlam();
 
+        pageRefresh();
+
+        async function pageRefresh() {
+            await getdanaConsumptionData();
+            deleteDanaConsumptionData();
+        }
+
+        let sn = 1;
+
+        //remove all table data
+        function removeAllTableRows(tableId) {
+            // Resetting SN
+            sn = 1;
+            let tableTbody = document.querySelector("#" + tableId + " tbody");
+            //let tableTbody = tableId.querySelector("tbody");
+            if (tableTbody) {
+                for (var i = tableTbody.rows.length - 1; i >= 0; i--) {
+                    tableTbody.deleteRow(i);
+                }
+            }
+        }
+
         $("body").on("submit","#wastesubmit", function(event){
             // Pace.start();
             var fabric_name = $('#fabric_name').val(),
@@ -812,6 +873,220 @@
                 }
             });
         });
+
+        $('#godamId').on('select2:select', function(e) {
+            let godam_id = e.params.data.id;
+            $('#danaGroupId').empty();
+            getDanaName(godam_id);
+        });
+
+        $('#danaNameId').on('select2:select', function(e) {
+            // console.log('df');
+            // debugger;
+            let godam_id = document.getElementById('godamId').value;
+            let dana_name_id = e.params.data.id;
+            $('#avilableStock').empty();
+            getStockQuantity(godam_id, dana_name_id);
+        });
+
+        function getStockQuantity(godam_id, dana_name_id) {
+            $.ajax({
+                url: "{{ route('printsAndCuts.getStockQuantity') }}",
+                method: 'post',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    godam_id: godam_id,
+                    dana_name_id: dana_name_id
+                },
+                success: function(response) {
+                    console.log('stockQty', response);
+                    document.getElementById('avilableStock').value = response.quantity;
+                    // response.forEach(function(item) {
+                    //     setOptionInSelect('danaNameId', item.dana_name.id, item.dana_name
+                    //         .name);
+                    // });
+                },
+                error: function(xhr, status, error) {
+                    setErrorMsg(xhr.responseJSON.message);
+                }
+            });
+        }
+
+
+        function getDanaName(dana_group_id) {
+            let godam_id = document.getElementById('godamId').value;
+            $.ajax({
+                url: "{{ route('printsAndCuts.getDanaName') }}",
+                method: 'post',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    //dana_group_id: dana_group_id,
+                    godam_id: godam_id
+
+                },
+                success: function(response) {
+                    $('#danaNameId').prepend(
+                        "<option value='' disabled selected>Select required</option>"
+                    );
+                    response.forEach(function(item) {
+                        setOptionInSelect('danaNameId', item.dana_name.id, item
+                            .dana_name
+                            .name);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    setErrorMsg(xhr.responseJSON.message);
+                }
+            });
+        }
+
+        function getDanaGroup(godam_id) {
+            $.ajax({
+                url: "{{ route('printsAndCuts.getDanaGroup') }}",
+                method: 'post',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    godam_id: godam_id,
+                },
+                success: function(response) {
+                    $('#danaGroupId').prepend(
+                        "<option value='' disabled selected>Select required data</option>"
+                    );
+                    response.danaGroups.forEach(function(item) {
+                        setOptionInSelect('danaGroupId', item.dana_group.id,
+                            item.dana_group
+                            .name);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    setErrorMsg(xhr.responseJSON.message);
+                }
+            });
+        }
+
+        //save addPrintsAndDanaConsumption
+        document.getElementById('addSingleTripalDanaConsumption').addEventListener('submit',
+            function(e) {
+                //let printCutEntry_id = {!! json_encode($data->id) !!};
+                e.preventDefault();
+                debugger;
+                const form = e.target;
+                let bill_no = $("#bill_no").val();
+                //console.log('testing', printCutEntry_id);
+                let godam_id = form.elements['godam_id'];
+                let dana_name_id = form.elements['dana_name_id'];
+                let quantity = form.elements['quantity'];
+                $.ajax({
+                    url: "{{ route('singleTripalDanaConsumption.store') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        bill_no: bill_no,
+                        godam_id: godam_id.value,
+                        dana_name_id: dana_name_id.value,
+                        quantity: quantity.value
+                    },
+                    success: function(response) {
+                        removeAllTableRows('danaConsumption');
+                        getdanaConsumptionData();
+                        // setIntoConsumptionTable(response);
+                        // getdanaConsumptionData();
+                        updateStockQuantity();
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                    }
+                });
+        });
+
+        function updateStockQuantity() {
+            let godam_id = $('#godamId').val();
+            // let dana_group_id = $('#danaGroupId').val();
+            let dana_name_id = $('#danaNameId').val();
+            getStockQuantity(godam_id, dana_name_id);
+        }
+
+        //remove all table data
+        function removeAllTableRows(tableId) {
+            // Resetting SN
+            sn = 1;
+            let tableTbody = document.querySelector("#" + tableId + " tbody");
+            //let tableTbody = tableId.querySelector("tbody");
+            if (tableTbody) {
+                for (var i = tableTbody.rows.length - 1; i >= 0; i--) {
+                    tableTbody.deleteRow(i);
+                }
+            }
+        }
+
+        function setIntoConsumptionTable(res) {
+            var html = "";
+            html = "<tr id=editConsumptRow-" + res.id + "><td>" + sn +
+                "</td><td class='rowGodamName'>" + res.godam.name +
+                "</td><td class='rowDanaName'>" + res.dana_name.name +
+                "</td><td class='rowQuantity'>" + res.quantity +
+                "</td></tr>";
+
+
+            document.getElementById('printsCutsDanaConsumpt').innerHTML += html;
+            sn++;
+            // Clearing the input fields
+            // clearInputFields();
+        }
+
+        function getdanaConsumptionData() {
+            return new Promise(function(resolve, reject) {
+                let bill_no = $("#bill_no").val();
+                //console.log('printAndCutEntry_id_data', printAndCutEntry_id_data);
+                $.ajax({
+                    url: '{{ route('singleTripal.getSingleTripalDanaConsumption') }}',
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        bill_no: bill_no
+                    },
+                    success: function(response) {
+                        console.log('consumption data hgftyuhb', response);
+                        response.forEach(function(response) {
+                            console.log('qty', response.quantity)
+                            setIntoConsumptionTable(response)
+                        })
+                        resolve();
+                    },
+                    error: function(xhr, status, error) {
+                        setErrorMsg(xhr.responseJSON.message);
+                        reject();
+                    }
+                });
+            });
+        }
+
+
+
+        function setOptionInSelect(elementId, optionId, optionText) {
+            let selectElement = $('#' + elementId);
+            // create a new option element
+            let newOption = $('<option>');
+
+            // set the value and text of the new option element
+            newOption.val(optionId).text(optionText);
+
+            // append the new option element to the select element
+            selectElement.append(newOption);
+
+            // refresh the select2 element to update the UI
+            selectElement.trigger('change.select2');
+            // $('#' + elementId).val(optionId).trigger('change.select2');
+        }
+
+        function setErrorMsg(errorMessage) {
+            let errorContainer = document.getElementById('error_msg');
+            errorContainer.hidden = false;
+            errorContainer.innerHTML = errorMessage;
+            setTimeout(function() {
+                errorContainer.hidden = true;
+            }, 2000);
+        }
 
 
 
@@ -1274,13 +1549,13 @@
             let bill = $("#bill").val();
             // console.log(godam_id);
 
-            trimmedConsumption = consumption.trim();
+            trimmedConsumption = consumption;
             trimmedPoloWaste = polo_waste.trim();
             trimmedFabricWaste = fabric_waste.trim();
             trimmedTotalWaste = total_waste.trim();
 
 
-            if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
+            if(trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');
             }else{
             // subtractformautolad(danaNameId,consumption);

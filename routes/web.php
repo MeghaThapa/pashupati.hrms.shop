@@ -82,16 +82,9 @@ Route::get('artisandone',function(){
     // \Artisan::call("make:controller AutoloadItemsController");
     // \Artisan::call("make:model AutoloadItems");
     // \Artisan::call('make:migration create_autoload_items_stock_table');
-    // \Artisan::call('make:migration add_department_id_to_processing_steps_table --table=processing_steps');
 
-
-    // \Artisan::call("m:migrationcreate_processing_categories_and_subcategories_table");
-    // if($artisan){
-    //     return "done";
-    // }else{
-    //     return "not done";
-    // }
-    // \Artisan::call('migrate:refresh --path=/database/migrations/2023_05_25_094556_add_department_id_to_processing_steps_table.php');
+    \Artisan::call('migrate --path=/database/migrations/2023_07_18_052352_create_tripal_entries_table.php');         
+      return "done";
 });
 
 // admin auth routes
@@ -521,10 +514,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
-    Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
-    // Route::delete('rawMaterial/delete/{rawMaterial_id}', 'RawMaterialController@delete')->name('rawMaterial.delete');
-
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
+    
+    Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
 
     //fabric opening
     Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
@@ -552,10 +544,13 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('fabricGodam/transferFabricGodamDetail/{fabricgodam_id}', 'FabricGodamController@transferFabricDetail')->name('fabricgodams.transferFabricDetail');
 
+    Route::get('fabricGodam/fabricStockList', 'FabricGodamController@getFabricStockList')->name('godamfabrics.getFabricStockList');
 
     Route::post('fabric/godamTransfer/store','FabricGodamController@getFabricGodamStore')->name("getFabricGodamStore");
 
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("get.fabric.same.name");
+    
+
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [
@@ -579,6 +574,21 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('tripal/getUnlamSingleLam/List','Tripal\TripalController@getUnlamSingleLam')->name('tripal.getUnlamSingleLam');
 
     Route::post('tripal/wastage/submit','Tripal\TripalController@getWastageStore')->name("tripal.wastage.submit");
+
+    Route::post("single/tripal/DanaConsumption/store",'Tripal\SingleTripalDanaConsumptionController@store')->name('singleTripalDanaConsumption.store');
+
+    Route::post("singletripal/DanaConsumption/getPrintsAndCutsDanaConsumption",'Tripal\SingleTripalDanaConsumptionController@getSingleTripalDanaConsumption')->name('singleTripal.getSingleTripalDanaConsumption');
+
+    //doubletripal dana consumption
+    Route::post("double/tripal/DanaConsumption/store",'Tripal\DoubleTripalDanaConsumptionController@store')->name('doubleTripalDanaConsumption.store');
+
+    Route::post("doubletripal/DanaConsumption",'Tripal\DoubleTripalDanaConsumptionController@getDoubleTripalDanaConsumption')->name('doubleTripal.getDoubleTripalDanaConsumption');
+
+    //finaltripal dana consumption
+    Route::post("final/tripal/DanaConsumption/store",'Tripal\FinalTripalDanaConsumptionController@store')->name('finalTripalDanaConsumption.store');
+
+    Route::post("finaltripal/DanaConsumption",'Tripal\FinalTripalDanaConsumptionController@getFinalTripalDanaConsumption')->name('finalTripal.getFinalTripalDanaConsumption');
+
 
     //singletripal stock
     Route::get('single-tripal/getstock/index',[SingleTripalStockController::class,'index'])->name('singletripal-stock.index');
@@ -642,6 +652,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('salefinaltripal/store','Sale\SaleFinalTripalController@store')->name('salefinaltripal.store');
 
     Route::get('salefinaltripal/addTripal/{id}','Sale\SaleFinalTripalController@addTripal')->name('salefinaltripals.addTripal');
+
+    //salefinaltripal filter
+
+    Route::post("get/finalTripal/filterName",'Sale\SaleFinalTripalController@getfinaltripalFilter')->name("getfinaltripalFilter");
+
+    Route::post('salefinaltripal/store/list','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
 
 
 
@@ -1310,7 +1326,7 @@ Route::controller(SqlDumpController::class)
 ->prefix('sqlDownload')
 ->group(function(){
     Route::get("download","download")->name('sqlDownload.download');
-    // Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
+    Route::post("importSql","importSql")->name('sqlDownload.importSql');
 });
 
 Route::controller(BswLamFabForPrintingEntryController::class)

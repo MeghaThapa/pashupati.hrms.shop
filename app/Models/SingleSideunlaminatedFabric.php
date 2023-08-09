@@ -11,7 +11,7 @@ class SingleSideunlaminatedFabric extends Model
 
    protected $fillable = [
        'fabric_id','roll_no','gross_wt','net_wt','meter','average','gram','created_at','updated_at',
-       'plantname_id','department_id','planttype_id','bill_number','bill_date',"status"
+       'plantname_id','department_id','planttype_id','bill_number','bill_date',"status",'name','slug'
    ];
    public function fabric(){
        return $this->belongsTo(Fabric::class,"fabric_id","id");

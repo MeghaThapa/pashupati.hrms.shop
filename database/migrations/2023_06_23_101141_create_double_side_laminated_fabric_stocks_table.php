@@ -43,7 +43,7 @@ return new class extends Migration
             $table->string('net_wt');
             $table->string('meter');
             $table->string('roll_no');
-            $table->string('loom_no');
+            $table->string('loom_no')->nullable();
             $table->string('average_wt');
             $table->string('bill_number');
             $table->string('bill_date');
