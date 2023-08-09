@@ -28,7 +28,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Str;
 use App\Models\Singlesidelaminatedfabric;
-use App\Models\SinglesidelaminatedfabricStock;
+use App\Models\Singlesidelaminatedfabricstock;
+use App\Models\SingleTripalDanaConsumption;
 use App\Helpers\AppHelper;
 
 class TripalController extends Controller
@@ -43,7 +44,17 @@ class TripalController extends Controller
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
         $dana = AutoLoadItemStock::get();
-        return view('admin.tripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date'));
+
+        $sumdana = SingleTripalDanaConsumption::where('bill_no',$bill_no)->sum('quantity');
+
+        $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
+            $query->select('id','name');
+        }])
+        ->select('from_godam_id')
+        ->distinct()
+        ->get();
+
+        return view('admin.tripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana'));
     }
     public function getplanttype(Request $request){
         if($request->ajax()){
@@ -511,29 +522,29 @@ class TripalController extends Controller
 
                 $department_id = Singlesidelaminatedfabric::value('department_id');
                 
-                $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
+                // $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
 
-                $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
+                // $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
 
-                $presentQuantity = $stock->quantity;
-                $deduction = $presentQuantity - $consumption;
+                // $presentQuantity = $stock->quantity;
+                // $deduction = $presentQuantity - $consumption;
 
-                if($deduction == 0){
-                    $stock->delete();
-                }
-                else{
-                    $stock->update([
-                        "quantity" => $deduction
-                    ]);
-                }
+                // if($deduction == 0){
+                //     $stock->delete();
+                // }
+                // else{
+                //     $stock->update([
+                //         "quantity" => $deduction
+                //     ]);
+                // }
 
                 $getSinglesidelaminatedfabric = Singlesidelaminatedfabric::where('bill_number',$request->bill)->update(['status' => 'completed']); 
 
-                $getSinglesidelaminatedfabricstock = SinglesidelaminatedfabricStock::where('bill_number',$request->bill)->update(['status' => 'completed']); 
+                $getSinglesidelaminatedfabricstock = Singlesidelaminatedfabricstock::where('bill_number',$request->bill)->update(['status' => 'completed']); 
 
                 $unlaminatedfabrictripal = Unlaminatedfabrictripal::where('bill_number',$request->bill)->update(['status' => 'completed']);
 
-                $find_godam = SinglesidelaminatedfabricStock::where('bill_number',$request->bill)->latest()->first();
+                $find_godam = Singlesidelaminatedfabricstock::where('bill_number',$request->bill)->latest()->first();
                     
 
 

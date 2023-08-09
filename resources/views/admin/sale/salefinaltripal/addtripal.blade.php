@@ -81,31 +81,62 @@
         @csrf
 
         <div class="row">
-            <div class="col-md-3 form-group">
+            <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="billnumber" value="{{ $bill_no }}" name="bill_number"
-                    required /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                <input type="text" id="bill_no" class="form-control" value="{{ $findtripal->bill_no }}"
+                    readonly /> 
+                <input type="hidden" name="salefinal_id" id="salefinal_id" value="{{$id}}">
             </div>
 
-            <div class="col-md-3 form-group">
+            <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice Date') }}
                 </label>
-                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
-                    id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
+                <input type="text" id="bill_date" value="{{ $findtripal->bill_date }}" class="form-control calculator" readonly>
 
-                @error('bill_date')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
             </div>
-            
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('PartyName ') }}
+                </label>
+                <input type="text" value="{{ $findtripal->partyname_id }}" class="form-control calculator" readonly>
+
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('Bill For') }}
+                </label>
+                <input type="text" value="{{ $findtripal->bill_for }}" class="form-control calculator" readonly>
+
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('Lorrynumber') }}
+                </label>
+                <input type="text" value="{{ $findtripal->lorry_no }}" class="form-control calculator" readonly>
+
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('GP number') }}
+                </label>
+                <input type="text" value="{{ $findtripal->gp_no }}" class="form-control calculator" readonly>
+
+            </div>
+
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('DO number') }}
+                </label>
+                <input type="text" value="{{ $findtripal->do_no }}" class="form-control calculator" readonly>
+
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="size" class="col-form-label">{{ __('Remarks') }}
+                </label>
+                <input type="text" value="{{ $findtripal->remarks }}" class="form-control calculator" readonly>
+
+            </div>            
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
                 
-                <select class="advance-select-box form-control" id="fabric_id" name="fabric_id"
+                <select class="advance-select-box form-control" id="finaltripalstock_id" name="finaltripalstock_id"
                     required>
                     <option value="">{{ __('Select Tripal Name') }}</option>
                    @foreach ($fabrics as $fabric)
@@ -146,58 +177,27 @@
         
     </form>
 </div>
-<div class="p-0 table-responsive table-custom my-3">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>@lang('#')</th>
-            <th>{{ __('Bill NO') }}</th>
-            <th>{{ __('Supplier') }}</th>
-            <th>{{ __('Created') }}</th>
-            <th class="text-right">{{ __('Action') }}</th>
-        </tr>
-        </thead>
-        <tbody>
-
-            @foreach ($salefinaltripals as $key => $fabric)
+<div class="row">
+    <div class="table-responsive table-custom my-3">
+        <table class="table table-hover table-striped" id="sameFabricsTable">
+            <thead class="table-info">
                 <tr>
-                    <td>{{ ++$key }}</td>
-                    <td>{{ $fabric->bill_no }} </td>
-                    <td>{{ $fabric->getParty->name }} </td>
-                   
-                   
-                    <td>{{ \Carbon\Carbon::parse($fabric->created_at)->format('d-M-Y') }}</td>
-                    <td class="text-right">
-                        <div class="btn-group">
-                            <button type="button"
-                                    class="btn btn-secondary dropdown-toggle action-dropdown-toggle"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-
-                                <a href="{{ route('salefinaltripals.addTripal', $fabric->id) }}"
-                                    class="dropdown-item"><i class="fas fa-edit"></i>
-                                    {{ __('ADDTripal') }}</a>
-                            
-                               {{--  <a href="{{ route('salefinaltripals.edit', $fabric->slug) }}"
-                                    class="dropdown-item"><i class="fas fa-edit"></i>
-                                    {{ __('Edit') }}</a> --}}
-                               {{--  <a href="{{ route('salefinaltripals.delete', $fabric->slug) }}"
-                                    class="dropdown-item delete-btn"
-                                    data-msg="{{ __('Are you sure you want to delete this sub category?') }}"><i
-                                        class="fas fa-trash"></i> {{ __('Delete') }}</a> --}}
-                            </div>
-                        </div>
-                    </td>
+                    <th>{{ __('Sr.No') }}</th>
+                    <th>{{ __('Fabric Name') }}</th>
+                    <th>{{ __('Roll No') }}</th>
+                    <th>{{ __('G.W') }}</th>
+                    <th>{{ __('N.W') }}</th>
+                    <th>{{ __('Meter') }}</th>
+                    <th>{{ __('Avg') }}</th>
+                    <th>{{ __('Gram') }}</th>
+                    <th>{{__('Send')}}</th>
                 </tr>
-            @endforeach
-  
-
-
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="same-fabrics"></tbody>
+        </table>
+    </div>
 </div>
+
 
 <!-- /.card-body -->
 
@@ -208,8 +208,165 @@
 @section('extra-script')
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
-</script>
+<script src="{{ asset('js/storein.js') }}"></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"> --}}
+
+ <script>
+     $(document).ready(function(){
+         let fabricTable = null;
+         /**************************** Ajax Calls **************************/
+         // callunlaminatedfabricajax();
+         // comparelamandunlam();
+   
+
+         $("#finaltripalstock_id").change(function(e){
+             if (fabricTable !== null) {
+                 fabricTable.destroy();
+             }
+
+             let fabric_name_id = $(this).val();
+             fabricTable = $("#sameFabricsTable").DataTable({
+                 serverside : true,
+                 processing : true,
+                 ajax : {
+                     url : "{{ route('getfinaltripalFilter') }}",
+                     method : "post",
+                     data : function(data){
+                         data._token = $("meta[name='csrf-token']").attr("content"),
+                         data.fabric_name_id = fabric_name_id
+                     }
+                 },
+                 columns:[
+                     { data : "DT_RowIndex" , name : "DT_RowIndex" },
+                     { data : "name" , name : "name" },
+                     { data : "roll_no" , name : "roll_no" },
+                     { data : "gross_wt" , name : "gross_wt" },
+                     { data : "net_wt" , name : "net_wt" },
+                     { data : "meter" , name : "meter" },
+                     { data : "average_wt" , name : "average_wt" },
+                     { data : "gram_wt" , name : "gram_wt" },
+                     { data : "action" , name : "action" },
+                 ]
+             });
+
+         })
+         /**************************** Ajax Calls End **************************/
+     });
+
+     /**************************** Ajax functions **************************/
+
+  
+
+ 
+
+
+
+
+     /************************* Form Submission *************************/
+     $(document).on("click",".send_to_lower",function(e){
+         debugger;
+         e.preventDefault()
+
+         let data_id = $(this).attr('data-id')
+         let bill_no = $("#bill_no").val()
+         let billDate = $("#bill_date").val()
+         let salefinal_id = $("#salefinal_id").val()
+
+       
+         $.ajax({
+             url  : "{{ route('finalsaletripal.storeList') }}",
+             method : "post",
+             data:{
+                 "_token" : $("meta[name='csrf-token']").attr("content"),
+                 "data_id" : data_id,
+                 "bill_no" : bill_no,
+                 "bill_date" : billDate,
+                 "salefinal_id" : salefinal_id,
+              
+             },
+             beforeSend:function(){
+                 console.log("sending")
+             },
+             success:function(response){
+                location.reload();
+                 emptytable();
+                 // callunlaminatedfabricajax();
+                 // emptyform();
+             },
+             error:function(error){
+                 console.log("error",error);
+             }
+         })
+     })
+
+     $(document).ready(function(){
+         $(document).on('submit','#createRawMaterial',function(e){
+             e.preventDefault();
+             let action = $(this).attr('action');
+             let method = $(this).attr('method');
+             let formData = $(this).serialize();
+            $.ajax({
+             url:action,
+             method : method,
+             data:{
+                 '_token' : $('meta[name="csrf-token"]').attr('content'),
+                 'data' : formData
+             },
+             beforeSend:function(){
+             },
+             success:function(response){
+                 console.log(response);
+                 if(response.status == "200"){
+                     emptytable();
+                     callunlaminatedfabricajax();
+                     emptyform();
+                 }else{
+                     alert(response.message_error)
+                 }
+             },
+             error:function(error){
+             }
+            });
+         });
+     })
+
+
+
+ 
+
+     function emptytable(){
+         $('#rawMaterialItemTbody').empty();
+     }
+
+ 
+
+     function filltable(data){
+         console.log(data);
+         data.response.forEach(d => {
+             let title = d.fabric.name;
+             let group = d.gram.split('-')[0];
+             let result = parseFloat(title) * parseFloat(group);
+
+             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
+
+             tr.append(`<td>#</td>`);
+             tr.append(`<td>${d.fabric.name}</td>`);
+             tr.append(`<td>${d.roll_no}</td>`);
+             tr.append(`<td>${d.gross_wt}</td>`);
+             tr.append(`<td>${d.net_wt}</td>`);
+             tr.append(`<td>${d.meter}</td>`)
+             tr.append(`<td>${d.fabric.average_wt}</td>`);
+             tr.append(`<td>${d.gram}</td>`);
+             tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+         });
+     }
+
+
+
+ </script>   
+
+
+
 
 @endsection

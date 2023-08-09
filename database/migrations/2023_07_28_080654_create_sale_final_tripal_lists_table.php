@@ -15,6 +15,14 @@ return new class extends Migration
     {
         Schema::create('sale_final_tripal_lists', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->string('roll');
+            $table->string('gross');
+            $table->string('net');
+            $table->string('meter');
+            $table->string('average');
+            $table->string('gram');
             $table->string('bill_no');
             $table->string('bill_date');
             $table->unsignedBigInteger('salefinal_id');

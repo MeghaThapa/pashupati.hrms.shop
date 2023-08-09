@@ -21,6 +21,7 @@ use App\Models\FinalTripalName;
 use App\Models\FinalTripal;
 use App\Models\FinalTripalStock;
 use App\Helpers\AppHelper;
+use App\Models\FinalTripalDanaConsumption;
 use Carbon\Carbon;
 
 class FinalTripalController extends Controller
@@ -35,8 +36,16 @@ class FinalTripalController extends Controller
         $dana = AutoLoadItemStock::get();
         $fabrics  = DoubleSideLaminatedFabricStock::get()->unique('name')->values()->all();;
         $finaltripalname  = FinalTripalName::get();
+        $sumdana = FinalTripalDanaConsumption::where('bill_no',$bill_no)->sum('quantity');
+
+        $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
+            $query->select('id','name');
+        }])
+        ->select('from_godam_id')
+        ->distinct()
+        ->get();
         // dd($fabrics);
-        return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname'));
+        return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname','godams','sumdana'));
     }
 
     public function getfilter(Request $request){
@@ -262,24 +271,7 @@ class FinalTripalController extends Controller
 
                   $getFabricLastId = FinalTripalStock::where('status','sent')->where('bill_number',$request->bill)->latest()->first();
 
-                  // dd($getFabricLastId,$request);
-
-                    $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
-
-                    $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
-
-                    $presentQuantity = $stock->quantity;
-                    $deduction = $presentQuantity - $consumption;
-
-                    if($deduction == 0){
-                        $stock->delete();
-                    }
-                    else{
-                        $stock->update([
-                            "quantity" => $deduction
-                        ]);
-                    }
-
+                 
                     $getsinglesidelaminatedfabric = TripalEntry::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']); 
 
                     $getdoublesidelaminatedfabric = FinalTripal::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']); 
