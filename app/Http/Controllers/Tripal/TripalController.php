@@ -83,7 +83,7 @@ class TripalController extends Controller
         ->get();
 
         $datas = SingleTripalBill::get();
-        $fabstocks = FabricStock::get();
+        $fabstocks = FabricStock::get()->unique('name')->values()->all();
 
 
 
@@ -220,8 +220,6 @@ class TripalController extends Controller
     }
     public function store(Request $request){
         try{
-            // dd('lol');
-            // dd($request);
 
             $data = [];
             parse_str($request->data,$data);
@@ -296,7 +294,7 @@ class TripalController extends Controller
             $fabricmodelquery = Fabric::find($fabric_id);
 
                 
-                if($lamimated_roll_no != null && $laminated_gross_weight != null && $laminated_net_weight != null && $laminated_avg_weight != null && $laminated_gram != null && $laminated_meter != null){
+             if($lamimated_roll_no != null && $laminated_gross_weight != null && $laminated_net_weight != null && $laminated_avg_weight != null && $laminated_gram != null && $laminated_meter != null){
 
                     $single_lamfabric = Singlesidelaminatedfabric::create([
                         "name" => $data['laminated_fabric_name'],
@@ -342,136 +340,119 @@ class TripalController extends Controller
                         // "fabric_id" => $fabric_id,
                     ]);
 
-                    $stock = FabricStock::where('fabric_id',$fabric_id)->value('net_wt');
-                    $fabrics_id = FabricStock::where('fabric_id',$fabric_id)->value('id');
-
-                    if($laminated_net_weight != null){
-                      $finalstock = $stock - $laminated_net_weight ;
-                      $find_fabric = FabricStock::find($fabrics_id);
-                      $find_fabric->net_wt = $finalstock;
-                      $find_fabric->update();
-
-                    }
-
-                if($lamimated_roll_no_2 != null && $laminated_gross_weight_2 != null && $laminated_net_weight_2 != null && $laminated_avg_weight_2 != null && $laminated_gram_2 != null && $laminated_meter_2 != null){
-
-                    $single_lamfabric = Singlesidelaminatedfabric::create([
-                        "name" => $data['laminated_fabric_name'],
-                        // "fabric_id" => $data['fabric_id'],
-                        "slug" => Str::slug($data["laminated_fabric_name"]),
-                        "fabric_id" => $fabric_id,
-                        "gram" =>  $laminated_gram_2,
-                        "loom_no" => $fabricmodelquery->loom_no,
-                        "average_wt" => $laminated_avg_weight_2,
-                        'gross_wt' => $laminated_gross_weight_2,
-                        "roll_no" => $lamimated_roll_no_2,
-                        'net_wt' => $laminated_net_weight_2,
-                        "meter" => $laminated_meter_2,
-                        "bill_number" => $bill_number,
-                        'bill_date' => $bill_date,
-                        "department_id" => $data['godam_id'],
-                        "planttype_id" => $planttype_id,
-                        "plantname_id" => $plantname_id,
-                        'bill_id' =>  $bill_id,
-                        "status" => "1"
-                    ]);
-
-
-                    $singlelamfabric_id = $single_lamfabric->id;
-
-
-                    $single_stock = Singlesidelaminatedfabricstock::create([
-                       "singlelamfabric_id" => $singlelamfabric_id,
-                       "name" => $data['laminated_fabric_name'],
-                       "slug" => Str::slug($data["laminated_fabric_name"]),
-                       "roll_no" => $lamimated_roll_no_2, 
-                       "department_id" => $data['godam_id'],
-                       "gram" =>  $laminated_gram,
-                       "loom_no" => $fabricmodelquery->loom_no,
-                       "average_wt" => $laminated_avg_weight_2,
-                       'gross_wt' => $laminated_gross_weight_2,
-                       "roll_no" => $lamimated_roll_no_2,
-                       'net_wt' => $laminated_net_weight_2,
-                       "meter" => $laminated_meter_2,
-                       "bill_number" => $bill_number,
-                       'bill_date' => $bill_date,
-                       "planttype_id" => $planttype_id,
-                       "plantname_id" => $plantname_id,
-                       'bill_id' =>  $bill_id,
-
-                    ]);
-
-                    $stock = FabricStock::where('fabric_id',$fabric_id)->value('net_wt');
-                    $fabrics_id = FabricStock::where('fabric_id',$fabric_id)->value('id');
-
-                    if($laminated_net_weight_2 != null){
-                      $finalstock = $stock - $laminated_net_weight_2 ;
-                      $find_fabric = FabricStock::find($fabrics_id);
-                      $find_fabric->net_wt = $finalstock;
-                      $find_fabric->update();
-
-                    }
-                }
-
-                if($lamimated_roll_no_3 != null && $laminated_gross_weight_3 != null && $laminated_net_weight_3 != null && $laminated_avg_weight_3 != null && $laminated_gram_3 != null && $laminated_meter_3 != null){
-
-                    $single_lamfabric = Singlesidelaminatedfabric::create([
-                        "name" => $data['laminated_fabric_name'],
-                        // "fabric_id" => $data['fabric_id'],
-                        "slug" => Str::slug($data["laminated_fabric_name"]),
-                        "fabric_id" => $fabric_id,
-                        "gram" =>  $laminated_gram_3,
-                        "loom_no" => $fabricmodelquery->loom_no,
-                        "average_wt" => $laminated_avg_weight_3,
-                        'gross_wt' => $laminated_gross_weight_3,
-                        "roll_no" => $lamimated_roll_no_3,
-                        'net_wt' => $laminated_net_weight_3,
-                        "meter" => $laminated_meter_3,
-                        "bill_number" => $bill_number,
-                        'bill_date' => $bill_date,
-                        "department_id" => $data['godam_id'],                     
-                        "planttype_id" => $planttype_id,
-                        "plantname_id" => $plantname_id,
-                        'bill_id' =>  $bill_id,
-                        "status" => "1"
-                    ]);
-
-                    $singlelamfabric_id = $single_lamfabric->id;
-
-                    $singlelamstock = Singlesidelaminatedfabricstock::create([
-                        "singlelamfabric_id" => $singlelamfabric_id,
-                        "name" => $data['laminated_fabric_name'],
-                        "slug" => Str::slug($data["laminated_fabric_name"]),
-                        "roll_no" => $lamimated_roll_no_3, 
-                        "department_id" => $data['godam_id'],
-                        "gram" =>  $laminated_gram,
-                        "loom_no" => $fabricmodelquery->loom_no,
-                        "average_wt" => $laminated_avg_weight_3,
-                        'gross_wt' => $laminated_gross_weight_3,
-                        "roll_no" => $lamimated_roll_no_3,
-                        'net_wt' => $laminated_net_weight_3,
-                        "meter" => $laminated_meter_3,
-                        "bill_number" => $bill_number,
-                        'bill_date' => $bill_date,
-                        "planttype_id" => $planttype_id,
-                        'bill_id' =>  $bill_id,
-                        "plantname_id" => $plantname_id
-                    ]);
-
-                    $stock = FabricStock::where('fabric_id',$fabric_id)->value('net_wt');
-                    $fabrics_id = FabricStock::where('fabric_id',$fabric_id)->value('id');
-
-                    if($laminated_net_weight_3 != null){
-                      $finalstock = $stock - $laminated_net_weight_3 ;
-                      $find_fabric = FabricStock::find($fabrics_id);
-                      $find_fabric->net_wt = $finalstock;
-                      $find_fabric->update();
-
-                    }
-                }
 
              
             }
+
+            if($lamimated_roll_no_2 != null && $laminated_gross_weight_2 != null && $laminated_net_weight_2 != null && $laminated_avg_weight_2 != null && $laminated_gram_2 != null && $laminated_meter_2 != null){
+
+                $single_lamfabric = Singlesidelaminatedfabric::create([
+                    "name" => $data['laminated_fabric_name'],
+                    // "fabric_id" => $data['fabric_id'],
+                    "slug" => Str::slug($data["laminated_fabric_name"]),
+                    "fabric_id" => $fabric_id,
+                    "gram" =>  $laminated_gram_2,
+                    "loom_no" => $fabricmodelquery->loom_no,
+                    "average_wt" => $laminated_avg_weight_2,
+                    'gross_wt' => $laminated_gross_weight_2,
+                    "roll_no" => $lamimated_roll_no_2,
+                    'net_wt' => $laminated_net_weight_2,
+                    "meter" => $laminated_meter_2,
+                    "bill_number" => $bill_number,
+                    'bill_date' => $bill_date,
+                    "department_id" => $data['godam_id'],
+                    "planttype_id" => $planttype_id,
+                    "plantname_id" => $plantname_id,
+                    'bill_id' =>  $bill_id,
+                    "status" => "1"
+                ]);
+
+
+                $singlelamfabric_id = $single_lamfabric->id;
+
+
+                $single_stock = Singlesidelaminatedfabricstock::create([
+                   "singlelamfabric_id" => $singlelamfabric_id,
+                   "name" => $data['laminated_fabric_name'],
+                   "slug" => Str::slug($data["laminated_fabric_name"]),
+                   "roll_no" => $lamimated_roll_no_2, 
+                   "department_id" => $data['godam_id'],
+                   "gram" =>  $laminated_gram,
+                   "loom_no" => $fabricmodelquery->loom_no,
+                   "average_wt" => $laminated_avg_weight_2,
+                   'gross_wt' => $laminated_gross_weight_2,
+                   "roll_no" => $lamimated_roll_no_2,
+                   'net_wt' => $laminated_net_weight_2,
+                   "meter" => $laminated_meter_2,
+                   "bill_number" => $bill_number,
+                   'bill_date' => $bill_date,
+                   "planttype_id" => $planttype_id,
+                   "plantname_id" => $plantname_id,
+                   'bill_id' =>  $bill_id,
+
+                ]);
+
+              
+            }
+
+            if($lamimated_roll_no_3 != null && $laminated_gross_weight_3 != null && $laminated_net_weight_3 != null && $laminated_avg_weight_3 != null && $laminated_gram_3 != null && $laminated_meter_3 != null){
+
+                $single_lamfabric = Singlesidelaminatedfabric::create([
+                    "name" => $data['laminated_fabric_name'],
+                    // "fabric_id" => $data['fabric_id'],
+                    "slug" => Str::slug($data["laminated_fabric_name"]),
+                    "fabric_id" => $fabric_id,
+                    "gram" =>  $laminated_gram_3,
+                    "loom_no" => $fabricmodelquery->loom_no,
+                    "average_wt" => $laminated_avg_weight_3,
+                    'gross_wt' => $laminated_gross_weight_3,
+                    "roll_no" => $lamimated_roll_no_3,
+                    'net_wt' => $laminated_net_weight_3,
+                    "meter" => $laminated_meter_3,
+                    "bill_number" => $bill_number,
+                    'bill_date' => $bill_date,
+                    "department_id" => $data['godam_id'],                     
+                    "planttype_id" => $planttype_id,
+                    "plantname_id" => $plantname_id,
+                    'bill_id' =>  $bill_id,
+                    "status" => "1"
+                ]);
+
+                $singlelamfabric_id = $single_lamfabric->id;
+
+                $singlelamstock = Singlesidelaminatedfabricstock::create([
+                    "singlelamfabric_id" => $singlelamfabric_id,
+                    "name" => $data['laminated_fabric_name'],
+                    "slug" => Str::slug($data["laminated_fabric_name"]),
+                    "roll_no" => $lamimated_roll_no_3, 
+                    "department_id" => $data['godam_id'],
+                    "gram" =>  $laminated_gram,
+                    "loom_no" => $fabricmodelquery->loom_no,
+                    "average_wt" => $laminated_avg_weight_3,
+                    'gross_wt' => $laminated_gross_weight_3,
+                    "roll_no" => $lamimated_roll_no_3,
+                    'net_wt' => $laminated_net_weight_3,
+                    "meter" => $laminated_meter_3,
+                    "bill_number" => $bill_number,
+                    'bill_date' => $bill_date,
+                    "planttype_id" => $planttype_id,
+                    'bill_id' =>  $bill_id,
+                    "plantname_id" => $plantname_id
+                ]);
+
+                // $stock = FabricStock::where('fabric_id',$fabric_id)->value('net_wt');
+                // $fabrics_id = FabricStock::where('fabric_id',$fabric_id)->value('id');
+
+                // if($laminated_net_weight_3 != null){
+                //   $finalstock = $stock - $laminated_net_weight_3 ;
+                //   $find_fabric = FabricStock::find($fabrics_id);
+                //   $find_fabric->net_wt = $finalstock;
+                //   $find_fabric->update();
+
+                // }
+            }
+
+            FabricStock::where('id',$fabricstock_id)->delete();
 
                 
            DB::commit();

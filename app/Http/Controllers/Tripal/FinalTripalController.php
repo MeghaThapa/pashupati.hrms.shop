@@ -145,12 +145,15 @@ class FinalTripalController extends Controller
             'bill_date' => $request['bill_date'],
             "planttype_id" => $request['plantype_id'],
             "plantname_id" => $request['plantname_id'],
-            "doublefabric_id" => $request['data_id'],
+            // "doublefabric_id" => $request['data_id'],
             "date_en" => $request['bill_date'],
             "date_np" => $request['bill_date'],
             "bill_id" => $request['bill_id'],
             "status" => "sent"
         ]);
+        $doublestockid = $request['data_id'];
+
+        DoubleSideLaminatedFabricStock::where('id',$doublestockid)->delete();
     }
 
     public function getTripalFabricEntry(Request $request){
