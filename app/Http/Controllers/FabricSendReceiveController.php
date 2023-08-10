@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AutoLoadItemStock;
+use App\Models\DanaGroup;
 use App\Models\DanaName;
 use App\Models\Department;
 use App\Models\FabricFSRDanaConsumption;
@@ -15,6 +16,7 @@ use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use App\Models\Shift;
 use App\Models\Fabric;
+use App\Models\TemporaryDanaConsumptionFSRTable;
 use App\Models\Unit;
 use App\Models\UnlaminatedFabric;
 use App\Models\UnlaminatedFabricStock;
@@ -668,7 +670,7 @@ class FabricSendReceiveController extends Controller
                     UnlaminatedFabric::where('status','sent')->delete();
                     $lamFabric = LaminatedFabric::with(['lamfabric'])->get();
                     foreach($lamFabric as $data){
-                        Fabric::create([
+                        $fabric = Fabric::create([
                             'name' => $data->lamfabric->name,
                             "godam_id" => $godamId,
                             'slug' => $data->lamfabric->slug,
@@ -695,8 +697,10 @@ class FabricSendReceiveController extends Controller
                             'gross_wt' => $data->gross_wt,
                             'net_wt' => $data->net_wt,
                             'meter' => $data->meter,
+                            // "fabric_id" => $fabric->id,
                             'roll_no' => $data->roll_no,
                             'loom_no' => $data->lamfabric->loom_no,
+                            "date_np" => getNepaliDate(date('Y-m-d')),
                             "is_laminated" => "true"
                         ]);
 
@@ -718,12 +722,29 @@ class FabricSendReceiveController extends Controller
                             'bill_date' => $data->bill_date
                         ]);
 
-                        FabricFSRDanaConsumption::create([
-                            "fabric_laminated_sent_fsr_id" => $letlaminatedsentfsr->id,
-                            "dana_name_id" =>  $autoloaderDanaData['dana_name_id'],
-                            "dana_group_id" => $autoloaderDanaData['dana_group_id'],
-                            "consumption_quantity" => $autoloaderDanaData['consumption']
-                        ]);
+                        // FabricFSRDanaConsumption::create([
+                        //     "fabric_laminated_sent_fsr_id" => $letlaminatedsentfsr->id,
+                        //     "dana_name_id" =>  $autoloaderDanaData['dana_name_id'],
+                        //     "dana_group_id" => $autoloaderDanaData['dana_group_id'],
+                        //     "consumption_quantity" => $autoloaderDanaData['consumption']
+                        // ]);
+
+                        $fsrconsumption = FabricFSRDanaConsumption::where("dana_name_id" ,  $autoloaderDanaData['dana_name_id'])
+                                                ->where("dana_group_id" , $autoloaderDanaData['dana_group_id'])
+                                                ->where("consumption_quantity" , $autoloaderDanaData['consumption'])
+                                                ->first();
+                        if(is_null($fsrconsumption)){
+                            $consumption =  new FabricFSRDanaConsumption;
+                            $consumption->consumption_quantity = $autoloaderDanaData['consumption'];
+                        }else{
+                            $consumption = $fsrconsumption;
+                            $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $autoloaderDanaData['consumption'];
+                        }
+                            $consumption->fabric_laminated_sent_fsr_id =  $letlaminatedsentfsr->id;
+                            $consumption->dana_name_id =  $autoloaderDanaData['dana_name_id'];
+                            $consumption->dana_group_id =  $autoloaderDanaData['dana_group_id'];
+                            $consumption->save();
+
 
                         $lamFabricToDelete[] = $data->id;
                         $lamFabricTempToDelete[] = $data->lamfabric->id;
@@ -786,5 +807,37 @@ class FabricSendReceiveController extends Controller
                 "data" => $data
             ]);
         }
+    }
+
+    public function addDanaConsumptionTable(Request $request){
+        if($request->ajax()){
+
+            $dana_group_id  = DanaName::where("id",$request->dana_name_id)->value("dana_group_id");
+            
+            TemporaryDanaConsumptionFSRTable::create([
+                "bill_number" => $request->bill_number,
+                "dana_name_id" => $request->dana_name_id,
+                "dana_group_id" => $dana_group_id,
+                "consumption_quantity" => $request->consumption
+            ]);
+
+            $consumptions = TemporaryDanaConsumptionFSRTable::where("bill_number",$request->bill_number)->with("dananame")->get();
+            $initial = 0;
+            foreach($consumptions as $data){
+                $initial += $data->consumption_quantity;
+            }
+
+            return response([
+                "dana" => $request->dana,
+                "consumptions" => $consumptions,
+                "total_consumption" => $initial
+            ]);
+        }
+    }
+
+    public function getDanaConsumptionTable(Request $request){
+        return response([
+            "consumptions" => TemporaryDanaConsumptionFSRTable::where("bill_number",$request->billnumber)->with("dananame")->get(),
+        ]);
     }
 }

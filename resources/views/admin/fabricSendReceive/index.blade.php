@@ -328,7 +328,6 @@
             <div class="card-body">
                 <div class="row p-2">
                     <div class="col-md-6">
-
                         <label for="" class="col-form-label">Godam</label>
                         <?php
                             $godam = \App\Models\Godam::where("status","active")->get();
@@ -339,7 +338,8 @@
                             <option value="{{ $data->id }}">{{ $data->name }}</option>
                             @endforeach
                         </select>
-
+                    </div>
+                    <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
                         </label>
                         <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" disabled required>
@@ -349,28 +349,33 @@
                             </option>
                             @endforeach
                         </select>
-                        @error('total_ul_in_mtr')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
                     </div>
                     <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Enter Qty:') }}<span class="required-field">*</span>
                         </label>
                         <input type="number" step="any" min="0" class="form-control" id="add_dana_consumption_quantity"
                             data-number="1" name="total_ul_in_mtr" min="1" disabled required>
-                        @error('total_ul_in_mtr')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
                     </div>
                     <div class="col-md-6">
+                        <label for="">Add Here</label>
                         <button class=" form-control btn btn-primary" id='add_dana_consumption' disabled>
                             Add
                         </button>
                     </div>
+                </div>
+                <hr>
+                <div class="col-12 table-responsive">
+                    <table class="table-bordered table dana-consumption-table">
+                       <thead class="table-primary">
+                        <tr>
+                            <th>SN</th>
+                            <th>Dana Name</th>
+                            <th>Quantity</th>
+                        </tr>
+                       </thead>
+                        <tbody id="dana-consumption-tbody">
+                        </tbody>
+                    </table>
                 </div>
                 {{-- <hr>
                 <div class="col-md-12">
@@ -520,10 +525,10 @@
             </div>
         </div>
         <div class="card-footer">
-            <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
+            <input type="text" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
             <button class="btn btn-info" id="finalUpdate">Update</button>
-            <input type="hidden" name="godam_id" id="godam_id" required/>
-            <input type="hidden" name="autoloader_godam_selected" id="autoloader_godam_selected" required>
+            <input type="text" name="godam_id" id="godam_id" required/>
+            <input type="text" name="autoloader_godam_selected" id="autoloader_godam_selected" required>
         </div>
     </div>
 </div>
@@ -693,6 +698,34 @@
         /**************************** Ajax Calls **************************/
         callunlaminatedfabricajax();
         comparelamandunlam();
+        getDanaConsumption();
+
+        function getDanaConsumption() {
+    $.ajax({
+        url: "{{ route('get.dana.consumption.fsr') }}",
+        method: "post",
+        data: {
+            "_token": $("meta[name='csrf-token']").attr("content"),
+            "billnumber": $("#billnumber").val()
+        },
+        success: function (response) {
+            if (response.consumptions != null) {
+                $("#dana-consumption-tbody").empty();
+                response.consumptions.forEach((data,index) => {
+                    let tr = $("<tr></tr>");
+                    $("#dana-consumption-tbody").append(tr);
+                    tr.append(`<td>${index++}</td>`);
+                    tr.append(`<td>${data.dananame.name}</td>`);
+                    tr.append(`<td>${data.consumption_quantity}</td>`);
+                });
+            }
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
 
         $("#toGodam").change(function(e){
             let godamId = $(this).val(); 
@@ -763,7 +796,7 @@
                 serverside : true,
                 processing : true,
                 ajax : {
-                    url : "{{ route('get.fabric.same.name') }}",
+                    url : "{{ route('get.fabric.same.name.fsr') }}",
                     method : "post",
                     data : function(data){
                         data._token = $("meta[name='csrf-token']").attr("content"),
@@ -1304,17 +1337,54 @@
         $("#add_dana_consumption").prop("disabled",false);
     });
 
+    // $(document).on("click","#add_dana_consumption",function(e){
+    //     let dana = $("#danaNameId").val();
+    //     let consumption = $("#add_dana_consumption_quantity").val();
+    //     if (consumption.trim() === '') {
+    //         alert("add quantity");
+    //     }else{
+    //         $("#totl_dana").val(consumption);
+
+    //         $("#selectedDanaID").val(dana);
+    //     }   
+    // });
+
     $(document).on("click","#add_dana_consumption",function(e){
         let dana = $("#danaNameId").val();
         let consumption = $("#add_dana_consumption_quantity").val();
-        if (consumption.trim() === '') {
+        if(consumption.trim() === '') {
             alert("add quantity");
-        }else{
-            $("#totl_dana").val(consumption);
-
-            $("#selectedDanaID").val(dana);
-        }   
+        }
+        if(dana == ""){
+            alert("choose dana");
+        }
+        $.ajax({
+            url : "{{ route('add.dana.consumption.fsr') }}",
+            method : "post",
+            data : {
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "dana_name_id" : dana,
+                "consumption" : consumption,
+                "bill_number" : $("#billnumber").val()
+            },success:function(response){
+                $(".dana-consumption-table").empty()
+                $("#totl_dana").val(response.total_consumption)
+                if(response.consumptions != null){
+                    response.consumptions.forEach(data=>{
+                        let tr = "<tr></tr>"
+                        $("#dana-consumption-tbody").append(tr);
+                        tr.append(`<td>${data.dananame.name}</td>`);
+                        tr.append(`<td>${data.consumption}</td>`);
+                    })
+                }
+                console.log(response)
+            },error:function(error){
+                console.log(error)
+                alert("error orccured check console")
+            }
+        });
     });
+
 
     $(document).on("keyup","#fabric_waste",function(e){
         let polo_waste = parseInt($("#polo_waste").val());
