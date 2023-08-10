@@ -562,8 +562,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'update' => 'tripal.update',
         ]
     ]);
+
+    Route::get('singletripals/create/{id}', 'Tripal\TripalController@createSingleTripal')->name('addsingletripal.create');
+
     Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
     Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');
+
+    Route::post('tripals/bill/store', 'Tripal\SingleTripalBillController@store')->name('singletripalbill.store');
+
+    Route::post('doubletripals/bill/store', 'Tripal\DoubleTripalBillController@store')->name('doubletripalbill.store');
+
+    Route::post('finaltripals/bill/store', 'Tripal\FinalTripalBillController@store')->name('finaltripalbill.store');
 
     //get fabricdata in tripal
 
@@ -685,6 +694,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
     Route::post('doubletripal/wastage/submit','Tripal\DoubleTripalController@getWastageStore')->name("doubletripal.wastage.submit");
+
+
+    Route::get('doubletripals/create/{id}', 'Tripal\DoubleTripalController@createDoubleTripal')->name('adddoubletripal.create');
+
+    Route::get('finaltripals/create/{id}', 'Tripal\FinalTripalController@createFinalTripal')->name('addfinaltripal.create');
+
     //for checking the quantity of data
 
     Route::post('dana/autoload/checkQuantity', 'Tripal\TripalController@checkAutoloadQuantity')->name('dana.autoload.checkAutoloadQuantity');

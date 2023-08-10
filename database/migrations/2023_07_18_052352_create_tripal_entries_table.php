@@ -18,6 +18,8 @@ return new class extends Migration
            
            $table->string('name');
            $table->string('slug');
+           $table->integer('bill_id')->nullable();
+           
            $table->unsignedBigInteger('doublefabric_id');
            $table->foreign('doublefabric_id')->references("id")->on('double_side_laminated_fabric_stocks')->onDelete('cascade')->onUpdate('cascade');
 

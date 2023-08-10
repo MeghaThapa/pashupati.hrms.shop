@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('bill_number');
             $table->string('bill_date');
+
+            $table->integer('bill_id')->nullable();
             $table->string('name');
             $table->string('slug');
             $table->unsignedBigInteger('fabric_id')->nullable();

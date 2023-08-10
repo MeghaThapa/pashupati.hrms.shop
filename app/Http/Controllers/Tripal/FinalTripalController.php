@@ -23,6 +23,8 @@ use App\Models\FinalTripalStock;
 use App\Helpers\AppHelper;
 use App\Models\FinalTripalDanaConsumption;
 use Carbon\Carbon;
+use App\Models\FinalTripalBill;
+
 
 class FinalTripalController extends Controller
 {
@@ -44,8 +46,36 @@ class FinalTripalController extends Controller
         ->select('from_godam_id')
         ->distinct()
         ->get();
+
+        $datas = FinalTripalBill::get();
         // dd($fabrics);
-        return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname','godams','sumdana'));
+        return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname','godams','sumdana','datas'));
+    }
+
+
+    public function createFinaltripal($id)
+    {
+        $find_data = FinalTripalBill::find($id);
+        $bill_date = $find_data->bill_date;
+        $bill_no = $find_data->bill_no;
+        
+        $godam= Godam::where('status','active')->get();
+        $shifts = Shift::where('status','active')->get();
+        $dana = AutoLoadItemStock::get();
+        $fabrics  = DoubleSideLaminatedFabricStock::get()->unique('name')->values()->all();;
+        $finaltripalname  = FinalTripalName::get();
+        $sumdana = FinalTripalDanaConsumption::where('bill_no',$bill_no)->sum('quantity');
+
+        $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
+            $query->select('id','name');
+        }])
+        ->select('from_godam_id')
+        ->distinct()
+        ->get();
+
+        return view('admin.finaltripal.create',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname','godams','sumdana','id','find_data'));
+
+
     }
 
     public function getfilter(Request $request){
@@ -116,8 +146,9 @@ class FinalTripalController extends Controller
             "planttype_id" => $request['plantype_id'],
             "plantname_id" => $request['plantname_id'],
             "doublefabric_id" => $request['data_id'],
-            "date_en" => $request['data_id'],
-            "date_np" => $request['data_id'],
+            "date_en" => $request['bill_date'],
+            "date_np" => $request['bill_date'],
+            "bill_id" => $request['bill_id'],
             "status" => "sent"
         ]);
     }
@@ -183,12 +214,14 @@ class FinalTripalController extends Controller
 
 
     public function store(Request $request){
-        // dd('hey',$request);
+        // dd('hey');
         // $validator = $request->validate([
         //     'name'    => 'required|unique:final_tripal_names,name',
         // ]);
+        // dd($request);
 
         $find_tripal_bill = TripalEntry::where('bill_number',$request->bill_no)->value('id');
+        $bill_id = $request->bill_id;
         // dd($)
         $find_bill = TripalEntry::find($find_tripal_bill);
         $findtripalname = FinalTripalName::where('id',$request->tripal)->value('name');
@@ -217,6 +250,7 @@ class FinalTripalController extends Controller
             'net_wt' => $request['net_wt'],
             "date_en" => $request['net_wt'],
             "date_np" => $request['net_wt'],
+            "bill_id" => $bill_id,
             "status" => "sent"
         ]);
 
@@ -242,6 +276,7 @@ class FinalTripalController extends Controller
             "finaltripal_id" => $finaltripal->id,
             "date_en" => $request['net_wt'],
             "date_np" => $request['net_wt'],
+            "bill_id" => $bill_id,
 
             "status" => "sent"
         ]);
