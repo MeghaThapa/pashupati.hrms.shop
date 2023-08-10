@@ -750,7 +750,6 @@
                             category_id: category_id
                         },
                         success: function(response) {
-                            console.log(response.data);
                             let selectOptions = '';
                             if (response.data.length == 0) {
                                 selectOptions += '<option disabled selected>' +
@@ -764,7 +763,6 @@
                                         response.data[i].text + '</option>';
                                 }
                             }
-
                             $('#items').html(selectOptions);
                             resolve(response);
 

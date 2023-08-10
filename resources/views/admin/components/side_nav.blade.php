@@ -73,14 +73,14 @@
                             </a>
                         </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('wastageStock.index') }}"
-                            class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <p>Wastage Opening</p>
-                        </a>
-                    </li>
-                   
+                        <li class="nav-item">
+                            <a href="{{ route('wastageStock.index') }}"
+                                class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Wastage Opening</p>
+                            </a>
+                        </li>
+
 
 
 
@@ -268,6 +268,13 @@
                         class="nav-link {{ request()->routeIs('BswLamFabSendForPrinting.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tags"></i>
                         <p>Bsw Laminated Fabric Send For Printing</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('fabSendCuetxReceivePatchValveEntry.index') }}"
+                        class="nav-link {{ request()->routeIs('fabSendCuetxReceivePatchValveEntry.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Bsw Fabric Sent to curtex receive patch/valve</p>
                     </a>
                 </li>
                 <li class="nav-item">

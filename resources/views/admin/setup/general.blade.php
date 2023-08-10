@@ -10,6 +10,7 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
+
                 <h1 class="m-0 text-dark">{{ __('General Settings') }}</h1>
             </div>
             <div class="col-sm-6">
@@ -36,6 +37,13 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">{{ __('General Settings') }}</h3>
+                <form action="{{ route('sqlDownload.importSql') }}" method="POST"  enctype="multipart/form-data">
+                    <div>
+                        @csrf
+                        <input type="file" name="sql_file">
+                        <button type="submit">Import SQL</button>
+                    </div>
+                </form>
                 <div class="card-tools row gap-2">
 
                     <a href="{{ route('sqlDownload.download') }}" class="btn btn-block btn-primary">
@@ -307,7 +315,8 @@
                                         {{ $settings->timezone == 'Africa/Tripoli' ? 'selected' : '' }}>Africa/Tripoli
                                     </option>
                                     <option value="Africa/Tunis"
-                                        {{ $settings->timezone == 'Africa/Tunis' ? 'selected' : '' }}>Africa/Tunis</option>
+                                        {{ $settings->timezone == 'Africa/Tunis' ? 'selected' : '' }}>Africa/Tunis
+                                    </option>
                                     <option value="Africa/Windhoek"
                                         {{ $settings->timezone == 'Africa/Windhoek' ? 'selected' : '' }}>Africa/Windhoek
                                     </option>

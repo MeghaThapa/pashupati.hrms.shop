@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\printedFabric;
+use App\Models\PrintedFabric;
 use Illuminate\Http\Request;
 
 class PrintedFabricController extends Controller
@@ -36,7 +36,7 @@ class PrintedFabricController extends Controller
     public function store(Request $request)
     {
        $request->validate([
-        'name' =>'required',
+        'name' =>'required|unique:printed_fabrics,name',
        ]);
        $printedFabric= new PrintedFabric();
        $printedFabric->name = $request->name;
