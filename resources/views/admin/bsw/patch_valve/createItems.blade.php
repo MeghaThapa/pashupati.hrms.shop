@@ -80,12 +80,11 @@
             @csrf
 
             <div class="row">
-                <div class="col-md-2 form-group">
+                <div class="col-md-3 form-group">
                     <label for="size" class="col-form-label">{{ __('Receipt No') }}<span class="required-field">*</span>
                     </label>
                     <input type="text" class="form-control" id="billnumber" name="bill_number"
-                        value="{{ $bswLamFabForPrintingEntry->receipt_no }}" readonly />
-                    {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                        value="{{ $bswFabSendcurtxReceivpatchvalveEntryData->receipt_no }}" readonly />
                 </div>
 
                 <div class="col-md-2 form-group">
@@ -103,7 +102,7 @@
                     <label for="size" class="col-form-label">{{ __('Plant Type') }}
                     </label>
                     <input type="text" name="plant_type_id" class="form-control" id="plantTypeId"
-                        value="{{ $bswLamFabForPrintingEntry->plantType->name }}" readonly>
+                        value="{{ $bswFabSendcurtxReceivpatchvalveEntryData->plantType->name }}" readonly>
                     @error('plant_type_id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -114,7 +113,7 @@
                     <label for="size" class="col-form-label">{{ __('Plant Name') }}
                     </label>
                     <input type="text" name="plant_name_id" class="form-control" id="plantNameId"
-                        value="{{ $bswLamFabForPrintingEntry->plantName->name }}" readonly>
+                        value="{{ $bswFabSendcurtxReceivpatchvalveEntryData->plantName->name }}" readonly>
                     @error('plant_type_id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -125,80 +124,44 @@
                     <label for="shift" class="col-form-label">{{ __('Shift') }}
                     </label>
                     <input type="text" name="shift_id" class="form-control" id="shiftId"
-                        value="{{ $bswLamFabForPrintingEntry->shift->name }}" readonly>
+                        value="{{ $bswFabSendcurtxReceivpatchvalveEntryData->shift->name }}" readonly>
                     @error('shift_id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
                 </div>
-                <div class="col-md-2 form-group">
+                <div class="col-md-1 form-group">
                     <label for="size" class="col-form-label">{{ __('To godam') }}
                     </label>
                     <input type="text" name="godam_id" class="form-control" id="godamId"
-                        value="{{ $bswLamFabForPrintingEntry->godam->name }}" readonly>
+                        value="{{ $bswFabSendcurtxReceivpatchvalveEntryData->godam->name }}"readonly>
                     @error('shift_name_id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
                 </div>
-                {{-- <div>
-                <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                    Add
-                </button>
-            </div> --}}
-
-            </div>
-            <div class="row">
-                <div class="col-md-4 form-group">
-                    <label for="size" class="col-form-label">{{ __('Group Name') }}<span
-                            class="required-field">*</span>
-                    </label>
-                    <input type="text" name="group_id" class="form-control" id="groupId"
-                        value="{{ $bswLamFabForPrintingEntry->group->name }}" readonly>
-                    @error('group_id')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-                <div class="col-md-2">
-                    <label for="Fabric">Brand Bag</label>
-                    <input type="text" name="bag_brand_id" class="form-control" id="bagBrandId"
-                        value="{{ $bswLamFabForPrintingEntry->bagBrand->name }}" readonly>
-                </div>
-                {{-- <div>
-                    <button id="getfabricsrelated" class="btn btn-primary mt-4">
-                        Add
-                    </button>
-                </div> --}}
             </div>
         </form>
         <hr>
         <div class="row">
             <div class="col-md-4">
-                <label for="size" class="col-form-label">{{ __('Laminate Fabric') }}<span
-                        class="required-field">*</span>
+                <label for="size" class="col-form-label">{{ __('Fabric Type') }}<span class="required-field">*</span>
                 </label>
-                <select class="advance-select-box form-control" id="laminatedFabricId" name="laminated_fabric_id">
-                    <option value="" disabled selected>{{ __('Select group Name') }}</option>
-                    @foreach ($uniqueFabrics as $uniqueFabric)
-                        <option value="{{ $uniqueFabric->name }}">
-                            {{ $uniqueFabric->name }} / ({{ $uniqueFabric->fabricgroup->name }})
-                        </option>
-                    @endforeach
+                <select class="advance-select-box form-control" id="fabricType" name="fabric_type">
+                    <option value="" disabled selected>{{ __('Select fabric type') }}</option>
+                    <option value="unlam">{{ __('UNLAM') }}</option>
+                    <option value="lam">{{ __('LAM') }}</option>
+                    <option value="printed">{{ __('PRINTED') }}</option>
                 </select>
             </div>
-            <div class="col-md-1 mt-5">
-                <center>
-                    <p>OR</p>
-                </center>
-            </div>
-            <div class="col-md-2">
-                <label for="size" class="col-form-label">{{ __('Rol No') }}<span class="required-field">*</span>
+            <div class="col-md-4">
+                <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="rollNo" name="roll_number" />
+                <select class="form-control" id="fabricName" name="fabric_name" required>
+                    <option value="" selected disabled>{{ __('Select a fabric') }}</option>
+                </select>
             </div>
         </div>
     </div>
@@ -206,7 +169,7 @@
     {{-- first --}}
     <div class="row">
         <div class="table-responsive table-custom my-3">
-            <table class="table table-hover table-striped" id="bswLamFabTable">
+            <table class="table table-hover table-striped" id="fabTable">
                 <thead class="table-info">
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -216,11 +179,12 @@
                         <th>{{ __('N.W') }}</th>
                         <th>{{ __('Meter') }}</th>
                         <th>{{ __('Avg') }}</th>
-                        {{-- <th>{{ __('Gram') }}</th> --}}
                         <th>{{ __('Send') }}</th>
                     </tr>
                 </thead>
-                <tbody id="bswLamFab"></tbody>
+                <tbody id="fabTbody">
+
+                </tbody>
             </table>
         </div>
     </div>
@@ -288,11 +252,11 @@
                             <select class="advance-select-box form-control  @error('godam_id') is-invalid @enderror"
                                 id="godamIdDanaCons" name="godam_id_consmpt" required>
                                 <option value=" " selected disabled>{{ __('Select Godam') }}</option>
-                                @foreach ($godams as $godam)
+                                {{-- @foreach ($godams as $godam)
                                     <option value="{{ $godam->fromGodam->id }}">
                                         {{ $godam->fromGodam->name }}
                                     </option>
-                                @endforeach
+                                @endforeach --}}
                             </select>
                         </div>
                         {{-- <div class="col-md-4">
@@ -536,8 +500,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="row mt-2 mb-2">
-                            <input type="text" name="bswfabEntry_id" id="bswfabEntryId"
-                                value="{{ $bswLamFabForPrintingEntry->id }}" hidden>
+                            <input type="text" name="bswfabEntry_id" id="bswfabEntryId" hidden>
                             <div class="col-md-2">
                                 <label for="size" class="col-form-label">{{ __('Printed Fabric') }}<span
                                         class="required-field">*</span>
@@ -551,20 +514,15 @@
                                 <select class="advance-select-box form-control" id="printedFabId"
                                     name="printed_fabric_id">
                                     <option value="" selected disabled>{{ __('Select Fabric name') }}</option>
-                                    @if ($printedFabrics && $printedFabrics != null)
-                                        @foreach ($printedFabrics as $printedFabric)
-                                            <option value="{{ $printedFabric->id }}">{{ $printedFabric->name }}</option>
-                                        @endforeach
-                                    @endif
+
 
                                 </select>
                             </div>
-                            <input type="text" id="size" name="size" placeholder="size" hidden>
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <label for="size" class="col-form-label">{{ __('Roll No') }}<span
                                         class="required-field">*</span>
                                 </label>
-                                <input type="text" step="any" min="0" class="form-control" id="rollNo"
+                                <input type="number" step="any" min="0" class="form-control" id="rollNo"
                                     data-number="1" name="roll_no" min="1" required>
                             </div>
                             <div class="col-md-2">
@@ -588,7 +546,7 @@
                                 <input type="number" step="any" min="0" class="form-control" id="meter"
                                     data-number="1" name="meter" min="1" required>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <label for="size" class="col-form-label">{{ __('AVG') }}<span
                                         class="required-field">*</span>
                                 </label>
@@ -686,412 +644,19 @@
     <script>
         $(document).ready(function() {
             $("#nepali-date-picker").nepaliDatePicker({});
-            let todayNepaliDate = {!! isset($bswLamFabForPrintingEntry)
-                ? json_encode($bswLamFabForPrintingEntry->date)
+            let todayNepaliDate = {!! isset($bswFabSendcurtxReceivpatchvalveEntryData)
+                ? json_encode($bswFabSendcurtxReceivpatchvalveEntryData->date)
                 : 'null' !!};
             if (todayNepaliDate !== null) {
                 $("#nepali-date-picker").val(todayNepaliDate);
             }
+            $('#fabricName').on('select2:select', function(e) {
 
-
-            getDataOfBswSentLam();
-            getDataOfPrintedLamFab();
-            getDataOfDanaConsumption();
-            $('#trimmingWst, #fabric_waste').on('input', calculateResult);
-            let id = {!! json_encode($bswLamFabForPrintingEntry->id) !!};
-            $('#printedFabEntireSave').on('click', function() {
-                let bswfabEntry_id = {!! json_encode($bswLamFabForPrintingEntry->id) !!};
-                let trimmimg_wastage = $('#trimmingWst').val();
-                let fabric_waste = $('#fabric_waste').val();
-                let wastage_godam_id = $('#godamIdWaste').val();
-                // console.log('i am here');
-                $.ajax({
-                    url: "{{ route('fabPrintingEntry.saveEntire') }}",
-                    method: 'post',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        bswfabEntry_id: bswfabEntry_id,
-                        trimmimg_wastage: trimmimg_wastage,
-                        fabric_waste: fabric_waste,
-                        wastage_godam_id: wastage_godam_id
-                    },
-                    success: function(response) {
-                        window.location.href =
-                            "{{ route('BswLamFabSendForPrinting.index') }}";
-
-                    },
-                    error: function(xhr, status, error) {
-                        setErrorMsg(xhr.responseJSON.message);
-                    }
-                });
-            });
-            //megha
-
-            $("#netWeight, #meter").on("input", function(event) {
-                calcuateAverageGram();
-            });
-
-            function calcuateAverageGram() {
-                let netweight = parseFloat($('#netWeight').val());
-                let meter = parseFloat($('#meter').val());
-                let size = parseFloat($('#size').val());
-                let farbicSelected = $('#printedFabId').find("option:selected:not([disabled])").length > 0;
-                if (netweight && meter && farbicSelected) {
-                    let avg = ((netweight / meter) * 1000).toFixed(2);
-                    let gram = (avg / size).toFixed(2);
-                    $('#average').val(avg);
-                    $('#gram').val(gram);
-                }
-            }
-            //watage calculation
-            function calculateResult() {
-                var trimmingWaste = parseFloat($('#trimmingWst').val()) || 0; // Parse as float or default to 0
-                var fabricWaste = parseFloat($('#fabric_waste').val()) || 0; // Parse as float or default to 0
-                var resultValue = trimmingWaste + fabricWaste; // Perform your desired calculation here
-                $('#total_waste').val(resultValue.toFixed(2)); // Display the result with 2 decimal places
-            }
-
-            $(document).on('click', "#sendforPrinting", function(e) {
-                e.preventDefault();
-                $('#staticBackdrop1').modal('show');
-            });
-            $(document).on('click', '#addPrintedFab', function() {
-                $('#printedFabricModal').modal('show');
-            });
-            $('#godamIdDanaCons').on('select2:select', function(e) {
-                // console.log('i am here');
-                let godam_id = e.params.data.id;
-                $('#danaGroupId').empty();
-                getDanaName(godam_id);
-            });
-
-            $('#danaNameId').on('select2:select', function(e) {
-                // console.log('df');
-                let godam_id = document.getElementById('godamIdDanaCons').value;
-                let dana_name_id = e.params.data.id;
-                $('#avilableStock').empty();
-                getStockQuantity(godam_id, dana_name_id);
-            });
-            $('#printedFabId').on('select2:select', function(e) {
-                var inputName = $(this).find("option:selected").text();
-                var number = parseInt(inputName.match(/\d+/)[0]);
-                $('#size').val(number);
-                calcuateAverageGram();
+                fabTable.ajax.reload();
             });
 
 
-            // printsAndCuts.getStockQuantity
-            function getStockQuantity(godam_id, dana_name_id) {
-                $.ajax({
-                    url: "{{ route('printsAndCuts.getStockQuantity') }}",
-                    method: 'post',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        godam_id: godam_id,
-                        dana_name_id: dana_name_id
-                    },
-                    success: function(response) {
-                        document.getElementById('avilableStock').value = response.quantity;
-                        // response.forEach(function(item) {
-                        //     setOptionInSelect('danaNameId', item.dana_name.id, item.dana_name
-                        //         .name);
-                        // });
-                    },
-                    error: function(xhr, status, error) {
-                        setErrorMsg(xhr.responseJSON.message);
-                    }
-                });
-            }
-            //save dana consumption
-            document.getElementById('bswFabPrintDanaConsumption').addEventListener('submit',
-                function(e) {
-                    e.preventDefault();
-                    const form = e.target;
-                    let bswfabEntry_id = {!! json_encode($bswLamFabForPrintingEntry->id) !!};
-                    //console.log('testing', printCutEntry_id);
-                    let godam_id = form.elements['godam_id_consmpt'];
-                    let dana_name_id = form.elements['dana_name_id'];
-                    let quantity = form.elements['quantity'];
-                    $.ajax({
-                        url: "{{ route('printFabDanaConsumpt.store') }}",
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            bswfabEntry_id: bswfabEntry_id,
-                            godam_id: godam_id.value,
-                            dana_name_id: dana_name_id.value,
-                            quantity: quantity.value
-                        },
-                        success: function(response) {
-                            console.log(response);
-                            getDataOfDanaConsumption();
-
-                            // removeAllTableRows('danaConsumption');
-                            // getdanaConsumptionData();
-                            // setIntoConsumptionTable(response);
-                            // getdanaConsumptionData();
-                            // updateStockQuantity();
-                        },
-                        error: function(xhr, status, error) {
-                            setErrorMsg(xhr.responseJSON.message);
-                        }
-                    });
-                });
-
-            //dana consumption
-            function getDataOfDanaConsumption() {
-                let bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
-                $.ajax({
-                    url: "{{ route('printFabDanaConsumpt.getData') }}",
-                    method: 'get',
-                    data: {
-                        bsw_lam_fab_for_printing_entry_id: bsw_lam_fab_for_printing_entry_id
-                    },
-                    success: function(response) {
-
-                        $('#bswLamPrintDanaConsumpt').empty();
-                        consumptTableData(response.printedFabDanaConsumpt);
-                        document.getElementById('totalItem').value = response.totalQuantity;
-                    },
-                    error: function(error) {
-                        // Handle the error if the AJAX request fails
-                        console.error(error);
-                    }
-                });
-            }
-
-            function getDanaName(godam_id) {
-                // let godam_id = document.getElementById('godamId').value;
-                $.ajax({
-                    url: "{{ route('printsAndCuts.getDanaName') }}",
-                    method: 'post',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        //dana_group_id: dana_group_id,
-                        godam_id: godam_id
-
-                    },
-                    success: function(response) {
-
-                        $('#danaNameId').prepend(
-                            "<option value='' disabled selected>Select required</option>"
-                        );
-                        response.forEach(function(item) {
-                            // console.log('sdfg', item);
-                            setOptionInSelect('danaNameId', item.dana_name.id, item
-                                .dana_name
-                                .name);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        setErrorMsg(xhr.responseJSON.message);
-                    }
-                });
-            }
-
-            function setOptionInSelect(elementId, optionId, optionText) {
-                let selectElement = $('#' + elementId);
-                // create a new option element
-                let newOption = $('<option>');
-
-                // set the value and text of the new option element
-                newOption.val(optionId).text(optionText);
-
-                // append the new option element to the select element
-                selectElement.append(newOption);
-
-                // refresh the select2 element to update the UI
-                selectElement.trigger('change.select2');
-                // $('#' + elementId).val(optionId).trigger('change.select2');
-            }
-
-            $(document).on('submit', '#sendLamFabForPrinting', function(e) {
-                e.preventDefault();
-                const form = e.target;
-                let bswfabEntry_id = form.elements['bswfabEntry_id'];
-                let printed_fabric_id = form.elements['printed_fabric_id'];
-                let roll_no = form.elements['roll_no'];
-                let gross_weight = form.elements['gross_weight'];
-                let net_weight = form.elements['net_weight'];
-                let meter = form.elements['meter'];
-                let average = form.elements['average'];
-                let gram = form.elements['gram'];
-                if (!printed_fabric_id.value && !roll_no.value && !gross_weight.value && !net_weight
-                    .value && !meter.value && !average.value && !gram.value) {
-                    setMessage('sendForPrintingError', 'Please Fill out all fields')
-                    return false;
-                }
-                $.ajax({
-                    url: "{{ route('bswLamPrintedFabStock.store') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        bswfabEntry_id: bswfabEntry_id.value,
-                        printed_fabric_id: printed_fabric_id.value,
-                        roll_no: roll_no.value,
-                        gross_weight: gross_weight.value,
-                        net_weight: net_weight.value,
-                        meter: meter.value,
-                        average: average.value,
-                        gram: gram.value,
-                    },
-
-                    success: function(response) {
-                        // console.log('name', response);
-                        $('#staticBackdrop1').modal('hide');
-                        $('#bswSentLamFabTbody').empty();
-                        getDataOfPrintedLamFab();
-                    },
-                    error: function(xhr, status, error) {
-                        setMessage('sendForPrintingError', xhr.responseJSON.message)
-                    }
-                })
-            });
-
-            $(document).on('submit', '#createPrintedFabricModel', function(e) {
-                e.preventDefault();
-                const form = e.target;
-                let name = form.elements['name'];
-                let status = form.elements['status'];
-                if (!name.value && !status.value) {
-                    setMessage('printedFabricError', 'Please Fill out all fields')
-                    return false;
-                }
-                $.ajax({
-                    url: "{{ route('printedFabric.store') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        name: name.value,
-                        status: status.value,
-                    },
-                    success: function(response) {
-                        console.log('name', response);
-                        $('#printedFabricModal').modal('hide');
-
-                        name.value = '';
-                        status.value = '';
-
-                        let selectElement = document.getElementById('printedFabId');
-                        let optionElement = document.createElement('option');
-
-                        optionElement.value = response.id;
-                        optionElement.text = response.name;
-                        selectElement.appendChild(optionElement);
-                        optionElement.selected = true;
-                    },
-                    error: function(xhr, status, error) {
-
-                        setMessage('printedFabricError', xhr.responseJSON.message)
-                    }
-                })
-            });
-
-            function setMessage(element_id, message) {
-                let errorContainer = document.getElementById(element_id);
-                errorContainer.hidden = false;
-                errorContainer.innerHTML = message;
-                setTimeout(function() {
-                    errorContainer.hidden = true;
-                }, 2000);
-            }
-            //for printed
-            function getDataOfPrintedLamFab() {
-                let bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
-                $.ajax({
-                    url: "{{ route('bswLamPrintedFabStock.printedLamFabData') }}",
-                    method: 'get',
-                    data: {
-                        bsw_lam_fab_for_printing_entry_id: bsw_lam_fab_for_printing_entry_id
-                    },
-                    success: function(response) {
-                        // console.log('printedFabric data', response);
-
-                        $('#bswPrintedLamFabTbody').empty();
-                        printedTableData(response.bswLamPrintedFabricStocks);
-                        document.getElementById('totalPrintInmtr').value = response.totalMeter;
-                        document.getElementById('totalPrintNetWt').value = response.totalNetWt;
-                    },
-                    error: function(error) {
-                        // Handle the error if the AJAX request fails
-                        console.error(error);
-                    }
-                });
-            }
-
-            //for dana consumpt
-            function consumptTableData(data) {
-                data.forEach(d => {
-                    insertDataIntoConsumptTable(d)
-                });
-            }
-
-            function insertDataIntoConsumptTable(d) {
-                // let group = d.gram_wt.split('-')[0];
-                // let result = parseFloat(title) * parseFloat(group);
-
-                let tr = $("<tr></tr>").appendTo('#bswLamPrintDanaConsumpt');
-
-                tr.append(`<td>#</td>`);
-                tr.append(`<td>${d.godam.name}</td>`);
-                tr.append(`<td>${d.dana_name.name}</td>`);
-                tr.append(`<td>${d.quantity}</td>`);
-            }
-
-            function printedTableData(data) {
-                data.forEach(d => {
-                    insertDataIntoPrintedFabTable(d)
-                });
-            }
-
-            function insertDataIntoPrintedFabTable(d) {
-                // let group = d.gram_wt.split('-')[0];
-                // let result = parseFloat(title) * parseFloat(group);
-
-                let tr = $("<tr></tr>").appendTo('#bswPrintedLamFabTbody');
-
-                tr.append(`<td>#</td>`);
-                tr.append(`<td>${d.printed_fabric.name}</td>`);
-                tr.append(`<td>${d.roll_no}</td>`);
-                tr.append(`<td>${d.gross_weight}</td>`);
-                tr.append(`<td>${d.net_weight}</td>`);
-                tr.append(`<td>${d.meter}</td>`)
-                tr.append(`<td>${d.average}</td>`);
-                tr.append(`<td>${d.gram_weight}</td>`);
-                // tr.append(
-                //     `<td><div class="btn-group"><a id="sendforPrinting" data-group='${d.gram_wt}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`
-                // );
-            }
-            //for printed end
-            //for sent fabric
-            function getDataOfBswSentLam() {
-                let bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
-                $.ajax({
-                    url: "{{ route('bswSentLamFab.lamFabData') }}",
-                    method: 'get',
-                    data: {
-                        bsw_lam_fab_for_printing_entry_id: bsw_lam_fab_for_printing_entry_id
-                    },
-                    success: function(response) {
-                        // console.log('megha', response)
-                        tableData(response.bswSentLamFab);
-                        document.getElementById('totalLamMeter').value = response.totalMeter;
-                        document.getElementById('totalLamNetWt').value = (response.totalNetWt).toFixed(
-                            2);
-                        // console.log('frtyhbvcfgh', response);
-                    },
-                    error: function(error) {
-                        // Handle the error if the AJAX request fails
-                        console.error(error);
-                    }
-                });
-            }
-
-            $('#laminatedFabricId').on('select2:select', function(e) {
-                bswDatatable.ajax.reload();
-            });
-
-            var bswDatatable = $('#bswLamFabTable').DataTable({
+            var fabTable = $('#fabTable').DataTable({
                 lengthMenu: [
                     [5, 15, 30, -1],
                     ['5 rows', '15 rows', '30 rows', 'Show all']
@@ -1100,14 +665,15 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{ route('BswLamFabSendForPrinting.lamFabData') }}',
+                    url: '{{ route('fabSendCuetxReceivePatchValveItems.fabData') }}',
                     data: function(data) {
-                        data.lamFabName = $('#laminatedFabricId').val()
+                        data.fabName = $('#fabricName').val();
+                        data.fabType = $('#fabricType').val();
+                        return data;
                     },
                     error: function(xhr, error, thrown) {
                         console.log("Error fetching data:", error);
                     }
-
                 },
                 columns: [{
                         data: 'DT_RowIndex'
@@ -1134,106 +700,67 @@
                         data: 'action'
                     },
                 ],
-            });
-            //first table data
-            // function putDataInBswLamFabTbl(data) {
-            //     console.log(data)
-            //     $("#bswLamFab").empty();
-            //     data.forEach((d, index) => {
-            //         let tr = $("<tr></tr>").appendTo("#bswLamFab");
-            //         tr.append(`<td>${index+1}</td>`);
-            //         tr.append(`<td>${d.name}</td>`);
-            //         tr.append(`<td>${d.roll_no}</td>`);
-            //         tr.append(`<td>${d.gross_wt}</td>`);
-            //         tr.append(`<td>${d.net_wt}</td>`);
-            //         tr.append(`<td>${d.meter}</td>`);
-            //         tr.append(`<td>${d.average_wt}</td>`);
 
-            //         tr.append(`<td>
-        //                 <a class="btn btn-primary send_to_lower"
-        //                     data-name='${d.name}'
-        //                     data-gross_wt= "${d.gross_wt}"
-        //                     data-roll_no= "${d.roll_no}"
-        //                     data-id= "${d.id}"
-        //                     data-fabric_id= "${d.fabric_id}"
-        //                     data-net_wt = "${d.net_wt}"
-        //                     data-meter = "${d.meter}"
-        //                     data-gram_wt = "${d.gram_wt}"
-        //                     data-average = "${d.average_wt}"
-        //                     href="${d.id}">Send</a>
-        //             </td>`);
-            //     })
-            // }
-            /************************* Form Submission *************************/
+            });
 
             $(document).on("click", '#lamsendEntry', function(e) {
-                // alert($(this).data("id"))
-                let $bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
-                // console.log('bsw_lam_fab_for_printing_entry_id', $bsw_lam_fab_for_printing_entry_id);
+                //   alert($(this).data("id")) megha
+                let $bswcurtexto_patchVal_Entry_id = {!! $bswFabSendcurtxReceivpatchvalveEntryData->id !!}
                 e.preventDefault()
                 let name = $(this).data("name")
                 let gross_wt = $(this).data("gross_wt")
                 let net_wt = $(this).data("net_wt")
                 let roll_no = $(this).data("roll_no")
                 let meter = $(this).data("meter")
-                let fabric_id = $(this).data("fabric_id")
+                // let fabric_id = $(this).data("fabric_id")
                 let average_wt = $(this).data("average")
                 let gram_wt = $(this).data("gram_wt")
-
-                let id = $(this).data("id")
-                $.ajax({
-                    url: "{{ route('bswSentLamFab.store') }}",
-                    method: "post",
-                    data: {
-                        "_token": $("meta[name='csrf-token']").attr("content"),
-                        "gross_wt": gross_wt,
-                        "net_wt": net_wt,
-                        "roll_no": roll_no,
-                        "meter": meter,
-                        "average": average_wt,
-                        "gram_wt": gram_wt,
-                        "fabric_stock_id": id,
-                        "fabric_id": fabric_id,
-                        "bsw_lam_fab_for_printing_entry_id": $bsw_lam_fab_for_printing_entry_id
+            });
+            $('#fabricName').select2({
+                theme: 'bootstrap4',
+                ajax: {
+                    method: 'GET',
+                    url: "{{ route('fabSendCuetxReceivePatchValveItems.getFabricName') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        let fabricType = $('#fabricType').val();
+                        return {
+                            fabricType: fabricType,
+                            query: params.term,
+                            page: params.page || 1
+                        };
                     },
-
-                    success: function(response) {
-                        $('#bswSentLamFabTbody').empty();
-                        getDataOfBswSentLam();
-
-
-                    },
-                    error: function(error) {
-                        console.log("error", error);
+                    processResults: function(data) {
+                        console.log(data.data)
+                        return {
+                            results: data.data,
+                            pagination: {
+                                more: data.next_page_url ? true : false
+                            }
+                        };
                     }
-                })
+                },
+                placeholder: 'Select a fabric',
+                minimumInputLength: 0
+            });
 
-            })
 
-            function insertDataIntoTable(d) {
-                //  console.log(d);
-                let group = d.gram_wt.split('-')[0];
-                // let result = parseFloat(title) * parseFloat(group);
 
-                let tr = $("<tr></tr>").appendTo('#bswSentLamFabTbody');
+            function setOptionInSelect(elementId, optionId, optionText) {
+                let selectElement = $('#' + elementId);
+                // create a new option element
+                let newOption = $('<option>');
 
-                tr.append(`<td>#</td>`);
-                tr.append(`<td>${d.fabric.name}</td>`);
-                tr.append(`<td>${d.roll_no}</td>`);
-                tr.append(`<td>${d.gross_wt}</td>`);
-                tr.append(`<td>${d.net_wt}</td>`);
-                tr.append(`<td>${d.meter}</td>`)
-                tr.append(`<td>${d.average}</td>`);
-                tr.append(`<td>${d.gram_wt}</td>`);
-                tr.append(
-                    `<td><div class="btn-group"><a id="sendforPrinting" data-group='${d.gram_wt}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`
-                );
-            }
+                // set the value and text of the new option element
+                newOption.val(optionId).text(optionText);
 
-            function tableData(data) {
-                data.forEach(d => {
-                    insertDataIntoTable(d)
-                });
+                // append the new option element to the select element
+                selectElement.append(newOption);
+
+                // refresh the select2 element to update the UI
+                selectElement.trigger('change.select2');
+                // $('#' + elementId).val(optionId).trigger('change.select2');
             }
         });
     </script>

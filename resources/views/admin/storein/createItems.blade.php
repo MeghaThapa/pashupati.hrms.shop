@@ -60,8 +60,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                    width:150px !important;
-                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                        width:150px !important;
+                                                                                                                                                                                                                                    } */
     </style>
 @endsection
 
@@ -330,8 +330,8 @@
                     <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
                         placeholder="{{ __('Purchase Note') }}">
                         @if ($storein->note)
-                {{ $storein->note }}
-                @endif
+{{ $storein->note }}
+@endif
                     </textarea>
                     @error('note')
                         <span class="invalid-feedback" role="alert">
@@ -1881,17 +1881,14 @@
                                     let option = new Option(optionText, optionValue);
                                     selectOptions += option.outerHTML;
                                 }
-
                             }
                             if (click_by == 'blade') {
                                 $('#ProductName').html(selectOptions);
                                 resolve(response);
-
                             } else {
                                 $('#item_id').html(selectOptions);
                                 resolve(response);
                             }
-
                         },
                         error: function(xhr, status, error) {
                             reject(error);

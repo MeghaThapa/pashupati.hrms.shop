@@ -631,7 +631,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('openingfinaltripal/edit/{id}','Tripal\OpeningTripalController@getOpeningFinalTripalEdit')->name('openingfinaltripal.edit');
     Route::put('openingfinaltripal/update/{id}','Tripal\OpeningTripalController@getOpeningFinalTripalUpdate')->name('openingfinaltripal.update');
     Route::get('openingfinaltripal/delete/{id}','Tripal\OpeningTripalController@destroyTripal')->name('openingfinaltripal.delete');
-   
+
 
     //sale final tripal
     Route::get('salefinaltripal','Sale\SaleFinalTripalController@index')->name('salefinaltripal.index');
@@ -1308,7 +1308,7 @@ Route::controller(SqlDumpController::class)
 ->prefix('sqlDownload')
 ->group(function(){
     Route::get("download","download")->name('sqlDownload.download');
-    // Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
+    Route::post("importSql","importSql")->name('sqlDownload.importSql');
 });
 
 Route::controller(BswLamFabForPrintingEntryController::class)
@@ -1319,3 +1319,22 @@ Route::controller(BswLamFabForPrintingEntryController::class)
 });
 
 /***********************************END SQL DUMP*************************************/
+/*********************************BswFabSendcurtxReceivpatchvalveController*****************************************/
+Route::controller(BswFabSendcurtxReceivpatchvalveEntryController::class)
+->prefix('fabSendCuetxReceivePatchValveEntry')
+->group(function(){
+    Route::get("yajraDatatables","yajraDatatables")->name('fabSendCuetxReceivePatchValveEntry.yajraDatatables');
+    Route::get("index","index")->name('fabSendCuetxReceivePatchValveEntry.index');
+    Route::get("create","create")->name('fabSendCuetxReceivePatchValveEntry.create');
+    Route::post("store","store")->name('fabSendCuetxReceivePatchValveEntry.store');
+});
+Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
+->prefix('fabSendCuetxReceivePatchValveItems')
+->group(function(){
+    Route::get("createItems","createItems")->name('fabSendCuetxReceivePatchValveItems.createItems');
+    Route::get("getFabricName","getFabricName")->name('fabSendCuetxReceivePatchValveItems.getFabricName');
+    Route::get("fabData","fabData")->name('fabSendCuetxReceivePatchValveItems.fabData');
+    Route::get("edit/{id}","edit")->name('fabSendCuetxReceivePatchValveItems.edit');
+});
+
+/*********************************BswFabSendcurtxReceivpatchvalveController*****************************************/

@@ -25,7 +25,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
      */
     public function collection(Collection $rows)
     {
-
+        DB::beginTransaction();
         foreach ($rows as $row) {
            // dd($row);
             $trimDepartment = trim($row['department']);
@@ -168,9 +168,11 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     ]);
                 }
             }else{
-                // dd($department, $category , $item , $size , $unit);
+                DB::rollback();
+                dd($department, $category , $item , $size , $unit);
             }
         }
+        DB::commit();
     }
 }
 
