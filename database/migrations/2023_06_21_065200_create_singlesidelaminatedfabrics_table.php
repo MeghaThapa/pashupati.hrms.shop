@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->integer('bill_id')->nullable();
            
             $table->bigInteger('fabric_id')->unsigned()->index();
             $table->foreign('fabric_id')->references('id')->on('fabrics')->onDelete('cascade');

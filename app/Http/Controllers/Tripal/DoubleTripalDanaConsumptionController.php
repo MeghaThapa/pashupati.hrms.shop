@@ -48,6 +48,7 @@ class DoubleTripalDanaConsumptionController extends Controller
             }else{
                 $printsCutsDanaConsumption=new DoubleTripalDanaConsumption();
                 $printsCutsDanaConsumption->bill_no = $request->bill_no;
+                $printsCutsDanaConsumption->bill_id = $request->bill_id;
                 $printsCutsDanaConsumption->godam_id  = $request->godam_id;
                 $printsCutsDanaConsumption->dana_name_id = $request->dana_name_id;
                 $printsCutsDanaConsumption->quantity = $request->quantity;

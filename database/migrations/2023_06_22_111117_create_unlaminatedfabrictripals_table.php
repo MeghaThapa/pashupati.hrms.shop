@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('bill_number');
             $table->string('bill_date');
+            $table->integer('bill_id')->nullable();
+            
             $table->unsignedBigInteger('fabric_id')->nullable();
             $table->foreign('fabric_id')->references("id")->on('fabrics')->onDelete('cascade')->onUpdate('cascade');
             $table->string('roll_no');

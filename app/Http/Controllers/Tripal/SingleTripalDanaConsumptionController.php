@@ -51,6 +51,7 @@ class SingleTripalDanaConsumptionController extends Controller
                 $printsCutsDanaConsumption->godam_id  = $request->godam_id;
                 $printsCutsDanaConsumption->dana_name_id = $request->dana_name_id;
                 $printsCutsDanaConsumption->quantity = $request->quantity;
+                $printsCutsDanaConsumption->bill_id = $request->bill_id;
                 $printsCutsDanaConsumption->save();
         }
         DB::commit();
@@ -64,7 +65,8 @@ class SingleTripalDanaConsumptionController extends Controller
     public function getSingleTripalDanaConsumption(Request $request){
         //return $request->printAndCutEntry_id;
         // dd('lol');
-            $printsCutsDanaConsumption=SingleTripalDanaConsumption::where('bill_no',$request->bill_no)->get();
+        // dd($request);
+            $printsCutsDanaConsumption=SingleTripalDanaConsumption::where('bill_id',$request->bill_id)->get();
             // dd($printsCutsDanaConsumption);
             return $printsCutsDanaConsumption->load(['godam:id,name','danaName:id,name']);
     }

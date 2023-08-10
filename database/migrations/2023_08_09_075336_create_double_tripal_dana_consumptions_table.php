@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('double_tripal_dana_consumptions', function (Blueprint $table) {
             $table->id();
+            $table->integer('bill_id')->nullable();
             $table->string("bill_no");
             $table->unsignedBigInteger("godam_id");
             $table-> foreign("godam_id")->references("id")->on('godam')->onDelete('cascade');

@@ -32,6 +32,7 @@ use App\Models\DoubleSideLaminatedFabric;
 use App\Models\DoubleSideLaminatedFabricStock;
 use App\Models\DoubleTripalName;
 use App\Models\DoubleTripalDanaConsumption;
+use App\Models\DoubleTripalBill;
 use App\Helpers\AppHelper;
 
 class DoubleTripalController extends Controller
@@ -56,9 +57,41 @@ class DoubleTripalController extends Controller
         ->select('from_godam_id')
         ->distinct()
         ->get();
+        $datas = DoubleTripalBill::get();
 
         // dd($fabrics);
-        return view('admin.doubletripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date','godams','sumdana'));
+        return view('admin.doubletripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date','godams','sumdana','datas'));
+    }
+
+    public function createDoubletripal($id)
+    {
+        $find_data = DoubleTripalBill::find($id);
+        $bill_date = $find_data->bill_date;
+        $bill_no = $find_data->bill_no;
+        
+        $shifts = Shift::where('status','active')->get();
+        $godam = Godam::where('status','active')->get();
+        $planttype = ProcessingStep::where('status','1')->get();
+        $plantname = ProcessingSubcat::where('status','active')->get();
+        $dana = AutoLoadItemStock::get();
+        $fabrics = Singlesidelaminatedfabricstock::get()->unique('name')->values()->all();
+
+        $sumdana = DoubleTripalDanaConsumption::where('bill_no',$bill_no)->sum('quantity');
+
+        $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
+            $query->select('id','name');
+        }])
+        ->select('from_godam_id')
+        ->distinct()
+        ->get();
+        $datas = DoubleTripalBill::get();
+
+        // dd($fabrics);
+        return view('admin.doubletripal.create',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date','godams','sumdana','datas','find_data','id'));
+
+      
+
+
     }
 
 
@@ -195,6 +228,8 @@ class DoubleTripalController extends Controller
             parse_str($request->data,$data);
             
             $fabric_ids = $data['fabricsid'];
+            $bill_id = $data['bill_id'];
+            // dd($request);
             //thiis fabric id is singlesidestockid
 
             $fabric_data = Singlesidelaminatedfabricstock::find($fabric_ids);
@@ -207,6 +242,7 @@ class DoubleTripalController extends Controller
       
 
             SingleSideunlaminatedFabric::create([
+                'bill_id' => $bill_id,
                 'bill_number' => $data['bill_no'],
                 'bill_date' => $data['bill_date'],
                 'fabric_id' =>$fabric_id ,
@@ -296,6 +332,7 @@ class DoubleTripalController extends Controller
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
+                        'bill_id' => $bill_id,
                         "status" => "sent"
                     ]);
                     // dd('hello');
@@ -319,6 +356,7 @@ class DoubleTripalController extends Controller
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
+                        'bill_id' => $bill_id,
                         "status" => "sent"
                     ]);
 

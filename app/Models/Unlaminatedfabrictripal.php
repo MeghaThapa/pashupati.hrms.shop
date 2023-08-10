@@ -10,7 +10,7 @@ class Unlaminatedfabrictripal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'fabric_id','roll_no','gross_wt','net_wt','meter','average','gram','created_at','updated_at',
+        'fabric_id','roll_no','gross_wt','net_wt','meter','average','gram','created_at','updated_at','bill_id',
         'plantname_id','department_id','planttype_id','bill_number','bill_date',"status"
     ];
     public function fabric(){

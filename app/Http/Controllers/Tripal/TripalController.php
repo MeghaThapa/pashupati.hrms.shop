@@ -30,6 +30,7 @@ use Str;
 use App\Models\Singlesidelaminatedfabric;
 use App\Models\Singlesidelaminatedfabricstock;
 use App\Models\SingleTripalDanaConsumption;
+use App\Models\SingleTripalBill;
 use App\Helpers\AppHelper;
 
 class TripalController extends Controller
@@ -54,8 +55,41 @@ class TripalController extends Controller
         ->distinct()
         ->get();
 
-        return view('admin.tripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana'));
+        $datas = SingleTripalBill::get();
+
+        return view('admin.tripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana','datas'));
     }
+
+    public function createSingletripal($id)
+    {
+        
+        $find_data = SingleTripalBill::find($id);
+        $bill_date = $find_data->bill_date;
+        $bill_no = $find_data->bill_no;
+        // dd($bill_date);
+        $shifts = Shift::where('status','active')->get();
+        $godam = Godam::where('status','active')->get();
+        $planttype = ProcessingStep::where('status','1')->get();
+        $plantname = ProcessingSubcat::where('status','active')->get();
+        $dana = AutoLoadItemStock::get();
+
+        $sumdana = SingleTripalDanaConsumption::where('bill_no',$bill_no)->sum('quantity');
+
+        $godams=AutoLoadItemStock::with(['fromGodam'=>function($query){
+            $query->select('id','name');
+        }])
+        ->select('from_godam_id')
+        ->distinct()
+        ->get();
+
+        $datas = SingleTripalBill::get();
+        $fabstocks = FabricStock::get();
+
+
+
+        return view('admin.tripal.create',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana','datas','id','find_data','fabstocks'));
+    }
+
     public function getplanttype(Request $request){
         if($request->ajax()){
             $department_id =  $request->id;
@@ -187,12 +221,14 @@ class TripalController extends Controller
     public function store(Request $request){
         try{
             // dd('lol');
+            // dd($request);
 
             $data = [];
             parse_str($request->data,$data);
             
             
             $fabricstock_id = $data['fabricsid'];
+            $bill_id = $data['bill_id'];
             $fabric_data = FabricStock::find($fabricstock_id);
             $fabric_id = $fabric_data->fabric_id;
 
@@ -212,6 +248,7 @@ class TripalController extends Controller
                 'department_id' =>$data['godam_id'],
                 'planttype_id' => $data['planttype_id'],
                 'plantname_id' =>  $data['plantname_id'],
+                'bill_id' =>  $bill_id,
                 'status' => "sent",
             ]);
 
@@ -277,6 +314,7 @@ class TripalController extends Controller
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
+                        'bill_id' =>  $bill_id,
                         "status" => "1"
                     ]);
                     // dd('hello');
@@ -300,6 +338,7 @@ class TripalController extends Controller
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
+                        'bill_id' =>  $bill_id,
                         // "fabric_id" => $fabric_id,
                     ]);
 
@@ -333,6 +372,7 @@ class TripalController extends Controller
                         "department_id" => $data['godam_id'],
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
+                        'bill_id' =>  $bill_id,
                         "status" => "1"
                     ]);
 
@@ -356,7 +396,8 @@ class TripalController extends Controller
                        "bill_number" => $bill_number,
                        'bill_date' => $bill_date,
                        "planttype_id" => $planttype_id,
-                       "plantname_id" => $plantname_id
+                       "plantname_id" => $plantname_id,
+                       'bill_id' =>  $bill_id,
 
                     ]);
 
@@ -391,6 +432,7 @@ class TripalController extends Controller
                         "department_id" => $data['godam_id'],                     
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
+                        'bill_id' =>  $bill_id,
                         "status" => "1"
                     ]);
 
@@ -412,6 +454,7 @@ class TripalController extends Controller
                         "bill_number" => $bill_number,
                         'bill_date' => $bill_date,
                         "planttype_id" => $planttype_id,
+                        'bill_id' =>  $bill_id,
                         "plantname_id" => $plantname_id
                     ]);
 
@@ -522,21 +565,7 @@ class TripalController extends Controller
 
                 $department_id = Singlesidelaminatedfabric::value('department_id');
                 
-                // $stocks = AutoLoadItemStock::where('id',$request->selectedDanaID)->value('dana_name_id');
-
-                // $stock = AutoLoadItemStock::where('dana_name_id',$stocks)->first();
-
-                // $presentQuantity = $stock->quantity;
-                // $deduction = $presentQuantity - $consumption;
-
-                // if($deduction == 0){
-                //     $stock->delete();
-                // }
-                // else{
-                //     $stock->update([
-                //         "quantity" => $deduction
-                //     ]);
-                // }
+           
 
                 $getSinglesidelaminatedfabric = Singlesidelaminatedfabric::where('bill_number',$request->bill)->update(['status' => 'completed']); 
 

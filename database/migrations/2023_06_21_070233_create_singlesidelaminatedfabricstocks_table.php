@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->integer('bill_id')->nullable();
             
             $table->unsignedBigInteger('planttype_id')->nullable();
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade');

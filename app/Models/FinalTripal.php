@@ -10,7 +10,7 @@ class FinalTripal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'fabric_id','doublefabric_id','roll_no','gross_wt','net_wt','meter','gram','created_at','updated_at',
+        'fabric_id','doublefabric_id','roll_no','gross_wt','net_wt','meter','gram','created_at','updated_at','bill_id',
         'plantname_id','department_id','planttype_id','bill_number','bill_date','name','slug','loom_no','average_wt','status','date_en','date_np','finaltripalname_id'
     ];
 }
