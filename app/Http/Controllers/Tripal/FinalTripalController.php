@@ -164,13 +164,13 @@ class FinalTripalController extends Controller
             $finaltripal = FinalTripal::where("status",'sent')->get();
             // dd($tripalentry);
 
-            $unlam = DoubleSidelaminatedfabricstock::with('fabric')->where('status',"sent")->get();
+            $unlam = DoubleSidelaminatedfabricstock::where('status',"sent")->get();
             $ul_mtr_total=0;
             $ul_net_wt_total = 0;
             // dd($unlam);
 
-            $unlamnet_wt = DoubleSidelaminatedfabricstock::with('fabric')->where('status',"sent")->sum('net_wt');
-            $unlamnet_meter = DoubleSidelaminatedfabricstock::with('fabric')->where('status',"sent")->sum('meter');
+            $unlamnet_wt = DoubleSidelaminatedfabricstock::where('status',"sent")->sum('net_wt');
+            $unlamnet_meter = DoubleSidelaminatedfabricstock::where('status',"sent")->sum('meter');
             
             $lam = FinalTripalStock::where('status','sent')->get();
             // dd($lam);
