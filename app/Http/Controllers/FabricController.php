@@ -9,6 +9,7 @@ use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\FabricDetail;
 use App\Models\TapeEntryStockModel;
+use App\Models\FabricStock;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FabricImport;
 use Illuminate\Support\Facades\DB;
@@ -253,6 +254,60 @@ $fabric_netweight = 0;
         }
 
         return redirect()->back()->withSuccess('Sub category created successfully!');
+    }
+
+    public function fabricDetailDestroy($fabricDetail_id)
+    {
+
+        try{
+            DB::beginTransaction();
+
+           
+
+            // dd('ll');
+            // dd($fabricDetail_id);
+            $id = $fabricDetail_id;
+            $find_data = FabricDetail::find($id);
+
+
+            // dd($find_data->total_netweight,$find_data);
+            $getfabricstock = FabricStock::where('bill_no',$find_data->bill_number)->get();
+
+            $getfabric = Fabric::where('bill_no',$find_data->bill_number)->get();
+
+            foreach($getfabric as $stock){
+                $stock->delete();
+            }
+
+            foreach($getfabricstock as $stock){
+                $stock->delete();
+            }
+
+            FabricDetail::where('id',$id)->delete();  
+
+            $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$find_data->godam_id)
+                                                  ->value('id');
+
+            $findTape = TapeEntryStockModel::find($gettapeQuantity);
+
+            $final = $findTape->tape_qty_in_kg + $find_data->total_netweight;
+            $findTape->tape_qty_in_kg = $final;
+            $findTape->update();  
+
+
+            DB::commit();
+
+            return back();
+        }catch(Exception $e){
+            DB::rollBack();
+            return response([
+                "exception" => $e->getMessage(),
+            ]);
+        }
+    
+
+        // dd($getfabricstock);
+        return back();
     }
 
     public function discard()

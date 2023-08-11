@@ -90,6 +90,7 @@ class BswSendLamFabForPrintingController extends Controller
     public function createItems( $id){
         $bswLamFabForPrintingEntry= BswLamFabForPrintingEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name','group:id,name','bagBrand:id,name'])->find($id);
         $laminatedFabrics=FabricStock::with('fabricgroup')->where('is_laminated','true')
+        ->where('godam_id',$bswLamFabForPrintingEntry->godam_id)
         ->get();
         $uniqueFabrics = $laminatedFabrics->unique('name')->values()->all();
         $printedFabrics=PrintedFabric::where('status','active')->get();
@@ -104,14 +105,34 @@ class BswSendLamFabForPrintingController extends Controller
         return view('admin.bsw.lamFabricSendForPrinting',compact(['bswLamFabForPrintingEntry','uniqueFabrics','printedFabrics','godams']));
     }
 
-    public function lamFabData(Request $request){
-        $tableDatas=FabricStock::where('name',$request->lamFabName)->get();
-        return $tableDatas;
-    }
+  public function lamFabData(Request $request) {
+    if($request->lamFabName){
+        $tableDatas = FabricStock::where('name', $request->lamFabName)->get();
+        return DataTables::of($tableDatas)
+        ->addIndexColumn()
+        ->addColumn('action', function ($tableData) {
+            $actionBtn = '<button class="btn btn-danger" id="lamsendEntry"
+                data-id="' . $tableData->id . '"
+                data-name="' . $tableData->name . '"
+                data-gross_wt="' . $tableData->gross_wt . '"
+                data-roll_no="' . $tableData->roll_no . '"
+                data-fabric_id="' . $tableData->fabric_id . '"
+                data-net_wt="' . $tableData->net_wt . '"
+                data-meter="' . $tableData->meter . '"
+                data-gram_wt="' . $tableData->gram_wt . '"
+                data-average="' . $tableData->average_wt . '"
+            >Send</button>';
+            return $actionBtn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+    }}
+
      public function edit($id)
     {
         $bswLamFabForPrintingEntry= BswLamFabForPrintingEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name','group:id,name','bagBrand:id,name'])->find($id);
         $laminatedFabrics=FabricStock::with('fabricgroup')->where('is_laminated','true')
+        ->where('godam_id',$bswLamFabForPrintingEntry->godam_id )
         ->get();
         $uniqueFabrics = $laminatedFabrics->unique('name')->values()->all();
         $printedFabrics=PrintedFabric::where('status','active')->get();

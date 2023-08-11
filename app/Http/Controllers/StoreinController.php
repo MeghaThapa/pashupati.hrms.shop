@@ -20,6 +20,7 @@ use App\Models\Size;
 use App\Models\Stock;
 use App\Models\StoreinItem;
 use App\Models\Tax;
+use App\Models\PurchaseStoreinReport;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -229,6 +230,8 @@ class StoreinController extends Controller
     public function saveEntireStorein(Request $request, $storein_id)
     {
         try{
+        $today= Carbon::now()->format('Y-n-j');
+
             DB::beginTransaction();
         $storein = Storein::with('storeinItems')
             ->withSum('storeinItems', 'total_amount')
@@ -276,6 +279,30 @@ class StoreinController extends Controller
         $storein->status = $request->status;
         // storein status change
         $storein->save();
+        
+
+        foreach($storein->storeinItems as $item){
+
+        $purchaseStoreinReport=PurchaseStoreinReport::where('name',$item->storein_item_id)
+        ->where('date',$today)
+        ->first();
+        if($purchaseStoreinReport){
+            $purchaseStoreinReport->quantity += $item->quantity;
+            $purchaseStoreinReport->save();
+        }else{
+            $purchaseStoreinReport= new PurchaseStoreinReport();
+                    $purchaseStoreinReport->date =$purchaseStoreinReport->date;
+                    $purchaseStoreinReport->name =$item->storein_item_id;
+                    $purchaseStoreinReport->quantity =$item->quantity;
+                    $purchaseStoreinReport->rate = $item->price;
+                    $purchaseStoreinReport->total =$purchaseStoreinReport->quantity * $purchaseStoreinReport->rate;
+                    $purchaseStoreinReport->save();
+                }
+            }
+
+
+
+
         DB::commit();
         return redirect()->route('storein.index')->withSuccess('Storein entirely created successfully!');
         }catch(Exception $e){

@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Response;
 use Spatie\DbDumper\Databases\MySql;
+use Illuminate\Http\Request;
 use Artisan;
+use DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
 class SqlDumpController extends Controller
 {
 
@@ -39,5 +44,39 @@ class SqlDumpController extends Controller
         return $isWindows
             ? 'D:\xampp\mysql\bin\mysqldump' // Replace this with the correct path on Windows
             : '/usr/bin/mysqldump'; // Replace this with the correct path on Linux/Unix
+    }
+
+    public function importSql(Request $request)
+    {
+        $sqlFile = $request->file('sql_file');
+
+        if ($sqlFile) {
+            //   DB::table('hrms_productify')->truncate();
+            $stream = fopen($sqlFile->path(), 'r');
+            $sql = '';  
+
+            while (!feof($stream)) {
+                $line = fgets($stream);
+
+                // Skip comments and empty lines
+                if (substr(trim($line), 0, 2) == '--' || trim($line) == '') {
+                    continue;
+                }
+
+                $sql .= $line;
+
+                // Execute SQL statement if it ends with a semicolon
+                if (substr(trim($line), -1, 1) == ';') {
+                    DB::unprepared($sql);
+                    $sql = ''; // Reset the SQL buffer
+                }
+            }
+
+            fclose($stream);
+
+            return redirect()->back()->with('success', 'SQL data imported successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Please upload an SQL file.');
+        }
     }
 }

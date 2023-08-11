@@ -203,9 +203,10 @@
         </div>
     </div>
     <hr>
+    {{-- first --}}
     <div class="row">
         <div class="table-responsive table-custom my-3">
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped" id="bswLamFabTable">
                 <thead class="table-info">
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -558,11 +559,12 @@
 
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <input type="text" id="size" name="size" placeholder="size" hidden>
+                            <div class="col-md-1">
                                 <label for="size" class="col-form-label">{{ __('Roll No') }}<span
                                         class="required-field">*</span>
                                 </label>
-                                <input type="number" step="any" min="0" class="form-control" id="rollNo"
+                                <input type="text" step="any" min="0" class="form-control" id="rollNo"
                                     data-number="1" name="roll_no" min="1" required>
                             </div>
                             <div class="col-md-2">
@@ -586,7 +588,7 @@
                                 <input type="number" step="any" min="0" class="form-control" id="meter"
                                     data-number="1" name="meter" min="1" required>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <label for="size" class="col-form-label">{{ __('AVG') }}<span
                                         class="required-field">*</span>
                                 </label>
@@ -668,6 +670,8 @@
                         <!--<button type="button" class="btn btn-primary">Save changes</button>-->
                     </div>
                 </form>
+
+
             </div>
         </div>
     </div>
@@ -681,20 +685,35 @@
     </script>
     <script>
         $(document).ready(function() {
+            $("#nepali-date-picker").nepaliDatePicker({});
+            let todayNepaliDate = {!! isset($bswLamFabForPrintingEntry)
+                ? json_encode($bswLamFabForPrintingEntry->date)
+                : 'null' !!};
+            if (todayNepaliDate !== null) {
+                $("#nepali-date-picker").val(todayNepaliDate);
+            }
+
+
             getDataOfBswSentLam();
             getDataOfPrintedLamFab();
             getDataOfDanaConsumption();
             $('#trimmingWst, #fabric_waste').on('input', calculateResult);
-
+            let id = {!! json_encode($bswLamFabForPrintingEntry->id) !!};
             $('#printedFabEntireSave').on('click', function() {
                 let bswfabEntry_id = {!! json_encode($bswLamFabForPrintingEntry->id) !!};
-                console.log('i am here');
+                let trimmimg_wastage = $('#trimmingWst').val();
+                let fabric_waste = $('#fabric_waste').val();
+                let wastage_godam_id = $('#godamIdWaste').val();
+                // console.log('i am here');
                 $.ajax({
                     url: "{{ route('fabPrintingEntry.saveEntire') }}",
                     method: 'post',
                     data: {
                         _token: "{{ csrf_token() }}",
                         bswfabEntry_id: bswfabEntry_id,
+                        trimmimg_wastage: trimmimg_wastage,
+                        fabric_waste: fabric_waste,
+                        wastage_godam_id: wastage_godam_id
                     },
                     success: function(response) {
                         window.location.href =
@@ -706,16 +725,32 @@
                     }
                 });
             });
+            //megha
 
+            $("#netWeight, #meter").on("input", function(event) {
+                calcuateAverageGram();
+            });
+
+            function calcuateAverageGram() {
+                let netweight = parseFloat($('#netWeight').val());
+                let meter = parseFloat($('#meter').val());
+                let size = parseFloat($('#size').val());
+                let farbicSelected = $('#printedFabId').find("option:selected:not([disabled])").length > 0;
+                if (netweight && meter && farbicSelected) {
+                    let avg = ((netweight / meter) * 1000).toFixed(2);
+                    let gram = (avg / size).toFixed(2);
+                    $('#average').val(avg);
+                    $('#gram').val(gram);
+                }
+            }
+            //watage calculation
             function calculateResult() {
                 var trimmingWaste = parseFloat($('#trimmingWst').val()) || 0; // Parse as float or default to 0
                 var fabricWaste = parseFloat($('#fabric_waste').val()) || 0; // Parse as float or default to 0
                 var resultValue = trimmingWaste + fabricWaste; // Perform your desired calculation here
                 $('#total_waste').val(resultValue.toFixed(2)); // Display the result with 2 decimal places
             }
-            $('#laminatedFabricId').on('select2:select', function(e) {
-                handleSelectChange();
-            });
+
             $(document).on('click', "#sendforPrinting", function(e) {
                 e.preventDefault();
                 $('#staticBackdrop1').modal('show');
@@ -737,6 +772,14 @@
                 $('#avilableStock').empty();
                 getStockQuantity(godam_id, dana_name_id);
             });
+            $('#printedFabId').on('select2:select', function(e) {
+                var inputName = $(this).find("option:selected").text();
+                var number = parseInt(inputName.match(/\d+/)[0]);
+                $('#size').val(number);
+                calcuateAverageGram();
+            });
+
+
             // printsAndCuts.getStockQuantity
             function getStockQuantity(godam_id, dana_name_id) {
                 $.ajax({
@@ -797,14 +840,16 @@
 
             //dana consumption
             function getDataOfDanaConsumption() {
-                let $bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
+                let bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
                 $.ajax({
                     url: "{{ route('printFabDanaConsumpt.getData') }}",
                     method: 'get',
                     data: {
-                        bsw_lam_fab_for_printing_entry_id: $bsw_lam_fab_for_printing_entry_id
+                        bsw_lam_fab_for_printing_entry_id: bsw_lam_fab_for_printing_entry_id
                     },
                     success: function(response) {
+
+                        $('#bswLamPrintDanaConsumpt').empty();
                         consumptTableData(response.printedFabDanaConsumpt);
                         document.getElementById('totalItem').value = response.totalQuantity;
                     },
@@ -894,6 +939,7 @@
                     success: function(response) {
                         // console.log('name', response);
                         $('#staticBackdrop1').modal('hide');
+                        $('#bswSentLamFabTbody').empty();
                         getDataOfPrintedLamFab();
                     },
                     error: function(xhr, status, error) {
@@ -926,7 +972,7 @@
                         name.value = '';
                         status.value = '';
 
-                        let selectElement = document.getElementById('printedFabName');
+                        let selectElement = document.getElementById('printedFabId');
                         let optionElement = document.createElement('option');
 
                         optionElement.value = response.id;
@@ -936,7 +982,7 @@
                     },
                     error: function(xhr, status, error) {
 
-                        setMessage('sizeModelError', xhr.responseJSON.message)
+                        setMessage('printedFabricError', xhr.responseJSON.message)
                     }
                 })
             });
@@ -951,14 +997,17 @@
             }
             //for printed
             function getDataOfPrintedLamFab() {
-                let $bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
+                let bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
                 $.ajax({
                     url: "{{ route('bswLamPrintedFabStock.printedLamFabData') }}",
                     method: 'get',
                     data: {
-                        bsw_lam_fab_for_printing_entry_id: $bsw_lam_fab_for_printing_entry_id
+                        bsw_lam_fab_for_printing_entry_id: bsw_lam_fab_for_printing_entry_id
                     },
                     success: function(response) {
+                        // console.log('printedFabric data', response);
+
+                        $('#bswPrintedLamFabTbody').empty();
                         printedTableData(response.bswLamPrintedFabricStocks);
                         document.getElementById('totalPrintInmtr').value = response.totalMeter;
                         document.getElementById('totalPrintNetWt').value = response.totalNetWt;
@@ -969,6 +1018,7 @@
                     }
                 });
             }
+
             //for dana consumpt
             function consumptTableData(data) {
                 data.forEach(d => {
@@ -1015,17 +1065,19 @@
             //for printed end
             //for sent fabric
             function getDataOfBswSentLam() {
-                let $bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
+                let bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
                 $.ajax({
                     url: "{{ route('bswSentLamFab.lamFabData') }}",
                     method: 'get',
                     data: {
-                        bsw_lam_fab_for_printing_entry_id: $bsw_lam_fab_for_printing_entry_id
+                        bsw_lam_fab_for_printing_entry_id: bsw_lam_fab_for_printing_entry_id
                     },
                     success: function(response) {
+                        // console.log('megha', response)
                         tableData(response.bswSentLamFab);
                         document.getElementById('totalLamMeter').value = response.totalMeter;
-                        document.getElementById('totalLamNetWt').value = response.totalNetWt;
+                        document.getElementById('totalLamNetWt').value = (response.totalNetWt).toFixed(
+                            2);
                         // console.log('frtyhbvcfgh', response);
                     },
                     error: function(error) {
@@ -1035,57 +1087,87 @@
                 });
             }
 
-            function handleSelectChange() {
-                // Get the selected value from the dropdown
-                var lamFabName = $("#laminatedFabricId").val();
-                // console.log('val', selectedValue);
-                $.ajax({
-                    url: "{{ route('BswLamFabSendForPrinting.lamFabData') }}",
-                    method: 'get',
-                    data: {
-                        lamFabName: lamFabName
+            $('#laminatedFabricId').on('select2:select', function(e) {
+                bswDatatable.ajax.reload();
+            });
+
+            var bswDatatable = $('#bswLamFabTable').DataTable({
+                lengthMenu: [
+                    [5, 15, 30, -1],
+                    ['5 rows', '15 rows', '30 rows', 'Show all']
+                ],
+                style: 'bootstrap',
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('BswLamFabSendForPrinting.lamFabData') }}',
+                    data: function(data) {
+                        data.lamFabName = $('#laminatedFabricId').val()
                     },
-                    success: function(response) {
-                        putDataInBswLamFabTbl(response);
-                        // console.log('frtyhbvcfgh', response);
-                    },
-                    error: function(error) {
-                        // Handle the error if the AJAX request fails
-                        console.error(error);
+                    error: function(xhr, error, thrown) {
+                        console.log("Error fetching data:", error);
                     }
-                });
-            }
 
-            function putDataInBswLamFabTbl(data) {
-                console.log(data)
-                $("#bswLamFab").empty();
-                data.forEach((d, index) => {
-                    let tr = $("<tr></tr>").appendTo("#bswLamFab");
-                    tr.append(`<td>${index+1}</td>`);
-                    tr.append(`<td>${d.name}</td>`);
-                    tr.append(`<td>${d.roll_no}</td>`);
-                    tr.append(`<td>${d.gross_wt}</td>`);
-                    tr.append(`<td>${d.net_wt}</td>`);
-                    tr.append(`<td>${d.meter}</td>`);
-                    tr.append(`<td>${d.average_wt}</td>`);
+                },
+                columns: [{
+                        data: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'name'
+                    },
+                    {
+                        data: 'roll_no'
+                    },
+                    {
+                        data: 'gross_wt'
+                    },
+                    {
+                        data: 'net_wt'
+                    },
+                    {
+                        data: 'meter'
+                    },
+                    {
+                        data: 'average_wt'
+                    },
+                    {
+                        data: 'action'
+                    },
+                ],
+            });
+            //first table data
+            // function putDataInBswLamFabTbl(data) {
+            //     console.log(data)
+            //     $("#bswLamFab").empty();
+            //     data.forEach((d, index) => {
+            //         let tr = $("<tr></tr>").appendTo("#bswLamFab");
+            //         tr.append(`<td>${index+1}</td>`);
+            //         tr.append(`<td>${d.name}</td>`);
+            //         tr.append(`<td>${d.roll_no}</td>`);
+            //         tr.append(`<td>${d.gross_wt}</td>`);
+            //         tr.append(`<td>${d.net_wt}</td>`);
+            //         tr.append(`<td>${d.meter}</td>`);
+            //         tr.append(`<td>${d.average_wt}</td>`);
 
-                    tr.append(`<td>
-                            <a class="btn btn-primary send_to_lower"
-                                data-name='${d.name}'
-                                data-gross_wt= "${d.gross_wt}"
-                                data-roll_no= "${d.roll_no}"
-                                data-id= "${d.id}"
-                                data-fabric_id= "${d.fabric_id}"
-                                data-net_wt = "${d.net_wt}"
-                                data-meter = "${d.meter}"
-                                data-gram_wt = "${d.gram_wt}"
-                                data-average = "${d.average_wt}"
-                                href="${d.id}">Send</a>
-                        </td>`);
-                })
-            }
+            //         tr.append(`<td>
+        //                 <a class="btn btn-primary send_to_lower"
+        //                     data-name='${d.name}'
+        //                     data-gross_wt= "${d.gross_wt}"
+        //                     data-roll_no= "${d.roll_no}"
+        //                     data-id= "${d.id}"
+        //                     data-fabric_id= "${d.fabric_id}"
+        //                     data-net_wt = "${d.net_wt}"
+        //                     data-meter = "${d.meter}"
+        //                     data-gram_wt = "${d.gram_wt}"
+        //                     data-average = "${d.average_wt}"
+        //                     href="${d.id}">Send</a>
+        //             </td>`);
+            //     })
+            // }
             /************************* Form Submission *************************/
-            $(document).on("click", ".send_to_lower", function(e) {
+
+            $(document).on("click", '#lamsendEntry', function(e) {
+                // alert($(this).data("id"))
                 let $bsw_lam_fab_for_printing_entry_id = {!! $bswLamFabForPrintingEntry->id !!}
                 // console.log('bsw_lam_fab_for_printing_entry_id', $bsw_lam_fab_for_printing_entry_id);
                 e.preventDefault()
@@ -1114,25 +1196,19 @@
                         "fabric_id": fabric_id,
                         "bsw_lam_fab_for_printing_entry_id": $bsw_lam_fab_for_printing_entry_id
                     },
-                    beforeSend: function() {
-                        console.log("sending");
-                    },
+
                     success: function(response) {
-                        emptytable();
+                        $('#bswSentLamFabTbody').empty();
                         getDataOfBswSentLam();
-                        //insertDataIntoTable(response);
-                        // callunlaminatedfabricajax();
-                        emptyform();
+
+
                     },
                     error: function(error) {
                         console.log("error", error);
                     }
                 })
-            })
 
-            function emptytable() {
-                $('#bswSentLamFabTbody').empty();
-            }
+            })
 
             function insertDataIntoTable(d) {
                 //  console.log(d);

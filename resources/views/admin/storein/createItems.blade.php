@@ -60,8 +60,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                    width:150px !important;
-                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                            width:150px !important;
+                                                                                                                                                                                                                                        } */
     </style>
 @endsection
 
@@ -330,8 +330,8 @@
                     <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
                         placeholder="{{ __('Purchase Note') }}">
                         @if ($storein->note)
-                {{ $storein->note }}
-                @endif
+{{ $storein->note }}
+@endif
                     </textarea>
                     @error('note')
                         <span class="invalid-feedback" role="alert">
@@ -1051,7 +1051,9 @@
             $(document).on('select2:open', () => {
                 document.querySelector('.select2-search__field').focus();
             });
-
+            let sn = 1;
+            let selectedPercentage = 0;
+            dataRetrive();
             checkRowInTable();
 
 
@@ -1881,17 +1883,14 @@
                                     let option = new Option(optionText, optionValue);
                                     selectOptions += option.outerHTML;
                                 }
-
                             }
                             if (click_by == 'blade') {
                                 $('#ProductName').html(selectOptions);
                                 resolve(response);
-
                             } else {
                                 $('#item_id').html(selectOptions);
                                 resolve(response);
                             }
-
                         },
                         error: function(xhr, status, error) {
                             reject(error);
@@ -1900,8 +1899,7 @@
                 });
             }
 
-            let sn = 1;
-            let selectedPercentage = 0;
+
             // setTimeout(loadWhenPageLoad, 2000);
 
             function loadWhenPageLoad() {
@@ -2087,7 +2085,7 @@
 
             }
 
-            dataRetrive();
+
 
             //Validation start
 
@@ -2221,7 +2219,7 @@
 
             // function for creating a new row in table
             function setIntoTable(res) {
-
+                console.log('tghuuytrfghf', res);
                 var html = "";
 
                 html = "<tr id=editRow-" + res.id + "><td>" + sn +
@@ -2277,7 +2275,7 @@
                             setIntoTable(itemsRow);
                         });
                         if (response.storein_items.length > 0) {
-                            // alert('fghjk');
+
                             editEventBtn();
                             deleteEventBtn();
 

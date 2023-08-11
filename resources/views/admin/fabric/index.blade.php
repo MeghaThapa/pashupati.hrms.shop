@@ -113,6 +113,7 @@
                         <th>{{ __('BillNO') }}</th>
                         <th>{{ __('Date Np') }}</th>
                         <th>{{ __('Net Weight') }}</th>
+                        <th>{{ __('Action') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -125,6 +126,14 @@
                                 <td>{{ $fabric->bill_number }} </td>
                                 <td>{{ $fabric->bill_date }} </td>
                                 <td>{{ $fabric->total_netweight}} </td>
+                                <td>
+                                     <button type="button" id="rawMaterialDeleteBtn" class="btnEdit btn btn-sm btn-danger"  data-id="{{$fabric->id}}">
+                                    <i class="fas fa-trash fa-lg"></i>
+                                    </button>
+                                 {{--    <a 
+                                        class="dropdown-item" data-id="{{$fabric->id}}" id="rawMaterialDeleteBtn"><i class="fas fa-destroy"></i>
+                                        {{ __('Delete') }}</a> --}}
+                                </td>
 
                             </tr>
                         @endforeach
@@ -141,138 +150,6 @@
             <!-- pagination start -->
             {{ $fabrics->links() }}
 
-           {{--  <div class="card-body p-0">
-                <form class="form-horizontal" action="{{ route('fabricDetail') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 form-group">
-                                <label for="size" class="col-form-label">{{ __('To Godam') }}
-                                </label>
-                                <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
-                                    <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                                   @foreach ($departments as $data)
-                                        <option value="{{ $data->id }}">{{ $data->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                                @error('to_godam_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div>
-                   
-
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-2">
-                                <label for="name">{{ __('Pipe  Cutting') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('pipe_cutting') is-invalid @enderror" id="pipe_cutting" name="pipe_cutting" placeholder="{{ __('Fabric Name') }}" value="{{ old('pipe_cutting') }}" required>
-                                @error('pipe_cutting')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="name">{{ __('Bd Westage') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('bd_wastage') is-invalid @enderror" id="bd_wastage" name="bd_wastage" placeholder="{{ __('Fabric Name') }}" value="{{ old('bd_wastage') }}" required>
-                                @error('bd_wastage')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="other_wastage">{{ __('Other Westage') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('other_wastage') is-invalid @enderror" id="other_wastage" name="other_wastage" placeholder="{{ __('Fabric Name') }}" value="{{ old('other_wastage') }}" required>
-                                @error('other_wastage')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="total_wastage">{{ __('Total Westage') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('total_wastage') is-invalid @enderror" id="total_wastage" name="total_wastage" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_wastage') }}" required>
-                                @error('total_wastage')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="total_netweight">{{ __('Total Net Weight') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('total_netweight') is-invalid @enderror" id="total_netweight" name="total_netweight" placeholder="{{ __('Fabric Name') }}" value="{{ $fabric_netweight}}" required>
-                                @error('total_netweight')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-
-                        </div>
-                 
-                        <div class="row">
-                            <div class="form-group col-md-2">
-                                <label for="total_meter">{{ __('Total Meter') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('total_meter') is-invalid @enderror" id="total_meter" name="total_meter" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_meter') }}" required>
-                                @error('total_meter')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="total_weightinkg">{{ __('Total weight in kg') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('total_weightinkg') is-invalid @enderror" id="total_weightinkg" name="total_weightinkg" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_weightinkg') }}" required>
-                                @error('total_weightinkg')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="total_wastageinpercent">{{ __('Westage in %') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('total_wastageinpercent') is-invalid @enderror" id="total_wastageinpercent" name="total_wastageinpercent" placeholder="{{ __('Fabric Name') }}" value="{{ old('total_wastageinpercent') }}" required readonly>
-                                @error('total_wastageinpercent')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="run_loom">{{ __('Run Loom') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('run_loom') is-invalid @enderror" id="run_loom" name="run_loom" placeholder="{{ __('Fabric Name') }}" value="{{ old('run_loom') }}" required>
-                                @error('run_loom')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="wrapping">{{ __('Wrapping') }}<span class="required-field">*</span></label>
-                                <input type="text" class="form-control @error('wrapping') is-invalid @enderror" id="wrapping" name="wrapping" placeholder="{{ __('Fabric Name') }}" value="{{ old('wrapping') }}" required>
-                                @error('wrapping')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div>
-
-                        </div>
-                        
-                        
-                        <div class="row">
-                            <div class="col-sm-10">
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('Update') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.card-body -->
-                </form>
-            </div> --}}
 
 
             <!-- pagination end -->
@@ -300,324 +177,53 @@ $(document).ready(function(){
   
   });
 </script>
-
 <script>
+    $('body').on('click', '#rawMaterialDeleteBtn', function(e) {
+        let fabricDetail_id = this.getAttribute('data-id');
+        // console.log('js', fabricDetail_id);
+        new swal({
+            title: "Are you sure?",
+            text: "Once deleted, data will deleted completely!!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
 
+        }).then((willDelete) => {
+            if (willDelete.isConfirmed) {
 
-    $("#danaNameId").on("change",function(e){
-        var danaid = $(this).val(); 
-        $("#add_dana_consumption_quantity").prop("disabled",false);
-    });
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('fabricdetail.destroy', ['fabricDetail_id' => ':id']) }}"
+                        .replace(':id', fabricDetail_id),
+                    data: {
+                        '_token': $('meta[name=csrf-token]').attr("content"),
+                    },
+                    success: function(data) {
+                        console.log('controller:', data);
+                        new swal
+                            ({
+                                text: "Poof! Your data has been deleted!",
+                                title: "Deleted",
+                                icon: "success",
+                            });
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        setMessage('RawMaterialError', xhr.responseJSON.message)
 
+                        //console.log(xhr.responseJSON.message);
+                    }
+                })
 
-    $(document).on("keyup","#add_dana_consumption_quantity",function(e){
-        $("#add_dana_consumption").prop("disabled",false);
-    });
-
-    $(document).on("keyup","#filter",function(e){
-        $("#finalUpdate").prop("disabled",false);
-    });
-
-    $(document).on("click","#add_dana_consumption",function(e){
-        // debugger;
-        let dana = $("#danaNameId").val();
-        let consumption = $("#add_dana_consumption_quantity").val();
-        $("#dana_quanity").val(consumption);
-    
-        $.ajax({
-            url:"{{ route('dana.autoload.checkAutoloadQuantity') }}",
-            method : 'post',
-            data:{
-                '_token' : $('meta[name="csrf-token"]').attr('content'),
-                'danaid' : dana
-            },
-            beforeSend:function(){
-                console.log('Getting Plant type');
-            },
-            success:function(response){
-             
-                if (consumption.trim() === '') {
-                    alert("add quantity");
-                }else{
-                    $("#totl_dana").val(consumption);
-
-                    $("#selectedDanaID").val(dana);
-                }   
-             
-            },
-            error:function(error){
-                console.log(error);
             }
-
-        });
-
-    });
-    $('#total_weightinkg').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#total_wastage").val();
-        var weightinkg = $("#total_weightinkg").val();
-        var final = (filter / weightinkg) * 100;
-        var round = Math.round(final,2);
-        // var nettotal = total_fee - amount_received - parseInt(discount) + parseInt(fine);
-
-        $("#total_wastageinpercent").val(round);
-       
-      }
-    });
-
-    $('#filter').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        // var nettotal = total_fee - amount_received - parseInt(discount) + parseInt(fine);
-
-        $("#wastage").val(filter);
-       
-      }
-    });
-
-    $('#filament').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        var nettotal = parseInt(filter) + parseInt(filament);
-
-        $("#wastage").val(nettotal);
-       
-      }
-    });
-
-    $('#roalcoast').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast);
-
-        $("#wastage").val(nettotal);
-       
-      }
-    });
-
-    $('#strip').keyup(function(event){
-      event.preventDefault();
-      debugger;
-      if($(this).val() != '') {
-        var filter = $("#filter").val();
-        var filament = $("#filament").val();
-        var roalcoast = $("#roalcoast").val();
-        var strip = $("#strip").val();
-        var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast) + parseInt(strip);
-
-        $("#wastage").val(nettotal);
-       
-      }
+        })
     });
 </script>
-<script type="text/javascript">
-  // $('.add_wastage').click(function(event){
-  //   var wastage = $("#wastage").val(),
-  //       netweight = $("#netweight").val(),
-  //       danaquantity = $("#dana_quanity").val(),
-  //       dana = $("#dana").val();
-  //   debugger;
-  //   var  token = $('meta[name="csrf-token"]').attr('content');
-  //   $.ajax({
-  //     type:"POST",
-  //     dataType:"html",
-  //     url:"{{route('storeWastage')}}",
-  //     data:{
-  //       _token:token,
-  //       wastage: wastage,
-  //       netweight: netweight,
-  //       godam_id: '1',
-  //       danaquantity: danaquantity,
-  //       dana: dana,
-  //     },
-  //     success: function(response){
-  //       $('#dana_list').append(response);
-  //       $('table').on('click','#cross',function(e){
-  //         e.preventDefault();
-  //         $(this).closest('tr').remove();
-  //       });
-  //       $("#dana_quanity").val(quantity);
-
-        
-
-  //       // $("#submit").addClass('d-none');
-  //       // $("#calculate").removeClass('d-none');
-  //       // $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
-  //     },
-  //     error:function(event){
-  //       alert('Error');
-  //       return false;
-  //     }
-  //   })
-  // })
-
-   $(document).on("click","#finalUpdate",function(e){
-
-      let danaNameId = $("#selectedDanaID").val();
-      let consumption = $("#add_dana_consumption_quantity").val();
-      let wastage = $("#wastage").val();
-      // let total_waste = $('#total_waste').val();
-      let selectedDanaID = $("#selectedDanaID").val();
-      let filter = $("#filter").val();
-      let filament = $("#filament").val();
-      let roalcoast = $("#roalcoast").val();
-      let strip = $("#strip").val();
-      let godam_id = $("#toGodam").val();
-      // console.log(godam_id);
-      // debugger;
-
-      trimmedConsumption = consumption.trim();
-      trimmedFilter = filter.trim();
-      // trimmedFabricWaste = fabric_waste.trim();
-      trimmedTotalWaste = wastage.trim();
-
-      // debugger;
-
-      if(trimmedConsumption == '' || trimmedFilter == '' || trimmedTotalWaste == ''){
-          alert('Waste and Consumption cannot be null');
-      }else{
-      // subtractformautolad(danaNameId,consumption);
-          $.ajax({
-              url : "{{ route('storeWastage') }}",
-              method: "post",
-              data:{
-                  "_token" : $('meta[name="csrf-token"]').attr('content'),
-                  "danaNameID" : danaNameId,
-                  "consumption" : trimmedConsumption,
-                  "total_waste" : trimmedTotalWaste,
-                  "selectedDanaID" : selectedDanaID
-              },
-              beforeSend:function(){
-                  console.log("Before Send");
-              },
-              success:function(response){
-                  console.log(response);
-                  if(response == '200'){
-                      location.reload();
-                  }else{
-
-                  }
-              },
-              error:function(error){
-                  console.log(error);
-              }
-          }); 
-      }
-  });
-</script>
-
-<script>
-
-    $('#pipe_cutting').keyup(function(event){
-      event.preventDefault();
-      if($(this).val() != '') {
-        var pipe_cutting = $("#pipe_cutting").val();
-
-        $("#total_wastage").val(pipe_cutting);
-       
-      }
-    });
-
-    $('#bd_wastage').keyup(function(event){
-      event.preventDefault();
-      if($(this).val() != '') {
-        var pipe_cutting = $("#pipe_cutting").val();
-        var bd_wastage = $("#bd_wastage").val();
-        var wastage = parseInt(pipe_cutting) + parseInt(bd_wastage);
-
-        $("#total_wastage").val(wastage);
-       
-      }
-    });
-
-    $('#other_wastage').keyup(function(event){
-      event.preventDefault();
-      if($(this).val() != '') {
-        var pipe_cutting = $("#pipe_cutting").val();
-        var bd_wastage = $("#bd_wastage").val();
-        var other_wastage = $("#other_wastage").val();
-        var wastage = parseInt(pipe_cutting) + parseInt(bd_wastage) + parseInt(other_wastage);
-
-        $("#total_wastage").val(wastage);
-       
-      }
-    });
 
 
-    $(document).ready(function(){
 
 
-        $("#toGodam").change(function(e){
-            let department_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
-            $.ajax({
-                url:geturl.replace(':id',department_id),
-                beforeSend:function(){
-                    console.log('Getting Plant type');
-                },
-                success:function(response){
-                    addplanttype(response);
-                },
-                error:function(error){
-                    console.log(error);
-                }
-            });
-        });
 
-        $("#plantType").change(function(e){
-            let department_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.plantname',['id'=>':id']) }}";
-            $.ajax({
-                url:geturl.replace(':id',department_id),
-                beforeSend:function(){
-                    console.log('Getting Plant Name');
-                },
-                success:function(response){
-                    addplantname(response);
-                },
-                error:function(error){
-                    console.log(error);
-                }
-            });
-        });
-    });
-
-
-    function addplanttype(data){
-        $("#plantType").empty();
-        $('#plantType').append(`<option value="" disabled selected>Select Planttype</option>`);
-        data.planttype.forEach( d => {
-            $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
-        });
-    }
-
-    function addplantname(data){
-        console.log(data);
-        $("#plantName").empty();
-        $('#plantName').append(`<option value="" disabled selected>Select Plantname</option>`);
-        data.plantname.forEach( d => {
-            // if(d.name == '')
-            $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
-        });
-    }
-
-
-</script>
 @endsection 

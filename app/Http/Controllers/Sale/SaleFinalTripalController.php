@@ -7,23 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Str;
-use App\Models\Shift;
 use App\Models\Supplier;
 use App\Models\FinalTripalStock;
 use App\Models\SaleFinalTripal;
+use App\Models\SaleFinalTripalList;
 use App\Helpers\AppHelper;
-use Carbon\Carbon;
+use Throwable;
+use Yajra\DataTables\DataTables;
 
 class SaleFinalTripalController extends Controller
 {
     public function index()
     {
-        $bill_no = AppHelper::getFinalTripalReceiptNo();
-        $bill_date = date('Y-m-d');
         $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
         $partyname = Supplier::where('status',1)->get();
-        $salefinaltripals = SaleFinalTripal::paginate(20);
-        return view('admin.sale.salefinaltripal.creates',compact('bill_no','bill_date','fabrics','partyname','salefinaltripals'));
+        $salefinaltripals = SaleFinalTripal::with('getSaleList')->paginate(20);
+        return view('admin.sale.salefinaltripal.index',compact('fabrics','partyname','salefinaltripals'));
     }
 
     /**
@@ -67,11 +66,66 @@ class SaleFinalTripalController extends Controller
 
     public function addTripal($id)
     {
-        $bill_no = AppHelper::getFinalTripalReceiptNo();
-        $bill_date = date('Y-m-d');
-        $fabrics = FinalTripalStock::get();
-        $partyname = Supplier::where('status',1)->get();
+        $findtripal = SaleFinalTripal::find($id);
+        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
         $salefinaltripals = SaleFinalTripal::paginate(20);
-        return view('admin.sale.salefinaltripal.addtripal',compact('bill_no','bill_date','fabrics','partyname','salefinaltripals'));
+        return view('admin.sale.salefinaltripal.addtripal',compact('findtripal','fabrics','salefinaltripals','id'));
+    }
+
+    public function getfinaltripalFilter(Request $request){
+        if($request->ajax()){
+            $fabric_name_id = $request->fabric_name_id;
+            $fabric_name = FinalTripalStock::where("id",$fabric_name_id)->value("name");
+            $fabrics = FinalTripalStock::where("name",$fabric_name)->get();
+
+            return DataTables::of($fabrics)
+                    ->addIndexColumn()
+                    ->addColumn("gram_wt",function($row){
+                        return '1';
+                    })
+                    ->addColumn("action",function($row){
+                        return "
+                        <a class='btn btn-primary send_to_lower'  
+                                 data-id='{$row->id}' 
+                                 href='{$row->id}'>Send</a>";
+                    })
+                    ->rawColumns(["action","gram_wt"])
+                    ->make(true);
+
+        }
+    }
+
+    public function finalTripalStoreList(Request $request)
+    {
+        try{
+            $find_name = FinalTripalStock::find($request->data_id);
+            
+                $fabricstock = SaleFinalTripalList::create([
+                    'name' => $find_name->name,
+                    'slug' => $find_name->slug,
+                    'roll' => $find_name->roll_no,
+                    'gross' => $find_name->gross_wt,
+                    'net' => $find_name->net_wt,
+                    'meter' => $find_name->meter,
+                    'gram' => $find_name->gram,
+                    'average' => $find_name->average_wt,
+                    'bill_no' => $request->bill_no,
+                    'bill_date' => $request->bill_date,
+                    'salefinal_id' => $request->salefinal_id,
+                ]);
+
+                if($fabricstock){
+
+                  FinalTripalStock::where('id',$request->data_id)->delete();
+                }
+
+
+        return response(['message'=>'sale Transferred Successfully']);
+        }
+        catch (Exception $ex){
+            return $ex;
+        }
+    
+
     }
 }
