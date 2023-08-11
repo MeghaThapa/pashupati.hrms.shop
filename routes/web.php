@@ -482,7 +482,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         //getting unlaminated into form
         Route::get('fabric/get/unlaminated',[FabricSendReceiveController::class,'getunlaminated'])->name('fabricSendReceive.get.unlaminated');
         Route::post('fabric/store/laminated',[FabricSendReceiveController::class,'storelaminated'])->name('fabricSendReceive.store.laminated');
-        Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name");
+        Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name.fsr");
 
         Route::get('get/autoloader/godam/id/into/fsr/{godamId}',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
 
@@ -494,6 +494,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get('fabricSendReceive/compare/lamandunlam',[FabricSendReceiveController::class,'comparelamandunlam'])->name('fabricSendReceive.compare.lamandunlam');
         Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
         Route::post('final/submit/fsr',[FabricSendReceiveController::class,'finalsubmitfsr'])->name("final.submit.fsr");
+
+        Route::post("add/dana/consumption/fsr",[FabricSendReceiveController::class,"addDanaConsumptionTable"])->name("add.dana.consumption.fsr");
+        Route::post("get/dana/consumption/fsr",[FabricSendReceiveController::class,"getDanaConsumptionTable"])->name("get.dana.consumption.fsr");
     //fabric send receive contoller End
 
     // fabric_group route
