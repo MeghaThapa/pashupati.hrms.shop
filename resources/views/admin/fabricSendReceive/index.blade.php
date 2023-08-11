@@ -709,6 +709,7 @@
             "billnumber": $("#billnumber").val()
         },
         success: function (response) {
+            console.log(response)
             if (response.consumptions != null) {
                 $("#dana-consumption-tbody").empty();
                 response.consumptions.forEach((data,index) => {
@@ -718,6 +719,7 @@
                     tr.append(`<td>${data.dananame.name}</td>`);
                     tr.append(`<td>${data.consumption_quantity}</td>`);
                 });
+                $("#totl_dana").val(response.total_consumption)
             }
         },
         error: function (error) {
@@ -1367,16 +1369,14 @@
                 "consumption" : consumption,
                 "bill_number" : $("#billnumber").val()
             },success:function(response){
-                $(".dana-consumption-table").empty()
+                $("#dana-consumption-tbody").empty()
                 $("#totl_dana").val(response.total_consumption)
-                if(response.consumptions != null){
-                    response.consumptions.forEach(data=>{
-                        let tr = "<tr></tr>"
-                        $("#dana-consumption-tbody").append(tr);
+                    response.consumptions.forEach((data,index)=>{
+                        let tr = $("<tr></tr>").appendTo("#dana-consumption-tbody");
+                        tr.append(`<td>${index+1}</td>`);
                         tr.append(`<td>${data.dananame.name}</td>`);
-                        tr.append(`<td>${data.consumption}</td>`);
+                        tr.append(`<td>${data.consumption_quantity}</td>`);
                     })
-                }
                 console.log(response)
             },error:function(error){
                 console.log(error)
@@ -1434,7 +1434,8 @@
                         "total_waste" : trimmedTotalWaste,
                         "selectedDanaID" : selectedDanaID,
                         "godam_id" : godam_id,
-                        "autoloader_godam_selected" : autoloader_godam_selected
+                        "autoloader_godam_selected" : autoloader_godam_selected,
+                        "bill_number" : $("#billnumber").val()
                     },
                     beforeSend:function(){
                         console.log("Before Send");
