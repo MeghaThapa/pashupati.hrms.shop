@@ -418,6 +418,7 @@ class StoreoutController extends Controller
             $storeout = Storeout::with('storeoutItems')->find($storeout_id);
             $storeout->total_amount = round($request->storeOutTotal,2);
             $storeout->remark = $request->store_out_remark;
+            $storeout->status = 'completed';
             $storeout->save();
 
             foreach($storeout->storeoutItems as $item){

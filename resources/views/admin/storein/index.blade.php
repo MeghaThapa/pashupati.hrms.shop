@@ -66,6 +66,7 @@
                             <th>{{ __('PP No') }}</th>
                             <th>{{ __('Discount') }}</th>
                             <th>{{ __('Grand Total') }}</th>
+                            <th>{{ __('Status') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -81,49 +82,52 @@
 
 @section('extra-script')
     <script>
-         var table = $('#storeinTable').DataTable({
-                    lengthMenu: [
-                        [30, 40, 50, -1],
-                        ['30 rows', '40 rows', '50 rows', 'Show all']
-                    ],
-                    style: 'bootstrap4',
-                    processing: true,
-                    serverSide: true,
-                    ajax:"{{ route('storein.storinYajraDatabales')}}",
-                    columns: [{
-                            data: 'DT_RowIndex'
-                        },
-                        {
-                            data: 'purchase_date'
-                        },
-                        {
-                            data: 'storein_type_name'
-                        },
-                        {
-                            data: 'supplier_name'
-                        },
-                        {
-                            data: 'sr_no'
-                        },
-                        {
-                            data: 'bill_no'
-                        },
-                        {
-                            data: 'pp_no'
-                        },
-                        {
-                            data: 'total_discount'
-                        },
-                        {
-                            data: 'grand_total'
-                        },
-                        {
-                            data: 'action',
-                            orderable: true,
-                            searchable: true,
-                        },
-                    ]
-                });
+        var table = $('#storeinTable').DataTable({
+            lengthMenu: [
+                [30, 40, 50, -1],
+                ['30 rows', '40 rows', '50 rows', 'Show all']
+            ],
+            style: 'bootstrap4',
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('storein.storinYajraDatabales') }}",
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'purchase_date'
+                },
+                {
+                    data: 'storein_type_name'
+                },
+                {
+                    data: 'supplier_name'
+                },
+                {
+                    data: 'sr_no'
+                },
+                {
+                    data: 'bill_no'
+                },
+                {
+                    data: 'pp_no'
+                },
+                {
+                    data: 'total_discount'
+                },
+                {
+                    data: 'grand_total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'action',
+                    orderable: true,
+                    searchable: true,
+                },
+            ]
+        });
         $('body').on('click', '#dltstorein', function() {
             let id = this.getAttribute('data-id');
             // let id = $(this).attr('data-id').val();
@@ -150,7 +154,7 @@
                             },
                             success: function(data) {
                                 console.log(data);
-                               new swal
+                                new swal
                                     ({
                                         text: "Poof! Your data has been deleted!",
                                         title: "Deleted",

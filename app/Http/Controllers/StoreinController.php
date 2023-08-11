@@ -118,36 +118,41 @@ class StoreinController extends Controller
             'storein.pp_no',
             'storein.purchase_date',
             'storein.total_discount',
-            'storein.grand_total'
+            'storein.status',
+            'storein.grand_total',
             )
         ->get();
-
 
         return DataTables::of($storein)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $actionBtn = '
-                <a class="btnEdit" href="' . route('storein.editStorein', ["storein_id" => $row->id]) . '" >
-                    <button class="btn btn-primary">
-                        <i class="fas fa-edit fa-lg"></i>
-                    </button>
-                </a>
-
-                <button class="btn btn-danger" id="dltstorein" data-id="'.$row->id.'">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-
-                <a class="btnEdit" href="' . route('storein.invoiceView', ["storein_id" => $row->id]) . '" >
-                    <button class="btn btn-info">
-                        <i class="fas fa-file-invoice"></i>
-                    </button>
-                </a>
-                '
-                ;
-
+                $actionBtn ='';
+                if($row->status == 'running'){
+                    $actionBtn .= '
+                        <a class="btnEdit" href="' . route('storein.editStorein', ["storein_id" => $row->id]) . '" >
+                            <button class="btn btn-primary">
+                                <i class="fas fa-edit fa-lg"></i>
+                            </button>
+                        </a>
+                        <button class="btn btn-danger" id="dltstorein" data-id="'.$row->id.'">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        ';
+                }else{
+                    $actionBtn .=  '
+                    <a class="btnEdit" href="' . route('storein.invoiceView', ["storein_id" => $row->id]) . '" >
+                        <button class="btn btn-info">
+                            <i class="fas fa-file-invoice"></i>
+                        </button>
+                    </a>
+                    ';
+                }
                 return $actionBtn;
             })
-            ->rawColumns(['action'])
+           ->addColumn('status', function ($row) {
+                return '<span class="badge badge-pill badge-success">'.$row->status.'</span>';
+            })
+            ->rawColumns(['action','status'])
             ->make(true);
     }
     public function updateStorein(Request $request, $storein_id)
@@ -231,8 +236,7 @@ class StoreinController extends Controller
     {
         try{
         $today= Carbon::now()->format('Y-n-j');
-
-            DB::beginTransaction();
+        DB::beginTransaction();
         $storein = Storein::with('storeinItems')
             ->withSum('storeinItems', 'total_amount')
             ->find($storein_id);
@@ -276,10 +280,10 @@ class StoreinController extends Controller
             $storein->image_path = $imgPath;
         }
         $storein->note = $request->note;
-        $storein->status = $request->status;
+        $storein->status = 'completed';
         // storein status change
         $storein->save();
-        
+
 
         foreach($storein->storeinItems as $item){
 
@@ -291,7 +295,7 @@ class StoreinController extends Controller
             $purchaseStoreinReport->save();
         }else{
             $purchaseStoreinReport= new PurchaseStoreinReport();
-                    $purchaseStoreinReport->date =$purchaseStoreinReport->date;
+                    $purchaseStoreinReport->date =$today;
                     $purchaseStoreinReport->name =$item->storein_item_id;
                     $purchaseStoreinReport->quantity =$item->quantity;
                     $purchaseStoreinReport->rate = $item->price;
@@ -299,10 +303,6 @@ class StoreinController extends Controller
                     $purchaseStoreinReport->save();
                 }
             }
-
-
-
-
         DB::commit();
         return redirect()->route('storein.index')->withSuccess('Storein entirely created successfully!');
         }catch(Exception $e){
