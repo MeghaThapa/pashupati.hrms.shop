@@ -201,12 +201,13 @@
                             <div class="dropdown-menu dropdown-menu-right">
 
                                 <a href="{{ route('salefinaltripals.addTripal', $fabric->id) }}"
-                                    class="dropdown-item"><i class="fas fa-edit"></i>
+                                    class="dropdown-item" target="_blank"><i class="fas fa-edit"></i>
                                     {{ __('ADDTripal') }}</a>
                             
-                               {{--  <a href="{{ route('salefinaltripals.edit', $fabric->slug) }}"
+                                <a href="{{ route('salefinaltripals.viewTripal', $fabric->id) }}"
                                     class="dropdown-item"><i class="fas fa-edit"></i>
-                                    {{ __('Edit') }}</a> --}}
+                                    {{ __('Edit') }}</a>
+
                                {{--  <a href="{{ route('salefinaltripals.delete', $fabric->slug) }}"
                                     class="dropdown-item delete-btn"
                                     data-msg="{{ __('Are you sure you want to delete this sub category?') }}"><i

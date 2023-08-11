@@ -701,6 +701,35 @@
         comparelamandunlam();
         getDanaConsumption();
 
+
+        function getDanaConsumption() {
+    $.ajax({
+        url: "{{ route('get.dana.consumption.fsr') }}",
+        method: "post",
+        data: {
+            "_token": $("meta[name='csrf-token']").attr("content"),
+            "billnumber": $("#billnumber").val()
+        },
+        success: function (response) {
+            console.log(response)
+            if (response.consumptions != null) {
+                $("#dana-consumption-tbody").empty();
+                response.consumptions.forEach((data,index) => {
+                    let tr = $("<tr></tr>");
+                    $("#dana-consumption-tbody").append(tr);
+                    tr.append(`<td>${index++}</td>`);
+                    tr.append(`<td>${data.dananame.name}</td>`);
+                    tr.append(`<td>${data.consumption_quantity}</td>`);
+                });
+                $("#totl_dana").val(response.total_consumption)
+            }
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
         $("#toGodam").change(function(e){
             let godamId = $(this).val(); 
             $("#godam_id").val(godamId);
@@ -1408,7 +1437,6 @@
                 }
             });
         }
-
 
     $(document).on("keyup","#fabric_waste",function(e){
         let polo_waste = parseInt($("#polo_waste").val());

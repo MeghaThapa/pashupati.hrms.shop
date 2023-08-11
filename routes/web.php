@@ -667,6 +667,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('salefinaltripal/addTripal/{id}','Sale\SaleFinalTripalController@addTripal')->name('salefinaltripals.addTripal');
 
+    Route::get('salefinaltripal/viewTripal/{id}','Sale\SaleFinalTripalController@viewTripal')->name('salefinaltripals.viewTripal');
+
     //salefinaltripal filter
 
     Route::post("get/finalTripal/filterName",'Sale\SaleFinalTripalController@getfinaltripalFilter')->name("getfinaltripalFilter");
