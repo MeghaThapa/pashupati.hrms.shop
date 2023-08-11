@@ -6,18 +6,18 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-// use App\Models\Department;
-// use App\Models\Category;
 use App\Models\Items;
 use App\Models\Stock;
 use Illuminate\Support\Str;
 use App\Models\StoreinDepartment;
 use App\Models\StoreinCategory;
 use App\Models\ItemsOfStorein;
+use App\Models\OpeningStoreinReport;
 use App\Models\Size;
 use App\Models\Unit;
+use  DB;
+use Carbon\Carbon;
 
-//for silent creations
 class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 {
     /**
@@ -25,6 +25,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
      */
     public function collection(Collection $rows)
     {
+        try{
         DB::beginTransaction();
         foreach ($rows as $row) {
            // dd($row);
@@ -41,8 +42,6 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $unit = Unit::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimUnit)])->value('id');
             /******* end trims spaces in between**********/
 
-
-
             if($size == null) {
                 $code = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)), 0, 10);
                 $createSize = Size::create([
@@ -51,36 +50,24 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     'slug' => $code,
                     'note' => "Excel Import",
                     "status" => "1"
-
                 ]);
-                 $size = Size::where('code',$code)->value('id');
-             }
+                $size = $createSize->id;
+            }
 
-             if($unit == null){
+            if($unit == null){
                 $code = rand(0,9999);
                 $slug = Str::slug($row['unit']);
-
                 $unitCreate = Unit::firstOrCreate([
                     'slug' => $slug
                 ], [
                     "name" => $row['unit'],
                     "slug" => Str::slug($row['unit']),
                     "code" => $code
-
                 ]);
-                $unit = Unit::where('slug',$slug)->value('id');
-             }
+                $unit = $unitCreate->id;
+            }
 
-             if ($category === null) {
-                 // $createcategory = StoreinCategory::create([
-                 //     'name' => $row['category'],
-                 //     'slug' => Str::slug($row['category']),
-                 //     'note' => isset($row['note'])? $row['note'] : 'N/A',
-                 //     'status' => "active"
-                 // ]);
-                 // $category = $createcategory->id;
-                 // return back()->with(['message_err'=>"Category:".$category ."Not Found"]);
-
+            if ($category === null) {
                  $slug = Str::slug($row['category']);
 
                  $createcategory = StoreinCategory::firstOrCreate([
@@ -90,23 +77,12 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                      'slug' => strtolower(Str::slug($row['category'])),
                      'note' => isset($row['note'])? $row['note'] : 'N/A',
                      'status' => "active"
-
                  ]);
-                 $category = StoreinCategory::where('slug',$slug)->value('id');
-             }
-
+                 $category = $createcategory->id;
+            }
 
             if ($department === null) {
-                // $createdepartment = StoreinDepartment::create([
-                //     'name' => $row['department'],
-                //     'slug' => Str::slug($row['department']),
-                //     'status' => "active"
-                // ]);
-                // $department = $createdepartment->id;
-                // return back()->with(['message_err'=>"Department:".$department." Not Found"]);
                 $slug = Str::slug($row['department']);
-                // dd($slug);
-
                 $createdepartment = StoreinDepartment::firstOrCreate([
                     'slug' => $slug
                 ], [
@@ -114,9 +90,8 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     'slug' => strtolower(Str::slug($row['department'])),
                     'category_id' => $category,
                     'status' => "active"
-
                 ]);
-                $department = StoreinDepartment::where('slug',$slug)->value('id');
+                $department = $createdepartment->id;
             }
 
             $rowitem = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])
@@ -128,7 +103,6 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             }else{
                 $item = null;
             }
-
             if ($item === null) {
                 $createitem= ItemsOfStorein::create([
                     'name' =>trim(strtolower($row['item_name'])),
@@ -141,8 +115,6 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                 ]);
                 $item = $createitem->id;
             }
-
-
             if($department && $category && $item && $size && $unit){
                 $exists = Stock::where('department_id',$department)
                         ->where('category_id',$category)
@@ -152,7 +124,8 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                         ->first();
                 if($exists){
                     Stock::where('id',$exists->id)->update([
-                        "total_amount" => $exists->total_amount + $row['total_amount']
+                        "total_amount" => $exists->total_amount + $row['total_amount'],
+                        "quantity"=>$exists->quantity + $row['quantity']
                     ]);
 
                 }else{
@@ -167,85 +140,28 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     'category_id' => $category,
                     ]);
                 }
+                $openingStockReport=OpeningStoreinReport::where('name',$item)->first();
+                if($openingStockReport){
+                    $openingStockReport->quantity +=$row['quantity'];
+                    $openingStockReport->save();
+                }else{
+                    $stockReport= new OpeningStoreinReport();
+                    $stockReport->date =Carbon::now()->format('Y-n-j');
+                    $stockReport->name =$item;
+                    $stockReport->quantity =$row['quantity'];
+                    $stockReport->rate = $row['average_rate'];
+                    $stockReport->total =$stockReport->quantity * $stockReport->rate;
+                    $stockReport->save();
+                }
             }else{
                 DB::rollback();
                 dd($department, $category , $item , $size , $unit);
             }
         }
-        DB::commit();
+            DB::commit();
+        }catch(Exception $ex){
+            DB::rollback();
+        }
+
     }
 }
-
-
-//for popups
-//  class StockImport implements ToCollection, WithHeadingRow
-//     {
-//         // private $errorMessages = [];
-//         private $errorMessages = [];
-
-//         public function collection(Collection $rows)
-//         {
-//             foreach ($rows as $rowIndex => $row) {
-//                 $department = Department::where('department', $row['department'])->value('id');
-//                 $category = Category::where('name', $row['category'])->value('id');
-//                 $item = Items::where('item', $row['item_name'])->value('id');
-
-//                 if (!$department) {
-//                     // $this->addError("Row " . ($rowIndex + 2) . ": Department '{$row['department']}' not found");
-//                     // $this->addError($row['department']);
-//                     // $this->addError("department",$row['department']);
-//                     $createdep = Department::create([
-//                         "department" => $row['department'],
-//                         'slug' => Slug::str($row['department']),
-//                         'status' => 'active'
-//                     ]);
-//                     if(!$createdep){
-//                         $this->addError("department",$row['department']);
-//                     }
-//                 } elseif (!$category) {
-//                     // $this->addError("Row " . ($rowIndex + 2) . ": Category '{$row['category']}' not found");
-//                     $this->addError($row['category']);
-//                 } elseif (!$item) {
-//                     $this->addError($row['item_name']);
-//                     // $this->addError("Row " . ($rowIndex + 2) . ": Item '{$row['item_name']}' not found");
-//                 } else {
-//                     Stock::create([
-//                         'item_id' => $item,
-//                         'size' => $row['size'],
-//                         'quantity' => $row['qty'],
-//                         'unit' => $row['unit'],
-//                         'avg_price' => $row['avg_rate'],
-//                         'total_amount' => $row['total_amt'],
-//                         'department_id' => $department,
-//                         'category_id' => $category,
-//                     ]);
-//                 }
-//             }
-//         }
-
-//         public function onError(\Throwable $e)
-//         {
-//             // $this->addError($e->getMessage());
-//             $this->addError("General Error", $e->getMessage());
-//         }
-
-//         public function addError($type,$errorMessage)
-//         {
-//             // $this->errorMessages[] = $errorMessage;
-//             // $this->errorMessages = $errorMessage;
-
-//             $this->errorMessages[] = array(
-//                 "type" => $type,
-//                 "data" => $errorMessage
-//             );
-//         }
-
-//         public function getErrorMessages()
-//         {
-//             // dd($this->errorMessages);
-//             return $this->errorMessages;
-//         }
-//     }
-
-
-

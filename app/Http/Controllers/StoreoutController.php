@@ -15,8 +15,9 @@ use App\Models\Stock;
 use App\Models\Godam;
 use App\Models\StoreinDepartment;
 use App\Models\StoreoutDepartment;
+use App\Models\IssuedStoreinReport;
+use Carbon\Carbon;
 use Exception;
-//use DB;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -413,12 +414,33 @@ class StoreoutController extends Controller
     public function saveEntireStoreOut(Request $request, $storeout_id)
     {
         try {
-            $storeout = Storeout::find($storeout_id);
+            DB::beginTransaction();
+            $storeout = Storeout::with('storeoutItems')->find($storeout_id);
             $storeout->total_amount = round($request->storeOutTotal,2);
             $storeout->remark = $request->store_out_remark;
             $storeout->save();
+
+            foreach($storeout->storeoutItems as $item){
+                $issuedStoreinReport=IssuedStoreinReport::where('name',$item->item_of_storein_id)
+                ->where('date',Carbon::now()->format('Y-n-j'))
+                ->first();
+                if($issuedStoreinReport){
+                    $issuedStoreinReport->quantity += $item->quantity;
+                    $issuedStoreinReport->save();
+                }else{
+                    $issuedStoreinReport= new IssuedStoreinReport();
+                    $issuedStoreinReport->date =$storeout->receipt_date;
+                    $issuedStoreinReport->name =$item->item_of_storein_id;
+                    $issuedStoreinReport->quantity =$item->quantity;
+                    $issuedStoreinReport->rate = $item->rate;
+                    $issuedStoreinReport->total =$issuedStoreinReport->quantity * $issuedStoreinReport->rate;
+                    $issuedStoreinReport->save();
+                }
+            }
+            DB::commit();
             return redirect()->route('storeout.index')->withSuccess('Store Out Created Successfully!');
         } catch (Exception $e) {
+            DB::rollback();
             return back()->withErrors('Something went Wrong!');
         }
     }
