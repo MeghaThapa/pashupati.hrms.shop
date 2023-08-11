@@ -497,6 +497,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::post("add/dana/consumption/fsr",[FabricSendReceiveController::class,"addDanaConsumptionTable"])->name("add.dana.consumption.fsr");
         Route::post("get/dana/consumption/fsr",[FabricSendReceiveController::class,"getDanaConsumptionTable"])->name("get.dana.consumption.fsr");
+        Route::post("delete/dana/consumption",[FabricSendReceiveController::class,"removedDanaConsumptionTable"])->name("delete.dana.consumption");
     //fabric send receive contoller End
 
     // fabric_group route
