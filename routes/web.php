@@ -675,6 +675,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('salefinaltripal/store/list','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
 
+    Route::post("get/saleTripal/filterSaleTripalList",'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
+
 
 
 

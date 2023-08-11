@@ -198,6 +198,27 @@
     </div>
 </div>
 
+<div class="row">
+    <input type="hidden" name="saletripal_id" value="{{$id}}" id="saletripal_id">
+    <div class="table-responsive table-custom my-3">
+        <table class="table table-hover table-striped" id="getSaleList">
+            <thead class="table-info">
+                <tr>
+                    <th>{{ __('Sr.No') }}</th>
+                    <th>{{ __('Fabric Name') }}</th>
+                    <th>{{ __('Roll No') }}</th>
+                    <th>{{ __('G.W') }}</th>
+                    <th>{{ __('N.W') }}</th>
+                    <th>{{ __('Meter') }}</th>
+                    <th>{{ __('Avg') }}</th>
+                    <th>{{ __('Gram') }}</th>
+                </tr>
+            </thead>
+            <tbody id="getSaleList"></tbody>
+        </table>
+    </div>
+</div>
+
 
 <!-- /.card-body -->
 
@@ -365,6 +386,45 @@
 
 
  </script>   
+
+ <script>
+     $(document).ready(function(){
+         let fabricTable = null;
+
+         if (fabricTable !== null) {
+             fabricTable.destroy();
+         }
+
+         let saletripal_id = $('#saletripal_id').val();
+         // debugger;
+
+         fabricTable = $("#getSaleList").DataTable({
+             serverside : true,
+             processing : true,
+             ajax : {
+                 url : "{{ route('getSaleTripalList') }}",
+                 method : "post",
+                 data : function(data){
+                     data._token = $("meta[name='csrf-token']").attr("content"),
+                     data.saletripal_id = saletripal_id
+                 }
+             },
+             columns:[
+                 { data : "DT_RowIndex" , name : "DT_RowIndex" },
+                 { data : "name" , name : "name" },
+                 { data : "roll" , name : "roll" },
+                 { data : "gross" , name : "gross" },
+                 { data : "net" , name : "net" },
+                 { data : "meter" , name : "meter" },
+                 { data : "average" , name : "average" },
+                 { data : "gram" , name : "gram" },
+             ]
+         });
+       
+     });
+
+
+ </script>
 
 
 

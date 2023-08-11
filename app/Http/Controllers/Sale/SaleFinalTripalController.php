@@ -72,7 +72,7 @@ class SaleFinalTripalController extends Controller
         return view('admin.sale.salefinaltripal.addtripal',compact('findtripal','fabrics','salefinaltripals','id'));
     }
 
-    public function addTripal($id)
+    public function viewTripal($id)
     {
         $findtripal = SaleFinalTripal::find($id);
         $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
@@ -98,6 +98,24 @@ class SaleFinalTripalController extends Controller
                                  href='{$row->id}'>Send</a>";
                     })
                     ->rawColumns(["action","gram_wt"])
+                    ->make(true);
+
+        }
+    }
+
+    public function getSaleTripalList(Request $request){
+        if($request->ajax()){
+            $saletripal_id = $request->saletripal_id;
+
+            $fabrics = SaleFinalTripalList::where('salefinal_id',$saletripal_id)->get();
+
+            return DataTables::of($fabrics)
+                    ->addIndexColumn()
+                    ->addColumn("gram",function($row){
+                        return '1';
+                    })
+                    
+                    ->rawColumns(["gram"])
                     ->make(true);
 
         }

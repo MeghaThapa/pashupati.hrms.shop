@@ -205,8 +205,8 @@
                                     {{ __('ADDTripal') }}</a>
                             
                                 <a href="{{ route('salefinaltripals.viewTripal', $fabric->id) }}"
-                                    class="dropdown-item"><i class="fas fa-edit"></i>
-                                    {{ __('Edit') }}</a>
+                                    class="dropdown-item" target="_blank"><i class="fas fa-eye"></i>
+                                    {{ __('View') }}</a>
 
                                {{--  <a href="{{ route('salefinaltripals.delete', $fabric->slug) }}"
                                     class="dropdown-item delete-btn"
