@@ -59,7 +59,7 @@ class FabricSendReceiveController extends Controller
 
        // $department = Godam::whereIn('id',$departments)->get();
         $department=Godam::where('status','active')->get();
-        $id = UnlaminatedFabric::latest()->value('id');
+        $id = FabricLaminatedSentFSR::latest()->value('id');
         $bill_no = "FSR"."-".getNepaliDate(date('Y-m-d'))."-".$id+1;
         $shifts = Shift::where('status','active')->get();
         $planttype = ProcessingStep::where('status','1')->get();
@@ -634,11 +634,42 @@ class FabricSendReceiveController extends Controller
             $lamFabricTempToDelete = [];
             $department = [];
             $danaData = [];
+            $bill_number= $request->bill_number;
 
             try{
                 DB::beginTransaction();
                 //deduction
-                    $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)
+                    // $stock = AutoLoadItemStock::where('dana_name_id',$selectedDanaID)
+                    //         ->where("from_godam_id",$autoloader_godam_selected)
+                    //         ->first();
+
+                    // $autoloaderDanaData['dana_name_id'] = $stock->dana_name_id;
+                    // $autoloaderDanaData["id"] = $stock->id;
+                    // $autoloaderDanaData['dana_group_id'] = $stock->dana_group_id;
+                    // $autoloaderDanaData['consumption'] = $consumption;
+
+                    // // dd($autoloaderDanaData);
+
+                    // $presentQuantity = $stock->quantity; 
+
+                    // $deduction = $presentQuantity - $consumption;
+
+                    // if($deduction == 0){
+                    //     $stock->delete();
+                    // }elseif($deduction < 0){
+                    //     return response([
+                    //         "message" => "amount exceeded for dana consumption",
+                    //         "status" => "403"
+                    //         ]);
+                    // }else{
+                    //     $stock->update([
+                    //         "quantity" => $deduction
+                    //     ]);
+                    // }
+
+                $tempconsumptionfsr = TemporaryDanaConsumptionFSRTable::where("bill_number",$bill_number)->get();
+                foreach($tempconsumptionfsr as $data){
+                    $stock = AutoLoadItemStock::where('dana_name_id',$data->dana_name_id)
                             ->where("from_godam_id",$autoloader_godam_selected)
                             ->first();
 
@@ -656,6 +687,7 @@ class FabricSendReceiveController extends Controller
                     if($deduction == 0){
                         $stock->delete();
                     }elseif($deduction < 0){
+                        DB::rollBack();
                         return response([
                             "message" => "amount exceeded for dana consumption",
                             "status" => "403"
@@ -665,6 +697,7 @@ class FabricSendReceiveController extends Controller
                             "quantity" => $deduction
                         ]);
                     }
+                }
 
                 //fabric stock creation
                     UnlaminatedFabric::where('status','sent')->delete();
@@ -700,7 +733,7 @@ class FabricSendReceiveController extends Controller
                             // "fabric_id" => $fabric->id,
                             'roll_no' => $data->roll_no,
                             'loom_no' => $data->lamfabric->loom_no,
-                            "date_np" => getNepaliDate(date('Y-m-d')),
+                            // "date_np" => getNepaliDate(date('Y-m-d')),
                             "is_laminated" => "true"
                         ]);
 
@@ -729,21 +762,21 @@ class FabricSendReceiveController extends Controller
                         //     "consumption_quantity" => $autoloaderDanaData['consumption']
                         // ]);
 
-                        $fsrconsumption = FabricFSRDanaConsumption::where("dana_name_id" ,  $autoloaderDanaData['dana_name_id'])
-                                                ->where("dana_group_id" , $autoloaderDanaData['dana_group_id'])
-                                                ->where("consumption_quantity" , $autoloaderDanaData['consumption'])
-                                                ->first();
-                        if(is_null($fsrconsumption)){
-                            $consumption =  new FabricFSRDanaConsumption;
-                            $consumption->consumption_quantity = $autoloaderDanaData['consumption'];
-                        }else{
-                            $consumption = $fsrconsumption;
-                            $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $autoloaderDanaData['consumption'];
-                        }
-                            $consumption->fabric_laminated_sent_fsr_id =  $letlaminatedsentfsr->id;
-                            $consumption->dana_name_id =  $autoloaderDanaData['dana_name_id'];
-                            $consumption->dana_group_id =  $autoloaderDanaData['dana_group_id'];
-                            $consumption->save();
+                        // $fsrconsumption = FabricFSRDanaConsumption::where("dana_name_id" ,  $autoloaderDanaData['dana_name_id'])
+                        //                         ->where("dana_group_id" , $autoloaderDanaData['dana_group_id'])
+                        //                         ->where("consumption_quantity" , $autoloaderDanaData['consumption'])
+                        //                         ->first();
+                        // if(is_null($fsrconsumption)){
+                        //     $consumption =  new FabricFSRDanaConsumption;
+                        //     $consumption->consumption_quantity = $autoloaderDanaData['consumption'];
+                        // }else{
+                        //     $consumption = $fsrconsumption;
+                        //     $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $autoloaderDanaData['consumption'];
+                        // }
+                        //     $consumption->fabric_laminated_sent_fsr_id =  $letlaminatedsentfsr->id;
+                        //     $consumption->dana_name_id =  $autoloaderDanaData['dana_name_id'];
+                        //     $consumption->dana_group_id =  $autoloaderDanaData['dana_group_id'];
+                        //     $consumption->save();
 
 
                         $lamFabricToDelete[] = $data->id;
@@ -754,6 +787,25 @@ class FabricSendReceiveController extends Controller
                         }
 
                     }
+
+                    foreach($tempconsumptionfsr as $data){
+                        $fsrconsumption = FabricFSRDanaConsumption::where("dana_name_id" ,  $data->dana_name_id)
+                                                ->where("dana_group_id" , $data->dana_group_id)
+                                                ->where("consumption_quantity" , $data->consumption_quantity)
+                                                ->first();
+                        if(is_null($fsrconsumption)){
+                            $consumption =  new FabricFSRDanaConsumption;
+                            $consumption->consumption_quantity = $data->consumption_quantity;
+                        }else{
+                            $consumption = $fsrconsumption;
+                            $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $data->consumption_quantity;
+                        }
+                            $consumption->fabric_laminated_sent_fsr_id =  $letlaminatedsentfsr->id;
+                            $consumption->dana_name_id =  $data->dana_name_id;
+                            $consumption->dana_group_id =  $data->dana_group_id;
+                            $consumption->save();
+                    }
+                    
 
                     if($total_waste>0){
                         WasteStock::create([
@@ -821,23 +873,29 @@ class FabricSendReceiveController extends Controller
                 "consumption_quantity" => $request->consumption
             ]);
 
-            $consumptions = TemporaryDanaConsumptionFSRTable::where("bill_number",$request->bill_number)->with("dananame")->get();
-            $initial = 0;
-            foreach($consumptions as $data){
-                $initial += $data->consumption_quantity;
-            }
+            $query = TemporaryDanaConsumptionFSRTable::where("bill_number",$request->bill_number)->with("dananame");
+            $consumptions = $query->get();
+            $total_consumption = $query->sum("consumption_quantity");
+            // $initial = 0;
+            // foreach($consumptions as $data){
+            //     $initial += $data->consumption_quantity;
+            // }
 
             return response([
-                "dana" => $request->dana,
+                // "dana" => $request->dana,
                 "consumptions" => $consumptions,
-                "total_consumption" => $initial
+                "total_consumption" => $total_consumption
             ]);
         }
     }
 
     public function getDanaConsumptionTable(Request $request){
+        $query = TemporaryDanaConsumptionFSRTable::where("bill_number",$request->billnumber)->with("dananame");
+        $consumptions = $query->get();
+        $total_consumption = $query->sum("consumption_quantity");
         return response([
-            "consumptions" => TemporaryDanaConsumptionFSRTable::where("bill_number",$request->billnumber)->with("dananame")->get(),
+            "consumptions" =>  $consumptions,
+            "total_consumption" => $total_consumption
         ]);
     }
 }
