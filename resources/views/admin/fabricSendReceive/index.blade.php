@@ -371,6 +371,7 @@
                             <th>SN</th>
                             <th>Dana Name</th>
                             <th>Quantity</th>
+                            <th>Actions</th>
                         </tr>
                        </thead>
                         <tbody id="dana-consumption-tbody">
@@ -699,35 +700,6 @@
         callunlaminatedfabricajax();
         comparelamandunlam();
         getDanaConsumption();
-
-        function getDanaConsumption() {
-    $.ajax({
-        url: "{{ route('get.dana.consumption.fsr') }}",
-        method: "post",
-        data: {
-            "_token": $("meta[name='csrf-token']").attr("content"),
-            "billnumber": $("#billnumber").val()
-        },
-        success: function (response) {
-            console.log(response)
-            if (response.consumptions != null) {
-                $("#dana-consumption-tbody").empty();
-                response.consumptions.forEach((data,index) => {
-                    let tr = $("<tr></tr>");
-                    $("#dana-consumption-tbody").append(tr);
-                    tr.append(`<td>${index++}</td>`);
-                    tr.append(`<td>${data.dananame.name}</td>`);
-                    tr.append(`<td>${data.consumption_quantity}</td>`);
-                });
-                $("#totl_dana").val(response.total_consumption)
-            }
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    });
-}
-
 
         $("#toGodam").change(function(e){
             let godamId = $(this).val(); 
@@ -1376,6 +1348,7 @@
                         tr.append(`<td>${index+1}</td>`);
                         tr.append(`<td>${data.dananame.name}</td>`);
                         tr.append(`<td>${data.consumption_quantity}</td>`);
+                        tr.append(`<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`);
                     })
                 console.log(response)
             },error:function(error){
@@ -1384,6 +1357,57 @@
             }
         });
     });
+
+    $(document).on("click",".delete-dana",function(){
+        let id = $(this).data("id")
+        // alert(id)
+        $.ajax({
+            url : "{{ route('delete.dana.consumption') }}",
+            method : "post",
+            data : {
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "id" : id
+            },
+            success:function(response){
+                console.log(response)
+                if(response.status == 200){
+                    getDanaConsumption();
+                }
+            },
+            error:function(error){
+                console.log("error",error)
+            }
+        })
+    })
+
+    function getDanaConsumption() {
+            $.ajax({
+                url: "{{ route('get.dana.consumption.fsr') }}",
+                method: "post",
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content"),
+                    "billnumber": $("#billnumber").val()
+                },
+                success: function (response) {
+                    console.log(response)
+                    if (response.consumptions != null) {
+                        $("#dana-consumption-tbody").empty();
+                        response.consumptions.forEach((data,index) => {
+                            let tr = $("<tr></tr>");
+                            $("#dana-consumption-tbody").append(tr);
+                            tr.append(`<td>${index++}</td>`);
+                            tr.append(`<td>${data.dananame.name}</td>`);
+                            tr.append(`<td>${data.consumption_quantity}</td>`);
+                            tr.append(`<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`);
+                        });
+                        $("#totl_dana").val(response.total_consumption)
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
 
 
     $(document).on("keyup","#fabric_waste",function(e){

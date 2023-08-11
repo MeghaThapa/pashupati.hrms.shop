@@ -898,4 +898,13 @@ class FabricSendReceiveController extends Controller
             "total_consumption" => $total_consumption
         ]);
     }
+    public function removedDanaConsumptionTable(Request $request){
+        if($request->ajax()){
+            TemporaryDanaConsumptionFSRTable::where("id",$request->id)->delete();
+            return response([
+                "message" => "deleted successfully",
+                "status" => 200 
+            ],200);
+        }
+    }
 }
