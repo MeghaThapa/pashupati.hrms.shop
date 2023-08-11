@@ -89,23 +89,17 @@ class DoubleTripalController extends Controller
         // dd($fabrics);
         return view('admin.doubletripal.create',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date','godams','sumdana','datas','find_data','id'));
 
-      
-
-
     }
 
 
     public function getSingleLamFabric(Request $request){
-        // dd($request);
+        
         if($request->ajax()){
             $getAllfabrics = SinglesidelaminatedfabricStock::where('id',$request->fabric_id)->value('name');
             $fabrics = SinglesidelaminatedfabricStock::where('name',$getAllfabrics)->get();
             
-            // dd($fabrics);
             return response(['response'=>$fabrics]);
-            // return response([
-            //     'fabrics' => $fabrics
-            // ]);
+   
         }
     }
     public function getplanttype(Request $request){
@@ -309,9 +303,7 @@ class DoubleTripalController extends Controller
                 
                 $fabric =  SingleSideunlaminatedFabric::with('fabric')->where('id',$fabric_id)->first();
 
-                // $updatetosent = $fabric->update([
-                //     "status" => "sent"
-                // ]);
+         
 
                 
                 if($lamimated_roll_no != null && $laminated_gross_weight != null && $laminated_net_weight != null && $laminated_avg_weight != null && $laminated_gram != null){
@@ -365,16 +357,19 @@ class DoubleTripalController extends Controller
                     $fabrics_id = Singlesidelaminatedfabricstock::where('id',$fabric_ids)->value('id');
                     // dd($stock);
 
-                    if($laminated_net_weight != null){
-                      $finalstock = $stock - $laminated_net_weight ;
-                      // dd($stock,$laminated_net_weight);
-                      $find_fabric = Singlesidelaminatedfabricstock::find($fabrics_id);
-                      // dd($find_fabric);
-                      $find_fabric->net_wt = $finalstock;
-                      $find_fabric->update();
+                    // if($laminated_net_weight != null){
+                    //   $finalstock = $stock - $laminated_net_weight ;
+                    //   // dd($stock,$laminated_net_weight);
+                    //   $find_fabric = Singlesidelaminatedfabricstock::find($fabrics_id);
+                    //   // dd($find_fabric);
+                    //   $find_fabric->net_wt = $finalstock;
+                    //   $find_fabric->update();
 
-                    }
+                    // }
                 }
+
+                Singlesidelaminatedfabricstock::where('id',$fabric_ids)->delete();
+
 
                 // if($lamimated_roll_no_2 != null && $laminated_gross_weight_2 != null && $laminated_net_weight_2 != null && $laminated_avg_weight_2 != null && $laminated_gram_2 != null){
 
@@ -466,8 +461,6 @@ class DoubleTripalController extends Controller
                 //         "plantname_id" => $plantname_id
                 //     ]);
                 // }
-
-             
 
                 
            DB::commit();

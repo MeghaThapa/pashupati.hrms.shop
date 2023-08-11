@@ -104,7 +104,7 @@
                 <label for="size" class="col-form-label">{{ __('To Godam') }}
                 </label>
                 <input type="hidden" name="toGodam" value="{{$find_data->godam_id}}" id="toGodam">
-                <input value="{{ $find_data->godam_id }}" step="any" min="0" class="form-control calculator" readonly>
+                <input value="{{ $find_data->getGodam->name }}" step="any" min="0" class="form-control calculator" readonly>
                 @error('to_godam_id')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -114,7 +114,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Plant Type') }}
                 </label>
-                <input value="{{ $find_data->planttype_id }}" class="form-control" readonly>
+                <input value="{{ $find_data->getPlantType->name }}" class="form-control" readonly>
                 <input type="hidden" name="plant_type_id" value="{{$find_data->planttype_id}}" id="plantType">
                 
                 @error('plant_type_id')
@@ -128,7 +128,7 @@
                 </label>
                 <input type="hidden" name="plant_name_id" value="{{$find_data->plantname_id}}" id="plantName">
 
-                <input value="{{ $find_data->plantname_id }}" class="form-control" readonly>
+                <input value="{{ $find_data->getPlantName->name }}" class="form-control" readonly>
                 
                 @error('gp_no')
                 <span class="invalid-feedback" role="alert">
@@ -139,7 +139,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Shift') }}
                 </label>
-                <input value="{{ $find_data->shift_id }}" class="form-control" readonly>
+                <input value="{{ $find_data->getShift->name }}" class="form-control" readonly>
 
                 {{-- <select class="advance-select-box form-control" id="shiftName" name="shift_name_id" disabled required>
                     <option value="" selected disabled>{{ __('Select Shift Name') }}</option>

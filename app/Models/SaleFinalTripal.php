@@ -17,4 +17,9 @@ class SaleFinalTripal extends Model
     {
         return $this->belongsTo('App\Models\Supplier','partyname_id');
     }
+
+    public function getSaleList()
+    {
+        return $this->belongsTo('App\Models\SaleFinalTripalList','id','salefinal_id');
+    }
 }

@@ -27,8 +27,6 @@ return new class extends Migration
             $table->string('bill_date');
             $table->unsignedBigInteger('salefinal_id');
             $table->foreign('salefinal_id')->references("id")->on('sale_final_tripals')->onDelete('cascade');
-            $table->unsignedBigInteger('finaltripal_id');
-            $table->foreign('finaltripal_id')->references("id")->on('final_tripal_stocks')->onDelete('cascade');
             $table->timestamps();
         });
     }
