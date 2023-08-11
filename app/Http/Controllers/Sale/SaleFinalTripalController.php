@@ -19,12 +19,10 @@ class SaleFinalTripalController extends Controller
 {
     public function index()
     {
-        $bill_no = AppHelper::getFinalTripalReceiptNo();
-        $bill_date = date('Y-m-d');
         $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
         $partyname = Supplier::where('status',1)->get();
-        $salefinaltripals = SaleFinalTripal::paginate(20);
-        return view('admin.sale.salefinaltripal.creates',compact('bill_no','bill_date','fabrics','partyname','salefinaltripals'));
+        $salefinaltripals = SaleFinalTripal::with('getSaleList')->paginate(20);
+        return view('admin.sale.salefinaltripal.index',compact('fabrics','partyname','salefinaltripals'));
     }
 
     /**
@@ -69,8 +67,7 @@ class SaleFinalTripalController extends Controller
     public function addTripal($id)
     {
         $findtripal = SaleFinalTripal::find($id);
-        // dd($findtripal);
-        $fabrics = FinalTripalStock::get();
+        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
         $salefinaltripals = SaleFinalTripal::paginate(20);
         return view('admin.sale.salefinaltripal.addtripal',compact('findtripal','fabrics','salefinaltripals','id'));
     }
@@ -80,7 +77,6 @@ class SaleFinalTripalController extends Controller
             $fabric_name_id = $request->fabric_name_id;
             $fabric_name = FinalTripalStock::where("id",$fabric_name_id)->value("name");
             $fabrics = FinalTripalStock::where("name",$fabric_name)->get();
-            // dd($fabrics);
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
@@ -96,19 +92,14 @@ class SaleFinalTripalController extends Controller
                     ->rawColumns(["action","gram_wt"])
                     ->make(true);
 
-            // return response()->json([
-            //     "fabrics" => $fabrics
-            // ]);
         }
     }
 
     public function finalTripalStoreList(Request $request)
     {
         try{
-            // dd($request);
             $find_name = FinalTripalStock::find($request->data_id);
             
-
                 $fabricstock = SaleFinalTripalList::create([
                     'name' => $find_name->name,
                     'slug' => $find_name->slug,
@@ -121,7 +112,6 @@ class SaleFinalTripalController extends Controller
                     'bill_no' => $request->bill_no,
                     'bill_date' => $request->bill_date,
                     'salefinal_id' => $request->salefinal_id,
-                    'finaltripal_id' => $request->data_id,
                 ]);
 
                 if($fabricstock){
@@ -135,8 +125,6 @@ class SaleFinalTripalController extends Controller
         catch (Exception $ex){
             return $ex;
         }
-      
-      
     
 
     }

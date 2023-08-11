@@ -239,7 +239,7 @@ class FinalTripalController extends Controller
             'bill_date' => $request['bill_date'],
             "planttype_id" => $find_bill->planttype_id,
             "plantname_id" => $find_bill->plantname_id,
-            "doublefabric_id" => $find_bill->doublefabric_id,
+            // "doublefabric_id" => $find_bill->doublefabric_id,
             "fabric_id" => $find_bill->fabric_id,
             "department_id" => $find_bill->department_id,
             "finaltripalname_id" => $request->tripal,
@@ -251,8 +251,8 @@ class FinalTripalController extends Controller
             "average_wt" => $request['average'],
             "gsm" => $request['gsm'],
             'net_wt' => $request['net_wt'],
-            "date_en" => $request['net_wt'],
-            "date_np" => $request['net_wt'],
+            "date_en" => $request['bill_date'],
+            "date_np" => $request['bill_date'],
             "bill_id" => $bill_id,
             "status" => "sent"
         ]);
@@ -264,7 +264,7 @@ class FinalTripalController extends Controller
             'bill_date' => $request['bill_date'],
             "planttype_id" => $find_bill->planttype_id,
             "plantname_id" => $find_bill->plantname_id,
-            "doublefabric_id" => $find_bill->doublefabric_id,
+            // "doublefabric_id" => $find_bill->doublefabric_id,
             "fabric_id" => $find_bill->fabric_id,
             "department_id" => $find_bill->department_id,
             "finaltripalname_id" => $request->tripal,
