@@ -53,6 +53,7 @@ use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
 use Symfony\Component\Routing\RouteCollection;
+
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -1373,3 +1374,14 @@ Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
 });
 
 /*********************************BswFabSendcurtxReceivpatchvalveController*****************************************/
+/************************************closing storein*******************************************/
+
+Route::controller(ClosingStoreinReportController::class)
+->prefix('closingStoreinReport')
+->group(function(){
+    Route::get("closing","closing")->name('closingStoreinReport.closing');
+    Route::get("index","index")->name('closingStoreinReport.index');
+    Route::get("yajraReport","yajraReport")->name('closingStoreinReport.yajraReport');
+});
+
+/****************************************/

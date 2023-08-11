@@ -255,7 +255,14 @@
                         </a>
                     </li>
                 @endif
-                <li class="nav-header text-bold">{{ __('EXPENSE') }}</li>
+                <li class="nav-header text-bold">{{ __('Report') }}</li>
+                <li class="nav-item">
+                    <a href="{{ route('closingStoreinReport.index') }}"
+                        class="nav-link {{ request()->is('admin/closingStoreinReport/index*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-list-alt"></i>
+                        <p>{{ __('StoreIn/Out report') }}</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('expCategories.index') }}"
                         class="nav-link {{ request()->is('admin/expense-categories*') ? 'active' : '' }}">
