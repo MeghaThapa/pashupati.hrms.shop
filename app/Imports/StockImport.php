@@ -97,6 +97,8 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $rowitem = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])
             ->where('size_id',$size)
             ->where('unit_id',$unit)
+            ->where('department_id',$department)
+            ->where('category_id',$category)
             ->value('id');
             if($department && $category && $rowitem && $size && $unit){
                 $item = $rowitem;
@@ -123,9 +125,12 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                         ->where('unit',$unit)
                         ->first();
                 if($exists){
+                    $total_amount = $exists->total_amount + trim($row['total_amount']);
+                    $total_quantity =$exists->quantity + trim($row['quantity']);
                     Stock::where('id',$exists->id)->update([
-                        "total_amount" => $exists->total_amount + $row['total_amount'],
-                        "quantity"=>$exists->quantity + $row['quantity']
+                        "total_amount" => $total_amount,
+                        "quantity"=>$total_quantity,
+                        "avg_price" => $total_amount/$total_quantity
                     ]);
 
                 }else{
@@ -140,9 +145,24 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     'category_id' => $category,
                     ]);
                 }
-                $openingStockReport=OpeningStoreinReport::where('name',$item)->first();
+
+             $openingStockReport=   OpeningStoreinReport::with(['itemsOfStorein' => function($query) use($category, $department, $item, $size, $unit) {
+                    $query->where('category_id', $category)
+                          ->where('department_id', $department)
+                          ->where('size_id', $size)
+                          ->where('unit_id', $unit);
+                    }])
+                ->where('name', $item)
+                ->first();
+
+
                 if($openingStockReport){
-                    $openingStockReport->quantity +=$row['quantity'];
+                    $total_amount = $openingStockReport->total + trim($row['total_amount']);
+                    $total_quantity =$openingStockReport->quantity + trim($row['quantity']);
+                    $openingStockReport = OpeningStoreinReport::find($openingStockReport->id);
+                    $openingStockReport->quantity =$total_quantity;
+                    $openingStockReport->total =$total_amount ;
+                    $openingStockReport->rate= $total_amount /$total_quantity;
                     $openingStockReport->save();
                 }else{
                     $stockReport= new OpeningStoreinReport();

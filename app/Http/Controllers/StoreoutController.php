@@ -37,38 +37,131 @@ class StoreoutController extends Controller
         // return $storeOutDatas;
         return view('admin.storeout.index', compact('storeOutDatas'));
     }
+    // public function storoutYajraDatabales()
+    // {
+    //       $storeout = DB::table('storeout')
+    //     ->join('godam','godam.id','=','storeout.godam_id')
+    //     ->select(
+    //         'storeout.id',
+    //         'godam.name as storein_department_name',
+    //         'storeout.receipt_date',
+    //         'storeout.receipt_no',
+    //         'storeout.total_amount',
+    //         'storeout.status',
+    //         )
+    //     ->get();
+    //     return DataTables::of($storeout)
+    //         ->addIndexColumn()
+    //         ->addColumn('action', function ($row) {
+    //             $actionBtn ='';
+    //             if($row->status == 'running'){
+    //             $actionBtn .= '
+    //             <a class="btnEdit" href="' . route('storeout.edit', ["storeout_id" => $row->id]) . '" >
+    //                 <button class="btn btn-primary">
+    //                     <i class="fas fa-edit fa-lg"></i>
+    //                 </button>
+    //             </a>
+
+    //             <button class="btn btn-danger" id="dltStoreout" data-id="'.$row->id.'">
+    //                 <i class="fas fa-trash-alt"></i>
+    //             </button>
+    //             ';
+    //             }else{
+    //                 $actionBtn .=  '
+    //                 <a class="" href="#" >
+    //                     <button class="btn btn-info">
+    //                         <i class="fas fa-file-invoice"></i>
+    //                     </button>
+    //                 </a>
+    //                 ';
+    //             }
+
+    //             return $actionBtn;
+    //         })
+    //         ->addColumn('status', function ($row) {
+    //             return '<span class="badge badge-pill badge-success">'.$row->status.'</span>';
+    //         })
+    //         ->rawColumns(['action','status'])
+    //         ->make(true);
+    // }
     public function storoutYajraDatabales()
     {
-          $storeout = DB::table('storeout')
-        ->join('godam','godam.id','=','storeout.godam_id')
+    $batchSize = 100;
+
+    $storeout = DB::table('storeout')
+        ->join('godam', 'godam.id', '=', 'storeout.godam_id')
         ->select(
             'storeout.id',
             'godam.name as storein_department_name',
             'storeout.receipt_date',
             'storeout.receipt_no',
             'storeout.total_amount',
-            )
+            'storeout.status',
+        )
+        ->orderBy('storeout.id', 'DESC')
         ->get();
-        return DataTables::of($storeout)
-            ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $actionBtn = '
-                <a class="btnEdit" href="' . route('storeout.edit', ["storeout_id" => $row->id]) . '" >
-                    <button class="btn btn-primary">
-                        <i class="fas fa-edit fa-lg"></i>
-                    </button>
-                </a>
 
-                <button class="btn btn-danger" id="dltStoreout" data-id="'.$row->id.'">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-                '
-                ;
-                return $actionBtn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+    $storeoutChunks = array_chunk($storeout->toArray(), $batchSize);
+
+    $reportData = [];
+
+    foreach ($storeoutChunks as $batch) {
+        $storeoutBatch = collect($batch);
+
+        foreach ($storeoutBatch as $row) {
+            $actionBtn = '';
+            if ($row->status == 'running') {
+                $actionBtn .=$this->generateRunningAction($row);
+            } else {
+                $actionBtn .=$this->generateNonRunningAction($row);
+
+            }
+
+            $statusBadge = '<span class="badge badge-pill badge-success">' . $row->status . '</span>';
+
+            $reportData[] = [
+                'id' => $row->id,
+                'storein_department_name' => $row->storein_department_name,
+                'receipt_date' => $row->receipt_date,
+                'receipt_no' => $row->receipt_no,
+                'total_amount' => $row->total_amount,
+                'status' => $statusBadge,
+                'action' => $actionBtn,
+            ];
+        }
     }
+
+    return DataTables::of($reportData)
+        ->addIndexColumn()
+        ->rawColumns(['action', 'status'])
+        ->make(true);
+}
+private function generateRunningAction($row)
+{
+    return '
+    <a class="btnEdit" href="' . route('storeout.edit', ["storeout_id" => $row->id]) . '" >
+        <button class="btn btn-primary">
+            <i class="fas fa-edit fa-lg"></i>
+        </button>
+    </a>
+    <button class="btn btn-danger" id="dltStoreout" data-id="' . $row->id . '">
+        <i class="fas fa-trash-alt"></i>
+    </button>
+    ';
+}
+
+private function generateNonRunningAction($row)
+{
+    return '
+    <a class="" href="#" >
+        <button class="btn btn-info">
+            <i class="fas fa-file-invoice"></i>
+        </button>
+    </a>
+    ';
+}
+
+
     public function deleteStoreout($storeout_id){
     try{
          DB::beginTransaction();
@@ -169,10 +262,12 @@ class StoreoutController extends Controller
 
     public function edit($storeout_id)
     {
-        $receipt_no = null;
-       $godams =Godam::get(['id','name']);
-        $storeOut = StoreOut::find($storeout_id);
-        return view('admin.storeout.create', compact('receipt_no', 'storeOut','godams'));
+
+        return redirect()->route('storeout.storeOutItems',['store_out_id'=>$storeout_id]);
+    //     $receipt_no = null;
+    //    $godams =Godam::get(['id','name']);
+    //     $storeOut = StoreOut::find($storeout_id);
+    //     return view('admin.storeout.create', compact('receipt_no', 'storeOut','godams'));
     }
 
     public function saveStoreout(Request $request)
@@ -414,6 +509,7 @@ class StoreoutController extends Controller
     public function saveEntireStoreOut(Request $request, $storeout_id)
     {
         try {
+            $today= Carbon::now()->format('Y-n-j');
             DB::beginTransaction();
             $storeout = Storeout::with('storeoutItems')->find($storeout_id);
             $storeout->total_amount = round($request->storeOutTotal,2);
@@ -423,14 +519,14 @@ class StoreoutController extends Controller
 
             foreach($storeout->storeoutItems as $item){
                 $issuedStoreinReport=IssuedStoreinReport::where('name',$item->item_of_storein_id)
-                ->where('date',Carbon::now()->format('Y-n-j'))
+                ->where('date',$today)
                 ->first();
                 if($issuedStoreinReport){
                     $issuedStoreinReport->quantity += $item->quantity;
                     $issuedStoreinReport->save();
                 }else{
                     $issuedStoreinReport= new IssuedStoreinReport();
-                    $issuedStoreinReport->date =$storeout->receipt_date;
+                    $issuedStoreinReport->date =$today;
                     $issuedStoreinReport->name =$item->item_of_storein_id;
                     $issuedStoreinReport->quantity =$item->quantity;
                     $issuedStoreinReport->rate = $item->rate;
