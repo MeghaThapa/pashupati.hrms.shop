@@ -5,6 +5,8 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\ClosingStoreinReportController;
+use Illuminate\Support\Facades\Log;
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -24,10 +26,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            // Call your function here
-            ClosingStoreinReportController::closing();
-        })->dailyAt('21:47'); //
+        Log::info('storein closing.');
+        $schedule->command('storein:closing')->at('22:05');
     }
 
     /**

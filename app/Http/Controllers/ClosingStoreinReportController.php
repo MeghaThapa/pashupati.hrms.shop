@@ -107,6 +107,7 @@ class ClosingStoreinReportController extends Controller
                 ->whereIn('item.id', $itemId)
                 ->get();
 
+
             foreach ($batchItems as $item) {
                 $data = $allData->where('item_id', $item->id)->first();
 

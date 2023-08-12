@@ -14,11 +14,11 @@
         </button>
     </a>
 
-    <a href="{{ route('closingStoreinReport.closing') }}">
+    {{-- <a href="{{ route('closingStoreinReport.closing') }}">
         <button class="btn btn-primary">
             Closing
         </button>
-    </a>
+    </a> --}}
     <div class="d-flex "
         style="font-weight:bold; font-size:25px;justify-content:center; align-items:center;text-decoration:underline;">
         PASHUPATI
