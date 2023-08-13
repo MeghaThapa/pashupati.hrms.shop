@@ -283,16 +283,21 @@ $fabric_netweight = 0;
                 $stock->delete();
             }
 
-            FabricDetail::where('id',$id)->delete();  
+              
 
             $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$find_data->godam_id)
                                                   ->value('id');
 
             $findTape = TapeEntryStockModel::find($gettapeQuantity);
+            $totalwaste = $find_data->pipe_cutting + $find_data->bd_wastage + $find_data->other_wastage;
 
-            $final = $findTape->tape_qty_in_kg + $find_data->total_netweight;
+            $value = $find_data->total_netweight + $totalwaste;
+
+            $final = $findTape->tape_qty_in_kg + $value;
             $findTape->tape_qty_in_kg = $final;
             $findTape->update();  
+
+            FabricDetail::where('id',$id)->delete();
 
 
             DB::commit();

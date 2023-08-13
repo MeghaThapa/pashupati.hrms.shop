@@ -37,6 +37,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
       try{
           DB::beginTransaction();
+          // dd($rows[0]);
 
           $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$this->godam_id)
                                                 ->value('id');
@@ -55,7 +56,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
               $findTape->update();
 
               $countData = FabricDetail::where('bill_number',$bill_no)->count();
-              if($countData != 1){
+              
                   // store subcategory
                 $wasteagepercent = (($totalwastage)/$rows[0]['totalweightkg']) * 100;
                   $fabric = FabricDetail::create([
@@ -74,7 +75,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                       'wrapping' => '0',
                   ]);
 
-              }
+              
            }
 
            $wastename = 'rafia';
