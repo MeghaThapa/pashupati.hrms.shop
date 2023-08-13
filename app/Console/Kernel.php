@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         Log::info('storein closing.');
-        $schedule->command('storein:closing')->at('22:05');
+        $schedule->command('storein:closing')->at('21:45');
     }
 
     /**

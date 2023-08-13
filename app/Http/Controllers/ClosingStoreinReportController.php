@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Stock;
 use App\Models\OpeningStoreinReport;
 use App\Models\ClosingStoreinReport;
+use App\Models\StoreinCategory;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use DB;
@@ -12,8 +13,8 @@ use Carbon\Carbon;
 class ClosingStoreinReportController extends Controller
 {
     public function index(){
-
-          return view('admin.report.storeinOutReport');
+          $categories=StoreinCategory::where('status', 'active')->get();
+          return view('admin.report.storeinOutReport',compact('categories'));
     }
 
     // public function yajraReport(){
@@ -79,6 +80,10 @@ class ClosingStoreinReportController extends Controller
         $today= Carbon::now()->format('Y-n-j');
 
         $reportData = [];
+        $openingTotal = 0;
+        $purchaseTotal = 0;
+        $closingTotal = 0;
+
 
         foreach (array_chunk($items->toArray(), $batchSize) as $batchItems) {
             $itemId = array_column($batchItems, 'id');
@@ -111,6 +116,10 @@ class ClosingStoreinReportController extends Controller
             foreach ($batchItems as $item) {
                 $data = $allData->where('item_id', $item->id)->first();
 
+                $openingTotal += $data->opening_total ?? 0;
+                $purchaseTotal += $data->purchase_total ?? 0;
+                $closingTotal += $data->closing_total ?? 0;
+
                 $reportData[] = [
                     'item_name' => $item->name,
                     'opening_qty' => $data->opening_qty ?? 0,
@@ -129,8 +138,9 @@ class ClosingStoreinReportController extends Controller
             }
         }
 
+
         return Datatables::of($reportData)->addIndexColumn()
-     ->make(true);
+        ->make(true);
     }
 
     public function closing(){

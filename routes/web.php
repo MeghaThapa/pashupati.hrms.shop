@@ -981,6 +981,8 @@ Route::get('storein/{code}/delete', 'StoreinController@destroy')->name('storein.
 // stockController
 Route::post('stock/createUpdate/{storein_item_id}', 'StockController@createUpdate')->name('stock.createUpdate');
 Route::get('stock/index', 'StockController@index')->name('stock.index');
+Route::get('yajra/yajra', 'StockController@yajra')->name('stock.yajra');
+
 Route::get('stock/filterStockAccCategory/{category_id}', 'StockController@filterStockAccCategory')->name('stock.filterStockAccCategory');
 Route::get('stock/filterStockAccDepartment/{department_id}', 'StockController@filterStockAccDepartment')->name('stock.filterStockAccDepartment');
 //recent megha
