@@ -3,6 +3,7 @@
 @section('extra-style')
 <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
 <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
+<link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('content')
@@ -49,7 +50,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Receipt Date</label>
-                    <input type="date" class="form-control" name="fabric_opening_date" value="{{ date('Y-m-d') }}">
+                    <input type="text" class="form-control" name="date_np" id="date_np" >
                 </div>
                 <div class="col-md-6">
                     <label for="">To Godam</label>
@@ -63,6 +64,7 @@
                 <div class="col-md-6">
                     <label for="">Fabric Type</label>
                     <select name="type" class="form-control advance-select-box" id="type">
+                        <option disabled selected>--Select Type--</option>
                         <option value="lam">Lam</option>
                         <option value="unlam">Unlam</option>
                     </select>
@@ -81,4 +83,17 @@
 
 @section('extra-script')
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+<script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
+  $('#date_np').val(currentDate);
+  $('#date_np').nepaliDatePicker({
+    ndpYear: true,
+    ndpMonth: true,
+    disableAfter: currentDate,
+    });
+  
+  });
+</script>
 @endsection

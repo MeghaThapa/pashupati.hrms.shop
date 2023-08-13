@@ -76,8 +76,9 @@ class SaleFinalTripalController extends Controller
     {
         $findtripal = SaleFinalTripal::find($id);
         $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
-        $salefinaltripals = SaleFinalTripal::paginate(20);
-        return view('admin.sale.salefinaltripal.viewtripal',compact('findtripal','fabrics','salefinaltripals','id'));
+        $salefinaltripals = SaleFinalTripalList::where('salefinal_id',$id)->get();
+        // dd($salefinaltripals);
+        return view('admin.sale.salefinaltripal.billtripal',compact('findtripal','fabrics','salefinaltripals','id'));
     }
 
     public function getfinaltripalFilter(Request $request){
