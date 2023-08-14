@@ -85,9 +85,10 @@ class TripalController extends Controller
         $datas = SingleTripalBill::get();
         $fabstocks = FabricStock::get()->unique('name')->values()->all();
 
+        $danalist=SingleTripalDanaConsumption::where('bill_id',$id)->get();
 
 
-        return view('admin.tripal.create',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana','datas','id','find_data','fabstocks'));
+        return view('admin.tripal.create',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana','datas','id','find_data','fabstocks','danalist'));
     }
 
     public function getplanttype(Request $request){

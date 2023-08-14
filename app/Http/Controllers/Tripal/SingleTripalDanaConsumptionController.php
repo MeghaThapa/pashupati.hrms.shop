@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SingleTripalDanaConsumption;
 use App\Models\AutoLoadItemStock;
+use App\Models\SingleTripalBill;
 use DB;
 
 class SingleTripalDanaConsumptionController extends Controller
@@ -66,6 +67,22 @@ class SingleTripalDanaConsumptionController extends Controller
         //return $request->printAndCutEntry_id;
         // dd('lol');
         // dd($request);
+            $printsCutsDanaConsumption=SingleTripalDanaConsumption::where('bill_id',$request->bill_id)->get();
+            // dd($printsCutsDanaConsumption);
+            return $printsCutsDanaConsumption->load(['godam:id,name','danaName:id,name']);
+    }
+
+    public function delSingleDanaConsumption($id){
+        //return $request->printAndCutEntry_id;
+        // dd('lol');
+        // dd($id);
+        $find_data = SingleTripalDanaConsumption::find($id);
+        $find_bill = SingleTripalBill::find($find_data->bill_id);
+        dd($find_bill);
+
+        $autoloaderStock=AutoLoadItemStock::where('from_godam_id',$find_bill->godam_id)
+        ->where('dana_name_id',$request->dana_name_id)
+        ->value('id');
             $printsCutsDanaConsumption=SingleTripalDanaConsumption::where('bill_id',$request->bill_id)->get();
             // dd($printsCutsDanaConsumption);
             return $printsCutsDanaConsumption->load(['godam:id,name','danaName:id,name']);

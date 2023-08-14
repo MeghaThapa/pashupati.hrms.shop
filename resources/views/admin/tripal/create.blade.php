@@ -348,10 +348,25 @@
                     {{-- <th>Dana Group</th> --}}
                     <th>Dana Name</th>
                     <th>Quantity</th>
+                    <th>Action</th>
 
                 </tr>
             </thead>
-            <tbody id="printsCutsDanaConsumpt">
+            <tbody >
+                @foreach($danalist as $list)
+                <tr>
+                    <td>#</td>
+                    <td>{{$list->godam->name}}</td>
+                    <td>{{$list->danaName->name}}</td>
+                    <td>{{$list->quantity}}</td>
+
+                    <td>
+                        <a href="{{ route('singleDanaConsumption.delete', $list->id) }}"
+                            class="dropdown-item"><i class="fas fa-trash"></i>
+                            {{ __('Delete') }}</a>
+                    </td>
+                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -1014,6 +1029,8 @@
                 "</td><td class='rowDanaName'>" + res.dana_name.name +
                 "</td><td class='rowQuantity'>" + res.quantity +
                 "</td></tr>";
+
+                // tr.append(``);
 
 
             document.getElementById('printsCutsDanaConsumpt').innerHTML += html;

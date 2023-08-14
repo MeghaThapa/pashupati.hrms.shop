@@ -597,6 +597,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post("single/tripal/DanaConsumption/store",'Tripal\SingleTripalDanaConsumptionController@store')->name('singleTripalDanaConsumption.store');
 
+    Route::get("delete/singleDanaConsumption/{id}",'Tripal\SingleTripalDanaConsumptionController@delSingleDanaConsumption')->name("singleDanaConsumption.delete");
+
     Route::post("singletripal/DanaConsumption/getPrintsAndCutsDanaConsumption",'Tripal\SingleTripalDanaConsumptionController@getSingleTripalDanaConsumption')->name('singleTripal.getSingleTripalDanaConsumption');
 
     //doubletripal dana consumption
