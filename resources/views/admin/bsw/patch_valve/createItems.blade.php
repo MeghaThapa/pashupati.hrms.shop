@@ -80,6 +80,7 @@
             @csrf
 
             <div class="row">
+                {{-- <h1>fghjhgvb</h1> --}}
                 <div class="col-md-3 form-group">
                     <label for="size" class="col-form-label">{{ __('Receipt No') }}<span class="required-field">*</span>
                     </label>
@@ -643,6 +644,7 @@
     </script>
     <script>
         $(document).ready(function() {
+            getSentFabItemsData();
             $("#nepali-date-picker").nepaliDatePicker({});
             let todayNepaliDate = {!! isset($bswFabSendcurtxReceivpatchvalveEntryData)
                 ? json_encode($bswFabSendcurtxReceivpatchvalveEntryData->date)
@@ -705,17 +707,95 @@
 
             $(document).on("click", '#lamsendEntry', function(e) {
                 //   alert($(this).data("id")) megha
-                let $bswcurtexto_patchVal_Entry_id = {!! $bswFabSendcurtxReceivpatchvalveEntryData->id !!}
+                let bswcurtexto_patchVal_Entry_id = {!! $bswFabSendcurtxReceivpatchvalveEntryData->id !!}
                 e.preventDefault()
-                let name = $(this).data("name")
+                // let name = $(this).data("name")
+                let fabric_id = $(this).data("fabric_id")
+                let is_laminated = $(this).data("is_laminated")
                 let gross_wt = $(this).data("gross_wt")
-                let net_wt = $(this).data("net_wt")
                 let roll_no = $(this).data("roll_no")
+                let net_wt = $(this).data("net_wt")
                 let meter = $(this).data("meter")
-                // let fabric_id = $(this).data("fabric_id")
-                let average_wt = $(this).data("average")
                 let gram_wt = $(this).data("gram_wt")
+                let average_wt = $(this).data("average")
+                $.ajax({
+                    url: "{{ route('fabSendCuetxReceivePatchValveItems.store') }}",
+                    method: "post",
+                    data: {
+                        "_token": $("meta[name='csrf-token']").attr("content"),
+                        // "name": name,
+                        "is_laminated": is_laminated,
+                        "fabric_id": fabric_id,
+                        "gross_wt": gross_wt,
+                        "roll_no": roll_no,
+                        "net_wt": net_wt,
+                        "meter": meter,
+                        "gram_wt": gram_wt,
+                        "average": average_wt,
+                        "bswcurtexto_patchVal_Entry_id": bswcurtexto_patchVal_Entry_id
+                    },
+
+                    success: function(response) {
+                        $('#bswSentLamFabTbody').empty();
+                        getSentFabItemsData();
+
+
+                    },
+                    error: function(error) {
+                        console.log("error", error);
+                    }
+                })
             });
+
+            function getSentFabItemsData() {
+                let bsw_lam_fabcurtexToPatchVal_entry_id = {!! $bswFabSendcurtxReceivpatchvalveEntryData->id !!}
+                $.ajax({
+                    url: "{{ route('fabSendCuetxReceivePatchValveItems.lamFabData') }}",
+                    method: 'get',
+                    data: {
+                        bsw_lam_fabcurtexToPatchVal_entry_id: bsw_lam_fabcurtexToPatchVal_entry_id
+                    },
+                    success: function(response) {
+                        // console.log('megha', response)
+                        tableData(response);
+                        // document.getElementById('totalLamMeter').value = response.totalMeter;
+                        // document.getElementById('totalLamNetWt').value = (response.totalNetWt).toFixed(
+                        //     2);
+                        // console.log('frtyhbvcfgh', response);
+                    },
+                    error: function(error) {
+                        // Handle the error if the AJAX request fails
+                        console.error(error);
+                    }
+                });
+            }
+
+            function tableData(data) {
+                data.forEach(d => {
+                    insertDataIntoTable(d)
+                });
+            }
+
+            function insertDataIntoTable(d) {
+                //  console.log(d);
+                let group = d.gram_wt.split('-')[0];
+                // let result = parseFloat(title) * parseFloat(group);
+
+                let tr = $("<tr></tr>").appendTo('#bswSentLamFabTbody');
+
+                tr.append(`<td>#</td>`);
+                tr.append(`<td>${d.name}</td>`);
+                tr.append(`<td>${d.roll_no}</td>`);
+                tr.append(`<td>${d.gross_wt}</td>`);
+                tr.append(`<td>${d.net_wt}</td>`);
+                tr.append(`<td>${d.meter}</td>`)
+                tr.append(`<td>${d.average}</td>`);
+                tr.append(`<td>${d.gram_wt}</td>`);
+                tr.append(
+                    `<td><div class="btn-group"><a id="sendforCutAndFold" data-group='${d.gram_wt}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`
+                );
+            }
+
             $('#fabricName').select2({
                 theme: 'bootstrap4',
                 ajax: {
@@ -732,7 +812,6 @@
                         };
                     },
                     processResults: function(data) {
-                        console.log(data.data)
                         return {
                             results: data.data,
                             pagination: {

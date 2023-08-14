@@ -1049,7 +1049,7 @@ Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::cl
 //recent by m
 Route::get('storeout/getStoreinItemAccCat', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
 //getDepartmentSizeUnit
-Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
+Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_id}/{category_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
 //getStockQtyRate
 Route::post('/storeout/getStockQtyRate', 'StoreoutController@getStockQtyRate')->name('storeout.getStockQtyRate');
 
@@ -1337,6 +1337,9 @@ Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
     Route::get("createItems","createItems")->name('fabSendCuetxReceivePatchValveItems.createItems');
     Route::get("getFabricName","getFabricName")->name('fabSendCuetxReceivePatchValveItems.getFabricName');
     Route::get("fabData","fabData")->name('fabSendCuetxReceivePatchValveItems.fabData');
+    Route::post("store","store")->name('fabSendCuetxReceivePatchValveItems.store');
+    Route::get("lamFabData","lamFabData")->name('fabSendCuetxReceivePatchValveItems.lamFabData');
+
     Route::get("edit/{id}","edit")->name('fabSendCuetxReceivePatchValveItems.edit');
 });
 

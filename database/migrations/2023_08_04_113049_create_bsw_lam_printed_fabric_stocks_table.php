@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('meter');
             $table->string('average');
             $table->string('gram_weight');
+            $table->enum('is_laminated',['printed','nth'])->default('printed');
             $table->enum('status',['running','completed']);
             $table->timestamps();
         });
