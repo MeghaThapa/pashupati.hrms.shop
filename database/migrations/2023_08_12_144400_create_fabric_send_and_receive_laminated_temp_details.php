@@ -13,20 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('fabric_temporary_for_lamination', function (Blueprint $table) {
+        Schema::create('fabric_send_and_receive_laminated_temp_details', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->bigInteger('fabricgroup_id')->unsigned()->index();
-            $table->foreign('fabricgroup_id')->references('id')->on('fabric_groups')->onDelete('cascade');
-            $table->string('gram');
+            $table->unsignedBigInteger("temp_lam");
+            $table->foreign("temp_lam")->references("id")->on("fabric_send_and_receive_temp_lam")->onDelete("cascade");
+            $table->string("standard_wt");
+            $table->unsignedBigInteger("fbgrp_id");
+            $table->foreign("fbgrp_id")->references("id")->on("fabric_groups")->onDelete("cascade");
+            $table->string('gram_wt');
             $table->string('gross_wt');
             $table->string('net_wt');
             $table->string('meter');
             $table->string('roll_no');
             $table->string('loom_no');
             $table->string('average_wt');
-            $table->boolean('status')->nullable()->default(1);
             $table->timestamps();
         });
     }
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fabric_temporary_for_lam');
+        Schema::dropIfExists('fabric_send_and_receive_laminated_temp_details');
     }
 };
