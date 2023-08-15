@@ -491,9 +491,18 @@ class FabricSendReceiveController extends Controller
         }
     }
 
-    public function getStuffOfAutoloader(Request $request,$godamId){
+    public function getStuffOfAutoloader(Request $request){
         if($request->ajax()){
-            $data = AutoLoadItemStock::where("from_godam_id",$godamId)->with("fromGodam","danaName")->get();
+            $godamId = $request->godam_id;
+            $plantName = $request->plantname;
+            $planttype = $request->planttype;
+            $shift = $request->shift;
+            $data = AutoLoadItemStock::where("from_godam_id",$godamId)
+                                    ->where("plant_name_id",$plantName)
+                                    ->where("plant_type_id",$planttype)
+                                    ->where("shift_id",$shift)
+                                    ->with("fromGodam","danaName")
+                                    ->get();
             return response([
                 "data" => $data
             ]);
@@ -502,14 +511,14 @@ class FabricSendReceiveController extends Controller
     
     public function addDanaConsumptionTablerevised(Request $request){ //latest
         if($request->ajax()){
-
             $dana_group_id  = DanaName::where("id",$request->dana_name_id)->value("dana_group_id");
             
             FabricSendAndReceiveDanaConsumption::create([
                 "fsr_entry_id" => $request->fsr_entry_id,
                 "dana_name_id" => $request->dana_name_id,
                 "dana_group_id" => $dana_group_id,
-                "consumption_quantity" => $request->consumption
+                "consumption_quantity" => $request->consumption,
+                "autoloader_id" => $request->autoloader_id
             ]);
 
             $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id",$request->fsr_entry_id)->with("dananame");
@@ -570,8 +579,11 @@ class FabricSendReceiveController extends Controller
                 DB::beginTransaction();
                 $tempconsumptionfsr = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id",$fsr_entry_id)->get();
                 foreach($tempconsumptionfsr as $data){
-                    $stock = AutoLoadItemStock::where('dana_name_id',$data->dana_name_id)
-                            ->where("from_godam_id",$godam)
+                    // $stock = AutoLoadItemStock::where('dana_name_id',$data->dana_name_id)
+                    //         ->where("from_godam_id",$godam)
+                    //         ->first();
+
+                    $stock = AutoLoadItemStock::where('id',$data->autoloader_id)
                             ->first();
 
                     $autoloaderDanaData['dana_name_id'] = $stock->dana_name_id;

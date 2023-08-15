@@ -13,7 +13,7 @@ class FabricSendAndReceiveDanaConsumption extends Model
     use HasFactory;
     protected $table = "fabric_send_and_receive_dana_consumption";
     protected $fillable = [
-        "fsr_entry_id" , "dana_name_id" ,"dana_group_id" , "consumption_quantity"
+        "fsr_entry_id" , "dana_name_id" ,"dana_group_id" , "consumption_quantity","autoloader_id"
     ];
     public function dananame(){
         return $this->belongsTo(DanaName::class,"dana_name_id","id");
