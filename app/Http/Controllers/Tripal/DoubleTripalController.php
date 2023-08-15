@@ -68,12 +68,21 @@ class DoubleTripalController extends Controller
         $find_data = DoubleTripalBill::find($id);
         $bill_date = $find_data->bill_date;
         $bill_no = $find_data->bill_no;
+        $planttype_id = $find_data->planttype_id;
+        $plantname_id = $find_data->plantname_id;
+        $shift_id = $find_data->shift_id;
+        $godam_id = $find_data->godam_id;
         
         $shifts = Shift::where('status','active')->get();
         $godam = Godam::where('status','active')->get();
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
-        $dana = AutoLoadItemStock::get();
+
+        $danas = AutoLoadItemStock::where('plant_type_id',$planttype_id)
+                               ->where('plant_name_id',$plantname_id)
+                               ->where('shift_id',$shift_id)
+                               ->where('from_godam_id',$godam_id)
+                               ->get();
         $fabrics = Singlesidelaminatedfabricstock::get()->unique('name')->values()->all();
 
         $sumdana = DoubleTripalDanaConsumption::where('bill_no',$bill_no)->sum('quantity');
@@ -85,9 +94,10 @@ class DoubleTripalController extends Controller
         ->distinct()
         ->get();
         $datas = DoubleTripalBill::get();
+        $danalist = DoubleTripalDanaConsumption::where('bill_id',$id)->get();
 
         // dd($fabrics);
-        return view('admin.doubletripal.create',compact('godam','planttype','plantname','shifts','bill_no',"dana",'fabrics','bill_date','godams','sumdana','datas','find_data','id'));
+        return view('admin.doubletripal.create',compact('godam','planttype','plantname','shifts','bill_no','fabrics','bill_date','godams','sumdana','datas','find_data','id','danalist','danas'));
 
     }
 
@@ -475,24 +485,17 @@ class DoubleTripalController extends Controller
     
     public function getUnlamSingleDoubleLam(Request $request){
         if($request->ajax()){
-            // dd('ll');
-            $unlam = SingleSideunlaminatedFabric::with('fabric')->where('status',"sent")->get();
-            // dd($unlam);
+            $unlam = SingleSideunlaminatedFabric::where('bill_id',$request->bill_id)->where('status',"sent")->get();
             $ul_mtr_total=0;
             $ul_net_wt_total = 0;
-            // dd($unlam);
 
-            $unlamnet_wt = SingleSideunlaminatedFabric::with('fabric')->where('status',"sent")->sum('net_wt');
-            $unlamnet_meter = SingleSideunlaminatedFabric::with('fabric')->where('status',"sent")->sum('meter');
+            $unlamnet_wt = SingleSideunlaminatedFabric::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
+            $unlamnet_meter = SingleSideunlaminatedFabric::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
          
-            $lam = DoubleSidelaminatedfabricstock::where('status','sent')->get();
-            // dd($lam);
+            $lam = DoubleSidelaminatedfabricstock::where('status','sent')->where('bill_id',$request->bill_id)->get();
 
-            $lam_mtr_total = DoubleSidelaminatedfabricstock::with('fabric')->where('status',"sent")->sum('net_wt');
-            // dd($net_wt);
-            $lam_net_wt_total = DoubleSidelaminatedfabricstock::with('fabric')->where('status',"sent")->sum('meter');
-
-            // dd($lam_mtr_total,$lam_net_wt_total);
+            $lam_mtr_total = DoubleSidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
+            $lam_net_wt_total = DoubleSidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
 
        
             return response([

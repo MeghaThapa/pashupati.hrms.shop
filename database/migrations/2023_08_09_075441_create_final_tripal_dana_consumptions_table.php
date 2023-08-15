@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->integer('bill_id')->nullable();
             $table->string("bill_no");
-            $table->unsignedBigInteger("godam_id");
-            $table-> foreign("godam_id")->references("id")->on('godam')->onDelete('cascade');
+            $table->unsignedBigInteger("autoloader_id");
+            $table-> foreign("autoloader_id")->references("id")->on('autoload_items_stock')->onDelete('cascade');
             $table->unsignedBigInteger("dana_name_id");
             $table-> foreign("dana_name_id")->references("id")->on('dana_names')->onDelete('cascade');
             $table->string('quantity');

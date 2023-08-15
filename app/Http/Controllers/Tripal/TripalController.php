@@ -66,12 +66,25 @@ class TripalController extends Controller
         $find_data = SingleTripalBill::find($id);
         $bill_date = $find_data->bill_date;
         $bill_no = $find_data->bill_no;
+        $planttype_id = $find_data->planttype_id;
+        $plantname_id = $find_data->plantname_id;
+        $shift_id = $find_data->shift_id;
+        $godam_id = $find_data->godam_id;
+        // dd($planttype_id);
+
+        $danas = AutoLoadItemStock::where('plant_type_id',$planttype_id)
+                               ->where('plant_name_id',$plantname_id)
+                               ->where('shift_id',$shift_id)
+                               ->where('from_godam_id',$godam_id)
+                               ->get();
+
+                               // dd($danas);
+
         // dd($bill_date);
         $shifts = Shift::where('status','active')->get();
         $godam = Godam::where('status','active')->get();
         $planttype = ProcessingStep::where('status','1')->get();
         $plantname = ProcessingSubcat::where('status','active')->get();
-        $dana = AutoLoadItemStock::get();
 
         $sumdana = SingleTripalDanaConsumption::where('bill_no',$bill_no)->sum('quantity');
 
@@ -82,12 +95,15 @@ class TripalController extends Controller
         ->distinct()
         ->get();
 
+        // dd($danas);
+
         $datas = SingleTripalBill::get();
         $fabstocks = FabricStock::get()->unique('name')->values()->all();
 
+        $danalist=SingleTripalDanaConsumption::where('bill_id',$id)->get();
 
 
-        return view('admin.tripal.create',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana','datas','id','find_data','fabstocks'));
+        return view('admin.tripal.create',compact('godam','planttype','plantname','shifts','bill_no','bill_date','godams','sumdana','datas','id','find_data','fabstocks','danalist','danas'));
     }
 
     public function getplanttype(Request $request){
@@ -241,8 +257,8 @@ class TripalController extends Controller
                 'gross_wt' => $fabric_data->gross_wt ,
                 'net_wt' => $fabric_data->net_wt,
                 'meter' => $fabric_data->meter,
-                'average' => '0',
-                'gram' => '0',
+                'average' => $fabric_data->average_wt,
+                'gram' => $fabric_data->gram_wt,
                 'department_id' =>$data['godam_id'],
                 'planttype_id' => $data['planttype_id'],
                 'plantname_id' =>  $data['plantname_id'],
@@ -313,7 +329,7 @@ class TripalController extends Controller
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
                         'bill_id' =>  $bill_id,
-                        "status" => "1"
+                        "status" => "sent"
                     ]);
                     // dd('hello');
 
@@ -337,6 +353,7 @@ class TripalController extends Controller
                         "planttype_id" => $planttype_id,
                         "plantname_id" => $plantname_id,
                         'bill_id' =>  $bill_id,
+                        "status" => "sent"
                         // "fabric_id" => $fabric_id,
                     ]);
 
@@ -364,7 +381,7 @@ class TripalController extends Controller
                     "planttype_id" => $planttype_id,
                     "plantname_id" => $plantname_id,
                     'bill_id' =>  $bill_id,
-                    "status" => "1"
+                    "status" => "sent"
                 ]);
 
 
@@ -389,6 +406,7 @@ class TripalController extends Controller
                    "planttype_id" => $planttype_id,
                    "plantname_id" => $plantname_id,
                    'bill_id' =>  $bill_id,
+                   "status" => "sent"
 
                 ]);
 
@@ -415,7 +433,7 @@ class TripalController extends Controller
                     "planttype_id" => $planttype_id,
                     "plantname_id" => $plantname_id,
                     'bill_id' =>  $bill_id,
-                    "status" => "1"
+                    "status" => "sent"
                 ]);
 
                 $singlelamfabric_id = $single_lamfabric->id;
@@ -437,7 +455,8 @@ class TripalController extends Controller
                     'bill_date' => $bill_date,
                     "planttype_id" => $planttype_id,
                     'bill_id' =>  $bill_id,
-                    "plantname_id" => $plantname_id
+                    "plantname_id" => $plantname_id,
+                    "status" => "sent"
                 ]);
 
                 // $stock = FabricStock::where('fabric_id',$fabric_id)->value('net_wt');
@@ -467,20 +486,18 @@ class TripalController extends Controller
     
     public function getUnlamSingleLam(Request $request){
         if($request->ajax()){
-            $unlam = Unlaminatedfabrictripal::with('fabric')->where('status',"sent")->get();
-            // dd($unlam);
+            $unlam = Unlaminatedfabrictripal::where('bill_id',$request->bill_id)->where('status',"sent")->with('fabric')->get();
             $ul_mtr_total=0;
             $ul_net_wt_total = 0;
-            // dd($unlam);
 
-            $unlamnet_wt = Unlaminatedfabrictripal::with('fabric')->where('status',"sent")->sum('net_wt');
-            $unlamnet_meter = Unlaminatedfabrictripal::with('fabric')->where('status',"sent")->sum('meter');
+            $unlamnet_wt = Unlaminatedfabrictripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
+            $unlamnet_meter = Unlaminatedfabrictripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
          
-            $lam = Singlesidelaminatedfabric::where('status',"sent")->get();
+            $lam = Singlesidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->get();
+            // dd($lam);
 
-            $lam_mtr_total = Singlesidelaminatedfabric::with('fabric')->where('status',"sent")->sum('net_wt');
-            // dd($net_wt);
-            $lam_net_wt_total = Unlaminatedfabrictripal::with('fabric')->where('status',"sent")->sum('meter');
+            $lam_mtr_total = Singlesidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
+            $lam_net_wt_total = Singlesidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
 
        
             return response([
@@ -631,8 +648,6 @@ class TripalController extends Controller
 
                     }
 
-                
-     
 
                 DB::commit();
 
@@ -725,5 +740,13 @@ class TripalController extends Controller
         ]);
 
 
+    }
+
+    public function getStockQuantity(Request $request){
+         $stockQty=AutoLoadItemStock::
+            select('quantity')
+            ->where('id',$request->autoloader_id)
+            ->first();
+        return $stockQty;
     }
 }

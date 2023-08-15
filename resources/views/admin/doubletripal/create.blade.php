@@ -299,36 +299,23 @@
         <form id="addDoubleTripalDanaConsumption">
             <div class="card p-2">
                 <div class="row">
-                    <div class="col-md-4">
-                        <label for="cut_length">Godam</label>
-                        <select
-                            class="advance-select-box form-control  @error('godam_id') is-invalid @enderror"
-                            id="godamId" name="godam_id" required>
-                            <option value=" " selected disabled>{{ __('Select Godam') }}</option>
-                            @foreach ($godams as $godam)
-                                <option value="{{ $godam->fromGodam->id }}">
-                                    {{ $godam->fromGodam->name }}
-                                </option>
-                            @endforeach
-                            <input type="hidden" name="bill_no" value="{{$bill_no}}" id="bill_no">
-                        </select>
-                    </div>
-                    {{-- <div class="col-md-4">
-                        <label for="cut_length">Dana Group</label>
-                        <select
-                            class="advance-select-box form-control  @error('dana_group_id') is-invalid @enderror"
-                            id="danaGroupId" name="dana_group_id" required>
-                            <option value=" " selected disabled>{{ __('Select dana group') }}
-                            </option>
-                        </select>
-                    </div> --}}
+                    
+                 
 
                     <div class="col-md-4">
                         <label for="cut_length">Dana Name</label>
                         <select
                             class="advance-select-box form-control  @error('dana_name_id') is-invalid @enderror"
                             id="danaNameId" name="dana_name_id" required>
+                            <option value="">Select</option>
+
+                            @foreach ($danas as $dana)
+                                <option value="{{ $dana->id }}">
+                                    {{ $dana->danaName->name }}
+                                </option>
+                            @endforeach
                         </select>
+                        
                     </div>
                     <div class="col-md-4">
                         <label for="cut_length">Available</label>
@@ -358,11 +345,28 @@
                     {{-- <th>Dana Group</th> --}}
                     <th>Dana Name</th>
                     <th>Quantity</th>
+                    <th>Action</th>
 
                 </tr>
             </thead>
-            <tbody id="printsCutsDanaConsumpt">
+            <tbody >
+                @foreach($danalist as $list)
+                <tr>
+                    <td>#</td>
+                    <td>{{$list->getAutoloader->fromGodam->name}}</td>
+                    
+                    <td>{{$list->danaName->name}}</td>
+                    <td>{{$list->quantity}}</td>
+
+                    <td>
+                        <a href="{{ route('doubleDanaConsumption.delete', $list->id) }}"
+                            class="btnEdit btn btn-sm btn-danger"><i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
             </tbody>
+            
         </table>
     </div>
 </div>
@@ -820,20 +824,18 @@
         $('#danaNameId').on('select2:select', function(e) {
             // console.log('df');
             // debugger;
-            let godam_id = document.getElementById('godamId').value;
-            let dana_name_id = e.params.data.id;
+            let autoloader_id = e.params.data.id;
             $('#avilableStock').empty();
-            getStockQuantity(godam_id, dana_name_id);
+            getStockQuantity(autoloader_id);
         });
 
-        function getStockQuantity(godam_id, dana_name_id) {
+        function getStockQuantity(autoloader_id) {
             $.ajax({
-                url: "{{ route('printsAndCuts.getStockQuantity') }}",
+                url: "{{ route('tripalDana.getStockQuantity') }}",
                 method: 'post',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    godam_id: godam_id,
-                    dana_name_id: dana_name_id
+                    autoloader_id: autoloader_id,
                 },
                 success: function(response) {
                     console.log('stockQty', response);
@@ -905,13 +907,12 @@
         document.getElementById('addDoubleTripalDanaConsumption').addEventListener('submit',
             function(e) {
                 e.preventDefault();
-                debugger;
+                // debugger;
                 const form = e.target;
                 let bill_no = $("#bill_no").val();
                 let bill_id = $("#bill_id").val();
                 //console.log('testing', printCutEntry_id);
-                let godam_id = form.elements['godam_id'];
-                let dana_name_id = form.elements['dana_name_id'];
+                let autoloader_id = form.elements['dana_name_id'];
                 let quantity = form.elements['quantity'];
                 $.ajax({
                     url: "{{ route('doubleTripalDanaConsumption.store') }}",
@@ -920,8 +921,7 @@
                         _token: "{{ csrf_token() }}",
                         bill_no: bill_no,
                         bill_id: bill_id,
-                        godam_id: godam_id.value,
-                        dana_name_id: dana_name_id.value,
+                        autoloader_id: autoloader_id.value,
                         quantity: quantity.value
                     },
                     success: function(response) {
@@ -1424,9 +1424,14 @@
 
 
     function comparelamandunlam(){
+        var bill_id = $('#bill_id').val();
         $.ajax({
             url : "{{ route('doubletripal.getUnlamSingleDoubleLam') }}",
             method:"get",
+            data:{
+                "_token": $('meta[name="csrf-token"]').attr('content'),
+                "bill_id" : bill_id
+            },
             success:function(response){
                 emptycomparelamtbody();
                 emptycompareunlamtbody();
@@ -1490,11 +1495,11 @@
         $("#total_lam_in_mtr").val(total_lam_in_mtr);
         $("#total_lam_net_wt").val(total_lam_net_wt);
 
-        let diff_unLam_lamNw = parseFloat(total_lam_in_mtr) - parseFloat(total_ul_in_mtr);
+        let diff_unLam_lamNw = parseFloat(total_ul_in_mtr) - parseFloat(total_lam_in_mtr);
         diff_unLam_lamNw = diff_unLam_lamNw.toFixed(4);
         $('#diff_unLam_lamNw').val(diff_unLam_lamNw);
 
-        let total_diff = parseFloat(total_lam_net_wt) - parseFloat(total_ul_net_wt);
+        let total_diff = parseFloat(total_ul_net_wt) - parseFloat(total_lam_net_wt);
         total_diff = total_diff.toFixed(4);
         $("#total_diff").val(total_diff);
     }
