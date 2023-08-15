@@ -217,7 +217,13 @@
                             </a>
                         </li>
 
-
+                        <li class="nav-item">
+                            <a href="{{ route('fabric.sale.entry.index') }}"
+                                class="nav-link {{ request()->routeIs('fabric.sale.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>{{ __('Sales Fabric') }}</p>
+                            </a>
+                        </li>
 
                     </ul>
                 </li>

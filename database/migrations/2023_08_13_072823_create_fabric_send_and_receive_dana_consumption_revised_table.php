@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger("dana_group_id");
             $table->foreign('dana_group_id')->references("id")->on("dana_groups")->onDelete("cascade");
             $table->string("consumption_quantity");
+            $table->string("autoloader_id");
             $table->timestamps();
         });
     }

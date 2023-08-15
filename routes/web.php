@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FabricSendAndReceiveSaleController;
 use App\Http\Controllers\FabricTransferEntryForBagController;
 use App\Http\Controllers\InstallHelperController;
 use App\Http\Controllers\PrintedAndCuttedRollsController;
@@ -84,7 +85,7 @@ Route::get('artisandone',function(){
     // \Artisan::call("make:model AutoloadItems");
     // \Artisan::call('make:migration create_autoload_items_stock_table');
 
-    \Artisan::call('migrate --path=/database/migrations/2023_07_18_052352_create_tripal_entries_table.php');         
+    // \Artisan::call('migrate --path=/database/migrations/2023_08_15_160938_add_status_to_fabric_sale_entry_table.php');         
       return "done";
 });
 
@@ -465,7 +466,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/status', 'SubCategoryController@changeStatus')->name('subCategories.status');
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
-    //fabric send receive contoller
+    //fabric send receive contoller  //fabric send and receive
         /************* aile baki xa **************/
         Route::get('/fabricSendReceive/entry/create', [FabricSendReceiveController::class,"create"])->name('fabricSendReceive.entry.create');
         Route::get('/fabricSendReceive/entry/ajaxlist', [FabricSendReceiveController::class,"entrieslist"])->name('fabricSendReceive.entry.ajaxlist');
@@ -486,7 +487,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get('fabric/get/unlaminated/{fsr_entry_id}',[FabricSendReceiveController::class,'getunlaminatedrevised'])->name('fabricSendReceive.get.unlaminated.revised');//latest
         Route::post('fabric/store/laminated/revised',[FabricSendReceiveController::class,'storelaminatedrevised'])->name('fabricSendReceive.store.laminated.revised');//latest
         Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name.fsr");
-        Route::get('get/autoloader/godam/id/into/fsr/{godamId}',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
+        Route::post('get/autoloader/godam/id/into/fsr',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
         Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
         Route::get('fabricSendReceive/compare/lamandunlam/revised/{entry_id}',[FabricSendReceiveController::class,'comparelamandunlamrevised'])->name('fabricSendReceive.compare.lamandunlam.revised');//lastest
         Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
@@ -495,6 +496,22 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("get/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"getDanaConsumptionTablerevised"])->name("get.dana.consumption.fsr.revised");//latest
         Route::post("delete/dana/consumption/revised",[FabricSendReceiveController::class,"removedDanaConsumptionTablerevised"])->name("delete.dana.consumption.revised");//lastest
     //fabric send receive contoller End
+
+    //fabric send and receive /fabric sale
+    Route::prefix("fabric/sale/")->name("fabric.sale.")->controller(FabricSendAndReceiveSaleController::class)->group(function(){
+        Route::get("entry/index","index")->name("entry.index");
+        Route::get("entry/index/ajax","indexajax")->name("entry.index.ajax");
+        Route::post("entry/store","store")->name('entry.store');
+
+        Route::get("create/{entry_id}","create")->name("create"); 
+        Route::post("store","storeSale")->name("store");
+        Route::get("get/list","getSales")->name("get.list");
+
+        Route::post("delete","delete")->name('delete'); 
+        Route::post("final/submit","submit")->name("submit");
+    });
+    Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
+
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
@@ -747,7 +764,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
 
-    //fabric send and receive
+    
 
 
 
