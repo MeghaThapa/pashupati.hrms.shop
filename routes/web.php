@@ -598,6 +598,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post("single/tripal/DanaConsumption/store",'Tripal\SingleTripalDanaConsumptionController@store')->name('singleTripalDanaConsumption.store');
 
     Route::get("delete/singleDanaConsumption/{id}",'Tripal\SingleTripalDanaConsumptionController@delSingleDanaConsumption')->name("singleDanaConsumption.delete");
+    Route::get("delete/doubleDanaConsumption/{id}",'Tripal\DoubleTripalDanaConsumptionController@delDoubleDanaConsumption')->name("doubleDanaConsumption.delete");
+    Route::get("delete/finalDanaConsumption/{id}",'Tripal\FinalTripalDanaConsumptionController@delFinalDanaConsumption')->name("finalDanaConsumption.delete");
 
     Route::post("singletripal/DanaConsumption/getPrintsAndCutsDanaConsumption",'Tripal\SingleTripalDanaConsumptionController@getSingleTripalDanaConsumption')->name('singleTripal.getSingleTripalDanaConsumption');
 
@@ -684,8 +686,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('salefinaltripal/store/list','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
 
     Route::post("get/saleTripal/filterSaleTripalList",'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
-
-
 
 
     //double laminated tripal
@@ -1157,6 +1157,8 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
     Route::post("printsAndCuts/getDanaName",[PrintedAndCuttedRollsController::class,"getDanaName"])->name('printsAndCuts.getDanaName');
 
     Route::post("printsAndCuts/getStockQuantity",[PrintedAndCuttedRollsController::class,"getStockQuantity"])->name('printsAndCuts.getStockQuantity');
+
+    Route::post("tripal/getDanaQuantity",'Tripal\TripalController@getStockQuantity')->name('tripalDana.getStockQuantity');
 
 
 

@@ -17,15 +17,14 @@ class SingleTripalDanaConsumptionController extends Controller
         //return $request->printCutEntry_id;
         $request->validate([
             // "printCutEntry_id"=>"required",
-            "godam_id"=>"required",
-            "dana_name_id"=>"required",
+            // "godam_id"=>"required",
+            "autoloader_id"=>"required",
             "quantity"=>"required",
         ]);
         try{
             DB::beginTransaction();
             //deduct quantity from autoloader  stock
-            $autoloaderStock=AutoLoadItemStock::where('from_godam_id',$request->godam_id)
-            ->where('dana_name_id',$request->dana_name_id)
+            $autoloaderStock=AutoLoadItemStock::where('id',$request->autoloader_id)
             ->first();
             if($autoloaderStock->quantity<$request->quantity){
                 return response()->json([
@@ -39,18 +38,21 @@ class SingleTripalDanaConsumptionController extends Controller
             }else{
                 $autoloaderStock->save();
             }
-            $printsCutsDanaConsumption=SingleTripalDanaConsumption::where('bill_no', $request->bill_no)
-            ->where('godam_id',$request->godam_id)
-            ->where('dana_name_id',$request->dana_name_id)
+            $printsCutsDanaConsumption=SingleTripalDanaConsumption::where('bill_id', $request->bill_id)
+            ->where('autoloader_id',$request->autoloader_id)
             ->first();
+
             if($printsCutsDanaConsumption){
                $printsCutsDanaConsumption->quantity= $printsCutsDanaConsumption->quantity+$request->quantity;
                $printsCutsDanaConsumption->save();
             }else{
+                $find_data = AutoLoadItemStock::find($request->autoloader_id);
+                $find_bill = SingleTripalBill::find($request->bill_id);
+
                 $printsCutsDanaConsumption=new SingleTripalDanaConsumption();
-                $printsCutsDanaConsumption->bill_no = $request->bill_no;
-                $printsCutsDanaConsumption->godam_id  = $request->godam_id;
-                $printsCutsDanaConsumption->dana_name_id = $request->dana_name_id;
+                $printsCutsDanaConsumption->bill_no = $find_bill->bill_no;
+                $printsCutsDanaConsumption->autoloader_id  = $request->autoloader_id;
+                $printsCutsDanaConsumption->dana_name_id = $find_data->dana_name_id;
                 $printsCutsDanaConsumption->quantity = $request->quantity;
                 $printsCutsDanaConsumption->bill_id = $request->bill_id;
                 $printsCutsDanaConsumption->save();
@@ -73,18 +75,19 @@ class SingleTripalDanaConsumptionController extends Controller
     }
 
     public function delSingleDanaConsumption($id){
-        //return $request->printAndCutEntry_id;
-        // dd('lol');
-        // dd($id);
+
         $find_data = SingleTripalDanaConsumption::find($id);
         $find_bill = SingleTripalBill::find($find_data->bill_id);
-        dd($find_bill);
 
-        $autoloaderStock=AutoLoadItemStock::where('from_godam_id',$find_bill->godam_id)
-        ->where('dana_name_id',$request->dana_name_id)
-        ->value('id');
-            $printsCutsDanaConsumption=SingleTripalDanaConsumption::where('bill_id',$request->bill_id)->get();
-            // dd($printsCutsDanaConsumption);
-            return $printsCutsDanaConsumption->load(['godam:id,name','danaName:id,name']);
+        $autoloaderStock = AutoLoadItemStock::where('id',$find_data->autoloader_id)
+                        ->value('id');
+
+        $find_autoloader = AutoLoadItemStock::find($autoloaderStock);
+
+        $find_autoloader->quantity= $find_autoloader->quantity + $find_data->quantity;
+        $find_autoloader->update();
+        $find_data->delete();
+        return back();
+
     }
 }

@@ -190,6 +190,7 @@
                         <th>{{ __('Plantype') }}</th>
                         <th>{{ __('Plantname') }}</th>
                         <th>{{ __('Shift') }}</th>
+                        <th>{{ __('Godam') }}</th>
                         <th>{{__('Action')}}</th>
                     </tr>
                 </thead>
@@ -200,9 +201,10 @@
                         <td>#</td>
                         <td>{{$data->bill_no}}</td>
                         <td>{{$data->bill_date}}</td>
-                        <td>{{$data->planttype_id}}</td>
-                        <td>{{$data->plantname_id}}</td>
-                        <td>{{$data->shift_id}}</td>
+                        <td>{{$data->getPlantType->name}}</td>
+                        <td>{{$data->getPlantName->name}}</td>
+                        <td>{{$data->getShift->name}}</td>
+                        <td>{{$data->getGodam->name}}</td>
                         <td>
                             <div class="btn-group">
                                 <button type="button"
@@ -212,7 +214,7 @@
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     
-                                        <a href="{{ route('adddoubletripal.create', $data->id) }}"
+                                        <a href="{{ route('adddoubletripal.create', $data->id) }}" target="_blank" 
                                             class="dropdown-item"><i class="fas fa-plus"></i>
                                             {{ __('Add') }}</a>
                                   
