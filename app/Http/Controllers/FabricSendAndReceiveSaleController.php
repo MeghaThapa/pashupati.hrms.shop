@@ -184,7 +184,7 @@ class FabricSendAndReceiveSaleController extends Controller
             try{
                 DB::beginTransaction();                
                 foreach(FabricSale::where("sale_entry_id",$this->request->id)->get() as $data){
-                    $sale_fabric_id = FabricSale::where("sale_entry_id",$this->request->id)->value("fabric_id");
+                    $sale_fabric_id = $data->fabric_id;
                     
                     FabricSaleItems::create([
                         "fabric_id" => $data->fabric_id,

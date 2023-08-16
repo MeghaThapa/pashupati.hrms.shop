@@ -429,8 +429,8 @@ class FabricSendReceiveController extends Controller
             $lam_mtr_total=0;
             $lam_net_wt_total = 0;
             foreach($lam as $data){
-                $lam_mtr = $data['meter'];
-                $lam_net_wt = $data['net_wt'];
+                $lam_mtr = floatval($data['meter']);
+                $lam_net_wt = floatval($data['net_wt']);
 
                 $lam_mtr_total += $lam_mtr;
                 $lam_net_wt_total += $lam_net_wt;
@@ -575,6 +575,8 @@ class FabricSendReceiveController extends Controller
             $fabric_entry = FabricSendAndReceiveEntry::where("id",$fsr_entry_id)->first();
             $godam = $fabric_entry->godam_id;
 
+            // return $lam = FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric.getfabric.getfabric')->get(); //for nested relation
+
             try{
                 DB::beginTransaction();
                 $tempconsumptionfsr = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id",$fsr_entry_id)->get();
@@ -617,9 +619,11 @@ class FabricSendReceiveController extends Controller
                                 $query->where('fsr_entry_id', $fsr_entry_id);
                             })
                             ->get();
-
                           
                     foreach($lam as $data){
+
+                        $fabric_id_on_stock = $data->temporarylamfabric->getfabric->getfabric->id;
+
                         $fabric = Fabric::create([
                             'name' => $data->temporarylamfabric->fabric_name,
                             "godam_id" => $godam,
@@ -649,9 +653,9 @@ class FabricSendReceiveController extends Controller
                             'meter' => $data->meter,
                             'roll_no' => $data->roll_no,
                             'loom_no' => $data->loom_no,
-                            "is_laminated" => "true"
-                            // "fabric_id" => $fabric->id,
-                            // "date_np" => getNepaliDate(date('Y-m-d')),
+                            "is_laminated" => "true",
+                            "fabric_id" => $fabric->id,
+                            "date_np" => getNepaliDate(date('Y-m-d')),
                         ]);
 
                         $letlaminatedsentfsr = FabricSendAndReceiveLaminatedSent::create([
@@ -677,6 +681,8 @@ class FabricSendReceiveController extends Controller
                             "gram_wt"  => $data->gram_wt,
                             'standard_wt' => $data->standard_wt,
                         ]);
+
+                        FabricStock::where("fabric_id",$fabric_id_on_stock)->delete();
 
                     }
 
