@@ -509,6 +509,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::post("delete","delete")->name('delete'); 
         Route::post("final/submit","submit")->name("submit");
+
+        Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
 
