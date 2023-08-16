@@ -207,18 +207,16 @@
                         <td>{{$data->getGodam->name}}</td>
                         <td>
                             <div class="btn-group">
-                                <button type="button"
-                                    class="btn btn-secondary dropdown-toggle action-dropdown-toggle"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    
-                                        <a href="{{ route('adddoubletripal.create', $data->id) }}" target="_blank" 
-                                            class="dropdown-item"><i class="fas fa-plus"></i>
-                                            {{ __('Add') }}</a>
-                                  
-                                </div>
+
+                                <a href="{{ route('adddoubletripal.create', $data->id) }}"
+                                    class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>
+                                </a>
+
+                                <a href="{{ route('adddoubletripal.edit', $data->id) }}"
+                                        class="btn btn-primary" target="_blank"><i class="fas fa-edit"></i>
+                                </a>
+                                
+                                
                             </div>
                         </td>
                         

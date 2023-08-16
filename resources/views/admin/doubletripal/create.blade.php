@@ -1247,10 +1247,7 @@
     /************************* Other Functionalities ***********************/
     $("#plantName").change(function(e){
         $('#shiftName').prop('disabled',false);
-        $('#createRawMaterial').attr({
-            'action' : "{{ route('fabricSendReceive.send.unlaminated') }}",
-            'method' : "post"
-        });
+      
         $("#rollnumberfabric").prop('disabled',false);
     });
 
@@ -1301,25 +1298,7 @@
         $("#createRawMaterial")[0].reset();
     }
 
-    function deletefromunlamintedtable(data){
-        $.ajax({
-            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
-            method:'get',
-            beforeSend:function(){
-                console.log('deleteing from unlamintaed table');
-            },
-            success:function(response){
-                if(response.response == '200'){
-                    emptytable();
-                }else if(response.response == '400'){
-                    alert('Not Allowed OR Data is no longer there');
-                }
-            },
-            error:function(error){
-                console.log(error);
-            }
-        });
-    }
+   
 
     $(".discard").click(function(e){
         $.ajax({

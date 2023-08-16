@@ -1202,10 +1202,7 @@
     /************************* Other Functionalities ***********************/
     $("#plantName").change(function(e){
         $('#shiftName').prop('disabled',false);
-        $('#createRawMaterial').attr({
-            'action' : "{{ route('fabricSendReceive.send.unlaminated') }}",
-            'method' : "post"
-        });
+        
         $("#rollnumberfabric").prop('disabled',false);
     });
 
