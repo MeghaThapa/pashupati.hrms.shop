@@ -1355,3 +1355,19 @@ Route::controller(ClosingStoreinReportController::class)
 });
 
 /****************************************/
+/*********************curtexToPatchVal START******************************/
+Route::controller(CurtexToPatchValFabricController::class)
+->prefix('curtexToPatchValFabric')
+->group(function(){
+    Route::post("store","store")->name('curtexToPatchValFabric.store');
+    Route::get("getcrtxToPtchValFabricName","getcrtxToPtchValFabricName")->name('curtexToPatchValFabric.getcrtxToPtchValFabricName');
+});
+/*********************curtexToPatchVal END******************************/
+/******************ToPatchValveUnlamFabricStockController start************************/
+Route::controller(ToPatchValveUnlamFabricStockController::class)
+->prefix('toPatchValveUnlamFabricStock')
+->group(function(){
+    Route::post("store","store")->name('toPatchValveUnlamFabricStock.store');
+    // Route::get("getcrtxToPtchValFabricName","getcrtxToPtchValFabricName")->name('curtexToPatchValFabric.getcrtxToPtchValFabricName');
+});
+/***************************ToPatchValveUnlamFabricStockController end********************************/
