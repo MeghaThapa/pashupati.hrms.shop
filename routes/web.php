@@ -572,6 +572,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('singletripals/create/{id}', 'Tripal\TripalController@createSingleTripal')->name('addsingletripal.create');
 
+    Route::get('singletripals/edit/{id}', 'Tripal\SingleTripalBillController@edit')->name('addsingletripal.edit');
+    Route::post('singletripals/update/{id}', 'Tripal\SingleTripalBillController@update')->name('singletripalbill.update');
+
+     Route::get('doubletripals/edit/{id}', 'Tripal\DoubleTripalBillController@edit')->name('adddoubletripal.edit');
+    Route::post('doubletripals/update/{id}', 'Tripal\DoubleTripalBillController@update')->name('doubletripalbill.update');
+
+     Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
+    Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
+
     Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
     Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');
 

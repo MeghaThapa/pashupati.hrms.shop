@@ -81,15 +81,15 @@
 
 </div>
 <div class="card-body p-0 m-0">
-    <form class="form-horizontal" action="{{ route('singletripalbill.store') }}" method="post" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('doubletripalbill.update',$datas->id) }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill No') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="billnumber" value="{{ $bill_no }}" name="bill_number"
-                    required /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                <input type="text" class="form-control" id="billnumber" value="{{ $datas->bill_no }}" name="bill_number"
+                    readonly /> 
             </div>
 
             <div class="col-md-2 form-group">
@@ -110,7 +110,7 @@
                 <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
                     <option value="" selected>{{ __('Select Godam Name') }}</option>
                     @foreach ($godam as $data)
-                    <option value="{{ $data->id }}">{{ $data->name }}
+                    <option value="{{ $data->id }}" {{$data->id == $datas->godam_id ? 'selected' : ''}}>{{ $data->name }}
                     </option>
                     @endforeach
                 </select>
@@ -170,7 +170,7 @@
             </div>
             <div class="col-md-2 form-group">
                 <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                    Add
+                    Update
                 </button>
             </div> 
 
@@ -178,56 +178,7 @@
      
     </form>
 </div>
-<div class="row">
-    <div class="Ajaxdata col-md-12">
-        <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable" >
-                <thead>
-                    <tr>
-                        <th>{{ __('Sr.No') }}</th>
-                        <th>{{ __('Bill No') }}</th>
-                        <th>{{ __('Bill Date') }}</th>
-                        <th>{{ __('Plantype') }}</th>
-                        <th>{{ __('Plantname') }}</th>
-                        <th>{{ __('Shift') }}</th>
-                        <th>{{ __('Godam') }}</th>
-                        <th>{{__('Action')}}</th>
-                    </tr>
-                </thead>
 
-                <tbody>
-                    @foreach($datas as $data)
-                    <tr>
-                        <td>#</td>
-                        <td>{{$data->bill_no}}</td>
-                        <td>{{$data->bill_date}}</td>
-                        <td>{{$data->getPlantType->name}}</td>
-                        <td>{{$data->getPlantName->name}}</td>
-                        <td>{{$data->getShift->name}}</td>
-                        <td>{{$data->getGodam->name}}</td>
-                        <td>
-                           
-                            <div class="btn-group">
-                                <a href="{{ route('addsingletripal.create', $data->id) }}"
-                                    class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>
-                                </a>
-
-                                <a href="{{ route('addsingletripal.edit', $data->id) }}"
-                                        class="btn btn-primary" target="_blank"><i class="fas fa-edit"></i>
-                                </a>
-                                
-                            </div>
-                        </td>
-                        
-                    </tr>
-                    @endforeach
-                </tbody>
-
-            </table>
-        </div>
-
-    </div>
-</div>
 <hr>
 {{-- <h1 class='text-center'>Compare Lam and Unlam</h1> --}}
 
@@ -317,6 +268,7 @@ $(document).ready(function(){
     function addplanttype(data){
         $("#plantType").empty();
         $('#plantType').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
+
         data.planttype.forEach( d => {
             $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
         });
