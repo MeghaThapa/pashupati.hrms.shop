@@ -19,7 +19,7 @@ class SingleTripalDanaConsumption extends Model
     }
       public function godam()
     {
-        return $this->belongsTo('App\Models\Godam', 'godam_id', 'id');
+        return $this->belongsTo('App\Models\Godam', 'from_godam_id', 'id');
     }
 
     public function getAutoloader()

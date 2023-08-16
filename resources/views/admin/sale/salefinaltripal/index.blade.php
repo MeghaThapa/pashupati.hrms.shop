@@ -191,7 +191,23 @@
                     <td>{{ $fabric->bill_no }} ({{$fabric->getSaleList()->sum('net')}})</td>
                     <td>{{ $fabric->bill_date }}</td>
                     <td>{{ $fabric->getParty->name }} </td>
-                    <td class="text-right">
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ route('salefinaltripals.addTripal', $fabric->id) }}"
+                                class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>
+                            </a>
+
+                            <a href="{{ route('salefinaltripals.viewTripal', $fabric->id) }}"
+                                    class="btn btn-primary" target="_blank"><i class="fas fa-eye"></i>
+                            </a>
+
+                            <a href="{{ route('salefinaltripals.viewTripalBill', $fabric->id) }}"
+                                    class="btn btn-info" target="_blank"><i class="fas fa-eye"></i>
+                            </a>
+                            
+                        </div>
+                    </td>
+                    {{-- <td class="text-right">
                         <div class="btn-group">
                             <button type="button"
                                     class="btn btn-secondary dropdown-toggle action-dropdown-toggle"
@@ -208,13 +224,10 @@
                                     class="dropdown-item" target="_blank"><i class="fas fa-eye"></i>
                                     {{ __('View') }}</a>
 
-                               {{--  <a href="{{ route('salefinaltripals.delete', $fabric->slug) }}"
-                                    class="dropdown-item delete-btn"
-                                    data-msg="{{ __('Are you sure you want to delete this sub category?') }}"><i
-                                        class="fas fa-trash"></i> {{ __('Delete') }}</a> --}}
+                          
                             </div>
                         </div>
-                    </td>
+                    </td> --}}
                 </tr>
             @endforeach
   

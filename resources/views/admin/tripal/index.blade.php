@@ -206,7 +206,6 @@
                         <td>{{$data->getShift->name}}</td>
                         <td>{{$data->getGodam->name}}</td>
                         <td>
-                           
                             <div class="btn-group">
                                 <a href="{{ route('addsingletripal.create', $data->id) }}"
                                     class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>

@@ -19,15 +19,8 @@ class FinalTripalDanaConsumptionController extends Controller
         ]);
         try{
             DB::beginTransaction();
-            //deduct quantity from autoloader  stock
-            $autoloaderStock=AutoLoadItemStock::where('id',$request->autoloader_id)
-            ->first();
-            if($autoloaderStock->quantity<$request->quantity){
-                return response()->json([
-                    'message'=>"you don't have enough",
-                ],500);
+            $autoloaderStock = AutoLoadItemStock::find($request->autoloader_id);
 
-            }
             $autoloaderStock->quantity -=$request->quantity;
             if($autoloaderStock->quantity <=0){
                 $autoloaderStock->delete();
@@ -41,15 +34,19 @@ class FinalTripalDanaConsumptionController extends Controller
                $printsCutsDanaConsumption->quantity= $printsCutsDanaConsumption->quantity+$request->quantity;
                $printsCutsDanaConsumption->save();
             }else{
-                $find_data = AutoLoadItemStock::find($request->autoloader_id);
                 $find_bill = FinalTripalBill::find($request->bill_id);
 
                 $printsCutsDanaConsumption=new FinalTripalDanaConsumption();
                 $printsCutsDanaConsumption->bill_no = $find_bill->bill_no;
                 $printsCutsDanaConsumption->bill_id = $request->bill_id;
-                $printsCutsDanaConsumption->dana_name_id = $find_data->dana_name_id;
                 $printsCutsDanaConsumption->autoloader_id  = $request->autoloader_id;
                 $printsCutsDanaConsumption->quantity = $request->quantity;
+                $printsCutsDanaConsumption->dana_name_id = $autoloaderStock->dana_name_id;
+                $printsCutsDanaConsumption->from_godam_id = $autoloaderStock->from_godam_id;
+                $printsCutsDanaConsumption->plant_type_id = $autoloaderStock->plant_type_id;
+                $printsCutsDanaConsumption->plant_name_id = $autoloaderStock->plant_name_id;
+                $printsCutsDanaConsumption->shift_id = $autoloaderStock->shift_id;
+                $printsCutsDanaConsumption->dana_group_id = $autoloaderStock->dana_group_id;
                 $printsCutsDanaConsumption->save();
         }
         DB::commit();
@@ -70,20 +67,53 @@ class FinalTripalDanaConsumptionController extends Controller
 
     public function delFinalDanaConsumption($id){
 
-        $find_data = FinalTripalDanaConsumption::find($id);
-        $find_bill = FinalTripalBill::find($find_data->bill_id);
+        try{
 
-        $autoloaderStock=AutoLoadItemStock::where('id',$find_data->autoloader_id)
-        ->value('id');
+           DB::beginTransaction();
 
-        $find_autoloader = AutoLoadItemStock::find($autoloaderStock);
+           $find_data = FinalTripalDanaConsumption::find($id);
+           $find_bill = FinalTripalBill::find($find_data->bill_id);
 
-        // dd($find_data,$find_autoloader);
+           $autoloaderStock=AutoLoadItemStock::where('id',$find_data->autoloader_id)
+           ->value('id');
 
-        $find_autoloader->quantity= $find_autoloader->quantity + $find_data->quantity;
-        $find_autoloader->update();
-        $find_data->delete();
-        return back();
+           $find_autoloader = AutoLoadItemStock::find($autoloaderStock);
+
+           if($find_autoloader != null){
+
+               $find_autoloader->quantity= $find_autoloader->quantity + $find_data->quantity;
+               $find_autoloader->update();
+               $find_data->delete();
+
+           }else{
+
+               $autoloaderStock = new AutoLoadItemStock();
+               $autoloaderStock->from_godam_id = $find_data->from_godam_id;
+               $autoloaderStock->plant_type_id = $find_data->plant_type_id;
+               $autoloaderStock->plant_name_id = $find_data->plant_name_id;
+               $autoloaderStock->shift_id = $find_data->shift_id;
+               $autoloaderStock->dana_name_id = $find_data->dana_name_id;
+               $autoloaderStock->dana_group_id = $find_data->dana_group_id;
+               $autoloaderStock->quantity = $find_data->quantity;
+               $autoloaderStock->save();
+               $find_data->delete();
+
+           }
+
+          
+
+      
+        
+           DB::commit();
+            return back();
+
+        }
+        catch(Exception $e){
+            DB::rollback();
+            dd($e);
+            return "exception".$e->getMessage();
+        }
+
 
     }
 
