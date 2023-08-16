@@ -113,7 +113,7 @@
                 <label for="size" class="col-form-label">{{ __('Plant Type') }}
                 </label>
                 <select class="form-control" id="plantType" name="plant_type_id" disabled required>
-                    <option value="{{ $data->planttype_id }}" selected disabled required>{{ $data->getplanttype->name }}</option>
+                    <option value="{{ $data->planttype_id }}" selected readonly required>{{ $data->getplanttype->name }}</option>
                 </select>
                 @error('plant_type_id')
                 <span class="invalid-feedback" role="alert">
@@ -137,7 +137,7 @@
                 <label for="size" class="col-form-label">{{ __('Shift') }}
                 </label>
                 <select class="form-control" id="shiftName" name="shift_name_id" disabled required>
-                    <option value="{{ $data->shift_id }}" selected disabled>{{ $data->getshift->name }}</option>
+                    <option value="{{ $data->shift_id }}" selected>{{ $data->getshift->name }}</option>
                 </select>
                 @error('shift_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -305,27 +305,27 @@
         <div class="card mt-2 p-5">
             <div class="card-body">
                 <div class="row p-2">
-                    <div class="col-md-6">
-                        <label for="" class="col-form-label">Godam</label>
+                    {{-- <div class="col-md-6">
+                        <label for="" class="col-form-label">Godam</label> --}}
                         <?php
-                            $godam = \App\Models\Godam::where("status","active")->get();
+                            //$godam = \App\Models\Godam::where("status","active")->get();
                         ?>
-                        <select class="advance-select-box form-control" id="autoloader_godam">
+                        {{-- <select class="advance-select-box form-control" id="autoloader_godam">
                             <option value="" selected disabled>--Choose Godam--</option>
                             @foreach($godam as $data)
                             <option value="{{ $data->id }}">{{ $data->name }}</option>
                             @endforeach
-                        </select>
-                    </div>
+                        </select> --}}
+                    {{-- </div> --}}
                     <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
                         </label>
-                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" disabled required>
-                            <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
-                            @foreach ($dana as $danaName)
+                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
+                            <option value="" selected disabled>{{ __('--Select Dana Name--') }}</option>
+                            {{-- @foreach ($dana as $danaName)
                             <option value="{{ $danaName->id }}">{{ $danaName->name }}
                             </option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -339,6 +339,10 @@
                         <button class=" form-control btn btn-primary" id='add_dana_consumption' disabled>
                             Add
                         </button>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="">Available</label>
+                        <input type="text" id="available_dana" disabled>
                     </div>
                 </div>
                 <hr>
@@ -679,6 +683,7 @@
         callunlaminatedfabricajax();
         comparelamandunlam();
         getDanaConsumption();
+        getDana();
 
 
         function getDanaConsumption() {
@@ -934,21 +939,26 @@
         // });
     });
 
-    $("#autoloader_godam").change(function(e){
-        e.preventDefault();
-        let godamId = $(this).val(); 
-        $("#danaNameId").prop("disabled",false)
+    function getDana(){
+        // console.log($("#toGodam").val(),$("#plantType").val(),$("#plantName").val(),$("#shiftName").val())
         $.ajax({
-            url : "{{ route('get.autoloader.godam.id.into.fsr',['godamId' => ':godamId']) }}".replace(":godamId",godamId),
-            method :  'get',
+            url : "{{ route('get.autoloader.godam.id.into.fsr') }}", 
+            method :  'post',
+            data : {
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "godam_id" : $("#toGodam").val(),
+                "planttype" : $("#plantType").val(),
+                "plantname" : $("#plantName").val(),
+                "shift" : $("#shiftName").val()
+            },
             success:function(response){
                 putdanaNameId(response);
-                $("#autoloader_godam_selected").val(godamId);
+                $("#autoloader_godam_selected").val($("#toGodam").val());
             },error:function(error){
                 console.log(error);
             }
         })
-    })
+    }
     /************************* Other Functionalities ***********************/
 
     /************************* Send for lamination **************************/
@@ -1070,7 +1080,7 @@
         $("#danaNameId").empty();
         $("#danaNameId").append(`<option selected disabled>--Select Dana--</option>`);
         data.data.forEach(d => {
-            $("#danaNameId").append(`<option value="${d.dana_name.id}">${d.dana_name.name}</option>`);
+            $("#danaNameId").append(`<option autoloaderid="${d.id}" value="${d.dana_name.id}">${d.dana_name.name}</option>`);
         });
     }
 
@@ -1149,6 +1159,7 @@
 
     $(document).on("click","#add_dana_consumption",function(e){
         let dana = $("#danaNameId").val();
+        let autoloaderid = $("#danaNameId option:selected").attr("autoloaderid");
         let fsr_entry_id = $("#fsr_entry_id").val()
         let consumption = $("#add_dana_consumption_quantity").val();
         if(consumption.trim() === '') {
@@ -1163,6 +1174,7 @@
             data : {
                 "_token" : $("meta[name='csrf-token']").attr("content"),
                 "dana_name_id" : dana,
+                "autoloader_id" : autoloaderid,
                 "consumption" : consumption,
                 "bill_number" : $("#billnumber").val(),
                 "fsr_entry_id" : fsr_entry_id
