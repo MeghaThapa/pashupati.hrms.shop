@@ -7,6 +7,7 @@ use App\Models\FabricSaleEntry;
 use App\Models\FabricSaleItems;
 use App\Models\FabricStock;
 use App\Models\Supplier;
+use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Yajra\DataTables\Exceptions\Exception;
@@ -145,6 +146,22 @@ class FabricSendAndReceiveSaleController extends Controller
         }
     }
 
+    public function indexsumsajax(){
+        if($this->request->ajax()){
+            $fabrics = DB::table("fabric_sales")->where("sale_entry_id",$this->request->entry_id)
+                                            ->leftJoin("fabrics","fabrics.id", "=","fabric_sales.fabric_id")
+                                            ->get();
+            $sumnetwt = $fabrics->sum("net_wt");
+            $sumgrosswt = $fabrics->sum("gross_wt");
+            $summeter = $fabrics->sum("meter");
+            return response([
+                "net_wt" => $sumnetwt,
+                 "gross_wt" => $sumgrosswt,
+                 "meter" => $summeter
+            ]);
+        }
+    }
+
     public function delete(){
         if($this->request->ajax()){
             try{
@@ -164,20 +181,31 @@ class FabricSendAndReceiveSaleController extends Controller
 
     public function submit(){
         if($this->request->ajax()){
-            foreach(FabricSale::where("sale_entry_id",$this->request->id)->get() as $data){
-                FabricSaleItems::create([
-                    "fabric_id" => $data->fabric_id,
-                    "sale_entry_id" => $data->sale_entry_id
+            try{
+                DB::beginTransaction();                
+                foreach(FabricSale::where("sale_entry_id",$this->request->id)->get() as $data){
+                    $sale_fabric_id = FabricSale::where("sale_entry_id",$this->request->id)->value("fabric_id");
+                    
+                    FabricSaleItems::create([
+                        "fabric_id" => $data->fabric_id,
+                        "sale_entry_id" => $data->sale_entry_id
+                    ]);
+    
+                    FabricStock::where("fabric_id",$sale_fabric_id)->delete();
+                }
+    
+                FabricSale::where("sale_entry_id",$this->request->id)->delete();
+                FabricSaleEntry::where("id",$this->request->id)->update([
+                    "status" => "completed"
                 ]);
+                DB::commit();
+                return response([
+                    "status" => 200,
+                    "message" => "saved successfully"
+                ]);
+            }catch(Exception $e){
+                DB::rollBack();
             }
-            FabricSale::where("sale_entry_id",$this->request->id)->delete();
-            FabricSaleEntry::where("id",$this->request->id)->update([
-                "status" => "completed"
-            ]);
-            return response([
-                "status" => 200,
-                "message" => "saved successfully"
-            ]);
         }
     }
 }

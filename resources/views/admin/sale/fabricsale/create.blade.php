@@ -213,6 +213,37 @@
                 </tr>
             </thead>
             <tbody id="fabric_sale_list"></tbody>
+            <tfoot>
+                <tr>
+                    <th>{{ __('Sr.No') }}</th>
+                    <th>{{ __('Fabric Name') }}</th>
+                    <th>{{ __('Roll No') }}</th>
+                    <th>{{ __('G.W') }}</th>
+                    <th>{{ __('N.W') }}</th>
+                    <th>{{ __('Meter') }}</th>
+                    <th>{{ __('Avg') }}</th>
+                    <th>{{ __('Gram') }}</th>
+                    <th>{{__('Action')}}</th>
+                </tr>
+                <tr>
+                    <td colspan="9">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <label for="">Net Weight</label>
+                                <input type="text" class="form-control  net_wt" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="">Gross Weight</label>
+                                <input type="text" class="form-control  gross_wt" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="">Meter</label>
+                                <input type="text" class="form-control  meter" readonly>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
@@ -234,6 +265,7 @@
         let salesTable = null
 
         getSalesData()
+        getsums()
 
          $("#finaltripalstock_id").change(function(e){
              if (sameFabricTable !== null) {
@@ -284,6 +316,7 @@
                 success:function(response){
                     console.log(response)
                     getSalesData()
+                    getsums()
                 },
                 error:function(error){
                     console.log("error",error);
@@ -338,6 +371,7 @@
                     console.log(response);
                     if(response.status ==  "200"){
                         salesTable.ajax.reload();
+                        getsums()
                     }else{
                         alert("something went wrong check console")
                     }
@@ -367,6 +401,25 @@
             })
         })
 
+        function getsums(){
+            $.ajax({
+                url : "{{ route('fabric.sale.index.ajax.sums') }}",
+                method : "get",
+                data : {
+                    "entry_id" : entry_id
+                },
+                beforeSend:function(){
+                    console.log("sending")
+                },
+                success:function(response){
+                    $(".net_wt").val(response.net_wt)
+                    $(".gross_wt").val(response.gross_wt)
+                    $(".meter").val(response.meter)
+                },error:function(error){
+                    console.log(error)
+                }
+            })
+        }
      });       
  </script>
 @endsection
