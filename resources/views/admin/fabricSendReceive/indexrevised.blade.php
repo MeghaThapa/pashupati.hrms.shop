@@ -724,6 +724,10 @@
             fabricTable = $("#sameFabricsTable").DataTable({
                 serverside : true,
                 processing : true,
+                lengthMenu : [
+                    [5,10,25,50,100,250,500,-1],
+                    [5,10,25,50,100,250,500,"All"]
+                ],
                 ajax : {
                     url : "{{ route('get.fabric.same.name.fsr') }}",
                     method : "post",
