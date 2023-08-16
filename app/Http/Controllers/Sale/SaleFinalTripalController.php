@@ -40,6 +40,22 @@ class SaleFinalTripalController extends Controller
 
     }
 
+    public function getTripalSaleTotal(Request $request){
+        if($request->ajax()){
+            $tripal = SaleFinalTripalList::where('salefinal_id',$request->bill_id)
+                                            ->get();
+            $sumnetwt = $tripal->sum("net");
+            $sumgrosswt = $tripal->sum("gross");
+            $summeter = $tripal->sum("meter");
+            // dd($tripal);
+            return response([
+                "net_wt" => $sumnetwt,
+                 "gross_wt" => $sumgrosswt,
+                 "meter" => $summeter
+            ]);
+        }
+    }
+
     public function store(Request $request)
     {
         // $validator = $request->validate([

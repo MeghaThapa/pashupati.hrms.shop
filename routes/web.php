@@ -589,6 +589,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
+
+
     Route::get('singletripals/create/{id}', 'Tripal\TripalController@createSingleTripal')->name('addsingletripal.create');
 
     Route::get('singletripals/edit/{id}', 'Tripal\SingleTripalBillController@edit')->name('addsingletripal.edit');
@@ -704,6 +706,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('salefinaltripal/viewTripal/{id}','Sale\SaleFinalTripalController@viewTripal')->name('salefinaltripals.viewTripal');
 
     Route::get('salefinaltripal/viewTripalBill/{id}','Sale\SaleFinalTripalController@viewTripalBill')->name('salefinaltripals.viewTripalBill');
+
+    Route::get("salefinaltripal/getTripalSaleTotal",'Sale\SaleFinalTripalController@getTripalSaleTotal')->name("getTripalSaleTotal");
 
     //salefinaltripal filter
 
