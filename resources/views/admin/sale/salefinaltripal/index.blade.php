@@ -93,6 +93,7 @@
                  </span>
                  @enderror   
             </div>
+            
 
             <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice Date') }}
@@ -202,7 +203,7 @@
                             </a>
 
                             <a href="{{ route('salefinaltripals.viewTripalBill', $fabric->id) }}"
-                                    class="btn btn-info" target="_blank"><i class="fas fa-eye"></i>
+                                    class="btn btn-info" target="_blank"><i class="fas fa-print"></i>
                             </a>
                             
                         </div>

@@ -76,82 +76,158 @@
 @endsection
 
 @section('content')
+<section class="content">
+  <div class="container-fluid">
+    <a href="{{route('tripalsale.pdf',$id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a>
+    <a href="{{route('tripalsale.excel',$id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a>
+   
+    
+    <div class="row" id="printTable">
+      <div class="col-12">
+        <div class="invoice p-3 mb-3 card  card-outline">
+          {{-- <div class="row col-12">
+            <div class="col-12">
+              <h4>
+                <small class="float-right">Date: </small>
+              </h4>
+            </div>
+          </div> --}}
+          <div class="row invoice-info p-4">
+            <div class="col-sm-12 text-center mb-2">
+              <div><small>PASHUPATI SYNPACK INDUSTRIES PVT. LTD.</small></div>
+              {{-- <h3 class="m-0">SONAPUR,SUNSARI</h3> --}}
+              <div><small><b>SONAPUR,SUNSARI</b></small> </div>
+             
+            </div> 
+            <div class="col-sm-6 invoice-col">
+              
+              <address>
+                <strong> PartyName : {{$findtripal->getParty->name}}</strong><br>
+              
+              </address>
+            </div>
+            <div class="col-sm-12 col-lg-6  text-right">
+              <b>A/C : {{$findtripal->getParty->name}}</b><br>
+              <br>
+            </div>
+            <div class="row col-lg-12" >
+                <div class="col-sm-6 col-lg-6  text-left">
+                  <b>Invoice Number: {{$findtripal->bill_no}}</b><br>
+                  <br>
+                </div>
 
-<div class="card-body p-0 m-0">
-      <p class="text-center">PASHUPATI SYNPACK INDUSTRIES PVTV. LTD. SONAPUR,SUNSARI</p>
-       
+                <div class="col-lg-6 text-right">
+                  <b>Gate Pass: {{$findtripal->gp_no}}</b><br>
+                  <br>
+                </div>
+                
+            </div>
 
-    <div class="row">
-        <div class="col-md-6 form-group">
-            <label for="size" class="col-form-label">{{ __('Party Name') }} : {{$findtripal->getParty->name}}
-            </label>
-           
+            <div class="row">
+
+                <div class="col-sm-12 text-right ml-2">
+                  <b>Date: {{$findtripal->bill_date}}</b><br>
+                  <br>
+                </div>
+                
+            </div>
+            
+            
+          </div>
+          <div class="row">
+            <div class="col-12 table-responsive">
+              <table class="table table-striped table-sm">
+                
+
+                <tr>
+                    <th width="10px">{{ __('Sr.No') }}</th>
+                    <th width="10px">{{ __('Fabric Name') }}</th>
+                    <th width="10px">{{ __('Roll No') }}</th>
+                    <th width="10px">{{ __('Gross Wght') }}</th>
+                    <th width="10px">{{ __('Net Wght') }}</th>
+                    <th width="10px">{{ __('Meter') }}</th>
+                    <th width="10px">{{ __('Avg Wght') }}</th>
+                    <th width="10px">{{ __('GSM') }}</th>
+                </tr>
+
+                <tbody>
+                    @foreach($salefinaltripals as $tripal)
+                    <tr>
+                        <td>#</td>
+                        <td>{{$tripal->name}}</td>
+                        <td>{{$tripal->roll}}</td>
+                        <td>{{$tripal->gross}}</td>
+                        <td>{{$tripal->net}}</td>
+                        <td>{{$tripal->meter}}</td>
+                        <td>{{$tripal->average}}</td>
+                        <td>{{$tripal->gram}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+             
+             
+              </table>
+          </div>
         </div>
 
-        <div class="col-md-6 form-group">
-            <label for="size" class="col-form-label">{{ __('A/c') }} : hello
-            </label>
-           
-        </div>
+        <h3 class="m-0 text-center mt-2">SUMMARY</h3>
 
-    </div>
+          <div class="row p-4">
+            <div class="col-12 table-responsive">
+              <table class="table table-striped table-sm">
+                
 
-    <div class="row">
-        <div class="col-md-6 form-group">
-            <label for="size" class="col-form-label">{{ __('Packing List/Invoice No') }} : {{$findtripal->bill_no}}
-            </label>
-           
-        </div>
+                <tr>
+                    <th width="10px">{{ __('Sr.No') }}</th>
+                    <th width="10px">{{ __('Fabric Name') }}</th>
+                    <th width="10px">{{ __('Roll No') }}</th>
+                    <th width="10px">{{ __('Gross Wght') }}</th>
+                    <th width="10px">{{ __('Net Wght') }}</th>
+                    <th width="10px">{{ __('Meter') }}</th>
+                </tr>
 
-        <div class="col-md-6 form-group">
-            <label for="size" class="col-form-label">{{ __('Gate Pass no') }} : {{$findtripal->gp_no}}
-            </label>
-           
-        </div>
+                <tbody>
+                    @foreach($totaltripals as $tripal)
+                    <tr>
+                        <td>#</td>
+                        <td>{{$tripal->name}}</td>
+                        <td>{{$tripal->total_count}}</td>
+                        <td>{{$tripal->total_gross}}</td>
+                        <td>{{$tripal->total_net}}</td>
+                        <td>{{$tripal->total_meter}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
 
-    </div>
-    <div class="row">
-        <div class="col-md-4 form-group">
-            <label for="size" class="col-form-label">{{ __('Date') }} : {{$findtripal->bill_date}}
-            </label>
-           
+                <tfoot>
+                    <tr>
+                        <td colspan="3">GrandTotal</td>
+                        <td>{{$total_gross}}</td>
+                        <td>{{$total_net}}</td>
+                        <td>{{$total_meter}}</td>
+                    </tr>
+                </tfoot>
+             
+             
+              </table>
+          </div>
         </div>
         
+        <div class="row no-print">
+          <div class="col-12">
+            {{-- <span>Bill Printed By : {{$bill_total_student->getUser->name}}</span> --}}
+            {{-- <span class="float-right">Bill Date: {{$bill_total_student->created_at_np}}</span> --}}
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
+</section>
 
-<div class="row">
-    <div class="table-responsive table-custom my-3">
-        <table class="table table-hover table-striped" id="sameFabricsTable">
-            <thead class="table-info">
-                <tr>
-                    <th>{{ __('Sr.No') }}</th>
-                    <th>{{ __('Fabric Name') }}</th>
-                    <th>{{ __('Roll No') }}</th>
-                    <th>{{ __('G.W') }}</th>
-                    <th>{{ __('N.W') }}</th>
-                    <th>{{ __('Meter') }}</th>
-                    <th>{{ __('Avg') }}</th>
-                    <th>{{ __('Gram') }}</th>
-                </tr>
-            </thead>
-            <tbody id="same-fabrics">
-                @foreach($salefinaltripals as $tripal)
-                <tr>
-                    <td>#</td>
-                    <td>{{$tripal->name}}</td>
-                    <td>{{$tripal->roll}}</td>
-                    <td>{{$tripal->gross}}</td>
-                    <td>{{$tripal->net}}</td>
-                    <td>{{$tripal->meter}}</td>
-                    <td>{{$tripal->average}}</td>
-                    <td>{{$tripal->gram}}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
+
+
+
 
 
 <!-- /.card-body -->

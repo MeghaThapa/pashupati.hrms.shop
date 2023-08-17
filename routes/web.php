@@ -709,6 +709,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get("salefinaltripal/getTripalSaleTotal",'Sale\SaleFinalTripalController@getTripalSaleTotal')->name("getTripalSaleTotal");
 
+    Route::get("salefinaltripal/getTripalSale/Pdf/{id}",'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
+    Route::get("salefinaltripal/getTripalSale/excel/{id}",'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
+
     //salefinaltripal filter
 
     Route::post("get/finalTripal/filterName",'Sale\SaleFinalTripalController@getfinaltripalFilter')->name("getfinaltripalFilter");
