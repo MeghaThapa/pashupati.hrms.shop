@@ -156,12 +156,12 @@
                 @enderror
             </div>
             <div class="col-md-3 form-group">
-                <label for="size" class="col-form-label">{{ __('Gram Weight') }}<span class="required-field">*</span>
+                <label for="size" class="col-form-label">{{ __('Gross Weight') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" step="any" min="0" class="form-control calculator" id="gram_wt"
-                    data-number="1" name="gram_wt" min="1" required>
+                <input type="text" step="any" min="0" class="form-control calculator" id="gross_wt"
+                    data-number="1" name="gross_wt" min="1" required>
 
-                @error('gram_wt')
+                @error('gross_wt')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>

@@ -91,7 +91,7 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
+                <input type="text" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
                     id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
 
                 @error('bill_date')
@@ -486,7 +486,7 @@
                 @foreach($danalist as $list)
                 <tr>
                     <td>#</td>
-                    <td>{{$list->getAutoloader->fromGodam->name}}</td>
+                    <td>{{$list->godam->name}}</td>
 
                     <td>{{$list->danaName->name}}</td>
                     <td>{{$list->quantity}}</td>
@@ -1267,26 +1267,7 @@
 
 
 
-    function deletefromunlamintedtable(data){
-        $.ajax({
-            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
-            method:'get',
-            beforeSend:function(){
-                console.log('deleteing from unlamintaed table');
-            },
-            success:function(response){
-                if(response.response == '200'){
-                    emptytable();
-                    callunlaminatedfabricajax();
-                }else if(response.response == '400'){
-                    alert('Not Allowed OR Data is no longer there');
-                }
-            },
-            error:function(error){
-                console.log(error);
-            }
-        });
-    }
+   
 
     $(".discard").click(function(e){
         $.ajax({
@@ -1359,23 +1340,8 @@
                     console.log(error);
                 }
             }); 
-            // $('#staticBackdrop1').modal('show');
-            // let titleold = $('#staticBackdropLabel').text('');
-            // let title = $(this).attr('data-title');
-            // let id = $(this).attr('data-id');
-            // $("#laminated_fabric_name").val(title+"(SingleLam)");
-            // let laminated_fabric_group = $(this).attr('data-group');
-            // $("#laminated_fabric_group").val(laminated_fabric_group);
-            // let standard_weight_gram = $(this).attr('data-standard');
-            // $("#standard_weight_gram").val(standard_weight_gram);
-            // $('#staticBackdropLabel').text(title+" -> id = "+id);
-            // $("#fabricsid").val(id);
-
-            // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
-            // $('#sendtolaminationform').attr('action',action);
-            // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
-            // action = action.slice(0, -2) + `${id}`;
-            // $('#sendtolaminationform').attr('action', action);
+            
+          
         });
     });
     // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {

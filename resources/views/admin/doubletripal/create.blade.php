@@ -353,7 +353,7 @@
                 @foreach($danalist as $list)
                 <tr>
                     <td>#</td>
-                    <td>{{$list->getAutoloader->fromGodam->name}}</td>
+                    <td>{{$list->godam->name}}</td>
                     
                     <td>{{$list->danaName->name}}</td>
                     <td>{{$list->quantity}}</td>

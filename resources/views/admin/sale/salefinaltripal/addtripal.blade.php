@@ -216,6 +216,26 @@
             </thead>
             <tbody id="getSaleList"></tbody>
         </table>
+        <tfoot>
+            <tr>
+                <td colspan="9">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <label for="">Net Weight</label>
+                            <input type="text" class="form-control  net_wt" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">Gross Weight</label>
+                            <input type="text" class="form-control  gross_wt" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">Meter</label>
+                            <input type="text" class="form-control  meter" readonly>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
     </div>
 </div>
 
@@ -239,6 +259,29 @@
          /**************************** Ajax Calls **************************/
          // callunlaminatedfabricajax();
          // comparelamandunlam();
+
+          getTotal()
+
+         function getTotal(){
+            var bill_id = $('#salefinal_id').val();
+             $.ajax({
+                 url : "{{ route('getTripalSaleTotal') }}",
+                 method : "get",
+                 data : {
+                     "bill_id" : bill_id
+                 },
+                 beforeSend:function(){
+                     console.log("sending")
+                 },
+                 success:function(response){
+                     $(".net_wt").val(response.net_wt)
+                     $(".gross_wt").val(response.gross_wt)
+                     $(".meter").val(response.meter)
+                 },error:function(error){
+                     console.log(error)
+                 }
+             })
+         }
    
 
          $("#finaltripalstock_id").change(function(e){
