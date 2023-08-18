@@ -54,29 +54,26 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
               $final = $findTape->tape_qty_in_kg - $finalWastage;
               $findTape->tape_qty_in_kg = $final;
               $findTape->update();
-
-              $countData = FabricDetail::where('bill_number',$bill_no)->count();
-              
-                  // store subcategory
-                $wasteagepercent = (($totalwastage)/$rows[0]['totalweightkg']) * 100;
-                  $fabric = FabricDetail::create([
-                      'bill_number' => $bill_no,
-                      'bill_date' => $this->date_np,
-                      'godam_id' => $this->godam_id,
-                      'pipe_cutting' => $rows[0]['pipecutting'],
-                      'bd_wastage' => $rows[0]['bdwastage'],
-                      'other_wastage' => $rows[0]['otherwastage'],
-                      'total_wastage' => $totalwastage,
-                      'total_netweight' => $totalnetWeight,
-                      'total_meter' => $rows[0]['totalmeter'],
-                      'total_weightinkg' => $rows[0]['totalweightkg'],
-                      'total_wastageinpercent' => $wasteagepercent,
-                      'run_loom' => $rows[0]['runloom'],
-                      'wrapping' => '0',
-                  ]);
-
               
            }
+
+             // store subcategory
+            $wasteagepercent = (($totalwastage)/$rows[0]['totalweightkg']) * 100;
+             $detail = FabricDetail::create([
+                 'bill_number' => $bill_no,
+                 'bill_date' => $this->date_np,
+                 'godam_id' => $this->godam_id,
+                 'pipe_cutting' => $rows[0]['pipecutting'],
+                 'bd_wastage' => $rows[0]['bdwastage'],
+                 'other_wastage' => $rows[0]['otherwastage'],
+                 'total_wastage' => $totalwastage,
+                 'total_netweight' => $totalnetWeight,
+                 'total_meter' => $rows[0]['totalmeter'],
+                 'total_weightinkg' => $rows[0]['totalweightkg'],
+                 'total_wastageinpercent' => $wasteagepercent,
+                 'run_loom' => $rows[0]['runloom'],
+                 'wrapping' => '0',
+             ]);
 
            $wastename = 'rafia';
 
@@ -114,6 +111,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                // dd($row);
                $size = trim($row['size']);
                $slug = $row['gram'];
+               // dd($row);
 
                $fabricgroup = FabricGroup::firstOrCreate([
                    'slug' => $slug
@@ -125,15 +123,19 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                ]);
                $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
 
-               // $input = $size;
-               // $parts = explode(' ', $input);
-               // $firstString = $parts[0];   
+               $input = $row['size'];
+               $parts = explode(' ', $input);
+               $firstString = $parts[0];   
                        
-               // $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+               $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-               $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
+               $data = $find_name  ;
 
+               $average = $row['grams'];
 
+               $gram_wt = ($average) / $data;
+
+               // $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
 
 
                $fabric = Fabric::create([
@@ -175,6 +177,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
           return response(200);
       }catch(Exception $e){
+        // dd($e);
           DB::rollBack();
           return response([
               "exception" => $e->getMessage(),

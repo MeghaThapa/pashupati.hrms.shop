@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use App\Models\FinalTripalStock;
 use App\Models\SaleFinalTripal;
 use App\Models\SaleFinalTripalList;
+use App\Models\SaleFinalTripalEntry;
 use App\Helpers\AppHelper;
 use Throwable;
 use Yajra\DataTables\DataTables;
@@ -27,6 +28,38 @@ class SaleFinalTripalController extends Controller
         $partyname = Supplier::where('status',1)->get();
         $salefinaltripals = SaleFinalTripal::with('getSaleList')->paginate(20);
         return view('admin.sale.salefinaltripal.index',compact('fabrics','partyname','salefinaltripals'));
+    }
+
+    public function dataTable()
+    {
+        $data = SaleFinalTripal::orderBy('created_at','DESC')
+                       ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('supplier', function ($row) {
+
+                return $row->getParty->name;
+
+            })
+            ->addColumn('action', function ($row) {
+
+                if($row->status == "sent"){
+
+                    return '<a href="' . route('salefinaltripals.addTripal', ['id' => $row->id]) . '" class="btn btn-info"><i class="fas fa-plus"></i></a>';
+
+                }else{
+
+                    return '<a href="' . route('salefinaltripals.viewTripalBill', ['id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
+
+                }
+
+
+                return $actionBtn;
+
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**
@@ -78,6 +111,7 @@ class SaleFinalTripalController extends Controller
                 'do_no' => $request['dp_number'],
                 'gp_no' => $request['gp_number'],
                 'remarks' => $request['remarks'],
+                'status' => 'sent',
             ]);
 
         return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
@@ -141,29 +175,58 @@ class SaleFinalTripalController extends Controller
     }
 
     public function getSaleTripalList(Request $request){
-        if($request->ajax()){
-            $saletripal_id = $request->saletripal_id;
+        // dd($request);
 
-            $fabrics = SaleFinalTripalList::where('salefinal_id',$saletripal_id)->get();
+        if($request->ajax()){
+            $sale_id = $request->sale_id;
+            $fabrics = SaleFinalTripalEntry::where("salefinal_id",$sale_id)->get();
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
-                    ->addColumn("gram",function($row){
-                        return '1';
+                   
+                    ->addColumn("action",function($row){
+                        return "
+                        <a class='btn btn-danger deleteTripalEntry'  
+                                 data-id='{$row->id}' 
+                                 href='{$row->id}'>Delete</a>";
                     })
-                    
-                    ->rawColumns(["gram"])
+                    ->rawColumns(["action","gram_wt"])
                     ->make(true);
 
         }
+        // if($request->ajax()){
+        //     dd($request);
+        //     $salefinal_id = $request->salefinal_id;
+
+        //     $fabrics = SaleFinalTripalEntry::where('salefinal_id',$salefinal_id)->get();
+
+        //     return response([
+        //         "datalist" => $fabrics,
+        //     ]);
+
+
+        // }
     }
 
-    public function finalTripalStoreList(Request $request)
+    public function deleteEntryList(Request $request)
+    {
+
+        $unit = SaleFinalTripalEntry::find($request->data_id);
+
+        // delete unit
+        $unit->delete();
+        return response([
+            "message" => "Deleted Successfully" 
+        ]);
+
+    }
+
+    public function finalTripalStoreEntryList(Request $request)
     {
         try{
             $find_name = FinalTripalStock::find($request->data_id);
             
-                $fabricstock = SaleFinalTripalList::create([
+                $fabricstock = SaleFinalTripalEntry::create([
                     'name' => $find_name->name,
                     'slug' => $find_name->slug,
                     'roll' => $find_name->roll_no,
@@ -175,12 +238,60 @@ class SaleFinalTripalController extends Controller
                     'bill_no' => $request->bill_no,
                     'bill_date' => $request->bill_date,
                     'salefinal_id' => $request->salefinal_id,
+                    'stock_id' => $request->data_id,
+                    'status' => 'sent',
                 ]);
 
-                if($fabricstock){
+              
 
-                  FinalTripalStock::where('id',$request->data_id)->delete();
-                }
+
+        return response(['message'=>'sale Transferred Successfully']);
+        }
+        catch (Exception $ex){
+            return $ex;
+        }
+    
+
+    }
+
+    public function finalTripalStoreList(Request $request)
+    {
+        try{
+            // dd($request);
+            $getlist = SaleFinalTripalEntry::where('salefinal_id',$request->salefinal_id)->where('status','sent')->get();
+            // dd($getlist);
+
+            foreach ($getlist as $list) {
+                // dd($list);
+
+                $find_name = SaleFinalTripalEntry::find($list->id);
+                // dd($find_name);                
+                    $fabricstock = SaleFinalTripalList::create([
+                        'name' => $find_name->name,
+                        'slug' => $find_name->slug,
+                        'roll' => $find_name->roll,
+                        'gross' => $find_name->gross,
+                        'net' => $find_name->net,
+                        'meter' => $find_name->meter,
+                        'gram' => $find_name->gram,
+                        'average' => $find_name->average,
+                        'bill_no' => $find_name->bill_no,
+                        'bill_date' => $find_name->bill_date,
+                        'salefinal_id' => $request->salefinal_id,
+                    ]);
+
+                    if($fabricstock){
+
+                      FinalTripalStock::where('id',$find_name->stock_id)->delete();
+                    }
+
+                    $getlist = SaleFinalTripalEntry::where('salefinal_id',$request->salefinal_id)->update(['status' => 'completed']);
+
+
+            }
+
+            $getlist = SaleFinalTripal::where('id',$request->salefinal_id)->update(['status' => 'completed']);
+
 
 
         return response(['message'=>'sale Transferred Successfully']);
