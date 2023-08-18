@@ -174,7 +174,7 @@
     </form>
 </div>
 <div class="p-0 table-responsive table-custom my-3">
-    <table class="table">
+    <table class="table" id="rawMaterialTable">
         <thead>
         <tr>
             <th>@lang('#')</th>
@@ -184,57 +184,7 @@
             <th class="text-right">{{ __('Action') }}</th>
         </tr>
         </thead>
-        <tbody>
-
-            @foreach ($salefinaltripals as $key => $fabric)
-                <tr>
-                    <td>{{ ++$key }}</td>
-                    <td>{{ $fabric->bill_no }} ({{$fabric->getSaleList()->sum('net')}})</td>
-                    <td>{{ $fabric->bill_date }}</td>
-                    <td>{{ $fabric->getParty->name }} </td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="{{ route('salefinaltripals.addTripal', $fabric->id) }}"
-                                class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>
-                            </a>
-
-                            <a href="{{ route('salefinaltripals.viewTripal', $fabric->id) }}"
-                                    class="btn btn-primary" target="_blank"><i class="fas fa-eye"></i>
-                            </a>
-
-                            <a href="{{ route('salefinaltripals.viewTripalBill', $fabric->id) }}"
-                                    class="btn btn-info" target="_blank"><i class="fas fa-print"></i>
-                            </a>
-                            
-                        </div>
-                    </td>
-                    {{-- <td class="text-right">
-                        <div class="btn-group">
-                            <button type="button"
-                                    class="btn btn-secondary dropdown-toggle action-dropdown-toggle"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-
-                                <a href="{{ route('salefinaltripals.addTripal', $fabric->id) }}"
-                                    class="dropdown-item" target="_blank"><i class="fas fa-edit"></i>
-                                    {{ __('ADDTripal') }}</a>
-                            
-                                <a href="{{ route('salefinaltripals.viewTripal', $fabric->id) }}"
-                                    class="dropdown-item" target="_blank"><i class="fas fa-eye"></i>
-                                    {{ __('View') }}</a>
-
-                          
-                            </div>
-                        </div>
-                    </td> --}}
-                </tr>
-            @endforeach
-  
-
-
-        </tbody>
+   
     </table>
 </div>
 
@@ -251,6 +201,44 @@
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
 <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
+<script>
+    $('document').ready(function() {
+        var table = $('#rawMaterialTable').DataTable({
+            lengthMenu: [
+                [30, 40, 50, -1],
+                ['30 rows', '40 rows', '50 rows', 'Show all']
+            ],
+            style: 'bootstrap4',
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('saleFinalTripal.dataTable') }}",
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'bill_date',
+                    searchable: true,
+                },
+                {
+                    data: 'bill_no',
+                    searchable: true,
+                },
+                {
+                    data: 'supplier'
+                },
+              
+
+                {
+                    data: 'action',
+                    orderable: true,
+                    searchable: true,
+                },
+            ]
+        });
+    
+
+    });
+</script>
 
 <script type="text/javascript">
 $(document).ready(function(){

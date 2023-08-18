@@ -716,9 +716,16 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post("get/finalTripal/filterName",'Sale\SaleFinalTripalController@getfinaltripalFilter')->name("getfinaltripalFilter");
 
-    Route::post('salefinaltripal/store/list','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
+    Route::post('salefinaltripal/store/entryList','Sale\SaleFinalTripalController@finalTripalStoreEntryList')->name('finalsaletripal.storeEntryList');
 
-    Route::post("get/saleTripal/filterSaleTripalList",'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
+    Route::post('salefinaltripal/store/finalList','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
+
+    Route::get("get/saleTripal/filterSaleTripalList",'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
+
+    Route::get('salefinaltripal/delete/list', 'Sale\SaleFinalTripalController@deleteEntryList')->name('finalsaletripal.deleteFinalSaleEntry');
+
+    Route::get('saleFinalTripal/dataTable', 'Sale\SaleFinalTripalController@dataTable')->name('saleFinalTripal.dataTable');
+
 
 
     //double laminated tripal
