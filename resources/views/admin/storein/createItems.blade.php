@@ -2187,7 +2187,7 @@
                     data: {
                         _token: "{{ csrf_token() }}",
                         category_id: category_id,
-                        item_id: product_id,
+                        item_name: product_id,
                         quantity: quantities,
                         unit_id: unit_id,
                         unit_price: unit_price,

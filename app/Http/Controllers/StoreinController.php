@@ -585,7 +585,7 @@ class StoreinController extends Controller
         DB::beginTransaction();
         $validator = $request->validate([
             'category_id'  => 'required',
-            'item_id'   => 'required',
+            'item_name'   => 'required',
             'quantity'      => 'required|numeric',
             'unit_price'   => 'required|numeric',
             'size_id'   => 'required',
@@ -593,18 +593,18 @@ class StoreinController extends Controller
             'department_id'   => 'required',
         ]);
        //  name comes here instead of item id so converting name to id
-        $itemofstorein_id=ItemsOfStorein::where('id',$request->item_id)
+        $itemofstorein=ItemsOfStorein::where('name',$request->item_name)
         ->where('unit_id',$request->unit_id)
         ->where('category_id',$request->category_id)
         ->where('department_id',$request->department_id)
         ->where('size_id',$request->size_id)
-        ->first()->id;
+        ->first();
 
         $totalAmt = ($request->quantity * $request->unit_price);
 
         $storeinItem = new StoreinItem();
         $storeinItem->storein_category_id = $request->category_id;
-        $storeinItem->storein_item_id = $itemofstorein_id;
+        $storeinItem->storein_item_id = $itemofstorein->id;
         $storeinItem->quantity = $request->quantity;
         $storeinItem->size_id=$request->size_id;
         $storeinItem->unit_id = $request->unit_id;
