@@ -28,7 +28,7 @@ class FabricStockController extends Controller
     }
     public function openingStore(Request $request){
         $request->validate([
-            "fabric_opening_date" => "required",
+            "date_np" => "required",
             "godam" => "required",
             "file" => "required|mimes:csv,xlsx,xls,xltx,xltm"
         ]);
@@ -36,9 +36,10 @@ class FabricStockController extends Controller
         $file = $request->file("file");
         $godam = $request->godam;
         $type = $request->type;
+        $date_np = $request->date_np;
 
         try{
-            $fabricImport = new FabricOpeningImport($godam,$type);
+            $fabricImport = new FabricOpeningImport($godam,$type,$date_np);
             $import = Excel::import($fabricImport,$file);
 
             if($import){

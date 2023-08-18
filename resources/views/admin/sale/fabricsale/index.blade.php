@@ -3,6 +3,7 @@
 @section('extra-style')
 <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
 <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
+<link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
 <style>
     .col-form-label {
         font-size: 12px !important;
@@ -76,23 +77,41 @@
 @endsection
 
 @section('content')
+@if($errors->any())
+    <div class="card-header">
+        @foreach($errors->all() as $error)
+        <div class="alert alert-light text-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            {!! $error."<br>" !!}
+        </div>
+        @endforeach
+    </div>
+@endif
 <div class="card-body p-0 m-0">
-    <form action="{{ route('salefinaltripal.store') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('fabric.sale.entry.store') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
             <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="billnumber" value="{{ $bill_no }}" name="bill_number"
-                    required /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                <input type="text" class="form-control" id="billnumber" name="bill_number" />
+
+                 @error('bill_number')
+                 <span class="invalid-feedback" role="alert">
+                     <strong>{{ $message }}</strong>
+                 </span>
+                 @enderror   
             </div>
 
             <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice Date') }}
                 </label>
-                <input type="date" value="{{ $bill_date }}" step="any" min="0" class="form-control calculator"
-                    id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
+                <input type="text" step="any" min="0" class="form-control calculator"
+                    id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1">
 
                 @error('bill_date')
                 <span class="invalid-feedback" role="alert">
@@ -104,14 +123,14 @@
             <div class="col-md-6 form-group">
                 <label for="size" class="col-form-label">{{ __('PartyName') }}
                 </label>
-                <select class="advance-select-box form-control" id="partyname" name="partyname" required>
+                <select class="advance-select-box form-control" id="partyname" name="partyname">
                     <option value="" selected disabled>{{ __('Select PartyName') }}</option>
                     @foreach ($partyname as $party)
                     <option value="{{ $party->id }}">{{ $party->name }}
                     </option>
                     @endforeach
                 </select>
-                @error('plant_type_id')
+                @error('partyname')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -120,11 +139,12 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('BillFor') }}
                 </label>
-                <select class="advance-select-box form-control" id="billfor" name="bill_for" required>
+                <select class="advance-select-box form-control" id="billfor" name="bill_for" >
                     <option value="" selected disabled>{{ __('Select BillFor') }}</option>
-                    <option value="1">Local</option>
+                    <option value="local">Local</option>
+                    <option value="export">Export</option>
                 </select>
-                @error('gp_no')
+                @error('bill_for')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -165,6 +185,24 @@
         
     </form>
 </div>
+<div class="p-0 table-responsive table-custom my-3">
+    <table class="table table-hover table-bordered w-100">
+        <thead>
+        <tr>
+            <th>@lang('#')</th>
+            <th>{{ __('Invoice No') }}</th>
+            <th>{{ __('Invoice Date') }}</th>
+            <th>{{ __('Supplier') }}</th>
+            <th class="text-right">{{ __('Action') }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<!-- /.card-body -->
+
 
 @endsection
 @section('extra-script')
@@ -172,6 +210,41 @@
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+</script>
+<script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
+  $('#billDate').val(currentDate);
+  $('#billDate').nepaliDatePicker({
+    ndpYear: true,
+    ndpMonth: true,
+    disableAfter: currentDate,
+    });
+  
+  });
+
+  $(".table").DataTable({
+    serverside:true,
+    processing:true,
+    ajax : {
+        url : "{{ route('fabric.sale.entry.index.ajax') }}",
+    },
+    columns : [
+        {data : "DT_RowIndex" , name : "DT_RowIndex"},
+        {data : "bill_no" , name : "bill_no"},
+        {data : "bill_date" , name : "bill_date"},
+        {data : "supplier" , name : "supplier"},
+        {data : "action" , name : "action"},
+    ]
+  })
+
+  $(document).on("click",".create-sale",function(e){
+    e.preventDefault()
+    location.href = "{{ route('fabric.sale.create',['entry_id'=>':entry_id']) }}".replace(":entry_id",$(this).data("id"))
+  })
+
 </script>
 
 @endsection

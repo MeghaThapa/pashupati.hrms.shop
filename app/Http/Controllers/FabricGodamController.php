@@ -8,6 +8,7 @@ use App\Models\FabricGodam;
 use App\Models\FabricGodamTransfer;
 use App\Models\FabricStock;
 use App\Models\FabricGroup;
+use App\Models\FabricGodamList;
 use DB;
 use Throwable;
 use App\Helpers\AppHelper;
@@ -54,20 +55,37 @@ class FabricGodamController extends Controller
         $fabricstocks = FabricStock::get();
         $fromgodams = Godam::where('status','active')->get();
         $togodams = Godam::where('status','active')->get();
-        $groups = FabricGroup::get();
-        return view('admin.fabric.fabricgodam.transferFabric',compact('fabricstocks','fromgodams','togodams','fabricgodam_id','find_data','groups'));
+        $list = FabricGodamList::where('fabricgodam_id',$fabricgodam_id)->where('status','sent')->count();
+        return view('admin.fabric.fabricgodam.transferFabric',compact('fabricstocks','fromgodams','togodams','fabricgodam_id','find_data','list'));
     }
 
     public function transferFabricDetail($fabricgodam_id)
     {
         $find_data = FabricGodam::find($fabricgodam_id);
-        $fabricdetails = FabricGodamTransfer::get();
-        return view('admin.fabric.fabricgodam.transferFabricDetail',compact('fabricdetails','find_data'));
+        $fabricdetails = FabricGodamTransfer::where('fabricgodam_id',$fabricgodam_id)->paginate(10);
+        $net_wt = 0;
+        if($find_data->bill_no != null){
+
+          $net_wt = FabricGodamTransfer::where('fabricgodam_id',$fabricgodam_id)->sum('net_wt');
+        }
+        return view('admin.fabric.fabricgodam.transferFabricDetail',compact('fabricdetails','find_data','net_wt'));
+    }
+
+    public function deleteFabricGodamList(Request $request)
+    {
+
+        $unit = FabricGodamList::find($request->data_id);
+
+        // delete unit
+        $unit->delete();
+        return response([
+            "message" => "Deleted Successfully" 
+        ]);
+
     }
 
     public function getfabricwithsamename(Request $request){
         if($request->ajax()){
-            // dd($request);
             $fabric_name_id = $request->fabric_name_id;
             $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
             $fabrics = FabricStock::where("name",$fabric_name)->get();
@@ -90,51 +108,8 @@ class FabricGodamController extends Controller
                     ->rawColumns(["action","gram_wt"])
                     ->make(true);
 
-            // return response()->json([
-            //     "fabrics" => $fabrics
-            // ]);
+           
         }
-    }
-
-    public function getFabricStockList(Request $request)
-    {
-        // dd($request);
-        $fabricstock_id = $request->fabricstock_id;
-        $group_id = $request->group_id;
-        $fromgodam_id = $request->fromgodam_id;
-        $togodam_id = $request->togodam_id;
-        $bill_no = $request->bill_no;
-        $bill_date = $request->bill_date;
-
-        $find_name = FabricStock::find($fabricstock_id);
-        // dd($find_name);
-        $fabricstocks = FabricStock::where('status',1);
-
-        // dd($find_name->name,$request->group_id);
-
-        if($fabricstock_id != null){
-            // dd($find_name);
-           $fabricstocks = $fabricstocks->where('name',$find_name->name);
-        }
-        // dd($request);
-
-        // if($group_id != null){
-        //     // dd('kk',$group_id);
-        //     $fabricstocks = $fabricstocks->where('fabricgroup_id',$group_id);
-        //     // dd($group_id,$fabricstocks->get());
-        // }
-
-        $fabricstocks = $fabricstocks->with('fabricgroup')->get();
-
-        // dd($fabricstocks);
-
-        return response(['fabricstocks'=>$fabricstocks,
-                         'fromgodam_id'=>$fromgodam_id,
-                         'togodam_id'=>$togodam_id,
-                         'bill_no'=>$bill_no,
-                         'bill_date'=>$bill_date,
-                           ]);
-
     }
 
     public function getFabricGodamStore(Request $request)
@@ -143,23 +118,69 @@ class FabricGodamController extends Controller
 
         try{
             $find_name = FabricStock::find($request->ids);
-            // dd($find_name);
 
-            $count = FabricGodamTransfer::where('roll',$find_name->roll_no)
-                                        ->count();
-
-            // dd($count);
-            if($count == 0){
                 // store category
-                $fabricgodam = FabricGodamTransfer::create([
+                $fabricgodam = FabricGodamList::create([
                     'name' => $find_name->name,
                     'slug' => $find_name->slug,
                     'roll' => $find_name->roll_no,
+                    'net_wt' => $find_name->net_wt,
                     'fabricgodam_id' => $request->fabricgodam_id,
                     'bill_no' => $request->bill_no,
                     'bill_date' => $request->bill_date,
                     'fromgodam_id' => $request->fromgodam_id,
                     'togodam_id' => $request->togodam_id,
+                    'stock_id' => $request->ids,
+                ]);
+          
+
+        return response(['message'=>'Godam Transferred Successfully']);
+        }
+        catch (Exception $ex){
+            return $ex;
+        }
+    }
+
+    public function getFabricGodamList(Request $request){
+        if($request->ajax()){
+
+            $godamlist = FabricGodamList::where('status','sent')->with('getFromGodam','getToGodam')->get();
+            // dd($godamlist);
+
+       
+            return response([
+                "godamlist" => $godamlist,
+            ]);
+        }
+    }
+
+
+    public function getFabricGodamFinalStore(Request $request)
+    {
+        // dd($request);
+        
+
+        try{
+            DB::beginTransaction();
+            $getlist = FabricGodamList::where('fabricgodam_id',$request->fabricgodam_id)->where('status','sent')->get();
+            // dd($getlist);
+
+            foreach ($getlist as $list) {
+
+                $find_name = FabricStock::find($list->stock_id);
+                // dd($list->stock_id,$find_name);
+                // dd($find_name);
+
+                $fabricgodam = FabricGodamTransfer::create([
+                    'name' => $find_name->name,
+                    'slug' => $find_name->slug,
+                    'roll' => $find_name->roll_no,
+                    'net_wt' => $find_name->net_wt,
+                    'fabricgodam_id' => $request->fabricgodam_id,
+                    'bill_no' => $list->bill_no,
+                    'bill_date' => $list->bill_date,
+                    'fromgodam_id' => $list->fromgodam_id,
+                    'togodam_id' => $list->togodam_id,
                 ]);
 
                 $fabricstock = FabricStock::create([
@@ -172,40 +193,37 @@ class FabricGodamController extends Controller
                     'meter' => $find_name->meter,
                     'gram_wt' => $find_name->gram_wt,
                     'average_wt' => $find_name->average_wt,
-                    'godam_id' => $request->togodam_id,
+                    'godam_id' => $list->togodam_id,
                     'date_np' => $find_name->date_np,
                     'bill_no' => $find_name->bill_no,
                     'fabric_id' => $find_name->fabric_id
                 ]);
 
                 if($fabricstock){
-                    // dd('lol');
 
-                  FabricStock::where('id',$find_name->id)->delete();
+                  FabricStock::where('id',$list->stock_id)->delete();
                 }
 
 
-                // $find_name->delete();
+
+            }
+
+            $getupdate = FabricGodamList::where('fabricgodam_id',$request->fabricgodam_id)->update(['status' => 'completed']); 
+            
 
 
+            DB::commit();
 
-            }         
-
-
-      
-
-
-        // return back();
         return response(['message'=>'Godam Transferred Successfully']);
         }
         catch (Exception $ex){
+            DB::rollBack();
             return $ex;
         }
     }
 
     public function dataTable()
     {
-        // dd('lol');
         $rawMaterial = FabricGodam::orderBy('created_at','DESC')
                        ->get();
 
@@ -224,10 +242,7 @@ class FabricGodamController extends Controller
                 <a class="btn btn-sm btn-primary btnView" href="' . route('fabricgodams.transferFabricDetail', ["fabricgodam_id" => $row->id]) . '" >
                 <i class="fas fa-eye fa-lg"></i>
                 </a>
-
-               
                 ';
-
 
                 return $actionBtn;
 

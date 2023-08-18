@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Fabric extends Model
 {
+    
    use Sluggable;
    /**
     * The attributes that are mass assignable.

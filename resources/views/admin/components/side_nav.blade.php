@@ -217,7 +217,13 @@
                             </a>
                         </li>
 
-
+                        <li class="nav-item">
+                            <a href="{{ route('fabric.sale.entry.index') }}"
+                                class="nav-link {{ request()->routeIs('fabric.sale.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>{{ __('Sales Fabric') }}</p>
+                            </a>
+                        </li>
 
                     </ul>
                 </li>
@@ -385,17 +391,13 @@
                 </li>
 
 
-
-
                 <li class="nav-item">
-                    <a href="{{ route('fabricSendReceive.index') }}" class="nav-link">
-                        {{ request()->is('admin/fabrics/sendAndReceive*') ? 'active' : '' }}
+                    <a href="{{ route('fabricSendReceive.entry.create') }}" class="nav-link">
+                        {{ request()->is('fabricSendReceive.entry.*') ? 'active' : '' }}
                         <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric Send Receive</p>
-                        {{-- <p>{{ __('Categories') }}</p> --}}
+                        <p>Fabric Send Receive Entry</p>
                     </a>
                 </li>
-
 
 
                 <li class="nav-item">

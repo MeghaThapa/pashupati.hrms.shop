@@ -17,16 +17,18 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+
+            $table->integer('bill_id')->nullable();
             $table->unsignedBigInteger('doublefabric_id');
             $table->foreign('doublefabric_id')->references("id")->on('double_side_laminated_fabric_stocks')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('fabric_id');
+            $table->unsignedBigInteger('fabric_id')->nullable();
             $table->foreign('fabric_id')->references("id")->on('fabrics')->onDelete('cascade')->onUpdate('cascade');
             
-            $table->unsignedBigInteger('planttype_id');
+            $table->unsignedBigInteger('planttype_id')->nullable();
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade');
 
-            $table->unsignedBigInteger('plantname_id');
+            $table->unsignedBigInteger('plantname_id')->nullable();
             $table->foreign('plantname_id')->references("id")->on('processing_subcats')->onDelete('cascade');
 
             $table->bigInteger('department_id')->unsigned()->index();

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+
+            $table->integer('bill_id')->nullable();
             
             $table->unsignedBigInteger('planttype_id')->nullable();
             $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade');
@@ -43,7 +45,7 @@ return new class extends Migration
             $table->string('net_wt');
             $table->string('meter');
             $table->string('roll_no');
-            $table->string('loom_no');
+            $table->string('loom_no')->nullable();
             $table->string('average_wt');
             $table->string('bill_number');
             $table->string('bill_date');

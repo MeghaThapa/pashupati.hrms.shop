@@ -63,9 +63,8 @@
                     <thead>
                         <tr>
                             <th>{{ __('S.No') }}</th>
-                            <th>{{ __('Godam') }}</th>
-                            <th>{{ __('PlantType') }}</th>
-                            <th>{{ __('PlantName') }}</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Roll') }}</th>
                             <th>{{ __('Net Weight') }}</th>
                             <th>{{ __('Gross Weight') }}</th>
                             <th>{{ __('Meter') }}</th>
@@ -78,9 +77,8 @@
                             @foreach ($finaltripal as $i => $stock)
                                 <tr>
                                     <td>{{ ++$i }}</td>
-                                    <td>{{ $stock->getGodam->name }}</td>
-                                    <td>{{ $stock->getPlantType->name }}</td>
-                                    <td>{{ $stock->getPlantName->name }}</td>
+                                    <td>{{ $stock->name }}</td>
+                                    <td>{{ $stock->roll_no }}</td>
                                     <td>{{ $stock->net_wt}}</td>
                                     <td>{{ $stock->gross_wt }}</td>
                                     <td>{{ $stock->meter }}</td>

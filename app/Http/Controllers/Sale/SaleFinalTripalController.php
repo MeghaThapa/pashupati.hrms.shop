@@ -7,23 +7,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Str;
-use App\Models\Shift;
 use App\Models\Supplier;
 use App\Models\FinalTripalStock;
 use App\Models\SaleFinalTripal;
+use App\Models\SaleFinalTripalList;
 use App\Helpers\AppHelper;
-use Carbon\Carbon;
+use Throwable;
+use Yajra\DataTables\DataTables;
+use App\Exports\TripalSale;
+use PDF;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class SaleFinalTripalController extends Controller
 {
     public function index()
     {
-        $bill_no = AppHelper::getFinalTripalReceiptNo();
-        $bill_date = date('Y-m-d');
         $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
         $partyname = Supplier::where('status',1)->get();
-        $salefinaltripals = SaleFinalTripal::paginate(20);
-        return view('admin.sale.salefinaltripal.creates',compact('bill_no','bill_date','fabrics','partyname','salefinaltripals'));
+        $salefinaltripals = SaleFinalTripal::with('getSaleList')->paginate(20);
+        return view('admin.sale.salefinaltripal.index',compact('fabrics','partyname','salefinaltripals'));
     }
 
     /**
@@ -39,6 +42,22 @@ class SaleFinalTripalController extends Controller
 
         return response(['response'=>$fabrics]);
 
+    }
+
+    public function getTripalSaleTotal(Request $request){
+        if($request->ajax()){
+            $tripal = SaleFinalTripalList::where('salefinal_id',$request->bill_id)
+                                            ->get();
+            $sumnetwt = $tripal->sum("net");
+            $sumgrosswt = $tripal->sum("gross");
+            $summeter = $tripal->sum("meter");
+            // dd($tripal);
+            return response([
+                "net_wt" => $sumnetwt,
+                 "gross_wt" => $sumgrosswt,
+                 "meter" => $summeter
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -67,11 +86,143 @@ class SaleFinalTripalController extends Controller
 
     public function addTripal($id)
     {
-        $bill_no = AppHelper::getFinalTripalReceiptNo();
-        $bill_date = date('Y-m-d');
-        $fabrics = FinalTripalStock::get();
-        $partyname = Supplier::where('status',1)->get();
+        $findtripal = SaleFinalTripal::find($id);
+        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
         $salefinaltripals = SaleFinalTripal::paginate(20);
-        return view('admin.sale.salefinaltripal.addtripal',compact('bill_no','bill_date','fabrics','partyname','salefinaltripals'));
+        return view('admin.sale.salefinaltripal.addtripal',compact('findtripal','fabrics','salefinaltripals','id'));
     }
+
+    public function viewTripal($id)
+    {
+        $findtripal = SaleFinalTripal::find($id);
+        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
+        $salefinaltripals = SaleFinalTripalList::where('salefinal_id',$id)->get();
+        // dd($salefinaltripals);
+        return view('admin.sale.salefinaltripal.billtripal',compact('findtripal','fabrics','salefinaltripals','id'));
+    }
+
+    public function viewTripalBill($id)
+    {
+        $findtripal = SaleFinalTripal::find($id);
+        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
+        $salefinaltripals = SaleFinalTripalList::where('salefinal_id',$id)->orderBy('name')->get();
+
+        $total_gross = SaleFinalTripalList::where('salefinal_id',$id)->sum('gross');
+        $total_net = SaleFinalTripalList::where('salefinal_id',$id)->sum('net');
+        $total_meter = SaleFinalTripalList::where('salefinal_id',$id)->sum('meter');
+
+        $totaltripals = SaleFinalTripalList::where('salefinal_id',$id)->select('name', DB::raw('SUM(gross) as total_gross'),DB::raw('SUM(net) as total_net'),DB::raw('SUM(meter) as total_meter'),DB::raw('COUNT(name) as total_count'))
+            ->groupBy('name')
+            ->get();
+        return view('admin.sale.salefinaltripal.billtripallist',compact('findtripal','fabrics','salefinaltripals','id','totaltripals','total_gross','total_net','total_meter'));
+    }
+
+    public function getfinaltripalFilter(Request $request){
+        if($request->ajax()){
+            $fabric_name_id = $request->fabric_name_id;
+            $fabric_name = FinalTripalStock::where("id",$fabric_name_id)->value("name");
+            $fabrics = FinalTripalStock::where("name",$fabric_name)->get();
+
+            return DataTables::of($fabrics)
+                    ->addIndexColumn()
+                    ->addColumn("gram_wt",function($row){
+                        return '1';
+                    })
+                    ->addColumn("action",function($row){
+                        return "
+                        <a class='btn btn-primary send_to_lower'  
+                                 data-id='{$row->id}' 
+                                 href='{$row->id}'>Send</a>";
+                    })
+                    ->rawColumns(["action","gram_wt"])
+                    ->make(true);
+
+        }
+    }
+
+    public function getSaleTripalList(Request $request){
+        if($request->ajax()){
+            $saletripal_id = $request->saletripal_id;
+
+            $fabrics = SaleFinalTripalList::where('salefinal_id',$saletripal_id)->get();
+
+            return DataTables::of($fabrics)
+                    ->addIndexColumn()
+                    ->addColumn("gram",function($row){
+                        return '1';
+                    })
+                    
+                    ->rawColumns(["gram"])
+                    ->make(true);
+
+        }
+    }
+
+    public function finalTripalStoreList(Request $request)
+    {
+        try{
+            $find_name = FinalTripalStock::find($request->data_id);
+            
+                $fabricstock = SaleFinalTripalList::create([
+                    'name' => $find_name->name,
+                    'slug' => $find_name->slug,
+                    'roll' => $find_name->roll_no,
+                    'gross' => $find_name->gross_wt,
+                    'net' => $find_name->net_wt,
+                    'meter' => $find_name->meter,
+                    'gram' => $find_name->gram,
+                    'average' => $find_name->average_wt,
+                    'bill_no' => $request->bill_no,
+                    'bill_date' => $request->bill_date,
+                    'salefinal_id' => $request->salefinal_id,
+                ]);
+
+                if($fabricstock){
+
+                  FinalTripalStock::where('id',$request->data_id)->delete();
+                }
+
+
+        return response(['message'=>'sale Transferred Successfully']);
+        }
+        catch (Exception $ex){
+            return $ex;
+        }
+    
+
+    }
+
+    public function downloadPdf(Request $request,$id)
+       {
+
+
+           $findtripal = SaleFinalTripal::find($id);
+           $data = SaleFinalTripalList::where('salefinal_id',$id)->orderBy('name')->get();
+
+           $total_gross = SaleFinalTripalList::where('salefinal_id',$id)->sum('gross');
+           $total_net = SaleFinalTripalList::where('salefinal_id',$id)->sum('net');
+           $total_meter = SaleFinalTripalList::where('salefinal_id',$id)->sum('meter');
+
+           $totaltripals = SaleFinalTripalList::where('salefinal_id',$id)->select('name', DB::raw('SUM(gross) as total_gross'),DB::raw('SUM(net) as total_net'),DB::raw('SUM(meter) as total_meter'),DB::raw('COUNT(name) as total_count'))
+               ->groupBy('name')
+               ->get();
+
+
+           $pdf = PDF::loadView('admin.sale.salefinaltripal.pdf', [
+               'data' => $data,
+               'findtripal' => $findtripal,
+               'total_gross' => $total_gross,
+               'total_net' => $total_net,
+               'total_meter' => $total_meter,
+               'totaltripals' => $totaltripals,
+           ]);
+
+           return $pdf->download('tripal_sale.pdf');
+       }
+
+    public function downloadExcel(Request $request,$id)
+       {
+        
+         return Excel::download(new TripalSale($id), 'tripalsale.xlsx');
+       }   
 }

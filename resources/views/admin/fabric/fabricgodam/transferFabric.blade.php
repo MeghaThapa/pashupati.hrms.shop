@@ -154,11 +154,7 @@
             </div>
 
             
-            <div class="col-md-1 form-group">
-                <button id="getfabricsrelated" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                    Add
-                </button>
-            </div> 
+             
 
         </div>
         
@@ -184,32 +180,37 @@
         </table>
     </div>
 </div>
+
 <div class="row">
-    <div class="Ajaxdata col-md-12">
-        <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable" >
-                <thead>
-                    <tr>
-                        <th>{{ __('Sr.No') }}</th>
-                        <th>{{ __('Fabric Name') }}</th>
-                        <th>{{ __('Roll No') }}</th>
-                        <th>{{ __('G.W') }}</th>
-                        <th>{{ __('N.W') }}</th>
-                        <th>{{ __('Meter') }}</th>
-                        <th>{{ __('Avg') }}</th>
-                        <th>{{ __('Gram') }}</th>
-                        <th>{{__('Send')}}</th>
-                    </tr>
-                </thead>
-
-                <tbody id="rawMaterialItemTbody">
-                </tbody>
-
-            </table>
-        </div>
-
+    <div class="table-responsive table-custom my-3">
+        <table class="table table-hover table-striped" id="getFabricGodamList">
+            <thead class="table-info">
+                <tr>
+                    <th>{{ __('Sr.No') }}</th>
+                    <th>{{ __('Fabric Name') }}</th>
+                    <th>{{ __('Roll No') }}</th>
+                    <th>{{ __('N.W') }}</th>
+                    <th>{{ __('From Godam') }}</th>
+                    <th>{{ __('To Godam') }}</th>
+                    <th>{{ __('Invoice No') }}</th>
+                    <th>{{__('Send')}}</th>
+                </tr>
+            </thead>
+            <tbody id="getFabricGodamList"></tbody>
+        </table>
     </div>
 </div>
+
+<div class="card-footer">
+    {{-- <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly> --}}
+    @if($list >= 1)
+    <button type="submit" class="btn btn-info" id="finalUpdate">Update</button>
+    @else
+    <button type="submit" class="btn btn-info" disabled id="finalUpdate">Update</button>
+
+    @endif
+</div>
+
 
 
 @endsection
@@ -220,19 +221,99 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>
-<script type="text/javascript">
-$(document).ready(function(){
-  var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
-  $('#date_np').val(currentDate);
-  $('#date_np').nepaliDatePicker({
-    ndpYear: true,
-    ndpMonth: true,
-    disableAfter: currentDate,
-    });
-  
-  });
-</script>
+
 <script>
+
+    $(document).ready(function(){
+        /**************************** Ajax Calls **************************/
+        // callunlaminatedfabricajax();
+         // $('#fabricNameId').prop('disabled',true);
+        comparelamandunlam();
+
+        $("body").on("click","#finalUpdate", function(event){
+            // Pace.start();
+            // debugger;
+            var fabricgodam_id = $('#fabricgodam_id').val(),
+            token = $('meta[name="csrf-token"]').attr('content');
+              
+            $.ajax({
+              type:"POST",
+              dataType:"JSON",
+              url:"{{route('getFabricGodamFinalStore')}}",
+              data:{
+                _token: token,
+                fabricgodam_id: fabricgodam_id,
+            },
+            success: function(response){
+                location.reload();
+              
+            },
+            error: function(event){
+                alert("Sorry");
+            }
+           });
+        });
+
+        function comparelamandunlam(){
+            $.ajax({
+                url : "{{ route('fabricgodam.getFabricGodamList') }}",
+                method:"get",
+                success:function(response){
+                    putonlamtbody(response);
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        }
+
+        function putonlamtbody(response){
+            response.godamlist.forEach(element => {
+                let tr = $("<tr></tr>").appendTo("#getFabricGodamList");
+                tr.append(`<td>#</td>`);
+                tr.append(`<td>${element.name}</td>`);
+                tr.append(`<td>${element.roll}</td>`);
+                tr.append(`<td>${element.net_wt}</td>`);
+                tr.append(`<td>${element.get_from_godam.name}</td>`);
+                tr.append(`<td>${element.get_to_godam.name}</td>`);
+                tr.append(`<td>${element.bill_no}</td>`);
+                tr.append(`<td><div class="btn-group"><a id="deletelist" href="${element.id}" data-id="${element.id}" class="btn btn-danger">Delete</a></div></td>`);
+            });
+
+            
+        }
+
+        $(document).on('click','#deletelist',function(e){
+            e.preventDefault();
+            let id = $(this).attr('data-id');
+            deletefromunlamintedtable(id);
+        });
+
+        function deletefromunlamintedtable(data){
+           var data_id = data,
+           token = $('meta[name="csrf-token"]').attr('content');
+           $.ajax({
+             type:"GET",
+             dataType:"JSON",
+             url:"{{route('fabricgodam.deleteFabricGodamList')}}",
+             data:{
+               _token: token,
+               data_id: data_id,
+           },
+           success: function(response){
+              location.reload();
+           },
+           error: function(event){
+               alert("Sorry");
+           }
+           });
+
+         
+        }
+
+
+    });
+
     let fabricTable = null;
 
     $("#fabricstock_id").change(function(e){
@@ -316,10 +397,33 @@ $(document).ready(function(){
         });
     }
 
-   
+    function putonlamtbody(response){
+        console.log(response);
+        response.lam.forEach(element => {
+            let tr = $("<tr></tr>").appendTo("#getFabricGodamList");
+            tr.append(`<td>#</td>`);
+            tr.append(`<td>${element.name}</td>`);
+            tr.append(`<td>${element.roll_no}</td>`);
+            tr.append(`<td>${element.net_wt}</td>`);
+            tr.append(`<td>${element.gross_wt}</td>`);
+            tr.append(`<td>${element.meter}</td>`);
+            tr.append(`<td>${element.average_wt}</td>`);
+            tr.append(`<td>${element.gram}</td>`);
+        });
 
-
-
+        response.unlam.forEach(element => {
+            let tr = $("<tr></tr>").appendTo("#compareunlamtbody");
+            tr.append(`<td>#</td>`);
+            tr.append(`<td>${element.fabric.name}</td>`);
+            tr.append(`<td>${element.roll_no}</td>`);
+            tr.append(`<td>${element.net_wt}</td>`);
+            tr.append(`<td>${element.gross_wt}</td>`);
+            tr.append(`<td>${element.meter}</td>`);
+            tr.append(`<td>${element.average}</td>`);
+            tr.append(`<td>${element.gram}</td>`);
+        });
+        
+    }
     
 
     $(document).ready(function(){

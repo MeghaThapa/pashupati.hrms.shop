@@ -60,58 +60,21 @@ class OpeningTripalController extends Controller
            "department_id" => $request['godam_id'],
            "bill_number" => $request['bill_number'],
            'bill_date' => $request['bill_date'],
-           'gross_wt' => $request['gram_wt'],
+           'gross_wt' => $request['gross_wt'],
            "roll_no" => $request['roll'],
            'net_wt' => $request['net_wt'],
            "meter" => $request['meter'],
            "average_wt" => $request['average'],
            "gram" =>  $request['gram'],
            "loom_no" => '0',
+           "status" => 'completed',
          
            // "planttype_id" => $find_data->planttype_id,
            // "plantname_id" => $find_data->plantname_id,
            // "fabric_id" => $find_data->fabric_id,
        ]);
        return redirect()->back();
-       // dd($find_data);
-       // if($request['net_wt'] > $find_data->net_wt){
-       //     return response()->json([
-       //         'message' => 'Not Enough Stock',
-       //     ], 400);
-
-       // }
-       // else{
-
-       //     // $final_net_wt = $find_data->net_wt + $request['net_wt'];
-       //     // $find_data->net_wt = $final_net_wt;
-       //     // $find_data->update();
-       //     // dd($final_net_wt);
-
-       //     $single_stock = Singlesidelaminatedfabricstock::create([
-       //         "singlelamfabric_id" => $find_data->singlelamfabric_id,
-       //         "name" => $find_data->name,
-       //         "slug" => $find_data->slug,
-       //         "roll_no" => $request['roll'], 
-       //         "department_id" => $request['godam_id'],
-       //         "bill_number" => $request['bill_number'],
-       //         'bill_date' => $request['bill_date'],
-       //         "gram" =>  $request['gram_wt'],
-       //         "average_wt" => $request['average'],
-       //         "roll_no" => $request['roll'],
-       //         'net_wt' => $request['net_wt'],
-       //         "meter" => $request['meter'],
-       //         "loom_no" => $find_data->loom_no,
-       //         'gross_wt' => $find_data->gross_wt,
-             
-       //         "planttype_id" => $find_data->planttype_id,
-       //         "plantname_id" => $find_data->plantname_id,
-       //         "fabric_id" => $find_data->fabric_id,
-       //     ]);
-       //     return redirect()->back();
-
-
-
-       // }
+     
       
         
        
@@ -148,13 +111,14 @@ class OpeningTripalController extends Controller
             "department_id" => $request['godam_id'],
             "bill_number" => $request['bill_number'],
             'bill_date' => $request['bill_date'],
-            "gram" =>  $request['gram_wt'],
+            "gram" =>  $request['gram'],
             "average_wt" => $request['average'],
             "roll_no" => $request['roll'],
             'net_wt' => $request['net_wt'],
             "meter" => $request['meter'],
             "loom_no" => '0',
-            'gross_wt' => '0',
+            'gross_wt' => $request['gross_wt'],
+            "status" => 'completed',
           
         ]);
 
@@ -189,24 +153,7 @@ class OpeningTripalController extends Controller
     {
         // dd($request);
         $find_data = FinalTripalName::find($request->fabric_id);
-        // dd($find_data);
-        // $single_stock = FinalTripalOpeningStock::create([
-        //     "finaltripalname_id" => $request->fabric_id,
-        //     "name" => $find_data->name,
-        //     "slug" => $find_data->slug,
-        //     "roll_no" => $request['roll'], 
-        //     "godam_id" => $request['godam_id'],
-        //     "bill_number" => $request['bill_number'],
-        //     'bill_date' => $request['bill_date'],
-        //     "gram" =>  $request['gram'],
-        //     "average" => $request['average'],
-        //     "roll" => $request['roll'],
-        //     'net_wt' => $request['net_wt'],
-        //     "meter" => $request['meter'],
-          
-        //     "date_en" => date('Y-m-d'),
-        //     "date_np" => date('Y-m-d'),
-        // ]);
+      
 
         $finaltripalstock = FinalTripalStock::create([
             "name" => $find_data->name,
@@ -216,9 +163,9 @@ class OpeningTripalController extends Controller
             "department_id" => $request['godam_id'],
             "finaltripalname_id" => $request->fabric_id,
             "loom_no" => '0',
-            'gross_wt' => '0',
+            'gross_wt' => $request['gross_wt'],
             "roll_no" => $request['roll'],
-            "gram" =>  $request['gram_wt'],
+            "gram" =>  $request['gsm'],
             'net_wt' => $request['net_wt'],
             "meter" => $request['meter'],
             "average_wt" => $request['average'],
@@ -227,7 +174,7 @@ class OpeningTripalController extends Controller
             "date_en" => date('Y-m-d'),
             "date_np" => date('Y-m-d'),
 
-            "status" => "sent"
+            "status" => 'completed',
         ]);
 
         return back();

@@ -43,12 +43,8 @@
                         <tr>
                             <th>{{ __('S.No') }}</th>
                             <th>{{ __('Godam') }}</th>
-                            <th>{{ __('PlantType') }}</th>
-                            <th>{{ __('PlantName') }}</th>
-                            <th>{{ __('Shift') }}</th>
                             <th>{{ __('Tape Quantity') }}</th>
                             <th>{{ __('Total') }}</th>
-                            <th>{{ __('Dana') }}</th>
                         </tr>
                     </thead>
 
@@ -58,12 +54,8 @@
                                 <tr>
                                     <td>{{ ++$i }}</td>
                                     <td>{{ $stock->getGodam->name }}</td>
-                                    <td>{{ $stock->getPlantType->name }}</td>
-                                    <td>{{ $stock->getPlantName->name }}</td>
-                                    <td>{{ $stock->getShift->name }}</td>
                                     <td>{{ $stock->tape_qty_in_kg }}</td>
                                     <td>{{ $stock->total_in_kg }}</td>
-                                    <td>{{ $stock->dana_in_kg }}</td>
                                 </tr>
                             @endforeach
                         @endif

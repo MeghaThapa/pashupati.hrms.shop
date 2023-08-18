@@ -82,15 +82,14 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill No') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="billnumber" value="{{ $bill_no }}" name="bill_number"
-                    required /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                <input type="text" class="form-control" id="billnumber" value="{{ $data->bill_number }}" name="bill_number" disabled required />
             </div>
 
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Bill Date') }}
                 </label>
-                <input type="date" value="{{ date('Y-m-d') }}" step="any" min="0" class="form-control calculator"
-                    id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1" required>
+                <input type="date" value="{{ $data->bill_date }}" step="any" min="0" class="form-control calculator"
+                    id="billDate" data-number="1" name="bill_date"  min="1" disabled required>
 
                 @error('bill_date')
                 <span class="invalid-feedback" role="alert">
@@ -101,12 +100,8 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('To Godam') }}
                 </label>
-                <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
-                    <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                    @foreach ($department as $data)
-                    <option value="{{ $data->id }}">{{ $data->name }}
-                    </option>
-                    @endforeach
+                <select class="form-control" id="toGodam" name="to_godam_id" disabled required>
+                    <option value="{{ $data->godam_id }}" selected readonly>{{ $data->getgodam->name }}</option>
                 </select>
                 @error('to_godam_id')
                 <span class="invalid-feedback" role="alert">
@@ -117,12 +112,8 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Plant Type') }}
                 </label>
-                <select class="advance-select-box form-control" id="plantType" name="plant_type_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
+                <select class="form-control" id="plantType" name="plant_type_id" disabled required>
+                    <option value="{{ $data->planttype_id }}" selected readonly required>{{ $data->getplanttype->name }}</option>
                 </select>
                 @error('plant_type_id')
                 <span class="invalid-feedback" role="alert">
@@ -133,12 +124,8 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Plant Name') }}
                 </label>
-                <select class="advance-select-box form-control" id="plantName" name="plant_name_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
+                <select class="form-control" id="plantName" name="plant_name_id" disabled required>
+                    <option value="{{ $data->plantname_id }}" selected readonly>{{ $data->getplantname->name }}</option>
                 </select>
                 @error('gp_no')
                 <span class="invalid-feedback" role="alert">
@@ -149,12 +136,8 @@
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Shift') }}
                 </label>
-                <select class="advance-select-box form-control" id="shiftName" name="shift_name_id" disabled required>
-                    <option value="" selected disabled>{{ __('Select Shift Name') }}</option>
-                    @foreach ($shifts as $shift)
-                    <option value="{{ $shift->id }}">{{ $shift->name }}
-                    </option>
-                    @endforeach
+                <select class="form-control" id="shiftName" name="shift_name_id" disabled required>
+                    <option value="{{ $data->shift_id }}" selected>{{ $data->getshift->name }}</option>
                 </select>
                 @error('shift_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -162,12 +145,6 @@
                 </span>
                 @enderror
             </div>
-            {{-- <div>
-                <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                    Add
-                </button>
-            </div> --}}
-
         </div>
         <div class="row">
             <div class="col-md-4 form-group">
@@ -175,10 +152,10 @@
                 </label>
                 <select class="advance-select-box form-control" id="fabricNameId" {{-- name="fabric_name_id" --}}>
                     <option value="" disabled selected>{{ __('Select Fabric Name') }}</option>
-                    {{-- @foreach ($fabrics as $fabric)
+                    @foreach ($uniqueFabrics as $fabric)
                     <option value="{{ $fabric->id }}">{{ $fabric->name }}
                     </option>
-                    @endforeach --}}
+                    @endforeach
                 </select>
                 @error('fabric_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -196,7 +173,7 @@
                 <label for="size" class="col-form-label">{{ __('Roll') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator" id="rollnumberfabric"
-                    data-number="1" name="roll_number" min="1" disabled required>
+                    data-number="1" name="roll_number" min="1" required>
 
                 @error('fabric_name_id')
                 <span class="invalid-feedback" role="alert">
@@ -205,11 +182,12 @@
                 @enderror
             </div>
             <div>
-                <button id="getfabricsrelated" disabled class="btn btn-primary mt-4">
+                <button id="getfabricsrelated" class="btn btn-primary mt-4">
                     Add
                 </button>
             </div>
         </div>
+        <input type="hidden" id="fsr_entry_id" value="{{ $data->id }}">
     </form>
 </div>
 <hr>
@@ -327,50 +305,60 @@
         <div class="card mt-2 p-5">
             <div class="card-body">
                 <div class="row p-2">
-                    <div class="col-md-6">
-
-                        <label for="" class="col-form-label">Godam</label>
+                    {{-- <div class="col-md-6">
+                        <label for="" class="col-form-label">Godam</label> --}}
                         <?php
-                            $godam = \App\Models\Godam::where("status","active")->get();
+                            //$godam = \App\Models\Godam::where("status","active")->get();
                         ?>
-                        <select class="advance-select-box form-control" id="autoloader_godam">
+                        {{-- <select class="advance-select-box form-control" id="autoloader_godam">
                             <option value="" selected disabled>--Choose Godam--</option>
                             @foreach($godam as $data)
                             <option value="{{ $data->id }}">{{ $data->name }}</option>
                             @endforeach
-                        </select>
-
+                        </select> --}}
+                    {{-- </div> --}}
+                    <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
                         </label>
-                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" disabled required>
-                            <option value="" selected disabled>{{ __('--Select Plant Name--') }}</option>
-                            @foreach ($dana as $danaName)
+                        <select class="advance-select-box form-control" id="danaNameId" name="danaNameId" required>
+                            <option value="" selected disabled>{{ __('--Select Dana Name--') }}</option>
+                            {{-- @foreach ($dana as $danaName)
                             <option value="{{ $danaName->id }}">{{ $danaName->name }}
                             </option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
-                        @error('total_ul_in_mtr')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
                     </div>
                     <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Enter Qty:') }}<span class="required-field">*</span>
                         </label>
                         <input type="number" step="any" min="0" class="form-control" id="add_dana_consumption_quantity"
                             data-number="1" name="total_ul_in_mtr" min="1" disabled required>
-                        @error('total_ul_in_mtr')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
                     </div>
                     <div class="col-md-6">
+                        <label for="">Add Here</label>
                         <button class=" form-control btn btn-primary" id='add_dana_consumption' disabled>
                             Add
                         </button>
                     </div>
+                    <div class="col-md-6">
+                        <label for="">Available</label>
+                        <input type="text" id="available_dana" disabled>
+                    </div>
+                </div>
+                <hr>
+                <div class="col-12 table-responsive">
+                    <table class="table-bordered table dana-consumption-table">
+                       <thead class="table-primary">
+                        <tr>
+                            <th>SN</th>
+                            <th>Dana Name</th>
+                            <th>Quantity</th>
+                            <th>Actions</th>
+                        </tr>
+                       </thead>
+                        <tbody id="dana-consumption-tbody">
+                        </tbody>
+                    </table>
                 </div>
                 {{-- <hr>
                 <div class="col-md-12">
@@ -520,10 +508,10 @@
             </div>
         </div>
         <div class="card-footer">
-            <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly>
+            {{-- <input type="text" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly> --}}
             <button class="btn btn-info" id="finalUpdate">Update</button>
-            <input type="hidden" name="godam_id" id="godam_id" required/>
-            <input type="hidden" name="autoloader_godam_selected" id="autoloader_godam_selected" required>
+            {{-- <input type="text" name="godam_id" id="godam_id" required/>
+            <input type="text" name="autoloader_godam_selected" id="autoloader_godam_selected" required> --}}
         </div>
     </div>
 </div>
@@ -536,10 +524,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-rounded btn-primary" data-bs-dismiss="modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
-                <form id='sendtolaminationform' action='{{ route("fabricSendReceive.store.laminated") }}' method="post">
+                <form id='sendtolaminationform' action='{{ route("fabricSendReceive.store.laminated.revised") }}' method="post">
                     @csrf
                     <div class="card">
                         <div class="card-body">
@@ -663,8 +651,9 @@
                                 </div> --}}
                                 <div class="col-md-6">
                                     <button type='submit' class="btn btn-info">Update</button>
-                                    <input type="hidden" name="idoffabricforsendtolamination"
-                                                id="idoffabricforsendtolamination">
+                                    <input type="hidden" name="idoffabricforsendtolamination" id="idoffabricforsendtolamination">
+                                    <input type="hidden" name="fabricgroup_id" id="fabricgroup_id">
+                                    <input type="hidden" name="standard_wt" id="standard_wt">
                                 </div>
                                 
                             </div>
@@ -693,65 +682,38 @@
         /**************************** Ajax Calls **************************/
         callunlaminatedfabricajax();
         comparelamandunlam();
+        getDanaConsumption();
+        getDana();
 
-        $("#toGodam").change(function(e){
-            let godamId = $(this).val(); 
-            $("#godam_id").val(godamId);
 
-            let department_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
+        function getDanaConsumption() {
             $.ajax({
-                url:geturl.replace(':id',department_id),
-                beforeSend:function(){
-                    console.log('Getting Plant type');
+                url: "{{ route('get.dana.consumption.fsr.revised') }}",
+                method: "post",
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content"),
+                    "fsr_entry_id": $("#fsr_entry_id").val()
                 },
-                success:function(response){
-                    addplanttype(response);
+                success: function (response) {
+                    console.log(response)
+                    if (response.consumptions != null) {
+                        $("#dana-consumption-tbody").empty();
+                        response.consumptions.forEach((data,index) => {
+                            let tr = $("<tr></tr>");
+                            $("#dana-consumption-tbody").append(tr);
+                            tr.append(`<td>${index++}</td>`);
+                            tr.append(`<td>${data.dananame.name}</td>`);
+                            tr.append(`<td>${data.consumption_quantity}</td>`);
+                            tr.append(`<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`);
+                        });
+                        $("#totl_dana").val(response.total_consumption)
+                    }
                 },
-                error:function(error){
+                error: function (error) {
                     console.log(error);
                 }
             });
-        });
-
-        $("#plantType").change(function(e){
-            let department_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.plantname',['id'=>':id']) }}";
-            $.ajax({
-                url:geturl.replace(':id',department_id),
-                beforeSend:function(){
-                    console.log('Getting Plant Name');
-                },
-                success:function(response){
-                    addplantname(response);
-                },
-                error:function(error){
-                    console.log(error);
-                }
-            });
-        });
-
-        $("#shiftName").change(function(e){
-            let shift_id =  $(this).val();
-            let geturl = "{{ route('fabricSendReceive.get.fabrics') }}";
-            let godam_id = $("#godam_id").val();
-            $.ajax({
-                url : geturl,
-                data : {
-                    "shift_id" : shift_id,
-                    "godam_id" : godam_id,
-                },
-                beforeSend:function(){
-                    console.log('Getting Fabrics');
-                },
-                success:function(response){
-                    getfabrics(response);
-                },
-                error:function(error){
-                    console.log(error);
-                }
-            });
-        });
+        }
 
         $("#fabricNameId").change(function(e){
             if (fabricTable !== null) {
@@ -762,8 +724,12 @@
             fabricTable = $("#sameFabricsTable").DataTable({
                 serverside : true,
                 processing : true,
+                lengthMenu : [
+                    [5,10,25,50,100,250,500,-1],
+                    [5,10,25,50,100,250,500,"All"]
+                ],
                 ajax : {
-                    url : "{{ route('get.fabric.same.name') }}",
+                    url : "{{ route('get.fabric.same.name.fsr') }}",
                     method : "post",
                     data : function(data){
                         data._token = $("meta[name='csrf-token']").attr("content"),
@@ -782,36 +748,17 @@
                     { data : "action" , name : "action" },
                 ]
             });
-
-            // $.ajax({
-            //     url :" {{ route('get.fabric.same.name') }}",
-            //     method : "post",
-            //     data : {
-            //         "_token" : $("meta[name='csrf-token']").attr("content"),
-            //        "fabric_name_id" : fabric_name_id
-            //     },
-            //     beforeSend:function(){
-            //         console.log("getting data");
-            //     },
-            //     success:function(response){
-            //         putsamefabricsontabledata(response)
-                    
-            //     },error:function(error){
-            //         console.log(error);
-            //     }
-            // });
         })
         /**************************** Ajax Calls End **************************/
     });
 
     /**************************** Ajax functions **************************/
-
     function callunlaminatedfabricajax(){
         $.ajax({
-            url : "{{ route('fabricSendReceive.get.unlaminated') }}",
+            url : "{{ route('fabricSendReceive.get.unlaminated.revised',['fsr_entry_id' => ':fsr_entry_id']) }}".replace(":fsr_entry_id",$("#fsr_entry_id").val()),
             method: 'get',
             beforeSend:function(){
-                console.log('getting unlaminated fabric');
+                console.log('getting unlaminated fabric haha');
             },
             success:function(response){
                 emptytable();
@@ -826,110 +773,40 @@
             }
         });
     }
-
-    function addplanttype(data){
-        $("#plantType").empty();
-        $('#plantType').append(`<option value="" disabled selected>--Select Plant Type--</option>`);
-        data.planttype.forEach( d => {
-            if (d.name && d.name.startsWith('lam')) {
-             $('#plantType').append(`<option value="${d.id}">${d.name}</option>`);
-            }
-        });
-    }
-
-    function addplantname(data){
-        console.log(data);
-        $("#plantName").empty();
-        $('#plantName').append(`<option value="" disabled selected>--Select Plant Name--</option>`);
-        data.plantname.forEach( d => {
-            // if(d.name == '')
-            $('#plantName').append(`<option value="${d.id}">${d.name}</option>`);
-        });
-    }
-
-    function getfabrics(data){
-        $('#fabricNameId').prop('disabled',false);
-        $("#fabricNameId").empty();
-        $('#fabricNameId').append(`<option value="" disabled selected>--Select Fabric--</option>`);
-        data.fabrics.forEach(d => {
-            $("#fabricNameId").append(`<option value="${d.id}">${d.name}</option>`);
-        });
-    }
-
-    
-    // function putsamefabricsontabledata(data){
-    //     console.log(data)
-    //     $("#same-fabrics").empty();
-    //     data.fabrics.forEach((d,index) => {
-    //         let tr = $("<tr></tr>").appendTo("#same-fabrics");
-    //         tr.append(`<td>${index+1}</td>`);
-    //         tr.append(`<td>${d.name}</td>`);
-    //         tr.append(`<td>${d.roll_no}</td>`);
-    //         tr.append(`<td>${d.gross_wt}</td>`);
-    //         tr.append(`<td>${d.net_wt}</td>`);
-    //         tr.append(`<td>${d.meter}</td>`);
-    //         tr.append(`<td>${d.average_wt}</td>`);
-    //         tr.append(`<td>${d.gram_wt}</td>`);
-    //         tr.append(`<td>
-    //                         <a class="btn btn-primary send_to_lower"  
-    //                             data-name='${d.name}' 
-    //                             data-gross_wt="${d.gross_wt}" 
-    //                             data-roll_no="${d.roll_no}"  
-    //                             data-id="${d.id}" 
-    //                             data-net_wt = "${d.net_wt}"
-    //                             data-meter = "${d.meter}"
-    //                             data-average_wt = "${d.average_wt}"
-    //                             data-gram_wt = "${d.gram_wt}" 
-    //                             data-bill_no = "${d.bill_no}"
-    //                             href="${d.id}">Send</a>
-    //                     </td>`);
-    //     }) 
-    // }
     /**************************** Ajax functions **************************/
 
     /************************* Form Submission *************************/
     $(document).on("click",".send_to_lower",function(e){
         e.preventDefault()
-        let godam = $("#toGodam").val()
-        let plantType = $("#plantType").val()
-        let plantName = $("#plantName").val()
-        let shiftName = $("#shiftName").val()
+        let fsr_entry_id = $("#fsr_entry_id").val()
         let fabric_id = $(this).val()
-
-        let name = $(this).data("name")
-        let gross_wt = $(this).data("gross_wt")
-        let net_wt = $(this).data("net_wt")
-        let roll_no = $(this).data("roll_no")
-        let meter = $(this).data("meter")
-        let average_wt = $(this).data("average_wt")
-        let gram_wt = $(this).data("gram_wt")
-        let bill_no = $(this).data("bill_no")
-        let billDate = $("#billDate").val()
+        // let name = $(this).data("name")
+        // let gross_wt = $(this).data("gross_wt")
+        // let net_wt = $(this).data("net_wt")
+        // let roll_no = $(this).data("roll_no")
+        // let meter = $(this).data("meter")
+        // let average_wt = $(this).data("average_wt")
+        // let gram_wt = $(this).data("gram_wt")
         let id = $(this).data("id") 
 
-        console.log(godam,plantName,plantType,shiftName,gram_wt,billDate,id)
-        console.log(name,gross_wt,net_wt,roll_no,meter,average_wt,bill_no)
-        if(godam == null || plantName == null || plantType == null || shiftName == null){
-            alert("Godam or plantName or PlanType or Shift cannnot be null");
-        }
+        // console.log(godam,plantName,plantType,shiftName,gram_wt,billDate,id)
+        // console.log(name,gross_wt,net_wt,roll_no,meter,average_wt,bill_no)
+        // if(godam == null || plantName == null || plantType == null || shiftName == null){
+        //     alert("Godam or plantName or PlanType or Shift cannnot be null");
+        // }
         $.ajax({
-            url  : "{{ route('fabricSendReceive.send.unlaminated.revised') }}",
+            url  : "{{ route('fabricSendReceive.send.unlaminated.revised2') }}",
             method : "post",
             data:{
                 "_token" : $("meta[name='csrf-token']").attr("content"),
-                "name" : name,
-                "gross_wt" : gross_wt,
-                "net_wt" : net_wt,
-                "roll_no" : roll_no,
-                "meter" : meter,
-                "average_wt" : average_wt,
-                "gram_wt" : gram_wt,
-                "bill_no" : bill_no,
-                "billDate" : billDate,
-                "godam" : godam,
-                "plantType" : plantType,
-                "plantName" : plantName,
-                "shiftName" : shiftName,
+                // "name" : name,
+                "fsr_entry_id" : fsr_entry_id,
+                // "gross_wt" : gross_wt,
+                // "net_wt" : net_wt,
+                // "roll_no" : roll_no,
+                // "meter" : meter,
+                // "average_wt" : average_wt,
+                // "gram_wt" : gram_wt,
                 "fabric_id" : id
             },
             beforeSend:function(){
@@ -946,7 +823,7 @@
         })
     })
 
-    $(document).ready(function(){
+    $(document).ready(function(){  //bakli xa
         $(document).on('submit','#createRawMaterial',function(e){
             e.preventDefault();
             let action = $(this).attr('action');
@@ -979,22 +856,6 @@
     /************************* Form Submission *************************/
 
     /************************* Other Functionalities ***********************/
-    $("#plantName").change(function(e){
-        $('#shiftName').prop('disabled',false);
-        $('#createRawMaterial').attr({
-            'action' : "{{ route('fabricSendReceive.send.unlaminated') }}",
-            'method' : "post"
-        });
-        $("#rollnumberfabric").prop('disabled',false);
-    });
-
-
-    // $("#fabricNameId").change(function(e){
-    //     getfabricsrelated_enable();
-    //     $("#rollnumberfabric").prop('required',false);
-    //     $("#rollnumberfabric").prop('disabled',true);
-    // });
-
     $("#rollnumberfabric").keyup(function(e){
         getfabricsrelated_enable();
         // $("#fabricNameId").prop('disabled',true);
@@ -1018,21 +879,24 @@
     function filltable(data){
         console.log(data);
         data.response.forEach(d => {
-            let title = d.fabric.name;
-            let group = d.gram.split('-')[0];
-            let result = parseFloat(title) * parseFloat(group);
+            let title = d.getfabric.name;
+            let group = d.getfabric.fabricgroup.name.split('-')[0];
+            let group_id = d.getfabric.fabricgroup_id
+            let result = parseFloat(d.getfabric.name) * parseFloat(group);
+
+            console.log("title",title,"group",group,"result",result)
 
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
 
-            tr.append(`<td>#</td>`);
-            tr.append(`<td>${d.fabric.name}</td>`);
-            tr.append(`<td>${d.roll_no}</td>`);
-            tr.append(`<td>${d.gross_wt}</td>`);
-            tr.append(`<td>${d.net_wt}</td>`);
-            tr.append(`<td>${d.meter}</td>`)
-            tr.append(`<td>${d.fabric.average_wt}</td>`);
-            tr.append(`<td>${d.gram}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+            tr.append(`<td>${d.id}</td>`);
+            tr.append(`<td>${d.getfabric.name}</td>`);
+            tr.append(`<td>${d.getfabric.roll_no}</td>`);
+            tr.append(`<td>${d.getfabric.gross_wt}</td>`);
+            tr.append(`<td>${d.getfabric.net_wt}</td>`);
+            tr.append(`<td>${d.getfabric.meter}</td>`)
+            tr.append(`<td>${d.getfabric.average_wt}</td>`);
+            tr.append(`<td>${d.getfabric.gram_wt}</td>`);
+            tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${group}' data-standard='${result}' data-title='${d.getfabric.name}' href="${d.id}" data-group_id="${group_id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
         });
     }
 
@@ -1043,7 +907,7 @@
 
     function deletefromunlamintedtable(data){
         $.ajax({
-            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
+            url : "{{ route('fabricSendReceive.send.unlaminated.delete.revised',['id'=>':id']) }}".replace(':id',data),
             method:'get',
             beforeSend:function(){
                 console.log('deleteing from unlamintaed table');
@@ -1079,21 +943,26 @@
         // });
     });
 
-    $("#autoloader_godam").change(function(e){
-        e.preventDefault();
-        let godamId = $(this).val(); 
-        $("#danaNameId").prop("disabled",false)
+    function getDana(){
+        // console.log($("#toGodam").val(),$("#plantType").val(),$("#plantName").val(),$("#shiftName").val())
         $.ajax({
-            url : "{{ route('get.autoloader.godam.id.into.fsr',['godamId' => ':godamId']) }}".replace(":godamId",godamId),
-            method :  'get',
+            url : "{{ route('get.autoloader.godam.id.into.fsr') }}", 
+            method :  'post',
+            data : {
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "godam_id" : $("#toGodam").val(),
+                "planttype" : $("#plantType").val(),
+                "plantname" : $("#plantName").val(),
+                "shift" : $("#shiftName").val()
+            },
             success:function(response){
                 putdanaNameId(response);
-                $("#autoloader_godam_selected").val(godamId);
+                $("#autoloader_godam_selected").val($("#toGodam").val());
             },error:function(error){
                 console.log(error);
             }
         })
-    })
+    }
     /************************* Other Functionalities ***********************/
 
     /************************* Send for lamination **************************/
@@ -1111,16 +980,10 @@
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
             $("#idoffabricforsendtolamination").val(id);
-            // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
-            // $('#sendtolaminationform').attr('action',action);
-            // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
-            // action = action.slice(0, -2) + `${id}`;
-            // $('#sendtolaminationform').attr('action', action);
+            $('#fabricgroup_id').val($("#sendforlamination").data("group_id"))
+            $("#standard_wt").val(standard_weight_gram)
         });
     });
-    // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
-    //     $(this).removeAttr('action');
-    // });
     $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });
@@ -1165,10 +1028,6 @@
         let gram3 = (count3/data).toFixed(3);
         $("#laminated_gram_3").val(gram3)
     })
-    
-
-
-
 
     $("#sendtolaminationform").submit(function(e) {
         e.preventDefault();
@@ -1185,7 +1044,9 @@
             method:formmethod,
             data:{
                 "_token": $('meta[name="csrf-token"]').attr('content'),
-                "data" : formdata
+                "data" : formdata,
+                "fsr_entry_id" : $("#fsr_entry_id").val()
+
             },
             beforeSend:function(){
                 console.log('sending');
@@ -1201,10 +1062,9 @@
         });
     }
 
-
     function comparelamandunlam(){
         $.ajax({
-            url : "{{ route('fabricSendReceive.compare.lamandunlam') }}",
+            url : "{{ route('fabricSendReceive.compare.lamandunlam.revised',['entry_id'=>':entry_id']) }}".replace(':entry_id',$("#fsr_entry_id").val()),
             method:"get",
             success:function(response){
                 emptycomparelamtbody();
@@ -1224,7 +1084,7 @@
         $("#danaNameId").empty();
         $("#danaNameId").append(`<option selected disabled>--Select Dana--</option>`);
         data.data.forEach(d => {
-            $("#danaNameId").append(`<option value="${d.dana_name.id}">${d.dana_name.name}</option>`);
+            $("#danaNameId").append(`<option autoloaderid="${d.id}" value="${d.dana_name.id}">${d.dana_name.name}</option>`);
         });
     }
 
@@ -1246,25 +1106,25 @@
         response.lam.forEach(element => {
             let tr = $("<tr></tr>").appendTo("#comparelamtbody");
             tr.append(`<td>#</td>`);
-            tr.append(`<td>${element.name}</td>`);
+            tr.append(`<td>${element.temporarylamfabric.fabric_name}</td>`);
             tr.append(`<td>${element.roll_no}</td>`);
             tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.gross_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
             tr.append(`<td>${element.average_wt}</td>`);
-            tr.append(`<td>${element.gram}</td>`);
+            tr.append(`<td>${element.gram_wt}</td>`);
         });
 
         response.unlam.forEach(element => {
             let tr = $("<tr></tr>").appendTo("#compareunlamtbody");
             tr.append(`<td>#</td>`);
-            tr.append(`<td>${element.fabric.name}</td>`);
-            tr.append(`<td>${element.roll_no}</td>`);
-            tr.append(`<td>${element.net_wt}</td>`);
-            tr.append(`<td>${element.gross_wt}</td>`);
-            tr.append(`<td>${element.meter}</td>`);
-            tr.append(`<td>${element.average}</td>`);
-            tr.append(`<td>${element.gram}</td>`);
+            tr.append(`<td>${element.getfabric.name}</td>`);
+            tr.append(`<td>${element.getfabric.roll_no}</td>`);
+            tr.append(`<td>${element.getfabric.net_wt}</td>`);
+            tr.append(`<td>${element.getfabric.gross_wt}</td>`);
+            tr.append(`<td>${element.getfabric.meter}</td>`);
+            tr.append(`<td>${element.getfabric.average_wt}</td>`);
+            tr.append(`<td>${element.getfabric.gram_wt}</td>`);
         });
         
     }
@@ -1293,9 +1153,6 @@
 
     $("#danaNameId").on("change",function(e){
         let id = $(this).val();
-        // $.ajax({
-
-        // });
         $("#add_dana_consumption_quantity").prop("disabled",false);
     });
 
@@ -1306,15 +1163,93 @@
 
     $(document).on("click","#add_dana_consumption",function(e){
         let dana = $("#danaNameId").val();
+        let autoloaderid = $("#danaNameId option:selected").attr("autoloaderid");
+        let fsr_entry_id = $("#fsr_entry_id").val()
         let consumption = $("#add_dana_consumption_quantity").val();
-        if (consumption.trim() === '') {
+        if(consumption.trim() === '') {
             alert("add quantity");
-        }else{
-            $("#totl_dana").val(consumption);
-
-            $("#selectedDanaID").val(dana);
-        }   
+        }
+        if(dana == ""){
+            alert("choose dana");
+        }
+        $.ajax({
+            url : "{{ route('add.dana.consumption.fsr.revised') }}",
+            method : "post",
+            data : {
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "dana_name_id" : dana,
+                "autoloader_id" : autoloaderid,
+                "consumption" : consumption,
+                "bill_number" : $("#billnumber").val(),
+                "fsr_entry_id" : fsr_entry_id
+            },success:function(response){
+                $("#dana-consumption-tbody").empty()
+                $("#totl_dana").val(response.total_consumption)
+                    response.consumptions.forEach((data,index)=>{
+                        let tr = $("<tr></tr>").appendTo("#dana-consumption-tbody");
+                        tr.append(`<td>${index+1}</td>`);
+                        tr.append(`<td>${data.dananame.name}</td>`);
+                        tr.append(`<td>${data.consumption_quantity}</td>`);
+                        tr.append(`<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`);
+                    })
+                console.log(response)
+            },error:function(error){
+                console.log(error)
+                alert("error orccured check console")
+            }
+        });
     });
+
+    $(document).on("click",".delete-dana",function(){
+        let id = $(this).data("id")
+        // alert(id)
+        $.ajax({
+            url : "{{ route('delete.dana.consumption.revised') }}",
+            method : "post",
+            data : {
+                "_token" : $("meta[name='csrf-token']").attr("content"),
+                "id" : id
+            },
+            success:function(response){
+                console.log(response)
+                if(response.status == 200){
+                    getDanaConsumptionAfterDeletion();
+                }
+            },
+            error:function(error){
+                console.log("error",error)
+            }
+        })
+    })
+
+    function getDanaConsumptionAfterDeletion() {
+            $.ajax({
+                url: "{{ route('get.dana.consumption.fsr.revised') }}",
+                method: "post",
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content"),
+                    "fsr_entry_id": $("#fsr_entry_id").val()
+                },
+                success: function (response) {
+                    console.log(response)
+                    if (response.consumptions != null) {
+                        $("#dana-consumption-tbody").empty();
+                        response.consumptions.forEach((data,index) => {
+                            let tr = $("<tr></tr>");
+                            $("#dana-consumption-tbody").append(tr);
+                            tr.append(`<td>${index++}</td>`);
+                            tr.append(`<td>${data.dananame.name}</td>`);
+                            tr.append(`<td>${data.consumption_quantity}</td>`);
+                            tr.append(`<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`);
+                        });
+                        $("#totl_dana").val(response.total_consumption)
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
 
     $(document).on("keyup","#fabric_waste",function(e){
         let polo_waste = parseInt($("#polo_waste").val());
@@ -1330,15 +1265,11 @@
          ********/
 
         $(document).on("click","#finalUpdate",function(e){
-
-            let danaNameId = $("#selectedDanaID").val();
-            let consumption = $("#add_dana_consumption_quantity").val();
+            let consumption = $("#totl_dana").val();
+            // alert(consumption);
             let fabric_waste = $("#fabric_waste").val();
             let total_waste = $('#total_waste').val();
-            let selectedDanaID = $("#selectedDanaID").val();
             let polo_waste = $("#polo_waste").val();
-            let godam_id = $("#godam_id").val();
-            let autoloader_godam_selected = $("#autoloader_godam_selected").val();
 
             trimmedConsumption = consumption.trim();
             trimmedPoloWaste = polo_waste.trim();
@@ -1347,24 +1278,17 @@
 
             if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
                 alert('Waste and Consumption cannot be null');
-            }
-            else if(godam_id == null){
-                alert("please choose godam");
             }else{
-            // subtractformautolad(danaNameId,consumption);
                 $.ajax({
-                    url : "{{ route('final.submit.fsr') }}",
+                    url : "{{ route('final.submit.fsr.revised') }}",
                     method: "post",
                     data:{
                         "_token" : $('meta[name="csrf-token"]').attr('content'),
-                        "danaNameID" : danaNameId,
                         "consumption" : trimmedConsumption,
                         "fabric_waste" : trimmedFabricWaste,
                         "polo_waste" : trimmedPoloWaste,
                         "total_waste" : trimmedTotalWaste,
-                        "selectedDanaID" : selectedDanaID,
-                        "godam_id" : godam_id,
-                        "autoloader_godam_selected" : autoloader_godam_selected
+                        "fsr_entry_id" : $("#fsr_entry_id").val(),
                     },
                     beforeSend:function(){
                         console.log("Before Send");
@@ -1374,7 +1298,7 @@
                         if(response == '200'){
                             alert("Saved Successfully");
                             setTimeout(function(){
-                                location.reload();
+                                location.href = "{{ route('fabricSendReceive.entry.create') }}";
                             },500)
                         }
                         if(response.status == '403'){
@@ -1388,25 +1312,6 @@
             }
         
         });
-
-    // function subtractformautolad(danaNameId,consumption){
-    //     $.ajax({
-    //         url:"{{ route('subtract.dana.from.autoloder') }}",
-    //         method: "post",
-    //         data:{
-    //             '_token' : $('meta[name="csrf-token"]').attr('content'),
-    //             "danaId" : danaNameId,
-    //             "quantity" : consumption
-    //         },
-    //         success:function(response){
-    //             console.log(response);
-    //         },
-    //         error:function(error){
-    //             console.log(error);
-    //         }
-    //     });
-    // }
-
     /************************** Check weights matches for consumption and lamination and final submit   **********************************/
 </script>
 @endsection

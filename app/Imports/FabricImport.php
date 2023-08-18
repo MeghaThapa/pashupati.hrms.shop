@@ -37,6 +37,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
       try{
           DB::beginTransaction();
+          // dd($rows[0]);
 
           $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$this->godam_id)
                                                 ->value('id');
@@ -55,7 +56,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
               $findTape->update();
 
               $countData = FabricDetail::where('bill_number',$bill_no)->count();
-              if($countData != 1){
+              
                   // store subcategory
                 $wasteagepercent = (($totalwastage)/$rows[0]['totalweightkg']) * 100;
                   $fabric = FabricDetail::create([
@@ -74,7 +75,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                       'wrapping' => '0',
                   ]);
 
-              }
+              
            }
 
            $wastename = 'rafia';
@@ -124,12 +125,18 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                ]);
                $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
 
+               // $input = $size;
+               // $parts = explode(' ', $input);
+               // $firstString = $parts[0];   
+                       
+               // $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
                $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
 
 
-               $fabric = Fabric::firstOrCreate([
-                   'roll_no' => $row['roll_no']
-               ], [
+
+
+               $fabric = Fabric::create([
                    'name' => $size,
                    'roll_no' => $row['roll_no'],
                    'loom_no' => $row['loom_no'],
@@ -145,7 +152,7 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                    
                ]);
 
-               $fabricstock = FabricStock::firstOrCreate([
+               $fabricstock = FabricStock::create([
                 'name' => $size,
                 'roll_no' => $row['roll_no'],
                 'loom_no' => $row['loom_no'],

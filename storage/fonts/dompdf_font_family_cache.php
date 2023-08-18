@@ -83,5 +83,11 @@ return array (
     'bold' => $fontDir . '/sen_bold_033c055f76d939b0f7b49ebb34f000c9',
     '800' => $fontDir . '/sen_800_0b5d5dc5c2416506756c413728484340',
   ),
+  'dm sans' => array(
+    'italic' => $fontDir . '/dm_sans_italic_5bc236ed719331b2bbb395373fe26216',
+    'normal' => $fontDir . '/dm_sans_normal_ee50676bf446f61cea32e47d8e99df0e',
+    '500' => $fontDir . '/dm_sans_500_ad3e589e43237c2ffc18bbf790a7d82b',
+    'bold' => $fontDir . '/dm_sans_bold_f7af63fa6e08537ab5150ae572bc7c74',
+  ),
 );
 }; ?>
