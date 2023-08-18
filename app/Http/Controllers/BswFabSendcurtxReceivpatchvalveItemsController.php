@@ -6,7 +6,10 @@ use App\Models\BswFabSendcurtxReceivpatchvalveItems;
 use App\Models\BswFabSendcurtxReceivpatchvalveEntry;
 use App\Models\FabricStock;
 use App\Models\Fabric;
+use App\Models\CurtexToPatchValFabric;
 use App\Models\BswLamPrintedFabricStock;
+use App\Models\FabricGroup;
+use App\Models\AutoLoadItemStock;
 use Illuminate\Http\Request;
  use Yajra\DataTables\Facades\DataTables;
 use DB;
@@ -33,15 +36,54 @@ class BswFabSendcurtxReceivpatchvalveItemsController extends Controller
 
         $bswFabSendcurtxReceivpatchvalveEntryData=BswFabSendcurtxReceivpatchvalveEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name'])
         ->find($request->bswFabSendcurtxReceivpatchvalveEntry_id);
-        //return $bswFabSendcurtxReceivpatchvalveEntryData;
-        return view('admin.bsw.patch_valve.createItems',compact('bswFabSendcurtxReceivpatchvalveEntryData'));
+         $CurtexToPatchValFabrics=CurtexToPatchValFabric::where('status','1')->get();
+        $fabriGroups =DB::table('fabric_groups')->where('status','active')->get();
+
+
+        $godam_id= $bswFabSendcurtxReceivpatchvalveEntryData->godam->name;
+        $plantType_id = $bswFabSendcurtxReceivpatchvalveEntryData->plantType->name;
+        $plantName_id = $bswFabSendcurtxReceivpatchvalveEntryData->plantName->name;
+        $shift_id = $bswFabSendcurtxReceivpatchvalveEntryData->shift->name;
+        $autoloadDatas = AutoLoadItemStock::with('danaName:id,name')
+        ->where('from_godam_id',$godam_id)
+        ->where('plant_type_id',$plantType_id)
+        ->where('plant_name_id',$plantName_id)
+        ->where('shift_id',$shift_id)
+        ->get();
+        return view('admin.bsw.patch_valve.createItems',compact(['bswFabSendcurtxReceivpatchvalveEntryData','CurtexToPatchValFabrics','fabriGroups','autoloadDatas']));
     }
 
     public function edit($id){
         $bswFabSendcurtxReceivpatchvalveEntryData=BswFabSendcurtxReceivpatchvalveEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name'])
         ->find($id);
-            //return $bswFabSendcurtxReceivpatchvalveEntryData;
-        return view('admin.bsw.patch_valve.createItems',compact('bswFabSendcurtxReceivpatchvalveEntryData'));
+        $CurtexToPatchValFabrics=CurtexToPatchValFabric::where('status','active')->get();
+        $fabriGroups =FabricGroup::where('status','1')->get();
+        $godam_id= $bswFabSendcurtxReceivpatchvalveEntryData->godam_id ;
+        $plantType_id = $bswFabSendcurtxReceivpatchvalveEntryData->plant_type_id;
+        $plantName_id = $bswFabSendcurtxReceivpatchvalveEntryData->plant_name_id ;
+        $shift_id = $bswFabSendcurtxReceivpatchvalveEntryData->shift_id ;
+
+        $autoloadDatas = AutoLoadItemStock::with('danaName:id,name')
+        ->where('from_godam_id',$godam_id)
+        ->where('plant_type_id',$plantType_id)
+        ->where('plant_name_id',$plantName_id)
+        ->where('shift_id',$shift_id)
+        ->get();
+        return view('admin.bsw.patch_valve.createItems',compact(['bswFabSendcurtxReceivpatchvalveEntryData','CurtexToPatchValFabrics','fabriGroups','autoloadDatas']));
+    }
+    public function getAvailableQty(Request $request){
+         $bswFabSendcurtxReceivpatchvalveEntryData=BswFabSendcurtxReceivpatchvalveEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name'])
+        ->find($request->bswFabSendcurtxReceivpatchvalveEntry_id);
+        $godam_id= $bswFabSendcurtxReceivpatchvalveEntryData->godam_id ;
+        $plantType_id = $bswFabSendcurtxReceivpatchvalveEntryData->plant_type_id;
+        $plantName_id = $bswFabSendcurtxReceivpatchvalveEntryData->plant_name_id ;
+        $shift_id = $bswFabSendcurtxReceivpatchvalveEntryData->shift_id ;
+        $quantity=AutoLoadItemStock::where('from_godam_id',$godam_id)
+        ->where('plant_type_id',$plantType_id)
+        ->where('plant_name_id',$plantName_id)
+        ->where('shift_id',$shift_id)
+        ->where('dana_name_id',$request->dana_name_id)->first()->quantity;
+        return $quantity;
     }
 
     // public function getFabricName1(Request $request){
@@ -85,12 +127,16 @@ class BswFabSendcurtxReceivpatchvalveItemsController extends Controller
                     'stock.average_wt as average_wt',
                     'stock.gram_wt as gram_wt'
                 )->get();
+                // DD ($tableDatas);
 
         } elseif ($fabricType == 'lam') {
+            $input = $request->fabName;
+             $trimmedName = substr($input, 0, strpos($input, '('));
+        //   $trimmedName = preg_replace('/\s*\([^)]*\)/', '', $input);
              $tableDatas =DB::table('fabric_stock as stock')
                 ->join('fabrics','stock.fabric_id','=','fabrics.id')
                 ->where('stock.is_laminated','true')
-                ->where('fabrics.name',$request->fabName)
+                ->where('fabrics.name',$trimmedName)
                 ->select(
                     'stock.id as id',
                     'fabrics.name as name',

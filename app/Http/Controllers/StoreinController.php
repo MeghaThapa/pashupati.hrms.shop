@@ -404,16 +404,12 @@ class StoreinController extends Controller
 
     public function getTaxPercentage($tax_slug)
     {
-        // return $tax_id;
         return Tax::where('slug', $tax_slug)->first();
     }
     public function invoiceView($storein_id)
     {
-
         $storein = Storein::with(['supplier', 'storeinType', 'storeinItems', 'storeinItems.itemsOfStorein'])->find($storein_id);
-//return $storein;
         $charges = $storein->extra_charges ? json_decode($storein->extra_charges) : [];
-        // return $charges;
         return view('admin.storein.viewStorein', compact('storein', 'charges'));
     }
 
@@ -440,11 +436,12 @@ class StoreinController extends Controller
         ]);
     }
 
-    public function getDepartmentSizeUnit($items_of_storein_name,$category_id){
+    public function getDepartmentSizeUnit(Request $request){
 
+        // $encodedName = urldecode($items_of_storein_name);
         $items_of_storein =ItemsOfStorein::with('storeinDepartment:id,name','unit:id,name','size:id,name')
-        ->where('name', $items_of_storein_name)
-        ->where('category_id',$category_id)
+        ->where('name', $request->items_of_storein_name)
+        ->where('category_id',$request->category_id)
         ->groupBy(['size_id','unit_id','department_id'])
         ->get(['size_id','unit_id','department_id']);
 
@@ -596,7 +593,7 @@ class StoreinController extends Controller
             'department_id'   => 'required',
         ]);
        //  name comes here instead of item id so converting name to id
-        $itemofstorein_id=ItemsOfStorein::where('name',$request->item_id)
+        $itemofstorein_id=ItemsOfStorein::where('id',$request->item_id)
         ->where('unit_id',$request->unit_id)
         ->where('category_id',$request->category_id)
         ->where('department_id',$request->department_id)

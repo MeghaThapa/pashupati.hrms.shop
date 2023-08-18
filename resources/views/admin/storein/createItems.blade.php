@@ -60,8 +60,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                            width:150px !important;
-                                                                                                                                                                                                                                        } */
+                                                                                                                                                                                                                                                                width:150px !important;
+                                                                                                                                                                                                                                                            } */
     </style>
 @endsection
 
@@ -1700,10 +1700,10 @@
 
 
 
-            $('#categorySelect').on('select2:select', function(e) {
-                let category_id = e.params.data.id;
-                getCategoryItems(category_id, 'blade');
-            });
+            // $('#categorySelect').on('select2:select', function(e) {
+            //     let category_id = e.params.data.id;
+            //     getCategoryItems(category_id, 'blade');
+            // });
 
             $('#ProductName').on('select2:select', async function(e) {
                 let item_name = e.params.data.id;
@@ -1752,11 +1752,14 @@
             function getDepartmentSizeUnit(item_name, category_id) {
                 return new Promise(function(resolve, reject) {
                     $.ajax({
-                        url: "{{ route('storein.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced', 'category_id' => ':category']) }}"
-                            .replace(':Replaced', item_name)
-                            .replace(':category', category_id),
+                        url: "{{ route('storein.getDepartmentSizeUnit') }}",
                         method: 'GET',
+                        data:{
+                            items_of_storein_name:item_name,
+                            category_id:category_id
+                        },
                         success: function(response) {
+                            console.log('test', response);
                             resolve(response);
                         },
                         error: function(xhr, status, error) {
@@ -1859,45 +1862,45 @@
                 });
             }
 
-            function getCategoryItems(category_id, click_by = 'blade') {
-                return new Promise(function(resolve, reject) {
+            // function getCategoryItems(category_id, click_by = 'blade') {
+            //     return new Promise(function(resolve, reject) {
 
-                    $.ajax({
-                        method: 'GET',
-                        url: "{{ route('storein.getcategoryItems') }}",
-                        data: {
-                            category_id: category_id,
-                        },
-                        success: function(response) {
-                            let selectOptions = '';
-                            if (response.data.length == 0) {
-                                selectOptions += '<option disabled selected>' +
-                                    'no items found' + '</option>';
-                            } else {
-                                selectOptions += '<option disabled selected>' +
-                                    'select an item' + '</option>';
+            //         $.ajax({
+            //             method: 'GET',
+            //             url: "{{ route('storein.getcategoryItems') }}",
+            //             data: {
+            //                 category_id: category_id,
+            //             },
+            //             success: function(response) {
+            //                 let selectOptions = '';
+            //                 if (response.data.length == 0) {
+            //                     selectOptions += '<option disabled selected>' +
+            //                         'no items found' + '</option>';
+            //                 } else {
+            //                     selectOptions += '<option disabled selected>' +
+            //                         'select an item' + '</option>';
 
-                                for (let i = 0; i < response.data.length; i++) {
-                                    let optionText = response.data[i].name;
-                                    let optionValue = response.data[i].name;
-                                    let option = new Option(optionText, optionValue);
-                                    selectOptions += option.outerHTML;
-                                }
-                            }
-                            if (click_by == 'blade') {
-                                $('#ProductName').html(selectOptions);
-                                resolve(response);
-                            } else {
-                                $('#item_id').html(selectOptions);
-                                resolve(response);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            reject(error);
-                        }
-                    });
-                });
-            }
+            //                     for (let i = 0; i < response.data.length; i++) {
+            //                         let optionText = response.data[i].id;
+            //                         let optionValue = response.data[i].name;
+            //                         let option = new Option(optionText, optionValue);
+            //                         selectOptions += option.outerHTML;
+            //                     }
+            //                 }
+            //                 if (click_by == 'blade') {
+            //                     $('#ProductName').html(selectOptions);
+            //                     resolve(response);
+            //                 } else {
+            //                     $('#item_id').html(selectOptions);
+            //                     resolve(response);
+            //                 }
+            //             },
+            //             error: function(xhr, status, error) {
+            //                 reject(error);
+            //             }
+            //         });
+            //     });
+            // }
 
 
             // setTimeout(loadWhenPageLoad, 2000);

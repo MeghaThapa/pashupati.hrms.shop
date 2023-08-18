@@ -6,7 +6,6 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\ClosingStoreinReportController;
 use Illuminate\Support\Facades\Log;
-
 class Kernel extends ConsoleKernel
 {
     /**
@@ -22,12 +21,15 @@ class Kernel extends ConsoleKernel
      * Define the application's command schedule.
      *x
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
+     * @return voideveryDay
      */
     protected function schedule(Schedule $schedule)
     {
         Log::info('storein closing.');
-        $schedule->command('storein:closing')->at('21:45');
+        // Closing Storein Report
+        $schedule->command('storein:closing')
+        ->timezone('Asia/Kolkata')
+        ->at('23:30');
     }
 
     /**

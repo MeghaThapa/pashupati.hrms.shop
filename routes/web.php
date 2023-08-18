@@ -945,7 +945,7 @@ Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemD
 Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
 Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
 Route::get('/storein/getSizeOfItems/{items_of_storein_id}', 'StoreinController@getSizeOfItems')->name('storein.getSizeOfItems');
-Route::get('/storein/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
+Route::get('/storein/getDepartmentSizeUnit', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
 
 
 
@@ -1330,6 +1330,8 @@ Route::controller(BswFabSendcurtxReceivpatchvalveEntryController::class)
     Route::get("index","index")->name('fabSendCuetxReceivePatchValveEntry.index');
     Route::get("create","create")->name('fabSendCuetxReceivePatchValveEntry.create');
     Route::post("store","store")->name('fabSendCuetxReceivePatchValveEntry.store');
+    Route::post("saveEntire","saveEntire")->name('fabSendCuetxReceivePatchValveEntry.saveEntire');
+
 });
 Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
 ->prefix('fabSendCuetxReceivePatchValveItems')
@@ -1339,6 +1341,7 @@ Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
     Route::get("fabData","fabData")->name('fabSendCuetxReceivePatchValveItems.fabData');
     Route::post("store","store")->name('fabSendCuetxReceivePatchValveItems.store');
     Route::get("lamFabData","lamFabData")->name('fabSendCuetxReceivePatchValveItems.lamFabData');
+    Route::get("getAvailableQty","getAvailableQty")->name('fabSendCuetxReceivePatchValveItems.getAvailableQty');
 
     Route::get("edit/{id}","edit")->name('fabSendCuetxReceivePatchValveItems.edit');
 });
@@ -1361,6 +1364,7 @@ Route::controller(CurtexToPatchValFabricController::class)
 ->group(function(){
     Route::post("store","store")->name('curtexToPatchValFabric.store');
     Route::get("getcrtxToPtchValFabricName","getcrtxToPtchValFabricName")->name('curtexToPatchValFabric.getcrtxToPtchValFabricName');
+
 });
 /*********************curtexToPatchVal END******************************/
 /******************ToPatchValveUnlamFabricStockController start************************/
@@ -1368,6 +1372,17 @@ Route::controller(ToPatchValveUnlamFabricStockController::class)
 ->prefix('toPatchValveUnlamFabricStock')
 ->group(function(){
     Route::post("store","store")->name('toPatchValveUnlamFabricStock.store');
-    // Route::get("getcrtxToPtchValFabricName","getcrtxToPtchValFabricName")->name('curtexToPatchValFabric.getcrtxToPtchValFabricName');
+    Route::get("threeDiffStockData","threeDiffStockData")->name('toPatchValveUnlamFabricStock.threeDiffStockData');
+    Route::get("getcrtxToPtchValFabricName","getcrtxToPtchValFabricName")->name('toPatchValveUnlamFabricStock.getcrtxToPtchValFabricName');
 });
 /***************************ToPatchValveUnlamFabricStockController end********************************/
+/**************************************PatchValDanaConsumptController**************************************/
+
+Route::controller(PatchValDanaConsumptController::class)
+->prefix('patchValvDanaConsumpt')
+->group(function(){
+    Route::post("store","store")->name('patchValvDanaConsumpt.store');
+    Route::get("getDanaConsumptData","getDanaConsumptData")->name('patchValvDanaConsumpt.getDanaConsumptData');
+    Route::delete("delete/{id}","delete")->name('patchValvDanaConsumpt.delete');
+});
+/**********************************PatchValDanaConsumptController end****************************************/
