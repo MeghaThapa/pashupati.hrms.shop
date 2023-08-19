@@ -12,6 +12,7 @@ use App\Models\FinalTripalStock;
 use App\Models\SaleFinalTripal;
 use App\Models\SaleFinalTripalList;
 use App\Models\SaleFinalTripalEntry;
+use App\Models\FinalTripalName;
 use App\Helpers\AppHelper;
 use Throwable;
 use Yajra\DataTables\DataTables;
@@ -235,15 +236,16 @@ class SaleFinalTripalController extends Controller
                     'meter' => $find_name->meter,
                     'gram' => $find_name->gram,
                     'average' => $find_name->average_wt,
+                    'gsm' => $find_name->gsm,
+                    'godam_id' => $find_name->department_id,
+                    'bill_type' => $find_name->bill_number,
                     'bill_no' => $request->bill_no,
-                    'bill_date' => $request->bill_date,
+                    'bill_date' => $find_name->bill_date,
+                    'finaltripal_id' => $find_name->finaltripalname_id,
                     'salefinal_id' => $request->salefinal_id,
                     'stock_id' => $request->data_id,
                     'status' => 'sent',
                 ]);
-
-              
-
 
         return response(['message'=>'sale Transferred Successfully']);
         }
@@ -257,15 +259,12 @@ class SaleFinalTripalController extends Controller
     public function finalTripalStoreList(Request $request)
     {
         try{
-            // dd($request);
             $getlist = SaleFinalTripalEntry::where('salefinal_id',$request->salefinal_id)->where('status','sent')->get();
-            // dd($getlist);
 
             foreach ($getlist as $list) {
-                // dd($list);
 
                 $find_name = SaleFinalTripalEntry::find($list->id);
-                // dd($find_name);                
+                // dd($find_name);
                     $fabricstock = SaleFinalTripalList::create([
                         'name' => $find_name->name,
                         'slug' => $find_name->slug,
@@ -275,8 +274,13 @@ class SaleFinalTripalController extends Controller
                         'meter' => $find_name->meter,
                         'gram' => $find_name->gram,
                         'average' => $find_name->average,
-                        'bill_no' => $find_name->bill_no,
+                        'gsm' => $find_name->gsm,
+                        'godam_id' => $find_name->godam_id,
+                        'bill_type' => $find_name->bill_type,
+                        'bill_no' => $request->bill_no,
                         'bill_date' => $find_name->bill_date,
+                        'finaltripal_id' => $find_name->finaltripal_id,
+                        'bill_no' => $find_name->bill_no,
                         'salefinal_id' => $request->salefinal_id,
                     ]);
 
@@ -335,5 +339,77 @@ class SaleFinalTripalController extends Controller
        {
         
          return Excel::download(new TripalSale($id), 'tripalsale.xlsx');
-       }   
+       }  
+
+    public function restock(Request $request)
+       {
+        try{
+            DB::beginTransaction();
+
+            $getdata = SaleFinalTripalList::get();
+
+            foreach ($getdata as $list) {
+
+               $finaltripal_id = FinalTripalName::where('name',$list->name)->value('id');
+
+               $net_wt = $list->net;
+               $meter = $list->meter;
+               $average = ($net_wt / $meter) * 1000;
+
+
+               $input = $list->name;
+               $parts = explode(' ', $input);
+               $firstString = $parts[0];   
+                       
+               $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+               $data = $find_name / 39.37;
+
+               $gsm = ($average) / $data;
+                  
+
+                    $finaltripalstock = FinalTripalStock::create([
+                        "name" => $list->name,
+                        "slug" => $list->slug,
+                        "bill_number" => $list->bill_type,
+                        'bill_date' => $list->bill_date,
+                        "department_id" => '2',
+                        "gram" =>  $list->gram,
+                        "loom_no" => '0',
+                        "roll_no" => $list->roll,
+                        'gross_wt' => $list->gross,
+                        "meter" => $list->meter,
+                        "average_wt" => $list->average,
+                        "gsm" => $gsm,
+                        'net_wt' => $list->net,
+                        "finaltripalname_id" => $list->finaltripal_id,
+                        "date_en" => $list->bill_date,
+                        "date_np" => $list->bill_date,
+
+                        "status" => "sent"
+                    ]);
+
+                   
+
+
+            }
+
+         
+        
+
+
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+            return response([
+                "message" => "Something went wrong!{$e->getMessage()}" 
+            ]);
+        }
+         
+
+         return back();
+        
+       }       
+
+
 }

@@ -711,6 +711,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get("salefinaltripal/getTripalSale/Pdf/{id}",'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
     Route::get("salefinaltripal/getTripalSale/excel/{id}",'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
+ 
 
     //salefinaltripal filter
 
@@ -725,6 +726,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('salefinaltripal/delete/list', 'Sale\SaleFinalTripalController@deleteEntryList')->name('finalsaletripal.deleteFinalSaleEntry');
 
     Route::get('saleFinalTripal/dataTable', 'Sale\SaleFinalTripalController@dataTable')->name('saleFinalTripal.dataTable');
+
+    Route::get('finaltripal/getstock/filterStocks','Tripal\FinalTripalStockController@filterStock')->name('finaltripal-stock.filterStock');
+
+    Route::get("restock",'Sale\SaleFinalTripalController@restock')->name("admin.restock");
 
 
 

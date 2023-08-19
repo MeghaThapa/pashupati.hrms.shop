@@ -13,53 +13,29 @@
         <img class="lg-logo" src="{{ $settings->logo }}" alt="{{ $settings->companyName }}" width="250" height="50">
         <h3>FinalTripal Stock</h3>
     </div>
-  {{--   <form action="{{ route('tapeentry-stock.filterStock') }}" method="POST">
-        @csrf
-        <div class="row">
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Godam</label>
-                <select class="advance-select-box form-control" id="danaGroupId_model" name="godam_id">
-                    <option value="" selected disabled>{{ __('Select Godam') }}</option>
-                    <option value="all">All Stocks</option>
-                    @foreach ($godams as $godam)
-                        <option value="{{ $godam->id }}">{{ $godam->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Type</label>
-                <select class="advance-select-box form-control" id="planttype_id" name="planttypes_id">
-                    <option value="" selected disabled>{{ __('Select Plant Type') }}</option>
-                    <option value="all">All Stocks</option>
-                    @foreach ($planttypes as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
-                    @endforeach
-
-                </select>
-
-            </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Name</label>
-                <select class="advance-select-box form-control" id="plantname_id" name="plantname_id">
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    <option value="all">All Stocks</option>
-                    @foreach ($plantnames as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
-                    @endforeach
-                </select>
-
-            </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary" style="width:200px" type="submit">Show Report</button>
-
-            </div>
+    <div class="row">
+        <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+            <label for="">Godam</label>
+            <select class="advance-select-box form-control" id="name" name="name">
+                <option value="" selected disabled>{{ __('Select Name') }}</option>
+                <option value="all">All FinalStocks</option>
+                @foreach ($finaltripalname as $data)
+                    <option value="{{ $data->id }}">{{ $data->name }}</option>
+                @endforeach
+            </select>
         </div>
-    </form> --}}
+        
+        
+        <div class="col-md-3">
+            <button class="btn btn-primary" style="width:200px" type="submit" id="fabricStockSearch">Show Report</button>
+
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table" id="rawMaterialStockTable">
+                <table class="table" id="replaceTable">
                     <thead>
                         <tr>
                             <th>{{ __('S.No') }}</th>
@@ -88,6 +64,15 @@
                         @endif
                     </tbody>
 
+                    <tfoot>
+                      <tr>
+                        <th>Total:</th>
+                      
+                        <td class="text-right">{{ $sum}}</td>
+                      </tr>
+                      
+                    </tfoot>
+
                 </table>
             </div>
             @if ($finaltripal)
@@ -98,4 +83,33 @@
 @endsection
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+    <script>
+        $("body").on("click", "#fabricStockSearch", function(event){
+          searchFunction();
+        });
+        function searchFunction(){
+          var name = $('#name').val();
+          var token = $('meta[name="csrf-token"]').attr('content');
+          debugger;
+
+
+          $.ajax({
+            type:"GET",
+            dataType:"html",
+            url: "{{route('finaltripal-stock.filterStock')}}",
+            data: {
+              _token: token,
+              name: name,
+            },
+            success:function(response){
+              $('#replaceTable').html("");
+              $('#replaceTable').html(response);
+            },
+            error: function (e) {
+              alert('Sorry! we cannot load data this time');
+              return false;
+            }
+          });
+        }
+    </script>
 @endsection
