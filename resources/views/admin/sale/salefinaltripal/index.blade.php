@@ -172,6 +172,9 @@
         </div>
         
     </form>
+
+    {{-- <a class='btn btn-danger' href='{{route('admin.restock')}}'>restock</a> --}}
+
 </div>
 <div class="p-0 table-responsive table-custom my-3">
     <table class="table" id="rawMaterialTable">
