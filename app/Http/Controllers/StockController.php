@@ -12,6 +12,7 @@ use App\Models\StoreinDepartment;
 use App\Models\StoreinCategory;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 use DB;
 class StockController extends Controller
 {
@@ -22,32 +23,15 @@ class StockController extends Controller
      */
     public function index()
     {
-        $TOTAL_ROW=35;
-        $TOTAL_AMOUNT = 0;
 
-        $stocks = DB::table('stocks')
-        ->join('storein_categories','stocks.category_id','=','storein_categories.id')
-        ->join('items_of_storeins','stocks.item_id','=','items_of_storeins.id')
-        ->join('storein_departments','stocks.department_id','=','storein_departments.id')
-        ->join('units','stocks.unit','=','units.id')
-        ->join('sizes','stocks.size','=','sizes.id')
-        ->select(
-        'stocks.*',
-        'storein_categories.name as category_name',
-        'items_of_storeins.name as item_name',
-        'items_of_storeins.pnumber as item_num',
-        'storein_departments.name as department_name',
-        'units.name as unit_name',
-        'sizes.name as size_name'
-        )->paginate($TOTAL_ROW);
 
-        foreach ($stocks->items() as $stock){
-            $TOTAL_AMOUNT += $stock->total_amount;
-        }
 
+
+
+        // return $data;
         $departments=StoreinDepartment::where('status','active')->get();
         $categories =StoreinCategory::where('status','active')->get();
-        return view('admin.Stock.itemStock', compact('stocks','departments','categories','TOTAL_AMOUNT'));
+        return view('admin.Stock.itemStock', compact('departments','categories'));
     }
     public function filterStockAccCategory($category_id)
     {
@@ -97,6 +81,50 @@ class StockController extends Controller
         $categories =StoreinCategory::where('status','active')->get();
         return view('admin.Stock.itemStock', compact('stocks','departments','categories','TOTAL_AMOUNT'));
     }
+    public function yajra(Request $request){
+
+        $query = DB::table('stocks')
+        ->join('storein_categories', 'stocks.category_id', '=', 'storein_categories.id')
+        ->join('items_of_storeins', 'stocks.item_id', '=', 'items_of_storeins.id')
+        ->join('storein_departments', 'stocks.department_id', '=', 'storein_departments.id')
+        ->join('units', 'stocks.unit', '=', 'units.id')
+        ->join('sizes', 'stocks.size', '=', 'sizes.id')
+        ->select(
+            'stocks.*',
+            'storein_categories.name as category_name',
+            'items_of_storeins.name as item_name',
+            'items_of_storeins.pnumber as item_num',
+            'storein_departments.name as department_name',
+            'units.name as unit_name',
+            'sizes.name as size_name'
+        )
+        ->orderBy('stocks.id', 'DESC')
+        ->get();
+
+    $batchSize = 100;
+    $data = [];
+
+    foreach (array_chunk($query->toArray(), $batchSize) as $rows) {
+        foreach ($rows as $row) {
+            $data[] = [
+                'id' => $row->id,
+                'quantity' => $row->quantity,
+                'avg_price' => $row->avg_price,
+                'total_amount' => $row->total_amount,
+                'category_name' => $row->category_name,
+                'item_name' => $row->item_name,
+                'item_num' => $row->item_num,
+                'department_name' => $row->department_name,
+                'unit_name' => $row->unit_name,
+                'size_name' => $row->size_name,
+            ];
+        }
+    }
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
     public function departmentFilter()
     {
         $stocks = Stock::with('category', 'item', 'department')->get();

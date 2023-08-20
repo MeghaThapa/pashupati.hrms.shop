@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Stock;
 use App\Models\OpeningStoreinReport;
 use App\Models\ClosingStoreinReport;
+use App\Models\StoreinCategory;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use DB;
@@ -12,7 +13,8 @@ use Carbon\Carbon;
 class ClosingStoreinReportController extends Controller
 {
     public function index(){
-          return view('admin.report.storeinOutReport');
+          $categories=StoreinCategory::where('status', 'active')->get();
+          return view('admin.report.storeinOutReport',compact('categories'));
     }
 
     // public function yajraReport(){
@@ -72,15 +74,19 @@ class ClosingStoreinReportController extends Controller
     public function yajraReport() {
         $batchSize = 100;
 
-        $items = DB::table('items_of_storeins')->get();
+        $items = DB::table('items_of_storeins')->select('id','name')->get();
 
         // $today = Carbon::today()->format('Y-n-j');
-$today= Carbon::now()->addDay()->format('Y-n-j');
+        $today= Carbon::now()->format('Y-n-j');
 
         $reportData = [];
+        $openingTotal = 0;
+        $purchaseTotal = 0;
+        $closingTotal = 0;
+
 
         foreach (array_chunk($items->toArray(), $batchSize) as $batchItems) {
-            $itemNames = array_column($batchItems, 'name');
+            $itemId = array_column($batchItems, 'id');
 
             $allData = DB::table('items_of_storeins as item')
                 ->leftJoin('opening_storein_reports as opening', function ($join) use ($today) {
@@ -96,17 +102,23 @@ $today= Carbon::now()->addDay()->format('Y-n-j');
                     $join->on('closing.name', '=', 'item.id')->where('closing.date', $today);
                 })
                 ->select(
+                    'item.id as item_id',
                     'item.name as item_name',
                     'opening.quantity as opening_qty', 'opening.rate as opening_rate', 'opening.total as opening_total',
                     'purchase.quantity as purchase_qty', 'purchase.rate as purchase_rate', 'purchase.total as purchase_total',
                     'issue.quantity as issue_qty', 'issue.rate as issue_rate', 'issue.total as issue_total',
                     'closing.quantity as closing_qty', 'closing.rate as closing_rate', 'closing.total as closing_total'
                 )
-                ->whereIn('item.name', $itemNames)
+                ->whereIn('item.id', $itemId)
                 ->get();
 
+
             foreach ($batchItems as $item) {
-                $data = $allData->where('item_name', $item->name)->first();
+                $data = $allData->where('item_id', $item->id)->first();
+
+                $openingTotal += $data->opening_total ?? 0;
+                $purchaseTotal += $data->purchase_total ?? 0;
+                $closingTotal += $data->closing_total ?? 0;
 
                 $reportData[] = [
                     'item_name' => $item->name,
@@ -126,17 +138,17 @@ $today= Carbon::now()->addDay()->format('Y-n-j');
             }
         }
 
-        return Datatables::of($reportData)
-            ->addIndexColumn()
-            ->make(true);
-    }
 
+        return Datatables::of($reportData)->addIndexColumn()
+        ->make(true);
+    }
 
     public function closing(){
         try{
             DB::beginTransaction();
         $stocks=DB::table('stocks')->get(['item_id','quantity','avg_price','total_amount']);
         foreach($stocks as $stock){
+
             $closing = new ClosingStoreinReport();
             $closing->date =Carbon::now()->format('Y-n-j');
             $closing->name =$stock->item_id;

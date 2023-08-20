@@ -14,11 +14,11 @@
         </button>
     </a>
 
-    <a href="{{ route('closingStoreinReport.closing') }}">
+    {{-- <a href="{{ route('closingStoreinReport.closing') }}">
         <button class="btn btn-primary">
             Closing
         </button>
-    </a>
+    </a> --}}
     <div class="d-flex "
         style="font-weight:bold; font-size:25px;justify-content:center; align-items:center;text-decoration:underline;">
         PASHUPATI
@@ -87,46 +87,11 @@
                             <th>{{ __('Unit') }}</th>
                             <th>{{ __('Avg Rate') }}</th>
                             <th>{{ __('Total Amt') }}</th>
-
                         </tr>
                     </thead>
 
-                    <tbody>
-                        @php
-                            $i = 0;
-                        @endphp
-
-                        @if ($stocks && $stocks->total() > 0)
-                            @foreach ($stocks->items() as $stock)
-                                <tr>
-                                    <td>{{ ++$i }}</td>
-                                    <td>{{ $stock->item_name }}</td>
-                                    <td>{{ $stock->department_name }}</td>
-                                    <td>{{ $stock->category_name }}</td>
-                                    <td>{{ $stock->item_num }}</td>
-                                    <td>{{ $stock->size_name }}</td>
-                                    <td>{{ $stock->quantity }}</td>
-                                    <td>{{ $stock->unit_name }}</td>
-                                    <td>{{ $stock->avg_price }}</td>
-                                    <td>{{ $stock->total_amount }}</td>
-
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="5">No data available.</td>
-
-                            </tr>
-                        @endif
-                        <tr>
-                            <td colspan="9">Total Amount :</td>
-                            <td>{{ $TOTAL_AMOUNT ?? '00' }}</td>
-                        </tr>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
-                @if ($stocks)
-                    {{ $stocks->links() }}
-                @endif
             </div>
 
         </div>
@@ -285,5 +250,60 @@
                 });
             @endforeach
         @endif
+
+
+
+        var bswDatatable = $('#storeInItemTable').DataTable({
+            lengthMenu: [
+                [50, 100, 200, -1],
+                ['50 rows', '100 rows', '200 rows', 'Show all']
+            ],
+            style: 'bootstrap',
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route('stock.yajra') }}',
+                data: function(data) {
+                    data.lamFabName = '123';
+                },
+
+                error: function(xhr, error, thrown) {
+                    console.log("Error fetching data:", error);
+                }
+
+            },
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'item_name'
+                },
+                {
+                    data: 'department_name'
+                },
+                {
+                    data: 'category_name'
+                },
+                {
+                    data: 'item_num'
+                },
+                {
+                    data: 'size_name'
+                },
+                {
+                    data: 'quantity'
+                },
+                {
+                    data: 'unit_name'
+                },
+                {
+                    data: 'avg_price'
+                },
+                {
+                    data: 'total_amount'
+                },
+
+            ],
+        });
     </script>
 @endsection

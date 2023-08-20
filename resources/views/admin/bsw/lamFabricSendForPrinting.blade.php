@@ -680,9 +680,9 @@
     <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/storein.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
-    </script>
+    </script> --}}
     <script>
         $(document).ready(function() {
             $("#nepali-date-picker").nepaliDatePicker({});
