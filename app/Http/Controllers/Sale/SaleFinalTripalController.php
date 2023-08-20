@@ -368,7 +368,7 @@ class SaleFinalTripalController extends Controller
                $gsm = ($average) / $data;
                   
 
-                    $finaltripalstock = FinalTripalStock::create([
+              $finaltripalstock = FinalTripalStock::create([
                         "name" => $list->name,
                         "slug" => $list->slug,
                         "bill_number" => $list->bill_type,
@@ -389,12 +389,8 @@ class SaleFinalTripalController extends Controller
                         "status" => "sent"
                     ]);
 
-                   
-
 
             }
-
-         
         
 
 

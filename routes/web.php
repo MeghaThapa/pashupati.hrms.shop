@@ -795,11 +795,31 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //doubletripal name
     Route::post('doubletripal/name/store', 'Tripal\DoubleTripalController@storeTripalName')->name('doubletripal.storeName');
 
+    //godaam transfer tripal
 
+    Route::prefix('tripalGodamTransfer')->group(function () {
+        // Define routes here
+        Route::get('index', 'GodamTransfer\FinalTripalGodamController@index')->name('tripalGodamTransfer.index');
+        Route::get('create', 'GodamTransfer\FinalTripalGodamController@create')->name('tripalGodamTransfer.create');
+        Route::post('store', 'GodamTransfer\FinalTripalGodamController@store')->name('tripalGodamTransfer.store');
+        Route::get('tripalGodam/dataTable', 'GodamTransfer\FinalTripalGodamController@dataTable')->name('tripalGodam.dataTable');
+        Route::get('transferFabric/{tripalgodam_id}', 'GodamTransfer\FinalTripalGodamController@transferFabric')->name('tripalGodam.transferFabric');
 
+        Route::post('getFilter/transferFabric', 'GodamTransfer\FinalTripalGodamController@getTransferFilter')->name('getFilterGodamTripal');
 
-    
+        Route::post('transferFabric/storeEntryList', 'GodamTransfer\FinalTripalGodamController@getTripalGodamStore')->name('getTripalGodamStore');
 
+        Route::get("getTripalGodamList/filterData/List",'GodamTransfer\FinalTripalGodamController@getTripalGodamList')->name("transfer.getList");
+
+        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+
+        Route::post("getTripalGodamList/storeData",'GodamTransfer\FinalTripalGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
+
+        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+
+        Route::get("getTripalGodamList/viewBill/{tripalgodam_id}",'GodamTransfer\FinalTripalGodamController@viewBill')->name("tripalGodam.viewBill");
+
+    });
 
 
      // fabric_group route

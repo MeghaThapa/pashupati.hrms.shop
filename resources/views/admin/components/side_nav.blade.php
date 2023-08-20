@@ -228,16 +228,35 @@
                     </ul>
                 </li>
 
-
-
-
-                {{-- <li class="nav-item">
-                    <a href="{{ route('dashboard') }}"
-                        class="nav-link  {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-home"></i>
-                        <p>{{ __('Dashboard') }}</p>
+                <li class="nav-item has-treeview {{ request()->is('home/main-entry/*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('home/main-entry/*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-star"></i>
+                        <p>
+                            Godam Transfer
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
                     </a>
-                </li> --}}
+                    <ul class="nav nav-treeview ">
+                        <li class="nav-item">
+                            <a href="{{ route('fabricgodams.index') }}"
+                                class="nav-link {{ request()->is('admin/fabricgodams*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>FabricGodamTransfer</p>
+                                {{-- <p>{{ __('Categories') }}</p> --}}
+                            </a>
+                        </li>
+                        
+
+                        <li class="nav-item">
+                            <a href="{{ route('tripalGodamTransfer.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-boxes"></i>
+                                <p>{{ __('Tripal Transfer') }}</p>
+                            </a>
+                        </li>                        
+
+                    </ul>
+                </li>
+
                 <li class="nav-item">
                     <a href=" {{ route('staff.index') }} "
                         class="nav-link {{ request()->is('admin/staff*') ? 'active' : '' }}">
@@ -381,14 +400,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('fabricgodams.index') }}"
-                        class="nav-link {{ request()->is('admin/fabricgodams*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>FabricGodamTransfer</p>
-                        {{-- <p>{{ __('Categories') }}</p> --}}
-                    </a>
-                </li>
+                
 
 
                 <li class="nav-item">

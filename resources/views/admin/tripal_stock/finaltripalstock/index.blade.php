@@ -14,8 +14,8 @@
         <h3>FinalTripal Stock</h3>
     </div>
     <div class="row">
-        <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-            <label for="">Godam</label>
+        <div class="col-md-5" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
+            <label for="">Name</label>
             <select class="advance-select-box form-control" id="name" name="name">
                 <option value="" selected disabled>{{ __('Select Name') }}</option>
                 <option value="all">All FinalStocks</option>
