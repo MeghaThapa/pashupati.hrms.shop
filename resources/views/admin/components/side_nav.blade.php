@@ -545,6 +545,17 @@
                 </li>
 
 
+                <!--        cc plant    -->
+                <li class="nav-header text-bold">{{ __('CC plant') }}</li>
+                <li class="nav-item">
+                    <a href="{{ route('cc.plant.entry.index') }}"
+                        class="nav-link {{ request()->routeIs('cc.plant.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-random"></i>
+                        <p>{{ __('CC Plant') }}</p>
+                    </a>
+                </li>
+
+
 
                 <!-------------  Bag --------------------------->
                 <li class="nav-header text-bold">{{ __('Bags') }}</li>
