@@ -27,14 +27,17 @@ return new class extends Migration
             $table->string('net_wt');
             $table->string('meter');
             $table->string('roll_no');
-            $table->string('loom_no');
+            $table->string('loom_no')->nullable();
 
             $table->string('bill_no')->nullable();
             $table->string('date_np')->nullable();
             $table->boolean('status')->nullable()->default(1);
             $table->enum("is_laminated",["true","false"])->default('false');
-            $table->bigInteger('fabric_id')->unsigned()->index();
+            $table->bigInteger('fabric_id')->unsigned()->nullable()->index();
             $table->foreign('fabric_id')->references('id')->on('fabrics')->onDelete('cascade');
+
+            $table->bigInteger('curtexToPatchValFabric_id')->unsigned()->nullable()->index();
+            $table->foreign('curtexToPatchValFabric_id')->references('id')->on('curtex_to_patch_val_fabrics')->onDelete('cascade');
             $table->timestamps();
         });
     }

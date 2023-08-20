@@ -78,78 +78,172 @@ class StoreinController extends Controller
     // }
     public function editStorein($storein_id)
     {
-        // return $storein_id;
-        $storeintype = StoreinType::all();
-        $suppliers = Supplier::where('status', 1)->latest()->get();
-        $storeinData = DB::table('storein')
+        return redirect()->route('storein.storeinItemCreate',['id'=>$storein_id]);
+    //     $storeintype = StoreinType::all();
+    //     $suppliers = Supplier::where('status', 1)->latest()->get();
+    //     $storeinData = DB::table('storein')
+    //     ->join('suppliers', 'suppliers.id', '=', 'storein.supplier_id')
+    //     ->join('storein_types', 'storein_types.id', '=', 'storein.storein_type_id')
+    //     ->select(
+    //         'storein.id',
+    //         'suppliers.name as supplier_name',
+    //         'suppliers.id as supplier_id',
+    //         'storein_types.name as storein_type_name',
+    //         'storein_types.id as storein_type_id',
+    //         'storein.sr_no',
+    //         'storein.bill_no',
+    //         'storein.pp_no',
+    //         'storein.purchase_date',
+    //         'storein.total_discount',
+    //         'storein.grand_total'
+    //     )
+    //     ->where('storein.id', '=', $storein_id)
+    //     ->first();
+    //   //  return $storeinData;
+
+    //     return view('admin.storein.storeinCreate', compact('storeintype', 'suppliers', 'storeinData'));
+    }
+
+    // public function storinYajraDatabales()
+    // {
+    //     $storein = DB::table('storein')
+    //     ->join('suppliers','suppliers.id','=','storein.supplier_id')
+    //     ->join('storein_types','storein_types.id','=','storein.storein_type_id')
+    //     ->select(
+    //         'storein.id',
+    //         'suppliers.name as supplier_name',
+    //         'storein_types.name as storein_type_name',
+    //         'storein.sr_no',
+    //         'storein.bill_no',
+    //         'storein.pp_no',
+    //         'storein.purchase_date',
+    //         'storein.total_discount',
+    //         'storein.status',
+    //         'storein.grand_total',
+    //         )
+    //     ->get();
+
+    //     return DataTables::of($storein)
+    //         ->addIndexColumn()
+    //         ->addColumn('action', function ($row) {
+    //             $actionBtn ='';
+    //             if($row->status == 'running'){
+    //                 $actionBtn .= '
+    //                     <a class="btnEdit" href="' . route('storein.editStorein', ["storein_id" => $row->id]) . '" >
+    //                         <button class="btn btn-primary">
+    //                             <i class="fas fa-edit fa-lg"></i>
+    //                         </button>
+    //                     </a>
+    //                     <button class="btn btn-danger" id="dltstorein" data-id="'.$row->id.'">
+    //                         <i class="fas fa-trash-alt"></i>
+    //                     </button>
+    //                     ';
+    //             }else{
+    //                 $actionBtn .=  '
+    //                 <a class="btnEdit" href="' . route('storein.invoiceView', ["storein_id" => $row->id]) . '" >
+    //                     <button class="btn btn-info">
+    //                         <i class="fas fa-file-invoice"></i>
+    //                     </button>
+    //                 </a>
+    //                 ';
+    //             }
+    //             return $actionBtn;
+    //         })
+    //        ->addColumn('status', function ($row) {
+    //             return '<span class="badge badge-pill badge-success">'.$row->status.'</span>';
+    //         })
+    //         ->rawColumns(['action','status'])
+    //         ->make(true);
+    // }
+
+    public function storinYajraDatabales()
+{
+    $batchSize = 100;
+
+    $storein = DB::table('storein')
         ->join('suppliers', 'suppliers.id', '=', 'storein.supplier_id')
         ->join('storein_types', 'storein_types.id', '=', 'storein.storein_type_id')
         ->select(
             'storein.id',
             'suppliers.name as supplier_name',
-            'suppliers.id as supplier_id',
             'storein_types.name as storein_type_name',
-            'storein_types.id as storein_type_id',
             'storein.sr_no',
             'storein.bill_no',
             'storein.pp_no',
             'storein.purchase_date',
             'storein.total_discount',
-            'storein.grand_total'
+            'storein.status',
+            'storein.grand_total',
         )
-        ->where('storein.id', '=', $storein_id)
-        ->first();
-      //  return $storeinData;
-
-        return view('admin.storein.storeinCreate', compact('storeintype', 'suppliers', 'storeinData'));
-    }
-
-    public function storinYajraDatabales()
-    {
-        $storein = DB::table('storein')
-        ->join('suppliers','suppliers.id','=','storein.supplier_id')
-        ->join('storein_types','storein_types.id','=','storein.storein_type_id')
-        ->select(
-            'storein.id',
-            'suppliers.name as supplier_name',
-            'storein_types.name as storein_type_name',
-            'storein.sr_no',
-            'storein.bill_no',
-            'storein.pp_no',
-            'storein.purchase_date',
-            'storein.total_discount',
-            'storein.grand_total'
-            )
+        ->orderBy('storein.id', 'DESC')
         ->get();
 
+    $storeinChunks = array_chunk($storein->toArray(), $batchSize);
 
-        return DataTables::of($storein)
-            ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $actionBtn = '
-                <a class="btnEdit" href="' . route('storein.editStorein', ["storein_id" => $row->id]) . '" >
-                    <button class="btn btn-primary">
-                        <i class="fas fa-edit fa-lg"></i>
-                    </button>
-                </a>
+    $reportData = [];
 
-                <button class="btn btn-danger" id="dltstorein" data-id="'.$row->id.'">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
+    foreach ($storeinChunks as $batch) {
+        $storeinBatch = collect($batch);
 
-                <a class="btnEdit" href="' . route('storein.invoiceView', ["storein_id" => $row->id]) . '" >
-                    <button class="btn btn-info">
-                        <i class="fas fa-file-invoice"></i>
-                    </button>
-                </a>
-                '
-                ;
+        foreach ($storeinBatch as $row) {
+            $actionBtn = '';
+            if ($row->status == 'running') {
+                $actionBtn .= $this->generateRunningAction($row);
+            } else {
+                $actionBtn .= $this->generateNonRunningAction($row);
+            }
+            $statusBadge = '<span class="badge badge-pill badge-success">' . $row->status . '</span>';
 
-                return $actionBtn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+            $reportData[] = [
+                'id' => $row->id,
+                'supplier_name' => $row->supplier_name,
+                'storein_type_name' => $row->storein_type_name,
+                'sr_no' => $row->sr_no,
+                'bill_no' => $row->bill_no,
+                'pp_no' => $row->pp_no,
+                'purchase_date' => $row->purchase_date,
+                'total_discount' => $row->total_discount,
+                'status' => $statusBadge,
+                'grand_total' => $row->grand_total,
+                'action' => $actionBtn,
+            ];
+        }
     }
+
+    return DataTables::of($reportData)
+        ->addIndexColumn()
+        ->rawColumns(['action', 'status'])
+        ->make(true);
+}
+
+
+
+    private function generateRunningAction($item)
+    {
+        return '
+            <a class="btnEdit" href="' . route('storein.editStorein', ["storein_id" => $item->id]) . '" >
+                <button class="btn btn-primary">
+                    <i class="fas fa-edit fa-lg"></i>
+                </button>
+            </a>
+            <button class="btn btn-danger" id="dltstorein" data-id="' . $item->id . '">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        ';
+    }
+
+    private function generateNonRunningAction($item)
+    {
+        return '
+            <a class="btnEdit" href="' . route('storein.invoiceView', ["storein_id" => $item->id]) . '" >
+                <button class="btn btn-info">
+                    <i class="fas fa-file-invoice"></i>
+                </button>
+            </a>
+        ';
+    }
+
+
     public function updateStorein(Request $request, $storein_id)
     {
 
@@ -231,8 +325,7 @@ class StoreinController extends Controller
     {
         try{
         $today= Carbon::now()->format('Y-n-j');
-
-            DB::beginTransaction();
+        DB::beginTransaction();
         $storein = Storein::with('storeinItems')
             ->withSum('storeinItems', 'total_amount')
             ->find($storein_id);
@@ -276,10 +369,10 @@ class StoreinController extends Controller
             $storein->image_path = $imgPath;
         }
         $storein->note = $request->note;
-        $storein->status = $request->status;
+        $storein->status = 'completed';
         // storein status change
         $storein->save();
-        
+
 
         foreach($storein->storeinItems as $item){
 
@@ -291,7 +384,7 @@ class StoreinController extends Controller
             $purchaseStoreinReport->save();
         }else{
             $purchaseStoreinReport= new PurchaseStoreinReport();
-                    $purchaseStoreinReport->date =$purchaseStoreinReport->date;
+                    $purchaseStoreinReport->date =$today;
                     $purchaseStoreinReport->name =$item->storein_item_id;
                     $purchaseStoreinReport->quantity =$item->quantity;
                     $purchaseStoreinReport->rate = $item->price;
@@ -299,10 +392,6 @@ class StoreinController extends Controller
                     $purchaseStoreinReport->save();
                 }
             }
-
-
-
-
         DB::commit();
         return redirect()->route('storein.index')->withSuccess('Storein entirely created successfully!');
         }catch(Exception $e){
@@ -315,16 +404,12 @@ class StoreinController extends Controller
 
     public function getTaxPercentage($tax_slug)
     {
-        // return $tax_id;
         return Tax::where('slug', $tax_slug)->first();
     }
     public function invoiceView($storein_id)
     {
-
         $storein = Storein::with(['supplier', 'storeinType', 'storeinItems', 'storeinItems.itemsOfStorein'])->find($storein_id);
-//return $storein;
         $charges = $storein->extra_charges ? json_decode($storein->extra_charges) : [];
-        // return $charges;
         return view('admin.storein.viewStorein', compact('storein', 'charges'));
     }
 
@@ -351,11 +436,12 @@ class StoreinController extends Controller
         ]);
     }
 
-    public function getDepartmentSizeUnit($items_of_storein_name,$category_id){
+    public function getDepartmentSizeUnit(Request $request){
 
+        // $encodedName = urldecode($items_of_storein_name);
         $items_of_storein =ItemsOfStorein::with('storeinDepartment:id,name','unit:id,name','size:id,name')
-        ->where('name', $items_of_storein_name)
-        ->where('category_id',$category_id)
+        ->where('name', $request->items_of_storein_name)
+        ->where('category_id',$request->category_id)
         ->groupBy(['size_id','unit_id','department_id'])
         ->get(['size_id','unit_id','department_id']);
 
@@ -499,7 +585,7 @@ class StoreinController extends Controller
         DB::beginTransaction();
         $validator = $request->validate([
             'category_id'  => 'required',
-            'item_id'   => 'required',
+            'item_name'   => 'required',
             'quantity'      => 'required|numeric',
             'unit_price'   => 'required|numeric',
             'size_id'   => 'required',
@@ -507,18 +593,18 @@ class StoreinController extends Controller
             'department_id'   => 'required',
         ]);
        //  name comes here instead of item id so converting name to id
-        $itemofstorein_id=ItemsOfStorein::where('name',$request->item_id)
+        $itemofstorein=ItemsOfStorein::where('name',$request->item_name)
         ->where('unit_id',$request->unit_id)
         ->where('category_id',$request->category_id)
         ->where('department_id',$request->department_id)
         ->where('size_id',$request->size_id)
-        ->first()->id;
+        ->first();
 
         $totalAmt = ($request->quantity * $request->unit_price);
 
         $storeinItem = new StoreinItem();
         $storeinItem->storein_category_id = $request->category_id;
-        $storeinItem->storein_item_id = $itemofstorein_id;
+        $storeinItem->storein_item_id = $itemofstorein->id;
         $storeinItem->quantity = $request->quantity;
         $storeinItem->size_id=$request->size_id;
         $storeinItem->unit_id = $request->unit_id;

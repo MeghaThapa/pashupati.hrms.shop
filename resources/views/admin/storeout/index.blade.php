@@ -62,7 +62,7 @@
                             <th>{{ __('Receipt NO') }}</th>
                             <th>{{ __('For') }}</th>
                             <th>{{ __('Total') }}</th>
-                            {{-- <th>{{ __('Status') }}</th> --}}
+                            <th>{{ __('Status') }}</th>
                             <th style="text-align: center !important;">{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -78,81 +78,85 @@
     <!-- /.content -->
 @endsection
 @section('extra-script')
-<script>
-     $(document).ready(function(){
-             var table = $('#storeoutTable').DataTable({
-                    lengthMenu: [
-                        [30, 40, 50, -1],
-                        ['30 rows', '40 rows', '50 rows', 'Show all']
-                    ],
-                    style: 'bootstrap4',
-                    processing: true,
-                    serverSide: true,
-                    ajax:"{{ route('storeout.storoutYajraDatabales')}}",
-                    columns: [{
-                            data: 'DT_RowIndex'
-                        },
-                        {
-                            data: 'receipt_date'
-                        },
-                        {
-                            data: 'receipt_no'
-                        },
-                        {
-                            data: 'storein_department_name'
-                        },
-                        {
-                            data: 'total_amount'
-                        },
-                        {
-                            data: 'action',
-                            orderable: true,
-                            searchable: true,
-                        },
-                    ]
-                });
+    <script>
+        $(document).ready(function() {
+            var table = $('#storeoutTable').DataTable({
+                lengthMenu: [
+                    [30, 40, 50, -1],
+                    ['30 rows', '40 rows', '50 rows', 'Show all']
+                ],
+                style: 'bootstrap4',
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('storeout.storoutYajraDatabales') }}",
+                columns: [{
+                        data: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'receipt_date'
+                    },
+                    {
+                        data: 'receipt_no'
+                    },
+                    {
+                        data: 'storein_department_name'
+                    },
+                    {
+                        data: 'total_amount'
+                    },
+                    {
+                        data: 'status'
+                    },
+                    {
+                        data: 'action',
+                        orderable: true,
+                        searchable: true,
+                    },
+                ]
+            });
 
-                 $('body').on('click', '#dltStoreout', function() {
-            let id = this.getAttribute('data-id');
-            // let id = $(this).attr('data-id').val();
-            console.log(id);
-            new swal({
-                    title: "Are you sure?",
-                    text: "Once deleted, data will deleted completely!!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, cancel!',
-                    reverseButtons: true
+            $('body').on('click', '#dltStoreout', function() {
+                let id = this.getAttribute('data-id');
+                // let id = $(this).attr('data-id').val();
+                console.log(id);
+                new swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, data will deleted completely!!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, cancel!',
+                        reverseButtons: true
 
-                })
-                .then((willDelete) => {
-                    if (willDelete.isConfirmed) {
+                    })
+                    .then((willDelete) => {
+                        if (willDelete.isConfirmed) {
 
-                        $.ajax({
-                            type: "DELETE",
-                            url: "{{route('storeout.deleteStoreout',['storeout_id'=>':id'])}}".replace(':id',id),
-                            data: {
-                                '_token': $('meta[name=csrf-token]').attr("content"),
-                            },
-                            success: function(data) {
-                                console.log('hello',data);
-                               new swal
-                                    ({
-                                        text: "Poof! Your data has been deleted!",
-                                        title: "Deleted",
-                                        icon: "success",
-                                    });
-                                location.reload();
-                            },
-                            error: function(xhr) {
-                                console.log(xhr.responseJSON.message);
-                            }
-                        })
+                            $.ajax({
+                                type: "DELETE",
+                                url: "{{ route('storeout.deleteStoreout', ['storeout_id' => ':id']) }}"
+                                    .replace(':id', id),
+                                data: {
+                                    '_token': $('meta[name=csrf-token]').attr("content"),
+                                },
+                                success: function(data) {
+                                    console.log('hello', data);
+                                    new swal
+                                        ({
+                                            text: "Poof! Your data has been deleted!",
+                                            title: "Deleted",
+                                            icon: "success",
+                                        });
+                                    location.reload();
+                                },
+                                error: function(xhr) {
+                                    console.log(xhr.responseJSON.message);
+                                }
+                            })
 
-                    }
-                })
-        })
+                        }
+                    })
+            })
         });
-</script>
+    </script>
 @endsection

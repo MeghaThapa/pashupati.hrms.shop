@@ -92,4 +92,12 @@ class BswFabSendcurtxReceivpatchvalveEntryController extends Controller
         $bswFabSendcurtxReceivpatchvalveEntry_id= $bswFabSendcurtxReceivpatchvalveEntry->id;
         return redirect()->route('fabSendCuetxReceivePatchValveItems.createItems',compact('bswFabSendcurtxReceivpatchvalveEntry_id'));
     }
+    public function saveEntire(Request $request){
+        $bswFabSendcurtxReceivpatchvalveEntry = BswFabSendcurtxReceivpatchvalveEntry::find($request->bswFabSendcurtxReceivpatchvalveEntry_id);
+        $bswFabSendcurtxReceivpatchvalveEntry->trem_wastage =$request->trimmimg_wastage;
+        $bswFabSendcurtxReceivpatchvalveEntry->fabric_wastage=$request->fabric_waste;
+        $bswFabSendcurtxReceivpatchvalveEntry->total_wastage = $request->trimmimg_wastage + $request->fabric_waste;
+        $bswFabSendcurtxReceivpatchvalveEntry->status ="completed";
+        $bswFabSendcurtxReceivpatchvalveEntry->save();
+    }
 }

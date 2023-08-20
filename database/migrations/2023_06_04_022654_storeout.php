@@ -21,7 +21,8 @@ return new class extends Migration
                 $table->foreign('godam_id')->references('id')->on('godam');
                 $table->string('total_amount')->default('0');
                 $table->string('remark')->nullable();
-                 $table->timestamps();
+                $table->enum('status', ['running', 'completed']);
+                $table->timestamps();
          });
     }
 

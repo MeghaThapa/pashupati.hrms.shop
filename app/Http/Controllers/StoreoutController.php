@@ -37,38 +37,85 @@ class StoreoutController extends Controller
         // return $storeOutDatas;
         return view('admin.storeout.index', compact('storeOutDatas'));
     }
+
     public function storoutYajraDatabales()
     {
-          $storeout = DB::table('storeout')
-        ->join('godam','godam.id','=','storeout.godam_id')
+    $batchSize = 100;
+
+    $storeout = DB::table('storeout')
+        ->join('godam', 'godam.id', '=', 'storeout.godam_id')
         ->select(
             'storeout.id',
             'godam.name as storein_department_name',
             'storeout.receipt_date',
             'storeout.receipt_no',
             'storeout.total_amount',
-            )
+            'storeout.status',
+        )
+        ->orderBy('storeout.id', 'DESC')
         ->get();
-        return DataTables::of($storeout)
-            ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $actionBtn = '
-                <a class="btnEdit" href="' . route('storeout.edit', ["storeout_id" => $row->id]) . '" >
-                    <button class="btn btn-primary">
-                        <i class="fas fa-edit fa-lg"></i>
-                    </button>
-                </a>
 
-                <button class="btn btn-danger" id="dltStoreout" data-id="'.$row->id.'">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-                '
-                ;
-                return $actionBtn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+    $storeoutChunks = array_chunk($storeout->toArray(), $batchSize);
+
+    $reportData = [];
+
+    foreach ($storeoutChunks as $batch) {
+        $storeoutBatch = collect($batch);
+
+        foreach ($storeoutBatch as $row) {
+            $actionBtn = '';
+            if ($row->status == 'running') {
+                $actionBtn .=$this->generateRunningAction($row);
+            } else {
+                $actionBtn .=$this->generateNonRunningAction($row);
+
+            }
+
+            $statusBadge = '<span class="badge badge-pill badge-success">' . $row->status . '</span>';
+
+            $reportData[] = [
+                'id' => $row->id,
+                'storein_department_name' => $row->storein_department_name,
+                'receipt_date' => $row->receipt_date,
+                'receipt_no' => $row->receipt_no,
+                'total_amount' => $row->total_amount,
+                'status' => $statusBadge,
+                'action' => $actionBtn,
+            ];
+        }
     }
+
+    return DataTables::of($reportData)
+        ->addIndexColumn()
+        ->rawColumns(['action', 'status'])
+        ->make(true);
+}
+private function generateRunningAction($row)
+{
+    return '
+    <a class="btnEdit" href="' . route('storeout.edit', ["storeout_id" => $row->id]) . '" >
+        <button class="btn btn-primary">
+            <i class="fas fa-edit fa-lg"></i>
+        </button>
+    </a>
+    <button class="btn btn-danger" id="dltStoreout" data-id="' . $row->id . '">
+        <i class="fas fa-trash-alt"></i>
+    </button>
+    ';
+}
+
+private function generateNonRunningAction($row)
+{
+    return '
+    <a class="" href="#" >
+        <button class="btn btn-info">
+            <i class="fas fa-file-invoice"></i>
+        </button>
+    </a>
+    ';
+}
+
+
     public function deleteStoreout($storeout_id){
     try{
          DB::beginTransaction();
@@ -116,8 +163,6 @@ class StoreoutController extends Controller
         try{
         DB::beginTransaction();
         $storeOutItem =StoreOutItem::find($storeout_item_id);
-
-       // return $category_id;
 
         $stock =Stock::where('item_id', $storeOutItem->item_of_storein_id)
         ->where('department_id', $storeOutItem->storeinDepartment_id)
@@ -169,10 +214,11 @@ class StoreoutController extends Controller
 
     public function edit($storeout_id)
     {
-        $receipt_no = null;
-       $godams =Godam::get(['id','name']);
-        $storeOut = StoreOut::find($storeout_id);
-        return view('admin.storeout.create', compact('receipt_no', 'storeOut','godams'));
+        return redirect()->route('storeout.storeOutItems',['store_out_id'=>$storeout_id]);
+    //     $receipt_no = null;
+    //    $godams =Godam::get(['id','name']);
+    //     $storeOut = StoreOut::find($storeout_id);
+    //     return view('admin.storeout.create', compact('receipt_no', 'storeOut','godams'));
     }
 
     public function saveStoreout(Request $request)
@@ -222,8 +268,12 @@ class StoreoutController extends Controller
         $queryBuilder = DB::table('stocks')
         ->where('stocks.category_id', $request->category_id)
         ->join('items_of_storeins', 'items_of_storeins.id', 'stocks.item_id')
-        ->select('items_of_storeins.name as id', 'items_of_storeins.name as text')
-        ->distinct();
+        ->join('storein_departments','storein_departments.id','=','stocks.department_id')
+        ->select(
+        'items_of_storeins.id as id',
+        DB::raw("CONCAT(items_of_storeins.name, ' /', storein_departments.name) as text")
+        )
+        ->distinct('items_of_storeins.name','storein_departments.name');
 
         if ($query !== null) {
             $queryBuilder->where('items_of_storeins.name', 'like', '%' . $query . '%');
@@ -237,35 +287,23 @@ class StoreoutController extends Controller
         ]);
     }
 
-    //for stock qty rate
+    //For Stock QTY RATE AJAX REQUEST
     public function getStockQtyRate(Request $request){
-
-       $item_id =  DB::table('items_of_storeins')
-       ->where('name',$request->item_name)
-       ->where('size_id', $request->side_id)
-       ->where('unit_id', $request->unit_id)
-       ->select('id')->first()->id;
-
-       $stockRateQty = DB::table('stocks')
+        return DB::table('stocks')
         ->where('category_id', $request->cat_id)
-        ->where('item_id',$item_id)
+        ->where('item_id',$request->item_id)
         ->where('size', $request->side_id)
         ->where('unit', $request->unit_id)
         ->first();
-       return $stockRateQty;
     }
 
-    public function getDepartmentSizeUnit($items_of_storein_name, $category_id){
+    public function getDepartmentSizeUnit($items_of_storein_id, $category_id){
         $stocks =Stock::with('department:id,name','units:id,name','sizes:id,name')
-        ->whereIn('item_id', function ($query) use ($items_of_storein_name) {
-            $query->select('id')
-                ->from('items_of_storeins')
-                ->where('name', $items_of_storein_name);
-        })
+        ->where('item_id',$items_of_storein_id)
         ->where('category_id',$category_id)
         ->groupBy(['size','unit','department_id'])
         ->get(['size','unit','department_id']);
-        // return $stocks;
+
         $ArrayStock =$stocks->toArray();
 
         $unitArray = [];
@@ -321,11 +359,10 @@ class StoreoutController extends Controller
 
     public function saveStoreoutItems(Request $request)
     {
-       // return $request;
         $request->validate([
             'category_id'=> 'required',
             'storeout_id' => 'required',
-            'item_name' =>'required',
+            'item_id' =>'required',
             'size' => 'required',
             'unit' => 'required',
             'quantity' => 'required',
@@ -333,24 +370,14 @@ class StoreoutController extends Controller
             'placement_id' => 'required',
             'through' => 'required',
         ]);
-
-        $stock = Stock::where('item_id', function ($query) use ($request) {
-            $query->select('id')
-            ->from('items_of_storeins')
-           // ->where('department_id',$request->department_id)
-           ->where('category_id',$request->category_id)
-            ->where('unit_id',$request->unit)
-            ->where('size_id',$request->size)
-            ->where('name', $request->item_name);
-        })
-       // ->where('department_id',$request->department_id)
-       ->where('category_id',$request->category_id)
-        ->where('size',$request->size)
-        ->where('unit',$request->unit)
-        ->first();
-    //    return $stock;
         try {
             DB::beginTransaction();
+
+            $stock = Stock::where('item_id',$request->item_id)
+            ->where('category_id',$request->category_id)
+            ->where('size',$request->size)
+            ->where('unit',$request->unit)
+            ->first();
 
             $storeOutItem = new StoreOutItem();
             $storeOutItem->item_of_storein_id = $stock->item_id;
@@ -401,11 +428,12 @@ class StoreoutController extends Controller
 
     public function getSingleStoreOutItemData($storeOutItem_id)
     {
-        return  StoreOutItem::with(['itemsOfStorein','size','unit', 'placement', 'department'])->find($storeOutItem_id);
+        return  StoreOutItem::with(['itemsOfStorein','size:id,name','unit:id,name', 'placement:id,name', 'department:id,name'])
+        ->find($storeOutItem_id);
     }
     public function getStoreOutItemData($storeout_id)
     {
-        $storeout_items = StoreOutItem::with(['placement', 'size','unit','itemsOfStorein', 'department'])->where('storeout_id', $storeout_id)->get();
+        $storeout_items = StoreOutItem::with(['placement:id,name', 'size:id,name','unit:id,name','itemsOfStorein', 'department:id,name'])->where('storeout_id', $storeout_id)->get();
             // return $storeout_items;
         return response()->json([
             'storeOutItem' =>  $storeout_items
@@ -414,26 +442,29 @@ class StoreoutController extends Controller
     public function saveEntireStoreOut(Request $request, $storeout_id)
     {
         try {
+            $today= Carbon::now()->format('Y-n-j');
             DB::beginTransaction();
             $storeout = Storeout::with('storeoutItems')->find($storeout_id);
             $storeout->total_amount = round($request->storeOutTotal,2);
             $storeout->remark = $request->store_out_remark;
+            $storeout->status = 'completed';
             $storeout->save();
 
             foreach($storeout->storeoutItems as $item){
                 $issuedStoreinReport=IssuedStoreinReport::where('name',$item->item_of_storein_id)
-                ->where('date',Carbon::now()->format('Y-n-j'))
+                ->where('date',$today)
                 ->first();
                 if($issuedStoreinReport){
                     $issuedStoreinReport->quantity += $item->quantity;
+                    $issuedStoreinReport->total =  round($issuedStoreinReport->quantity * $item->rate,2);
                     $issuedStoreinReport->save();
                 }else{
                     $issuedStoreinReport= new IssuedStoreinReport();
-                    $issuedStoreinReport->date =$storeout->receipt_date;
+                    $issuedStoreinReport->date =$today;
                     $issuedStoreinReport->name =$item->item_of_storein_id;
                     $issuedStoreinReport->quantity =$item->quantity;
                     $issuedStoreinReport->rate = $item->rate;
-                    $issuedStoreinReport->total =$issuedStoreinReport->quantity * $issuedStoreinReport->rate;
+                    $issuedStoreinReport->total =round($issuedStoreinReport->quantity * $issuedStoreinReport->rate,2);
                     $issuedStoreinReport->save();
                 }
             }

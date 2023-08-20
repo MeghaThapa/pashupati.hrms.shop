@@ -4,7 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-
+use App\Http\Controllers\ClosingStoreinReportController;
+use Illuminate\Support\Facades\Log;
 class Kernel extends ConsoleKernel
 {
     /**
@@ -18,13 +19,17 @@ class Kernel extends ConsoleKernel
 
     /**
      * Define the application's command schedule.
-     *
+     *x
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
+     * @return voideveryDay
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        Log::info('storein closing.');
+        // Closing Storein Report
+        $schedule->command('storein:closing')
+        ->timezone('Asia/Kolkata')
+        ->at('23:30');
     }
 
     /**

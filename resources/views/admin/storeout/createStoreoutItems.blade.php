@@ -409,7 +409,7 @@
                 <!--<button type="button" class="btn btn-primary">Save changes</button>-->
             </div>
         </div>
-      </div>
+    </div>
     </div>
     <!--Placement Model Popup End-->
 
@@ -689,28 +689,18 @@
             $('#unit').on('select2:select', function(e) {
                 let unit_id = e.params.data.id;
                 let category_id = $('#categorySelect').val();
-                let item_name = $('#items').val();
+                let item_id = $('#items').val();
                 let side_id = $('#size').val();
-                getStockQtyRate(category_id, item_name, side_id, unit_id);
-
-                //getDepartmentPlacement(department_id, 'model');
-
+                getStockQtyRate(category_id, item_id, side_id, unit_id);
             });
 
             $('#storeoutDepartments').on('select2:select', function(e) {
                 let department_id = e.params.data.id;
                 let storeout_id = JSON.parse(`{!! json_encode($storeOut->id) !!}`);
-
                 getDepartmentPlacement(department_id, 'blade', storeout_id);
-                // let category_id =$('#categorySelect').val();
-                // let item_name =$('#items').val();
-                // let side_id = $('#size').val();
-                // let unit_id = $('#unit').val();
-                // getStockQtyRate(category_id,item_name,side_id,unit_id);
-
             });
 
-            function getStockQtyRate(category_id, item_name, side_id, unit_id) {
+            function getStockQtyRate(category_id, item_id, side_id, unit_id) {
                 $.ajax({
                     url: "{{ route('storeout.getStockQtyRate') }}",
                     method: 'POST',
@@ -718,21 +708,13 @@
                         _token: "{{ csrf_token() }}",
                         // dept_id: department_id,
                         cat_id: category_id,
-                        item_name: item_name,
+                        item_id: item_id,
                         side_id: side_id,
                         unit_id: unit_id,
                     },
                     success: function(response) {
-                        console.log('getStockQtyRate', response);
                         $('#stock_quantity').val(response.quantity);
                         $('#rate').val(response.avg_price);
-                        // updateTableRow(response.storeOutItem, storeOut_item_id.value);
-
-                        // totalAmountCalculation();
-
-                        // editStoreOutEvent();
-                        // deleteEventBtn();
-
                     },
                     error: function(xhr, status, error) {
                         setMessage('edit-form-error', 'Please Fill out all fields')
@@ -777,13 +759,13 @@
 
             $('#items').on('select2:select', function(e) {
 
-                let item_name = e.params.data.id;
+                let item_id = e.params.data.id;
                 let category_id = $('#categorySelect').val();
                 $.ajax({
-                    url: "{{ route('storeout.getDepartmentSizeUnit', ['items_of_storein_name' => ':Replaced', 'category_id' => ':categoryId']) }}"
+                    url: "{{ route('storeout.getDepartmentSizeUnit', ['items_of_storein_id' => ':Replaced', 'category_id' => ':categoryId']) }}"
                         .replace(
                             ':Replaced',
-                            item_name)
+                            item_id)
                         .replace(
                             ':categoryId',
                             category_id),
@@ -893,7 +875,7 @@
                     through: through.value,
                 },
                 success: function(response) {
-                  //  console.log(response);
+                    //  console.log(response);
                     $('#editStoreoutModel').modal('hide');
 
                     updateTableRow(response.storeOutItem, storeOut_item_id.value);
@@ -999,11 +981,9 @@
         document.getElementById('createStoreOutItem').addEventListener('submit', function(e) {
             e.preventDefault();
             const form = e.target;
-
             let storeout_id = form.elements['store_out_id'].value;
-            //recent added
             let category_id = form.elements['categoryName'].value;
-            let item_name = form.elements['item_id'].value;
+            let item_id = form.elements['item_id'].value;
             let size = form.elements['size'].value;
             let unit = form.elements['unit'].value;
             let quantity = form.elements['quantity'].value;
@@ -1016,21 +996,18 @@
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    //resc added
                     category_id: category_id,
                     storeout_id: storeout_id,
-                    item_name: item_name,
+                    item_id: item_id,
                     size: size,
                     unit: unit,
                     quantity: quantity,
                     department_id: department,
                     placement_id: placement,
                     through: through,
-                    //remark: remark,
-                    // Goes Into Request
                 },
                 success: function(response) {
-                    //console.log('save storeout item respnse',response);
+                    console.log('stored :', response);
                     setIntoTable(response.storeOutItem);
                     $('#items').focus();
 
@@ -1063,16 +1040,13 @@
             var html = "";
 
             html = "<tr  id=editRow-" + res.id + "><td>" + sn +
-                "</td><td class='rowItemName'>" + res.items_of_storein.name +
+                "</td><td class='rowItemName'>" + res.items_of_storein.name +' / '+ res.department.name+
                 "</td><td class='rowsize_id'>" + res.size.name +
                 "</td><td class='rowQuantity'>" + res.quantity +
                 "</td><td class='rowUnitName'>" + res.unit.name +
                 "</td><td class='rowPrice'>" + res.rate +
                 "</td><td class='rowTotalAmount'>" + res.total +
                 "</td> <td>" +
-                // "<button class='btn btn-success editStoreoutBtn' data-id=" +
-                // res.id + "><i class='fas fa-edit'></i></button>" +
-                // "  " +
                 "<button class='btn btn-danger dltstoreoutItem' data-id=" +
                 res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td ></tr>";
 

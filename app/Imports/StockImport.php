@@ -34,6 +34,10 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $trimItem = trim($row['item_name']);
             $trimSize = trim($row['size']);
             $trimUnit =  trim($row['unit']);
+            $trimProductNumber =trim($row['parts_number']);
+            $trimQuantity = trim($row['quantity']);
+            $trimTotal = trim($row['total_amount']);
+            $trimAverage = trim($row['average_rate']);
 
             /*******trims spaces in between**********/
             $department = StoreinDepartment::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimDepartment)])->value('id');
@@ -45,7 +49,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             if($size == null) {
                 $code = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)), 0, 10);
                 $createSize = Size::create([
-                    "name" => isset($row['size'])?$row['size']:"N/A",
+                    "name" => isset($trimSize) ? $trimSize : "N/A",
                     "code" => $code,
                     'slug' => $code,
                     'note' => "Excel Import",
@@ -56,25 +60,25 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
             if($unit == null){
                 $code = rand(0,9999);
-                $slug = Str::slug($row['unit']);
+                $slug = Str::slug($trimUnit);
                 $unitCreate = Unit::firstOrCreate([
                     'slug' => $slug
                 ], [
-                    "name" => $row['unit'],
-                    "slug" => Str::slug($row['unit']),
+                    "name" => $trimUnit,
+                    "slug" => Str::slug($trimUnit),
                     "code" => $code
                 ]);
                 $unit = $unitCreate->id;
             }
 
             if ($category === null) {
-                 $slug = Str::slug($row['category']);
+                 $slug = Str::slug($trimCategory);
 
                  $createcategory = StoreinCategory::firstOrCreate([
                      'slug' => $slug
                  ], [
-                     'name' =>  trim(strtolower($row['category'])),
-                     'slug' => strtolower(Str::slug($row['category'])),
+                     'name' =>  trim(strtolower($trimCategory)),
+                     'slug' => strtolower(Str::slug($trimCategory)),
                      'note' => isset($row['note'])? $row['note'] : 'N/A',
                      'status' => "active"
                  ]);
@@ -82,12 +86,12 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             }
 
             if ($department === null) {
-                $slug = Str::slug($row['department']);
+                $slug = Str::slug($trimDepartment);
                 $createdepartment = StoreinDepartment::firstOrCreate([
                     'slug' => $slug
                 ], [
-                    'name' => trim(strtolower($row['department'])),
-                    'slug' => strtolower(Str::slug($row['department'])),
+                    'name' => trim(strtolower($trimDepartment)),
+                    'slug' => strtolower(Str::slug($trimDepartment)),
                     'category_id' => $category,
                     'status' => "active"
                 ]);
@@ -97,6 +101,9 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             $rowitem = ItemsOfStorein::whereRaw('LOWER(REPLACE(name, " ", "")) = LOWER(?)', [str_replace(' ', '', $trimItem)])
             ->where('size_id',$size)
             ->where('unit_id',$unit)
+            ->where('department_id',$department)
+            ->where('category_id',$category)
+            ->where('pnumber',$trimProductNumber)
             ->value('id');
             if($department && $category && $rowitem && $size && $unit){
                 $item = $rowitem;
@@ -105,13 +112,13 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
             }
             if ($item === null) {
                 $createitem= ItemsOfStorein::create([
-                    'name' =>trim(strtolower($row['item_name'])),
+                    'name' =>strtolower($trimItem),
                     'department_id'=> $department,
                     "category_id" => $category,
                     'status' => "1",
                     "unit_id" => $unit,
                     "size_id" => $size,
-                    'pnumber' => isset($row['parts_number'])? trim(strtolower($row['parts_number'])) : "Any",
+                    'pnumber' => isset($trimProductNumber)? trim(strtolower($trimProductNumber)) : "Any",
                 ]);
                 $item = $createitem->id;
             }
@@ -123,33 +130,50 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                         ->where('unit',$unit)
                         ->first();
                 if($exists){
+                    $total_amount = $exists->total_amount + $trimTotal;
+                    $total_quantity =$exists->quantity + $trimQuantity;
                     Stock::where('id',$exists->id)->update([
-                        "total_amount" => $exists->total_amount + $row['total_amount'],
-                        "quantity"=>$exists->quantity + $row['quantity']
+                        "total_amount" => $total_amount,
+                        "quantity"=>$total_quantity,
+                        "avg_price" => $total_amount/$total_quantity
                     ]);
 
                 }else{
                     Stock::create([
                     'item_id' => $item,
                     'size' => $size,
-                    'quantity' => $row['quantity'],
+                    'quantity' => $trimQuantity,
                     'unit' => $unit,
-                    'avg_price' => $row['average_rate'],
-                    'total_amount' => $row['total_amount'],
+                    'avg_price' => $trimAverage,
+                    'total_amount' => $trimTotal,
                     'department_id' => $department,
                     'category_id' => $category,
                     ]);
                 }
-                $openingStockReport=OpeningStoreinReport::where('name',$item)->first();
+
+             $openingStockReport= OpeningStoreinReport::with(['itemsOfStorein' => function($query) use($category, $department, $item, $size, $unit,$trimProductNumber) {
+                    $query->where('category_id', $category)
+                          ->where('department_id', $department)
+                          ->where('size_id', $size)
+                          ->where('unit_id', $unit)
+                          ->where('pnumber',$trimProductNumber);
+                        }])
+                    ->where('name', $item)
+                    ->first();
+
                 if($openingStockReport){
-                    $openingStockReport->quantity +=$row['quantity'];
+                    $total_amount = $openingStockReport->total + $trimTotal;
+                    $total_quantity =$openingStockReport->quantity + $trimQuantity;
+                    $openingStockReport->quantity =$total_quantity;
+                    $openingStockReport->total =$total_amount ;
+                    $openingStockReport->rate= $total_amount /$total_quantity;
                     $openingStockReport->save();
                 }else{
                     $stockReport= new OpeningStoreinReport();
                     $stockReport->date =Carbon::now()->format('Y-n-j');
                     $stockReport->name =$item;
-                    $stockReport->quantity =$row['quantity'];
-                    $stockReport->rate = $row['average_rate'];
+                    $stockReport->quantity =$trimQuantity;
+                    $stockReport->rate = $trimAverage;
                     $stockReport->total =$stockReport->quantity * $stockReport->rate;
                     $stockReport->save();
                 }

@@ -30,7 +30,7 @@ return new class extends Migration
             $table->longText('extra_charges')->nullable();
             $table->string('image_path')->nullable();
             $table->longText('note')->nullable();
-            $table->enum('status', ['active', 'inactive']);
+            $table->enum('status', ['running', 'completed']);
             $table->timestamps();
         });
     }

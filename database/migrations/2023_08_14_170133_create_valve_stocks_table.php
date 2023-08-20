@@ -13,19 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bsw_lam_printed_fabric_stocks', function (Blueprint $table) {
+        Schema::create('valve_stocks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("bswfabEntry_id");
-            $table->foreign("bswfabEntry_id")->references("id")->on('bsw_lam_fab_for_printing_entries')->onDelete('cascade');
-            $table->unsignedBigInteger("printed_fabric_id");
-            $table->foreign("printed_fabric_id")->references("id")->on('printed_fabrics')->onDelete('cascade');
+            $table->unsignedBigInteger("curtexToPatchValFabric_id")->index();
+            $table->foreign("curtexToPatchValFabric_id")->references("id")->on("curtex_to_patch_val_fabrics")->onDelete("cascade");
             $table->string('roll_no');
             $table->string('gross_weight');
             $table->string('net_weight');
             $table->string('meter');
-            $table->string('average');
-            $table->string('gram_weight');
-            $table->enum('is_laminated',['printed','nth'])->default('printed');
+            $table->string('avg');
+            $table->string('gram_weight')->nullable();
             $table->enum('status',['running','completed']);
             $table->timestamps();
         });
@@ -38,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bsw_lam_printed_fabric_stocks');
+        Schema::dropIfExists('valve_stocks');
     }
 };
