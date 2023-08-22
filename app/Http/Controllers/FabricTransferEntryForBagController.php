@@ -53,7 +53,12 @@ class FabricTransferEntryForBagController extends Controller
 
   /********* For Revewing what was sent --report *********/
   public function viewSentItem($id){
-    return BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+    // return BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+
+    $data = BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+    return view("admin.bag.fabricTransferForBag.viewBill", compact("data"));
+
+
   }
     /********* For Revewing what was sent --report end*********/
 

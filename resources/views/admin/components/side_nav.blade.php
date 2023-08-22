@@ -252,6 +252,13 @@
                                 <i class="nav-icon fas fa-boxes"></i>
                                 <p>{{ __('Tripal Transfer') }}</p>
                             </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('nonwovenGodamTransfer.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-boxes"></i>
+                                <p>{{ __('Nonwoven Transfer') }}</p>
+                            </a>
                         </li>                        
 
                     </ul>
