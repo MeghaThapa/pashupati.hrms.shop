@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CCPlantDanaCreation;
+use App\Models\CCPlantDanaCreationTemp;
 use App\Models\CCPlantEntry;
 use App\Models\CCPlantItems;
 use App\Models\CCPlantItemsTemp;
@@ -146,9 +148,13 @@ class CCPlantController extends Controller
 
     public function finalsubmit(){
         if($this->request->ajax()){
-            $data = CCPlantItemsTemp::where("cc_plant_entry_id",$this->request->cc_plant_entry_id)->get();
+            $data = CCPlantItemsTemp::where("cc_plant_entry_id",$this->request->cc_plant_entry_id);
+            $godam = $data->first()->entry->godam_id;
             DB::beginTransaction();
-            foreach($data as $item){
+            foreach($data->get() as $item){
+
+                $dana = DanaName::where("id",$item->dana_id)->first();
+
                 CCPlantItems::create([
                     "cc_plant_entry_id" => $this->request->cc_plant_entry_id, 
                     'planttype_id' => $item->planttype_id , 
@@ -163,6 +169,24 @@ class CCPlantController extends Controller
                 "status" => "completed"
             ]);
             DB::commit();
+        }
+    }
+
+    public function danacreation(){
+        if($this->request->ajax()){
+            CCPlantDanaCreationTemp::create([
+                "dananame" => $this->request->dana_name,
+                "danagroup_id" => $this->request->dana_group,
+                "entry_id" => $this->request->cc_plant_entry_id,
+                "quantity" => $this->request->quantity,
+                "planttype_id" => $this->request->planttype_id,
+                "plantname_id" => $this->request->plantname_id
+            ]);
+        }
+    }
+    public function createdDana($entry_id){
+        if($this->request->ajax()){
+            return $entry_id;
         }
     }
 }
