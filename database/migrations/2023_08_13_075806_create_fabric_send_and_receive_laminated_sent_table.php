@@ -29,6 +29,8 @@ return new class extends Migration
             $table->string("standard_wt");
             $table->string("loom_no");
             $table->string("roll_no");
+            $table->unsignedBigInteger('fabid')->nullable();
+            $table->foreign("fabid")->references("id")->on("fabrics")->onDelete("cascade");
             $table->timestamps();
         });
     }

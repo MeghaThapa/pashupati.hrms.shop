@@ -30,6 +30,7 @@
             <div class="card">
                 <div class="card-header">
                     <h4>Create Entries</h4>
+                    <a href="{{ route('get.lam.sent.details.all') }}">EDIT</a>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('fabricSendReceive.entry.store') }}" method="post">

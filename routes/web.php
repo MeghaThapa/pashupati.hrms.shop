@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CCPlantController;
 use App\Http\Controllers\FabricSendAndReceiveSaleController;
 use App\Http\Controllers\FabricTransferEntryForBagController;
 use App\Http\Controllers\InstallHelperController;
@@ -495,6 +496,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("add/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"addDanaConsumptionTablerevised"])->name("add.dana.consumption.fsr.revised");//latest
         Route::post("get/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"getDanaConsumptionTablerevised"])->name("get.dana.consumption.fsr.revised");//latest
         Route::post("delete/dana/consumption/revised",[FabricSendReceiveController::class,"removedDanaConsumptionTablerevised"])->name("delete.dana.consumption.revised");//lastest
+
+        Route::post("get/fabric/details/fsr",[FabricSendReceiveController::class,"getFabricDetailsAccRollNo"])->name('get/fabric/details/fsr');
+        Route::get("get/lam/sent/details/all",[FabricSendReceiveController::class,"getallSentData"])->name('get.lam.sent.details.all');
+        Route::get("edit.laminated.fabric/ajax",[FabricSendReceiveController::class,"getDatajax"])->name("edit.laminated.fabric.ajax");
+        Route::post("update/lam/sent",[FabricSendReceiveController::class,"updateLamSentFSr"])->name("update.lam.sent.fsr");
     //fabric send receive contoller End
 
     //fabric send and receive /fabric sale
@@ -513,7 +519,24 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
+    //fabric send and receive /fabric sale ends
 
+    //cc plant
+    Route::prefix("cc/plant/")->name("cc.plant.")->controller(CCPlantController::class)->group(function(){
+        Route::get("entry/index","entryindex")->name("entry.index");
+        Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
+        Route::post("entry/store","entrystore")->name("entry.store");
+
+        Route::get("create/{entry_id}","create")->name("create");
+        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
+        Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
+
+        Route::post("add.dana","addDana")->name("add.dana");
+        Route::get("cc/raw/materials","getccrawmaterials")->name('get.cc.raw.materials');
+        Route::get("cc/get/sum/{entry_id}","getsumquantity")->name('get.sum');
+
+        Route::post("final/submit","finalsubmit")->name("final.submit");
+    });
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
