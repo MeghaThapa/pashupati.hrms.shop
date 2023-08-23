@@ -16,6 +16,6 @@ class DanaName extends Model
     ];
 
     public function danagroup(){
-        return $this->belongsTo(DanaGroup::class);
+        return $this->belongsTo(DanaGroup::class,'dana_group_id');
     }
 }
