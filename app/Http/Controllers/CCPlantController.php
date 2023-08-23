@@ -30,7 +30,7 @@ class CCPlantController extends Controller
         $getData = DB::table("ccplantentry")->first();
         if(isset($getData)){
             $entries = DB::table("ccplantentry")->latest()->first()->id;
-           $receipt_number = "CC-".getNepaliDate(date("Y-m-d"))."-".$entries + 1;
+            $receipt_number = "CC-".getNepaliDate(date("Y-m-d"))."-".$entries + 1;
         }else{
             $receipt_number = "CC-".getNepaliDate(date("Y-m-d"))."-1";
         }
@@ -42,8 +42,17 @@ class CCPlantController extends Controller
 
     public function entryindexajax(){
         if($this->request->ajax()){
-            return DataTables::of(DB::table("ccplantentry")->get())
+            return DataTables::of(CCPlantEntry::with('godam','danaName.danagroup')->get())
                     ->addIndexColumn()
+                    ->addColumn("godam_name",function($row){
+                        return $row->godam->name;
+                    })
+                    ->addColumn("dana_name",function($row){
+                        return $row->danaName->name;
+                    })
+                    ->addColumn('dana_group',function($row){
+                        return $row->danaName->danagroup->name;
+                    })
                     ->addColumn("action",function($row){
                         if($row->status == "pending"){
                             return "<div class='btn-group'>
@@ -62,18 +71,35 @@ class CCPlantController extends Controller
     }
 
     public function entrystore(){
+        $request = $this->request;
         $this->request->validate([
             "godam_id" => "required",
             "date" => "required",
             "receipt_number" => "required|unique:ccplantentry",
             "date_np" => "required",
+            "dana_name" => "required",
+            "available_quantity" => "required",
+            "dana_quantity" => function ($attribute, $value, $fail) use ($request) {
+                $availableQuantity = $request->input('available_quantity');
+                if (floatval($value) >= floatval($availableQuantity)) {
+                    $fail("The $attribute must be less than the available quantity.");
+                }
+            },
         ]);
+
+        $rawMaterial = RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$request->dana_name)->firstOrFail();
+        if($rawMaterial->quantity>= $request->dana_quantity){
+            $rawMaterial->quantity = $rawMaterial->quantity - $request->dana_quantity;
+            $rawMaterial->save();
+        }
 
         CCPlantEntry::create([
             "godam_id" => $this->request->godam_id,
             "date" => $this->request->date,
             "date_np" => $this->request->date_np,
             "receipt_number" => $this->request->receipt_number ,
+            "dana_name_id" => $this->request->dana_name ,
+            "dana_quantity" => $this->request->dana_quantity,
             "remarks" => $this->request->remarks
         ]);
 
@@ -107,6 +133,11 @@ class CCPlantController extends Controller
                 "planttype" => ProcessingSubcat::where("processing_steps_id",$this->request->planttype_id)->get()
             ]);
         }
+    }
+
+    public function danaNameFromStock($godam_id){
+        $rawMaterials = RawMaterialStock::with('danaName','danaGroup')->where('godam_id',$godam_id)->get();
+        return response(['status'=>true,'data'=>$rawMaterials]);
     }
 
     public function addDana(){

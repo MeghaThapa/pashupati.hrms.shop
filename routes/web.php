@@ -528,7 +528,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("entry/index","entryindex")->name("entry.index");
         Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
         Route::post("entry/store","entrystore")->name("entry.store");
-
+        
+        Route::get("dananame-from-stock/{godam_id}","danaNameFromStock")->name("get.dananame.ajax");
         Route::get("create/{entry_id}","create")->name("create");
         Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
         Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");

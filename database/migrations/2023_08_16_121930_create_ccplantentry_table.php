@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string("date");
             $table->string("date_np");
             $table->string("receipt_number")->unique();
+            $table->unsignedBigInteger("dana_name_id");
+            $table->foreign('dana_name_id')->references('id')->on('dana_names')->onDelete('cascade');
+            $table->unsignedBigInteger("dana_quantity");
             $table->string("remarks")->nullable();
             $table->enum("status",["pending","completed"])->default("pending");
             $table->timestamps();

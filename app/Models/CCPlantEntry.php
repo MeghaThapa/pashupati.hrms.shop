@@ -14,7 +14,19 @@ class CCPlantEntry extends Model
         "date",
         "date_np",
         "receipt_number",
+        "dana_name_id",
+        "dana_quantity",
         "remarks",
         "status"
     ];
+
+    public function godam()
+    {
+        return $this->belongsTo(Godam::class);
+    }
+
+    public function danaName()
+    {
+        return $this->belongsTo(DanaName::class,'dana_name_id');
+    }
 }
