@@ -78,8 +78,8 @@
 @section('content')
 <section class="content">
   <div class="container-fluid">
-    <a href="{{route('tripalsale.pdf',$id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a>
-    <a href="{{route('tripalsale.excel',$id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a>
+    {{-- <a href="{{route('tripalsale.pdf',$id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a> --}}
+    {{-- <a href="{{route('tripalsale.excel',$id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a> --}}
    
     
     <div class="row" id="printTable">
@@ -102,22 +102,22 @@
             <div class="col-sm-6 invoice-col">
               
               <address>
-                <strong> PartyName : {{$findtripal->getParty->name}}</strong><br>
+                <strong> PartyName : {{$findsale->getParty->name}}</strong><br>
               
               </address>
             </div>
             <div class="col-sm-12 col-lg-6  text-right">
-              <b>A/C : {{$findtripal->getParty->name}}</b><br>
+              <b>A/C : {{$findsale->getParty->name}}</b><br>
               <br>
             </div>
             <div class="row col-lg-12" >
                 <div class="col-sm-6 col-lg-6  text-left">
-                  <b>Invoice Number: {{$findtripal->bill_no}}</b><br>
+                  <b>Invoice Number: {{$findsale->bill_no}}</b><br>
                   <br>
                 </div>
 
                 <div class="col-lg-6 text-right">
-                  <b>Gate Pass: {{$findtripal->gp_no}}</b><br>
+                  <b>Gate Pass: {{$findsale->gp_no}}</b><br>
                   <br>
                 </div>
                 
@@ -126,7 +126,7 @@
             <div class="row">
 
                 <div class="col-sm-12 text-right ml-2">
-                  <b>Date: {{$findtripal->bill_date}}</b><br>
+                  <b>Date: {{$findsale->bill_date}}</b><br>
                   <br>
                 </div>
                 
@@ -147,20 +147,20 @@
                     <th width="10px">{{ __('Net Wght') }}</th>
                     <th width="10px">{{ __('Meter') }}</th>
                     <th width="10px">{{ __('Avg Wght') }}</th>
-                    <th width="10px">{{ __('GSM') }}</th>
+                    <th width="10px">{{ __('Avg Gram') }}</th>
                 </tr>
 
                 <tbody>
-                    @foreach($salefinaltripals as $key=>$tripal)
+                    @foreach($fabrics as $key=>$fabric)
                     <tr>
                         <td>{{$key+1}}</td>
-                        <td>{{$tripal->name}}</td>
-                        <td>{{$tripal->roll}}</td>
-                        <td>{{$tripal->gross}}</td>
-                        <td>{{$tripal->net}}</td>
-                        <td>{{$tripal->meter}}</td>
-                        <td>{{$tripal->average}}</td>
-                        <td>{{$tripal->gram}}</td>
+                        <td>{{$fabric->getfabric->name}}</td>
+                        <td>{{$fabric->getfabric->roll_no}}</td>
+                        <td>{{$fabric->getfabric->gross_wt}}</td>
+                        <td>{{$fabric->getfabric->net_wt}}</td>
+                        <td>{{$fabric->getfabric->meter}}</td>
+                        <td>{{$fabric->getfabric->average_wt}}</td>
+                        <td>{{$fabric->getfabric->gram_wt}}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -187,17 +187,17 @@
                 </tr>
 
                 <tbody>
-                    @foreach($totaltripals as $key=>$tripal)
+                    @foreach($totalstocks as $key=>$stock)
                     <tr>
                         <td>{{$key+1}}</td>
-                        <td>{{$tripal->name}}</td>
-                        <td>{{$tripal->total_count}}</td>
-                        <td>{{$tripal->total_gross}}</td>
-                        <td>{{$tripal->total_net}}</td>
-                        <td>{{$tripal->total_meter}}</td>
+                        <td>{{$stock->name}}</td>
+                        <td>{{$stock->total_count}}</td>
+                        <td>{{$stock->total_gross}}</td>
+                        <td>{{$stock->total_net}}</td>
+                        <td>{{$stock->total_meter}}</td>
                     </tr>
                     @endforeach
-                </tbody>
+                </tbody> 
 
                 <tfoot>
                     <tr>

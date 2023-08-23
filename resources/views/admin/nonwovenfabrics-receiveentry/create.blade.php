@@ -76,92 +76,51 @@
 
 @section('content')
 <div class="card-body p-0 m-0">
-    <form id="createRawMaterial">
+    <form id="createRawMaterial" action="{{ route('nonwovenfabrics-receiveentry.store') }}" method="post">
         @csrf
-
         <div class="row">
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Date') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="receive_date" value="{{ date('Y-m-d') }}"  name="receive_date" required/> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                <input type="text" class="form-control" id="receive_date" value="{{ $find_data->bill_date }}"  name="receive_date" readonly/>
+                <input type="hidden" value="{{$bill_id}}" name="bill_id" id="bill_id">
             </div>
 
             <div class="col-md-2 form-group">
                 <label for="receive_no">Receipt Number</label>
-                <input type="text" value="{{$receipt_no}}" id="receipt_number_1_repeat"
-                    name="receive_no" class="form-control" readonly required />
+                <input type="text" value="{{$find_data->bill_no}}" id="receipt_number_1_repeat"
+                    name="receive_no" class="form-control" readonly />
             </div>
 
             
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('To Godam') }}
                 </label>
-                <select class="advance-select-box form-control" id="toGodam" name="to_godam_id" required>
-                    <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                   @foreach ($godams as $data)
-                        <option value="{{ $data->id }}">{{ $data->name }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('to_godam_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
+                <input type="text" value="{{$find_data->getGodam->name}}" id="godams"
+                    name="receive_no" class="form-control" readonly />
+                
+              
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Plant Type') }}
                 </label>
-                <select class="advance-select-box form-control" id="plantType" name="planttype_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
-                </select>
-                @error('planttype_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
+                <input type="text" value="{{$find_data->getPlantType->name}}" id="godams"
+                    name="receive_no" class="form-control" readonly />
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Plant Name') }}
                 </label>
-                <select class="advance-select-box form-control" id="plantName" name="plantname_id" required>
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    {{-- @foreach ($danaNames as $danaName)
-                    <option value="{{ $danaName->id }}">{{ $danaName->name }}
-                    </option>
-                    @endforeach --}}
-                </select>
-                @error('plantname_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
+                <input type="text" value="{{$find_data->getPlantName->name}}" id="godams"
+                    name="receive_no" class="form-control" readonly />
+             
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Shift') }}
                 </label>
-                <select class="advance-select-box form-control" id="shiftName" name="shift_id" disabled required>
-                    <option value="" selected disabled>{{ __('Select Shift Name') }}</option>
-                     @foreach ($shifts as $shift)
-                        <option value="{{ $shift->id }}">{{ $shift->name }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('shift_id')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
+                <input type="text" value="{{$find_data->getShift->name}}" id="godams"
+                    name="receive_no" class="form-control" readonly />
             </div>
-            {{-- <div>
-                <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                    Add
-                </button>
-            </div> --}}
+        
 
         </div>
         <div class="row">
@@ -169,6 +128,8 @@
             <div class="col-md-3 form-group">
                 <label for="fabric_roll">Fabric  Roll</label>
                 <input type="text" class="form-control" name="fabric_roll" id="fabric_roll">
+
+                 <input type="hidden" class="form-control" name="bill_no" id="bill_no" value="{{$find_data->bill_no}}">
             </div>
 
             <div class="col-md-3 form-group">
@@ -230,7 +191,6 @@
                         <th>{{ __('Length') }}</th>
                         <th>{{ __('Gross Weight') }}</th>
                         <th>{{ __('Net Weight') }}</th>
-                        <th>{{__('Send')}}</th>
                     </tr>
                 </thead>
 
@@ -242,10 +202,79 @@
 
     </div>
 </div>
+<div class="row">
+    <div class="col-md-7">
+        <form id="addSingleTripalDanaConsumption">
+            <div class="card p-2">
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label for="cut_length">Dana Name</label>
+                        <select
+                            class="advance-select-box form-control  @error('dana_name_id') is-invalid @enderror"
+                            id="danaNameId" name="dana_name_id" required>
+                            <option value="">Select</option>
+
+                            @foreach ($danas as $dana)
+                                <option value="{{ $dana->id }}">
+                                    {{ $dana->danaName->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cut_length">Available</label>
+                        <input type="text" class="form-control" id="avilableStock"
+                            name="avilable_stock" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="cut_length">Quantity</label>
+                        <input type="text" class="form-control" id="quantity" name="quantity">
+                    </div>
+                    <div class="col-md-2 mt-4">
+                        <button class="btn btn-primary ">Add</button>
+                    </div>
+                </div>
+                
+            </div>
+        </form>
+    </div>
+    <div class="col-md-5">
+        <table class="table table-bordered table-hover" id="danaConsumption">
+            <thead>
+                <tr>
+                    <th style="width:30px;">SN</th>
+                    <th>Godam</th>
+                    {{-- <th>Dana Group</th> --}}
+                    <th>Dana Name</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+
+                </tr>
+            </thead>
+            <tbody >
+                @foreach($danalist as $list)
+                <tr>
+                    <td>#</td>
+                    <td>{{$list->godam->name}}</td>
+                    <td>{{$list->danaName->name}}</td>
+                    <td>{{$list->quantity}}</td>
+
+                    <td>
+
+                        <a class="btnEdit btn btn-sm btn-danger" href="{{ route('nonwovenDanaConsumption.delete', $list->id) }}"><i class="fas fa-trash"></i>
+                            </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <div class="row">
 
-    <div class="col-md-5">
+    {{-- <div class="col-md-5">
         <div class="card mt-2 p-5">
             <div class="card-body">
                 
@@ -287,7 +316,7 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="card col-md-7">
         <div class="card-body m-2 p-5">
@@ -352,7 +381,7 @@
                                     class="required-field">*</span>
                             </label>
                             <input type="text" step="any" min="0" class="form-control calculator" id="dana_quanity"
-                                data-number="1" name="dana_quanity" min="1" required>
+                                data-number="1" name="dana_quanity" min="1" required value="{{$sumdana}}">
                             @error('dana_quanity')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -476,6 +505,41 @@
 <script src="{{ asset('js/storein.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script>
+
+    //save addPrintsAndDanaConsumption
+    document.getElementById('addSingleTripalDanaConsumption').addEventListener('submit',
+        function(e) {
+            e.preventDefault();
+            // debugger;
+            const form = e.target;
+            let bill_no = $("#bill_no").val();
+            let bill_id = $("#bill_id").val();
+            //console.log('testing', printCutEntry_id);
+            let autoloader_id = form.elements['dana_name_id'];
+            let quantity = form.elements['quantity'];
+            $.ajax({
+                url: "{{ route('nonwovenDanaConsumption.store') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    bill_no: bill_no,
+                    bill_id: bill_id,
+                    autoloader_id: autoloader_id.value,
+                    quantity: quantity.value
+                },
+                success: function(response) {
+                    location.reload();
+                    removeAllTableRows('danaConsumption');
+                    getdanaConsumptionData();
+                    // setIntoConsumptionTable(response);
+                    // getdanaConsumptionData();
+                    updateStockQuantity();
+                },
+                error: function(xhr, status, error) {
+                    setErrorMsg(xhr.responseJSON.message);
+                }
+            });
+    });
 
 
     $("#danaNameId").on("change",function(e){
@@ -627,6 +691,37 @@
   //   })
   // })
 
+    $('#danaNameId').on('select2:select', function(e) {
+        // console.log('df');
+        // debugger;
+        // let godam_id = document.getElementById('godamId').value;
+        let autoloader_id = e.params.data.id;
+        $('#avilableStock').empty();
+        getStockQuantity(autoloader_id);
+    });
+
+    function getStockQuantity(autoloader_id) {
+        $.ajax({
+            url: "{{ route('tripalDana.getStockQuantity') }}",
+            method: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                autoloader_id: autoloader_id,
+            },
+            success: function(response) {
+                console.log('stockQty', response);
+                document.getElementById('avilableStock').value = response.quantity;
+                // response.forEach(function(item) {
+                //     setOptionInSelect('danaNameId', item.dana_name.id, item.dana_name
+                //         .name);
+                // });
+            },
+            error: function(xhr, status, error) {
+                setErrorMsg(xhr.responseJSON.message);
+            }
+        });
+    }
+
    $(document).on("click","#finalUpdate",function(e){
 
       let danaNameId = $("#selectedDanaID").val();
@@ -639,18 +734,17 @@
       let roalcoast = $("#roalcoast").val();
       let strip = $("#strip").val();
       let godam_id = $("#toGodam").val();
-      let bill = $("#billno").val();
+      let bill = $("#bill_id").val();
       // console.log(godam_id);
       // debugger;
 
-      trimmedConsumption = consumption.trim();
       trimmedFilter = filter.trim();
       // trimmedFabricWaste = fabric_waste.trim();
       trimmedTotalWaste = wastage.trim();
 
       // debugger;
 
-      if(trimmedConsumption == '' || trimmedFilter == '' || trimmedTotalWaste == ''){
+      if(trimmedFilter == '' || trimmedTotalWaste == ''){
           alert('Waste and Consumption cannot be null');
       }else{
       // subtractformautolad(danaNameId,consumption);
@@ -660,7 +754,6 @@
               data:{
                   "_token" : $('meta[name="csrf-token"]').attr('content'),
                   "danaNameID" : danaNameId,
-                  "consumption" : trimmedConsumption,
                   "total_waste" : trimmedTotalWaste,
                   "selectedDanaID" : selectedDanaID,
                   "bill" : bill
@@ -669,12 +762,12 @@
                   console.log("Before Send");
               },
               success:function(response){
-                  console.log(response);
-                  if(response == '200'){
-                      location.reload();
-                  }else{
+                  location.href='{{route('nonwovenfabrics-receiveentry.index')}}'
+                  // if(response == '200'){
+                  //     location.reload();
+                  // }else{
 
-                  }
+                  // }
               },
               error:function(error){
                   console.log(error);
@@ -806,9 +899,14 @@
     /**************************** Ajax functions **************************/
 
     function callunlaminatedfabricajax(){
+        let bill_id =  $('#bill_id').val();
         $.ajax({
             url : "{{ route('nonwovenfabric.getReceiveEntryData') }}",
             method: 'get',
+            data:{
+                "_token": $('meta[name="csrf-token"]').attr('content'),
+                "bill_id" : bill_id
+            },
             beforeSend:function(){
                 console.log('getting unlaminated fabric');
             },
@@ -890,8 +988,7 @@
     $("#plantName").change(function(e){
         $('#shiftName').prop('disabled',false);
         $('#createRawMaterial').attr({
-            'action' : "{{ route('nonwovenfabrics-receiveentry.store') }}",
-            'method' : "post"
+           
         });
         $("#rollnumberfabric").prop('disabled',false);
     });
@@ -942,7 +1039,7 @@
             tr.append(`<td>${d.length}</td>`);
             tr.append(`<td>${d.gross_weight}</td>`);
             tr.append(`<td>${d.net_weight}</td>`);
-            // tr.append(`<td><div class="btn-group"><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
+           
         });
     }
 
@@ -950,29 +1047,7 @@
         $("#createRawMaterial")[0].reset();
     }
 
-    function deletefromunlamintedtable(data){
-        $.ajax({
-            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
-            method:'get',
-            beforeSend:function(){
-                console.log('deleteing from unlamintaed table');
-            },
-            success:function(response){
-                if(response.response == '200'){
-                    emptytable();
-                    callunlaminatedfabricajax();
-                }else if(response.response == '400'){
-                    alert('Not Allowed OR Data is no longer there');
-                }
-            },
-            error:function(error){
-                console.log(error);
-            }
-        });
-    }
-    /************************* Other Functionalities ***********************/
-
-    /************************* Send for lamination **************************/
+   
     $(document).ready(function(){
         $(document).on('click',"#sendforlamination",function(e){
             e.preventDefault();
@@ -987,19 +1062,13 @@
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
             $("#idoffabricforsendtolamination").val(id);
-            // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
-            // $('#sendtolaminationform').attr('action',action);
-            // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
-            // action = action.slice(0, -2) + `${id}`;
-            // $('#sendtolaminationform').attr('action', action);
+            
         });
     });
-    // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
-    //     $(this).removeAttr('action');
-    // });
+   
         $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });
-    /************************* Send for lamination **************************/
+  
 </script>
 @endsection 

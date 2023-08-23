@@ -24,7 +24,7 @@
                                     <td>{{ ++$i }}</td>
                                      <td>{{ $stock->roll_no }}</td>
                                      <td>{{ $stock->loom_no }}</td>
-                                    <td>{{ $stock->name }} ({{$stock->fabricgroup->name}})</td>
+                                    <td>{{ $stock->name }} </td>
                                      <td>{{ $stock->gross_wt }}</td>
                                      <td>{{ $stock->net_wt }}</td>
                                      <td>{{ $stock->meter }}</td>

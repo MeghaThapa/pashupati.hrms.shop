@@ -50,6 +50,22 @@ $fabric_netweight = 0;
         return view('admin.fabric.index', compact('fabrics','departments','shifts','fabric_netweight'));
     }
 
+    public function test(){
+        $data = FabricStock::get();
+        // dd($data);
+        foreach ($data as $value) 
+            {
+                $group = FabricGroup::find($value->fabricgroup_id);
+                $final = $value->name .'('. $group->name.')';
+                // dd($final);
+                $sa = FabricStock::where('id',$value->id)->update(['name' => $final]); 
+
+                // dd($value,$group);
+            }
+        
+
+    }
+
 
      public function create()
     {

@@ -102,31 +102,32 @@
             <div class="col-sm-6 invoice-col">
               
               <address>
-                <strong> PartyName : {{$findtripal->getParty->name}}</strong><br>
+                <strong> FromGodam : {{$find_data->getFromGodam->name}}</strong><br>
               
               </address>
             </div>
             <div class="col-sm-12 col-lg-6  text-right">
-              <b>A/C : {{$findtripal->getParty->name}}</b><br>
+              <b>ToGodam : {{$find_data->getToGodam->name}}</b><br>
               <br>
             </div>
             <div class="row col-lg-12" >
                 <div class="col-sm-6 col-lg-6  text-left">
-                  <b>Invoice Number: {{$findtripal->bill_no}}</b><br>
+                    
+                  <b>Invoice Number: {{$find_data->bill_no}}</b><br>
                   <br>
                 </div>
 
-                <div class="col-lg-6 text-right">
-                  <b>Gate Pass: {{$findtripal->gp_no}}</b><br>
+                {{-- <div class="col-lg-6 text-right">
+                  <b>FromGodam : {{$find_data->getFromGodam->name}}</b><br>
                   <br>
-                </div>
+                </div> --}}
                 
             </div>
 
             <div class="row">
 
                 <div class="col-sm-12 text-right ml-2">
-                  <b>Date: {{$findtripal->bill_date}}</b><br>
+                  {{-- <b>Date: {{$findtripal->bill_date}}</b><br> --}}
                   <br>
                 </div>
                 
@@ -136,7 +137,7 @@
           </div>
           <div class="row">
             <div class="col-12 table-responsive">
-              <table class="table table-bordered" style="padding: 0 30px; ">
+              <table class="table table-striped table-sm">
                 
 
                 <tr>
@@ -151,9 +152,9 @@
                 </tr>
 
                 <tbody>
-                    @foreach($salefinaltripals as $key=>$tripal)
+                    @foreach($stocks as $tripal)
                     <tr>
-                        <td>{{$key+1}}</td>
+                        <td>#</td>
                         <td>{{$tripal->name}}</td>
                         <td>{{$tripal->roll}}</td>
                         <td>{{$tripal->gross}}</td>
@@ -170,11 +171,11 @@
           </div>
         </div>
 
-        <h3 class="m-0 text-center mt-4">SUMMARY</h3>
+        {{-- <h3 class="m-0 text-center mt-2">SUMMARY</h3> --}}
 
-          <div class="row px-4 py-3">
+        {{--   <div class="row p-4">
             <div class="col-12 table-responsive">
-              <table class="table table-bordered">
+              <table class="table table-striped table-sm">
                 
 
                 <tr>
@@ -187,9 +188,9 @@
                 </tr>
 
                 <tbody>
-                    @foreach($totaltripals as $key=>$tripal)
+                    @foreach($totaltripals as $tripal)
                     <tr>
-                        <td>{{$key+1}}</td>
+                        <td>#</td>
                         <td>{{$tripal->name}}</td>
                         <td>{{$tripal->total_count}}</td>
                         <td>{{$tripal->total_gross}}</td>
@@ -210,7 +211,7 @@
              
              
               </table>
-          </div>
+          </div> --}}
         </div>
         
         <div class="row no-print">
