@@ -54,6 +54,7 @@ use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
+use App\Http\Controllers\ReprocessWasteController;
 use Symfony\Component\Routing\RouteCollection;
 
 // brandBag.store
@@ -535,6 +536,22 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("add.dana","addDana")->name("add.dana");
         Route::get("cc/raw/materials","getccrawmaterials")->name('get.cc.raw.materials');
         Route::get("cc/get/sum/{entry_id}","getsumquantity")->name('get.sum');
+
+        Route::post("final/submit","finalsubmit")->name("final.submit");
+    });
+    
+    Route::prefix("reprocess/waste/")->name("reprocess.waste.")->controller(ReprocessWasteController::class)->group(function(){
+        Route::get("entry/index","entryindex")->name("entry.index");
+        Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
+        Route::post("entry/store","entrystore")->name("entry.store");
+
+        Route::get("create/{entry_id}","create")->name("create");
+        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
+        Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
+
+        Route::post("add-waste","addWaste")->name("add.waste");
+        Route::get("raw/materials","getWasteRawmaterials")->name('get.raw.materials');
+        Route::get("get/sum/{entry_id}","getsumquantity")->name('get.sum');
 
         Route::post("final/submit","finalsubmit")->name("final.submit");
     });

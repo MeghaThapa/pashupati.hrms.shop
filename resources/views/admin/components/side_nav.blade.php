@@ -252,7 +252,7 @@
                                 <i class="nav-icon fas fa-boxes"></i>
                                 <p>{{ __('Tripal Transfer') }}</p>
                             </a>
-                        </li>
+                        </li>                        
 
                         <li class="nav-item">
                             <a href="{{ route('nonwovenGodamTransfer.index') }}" class="nav-link">
@@ -561,7 +561,15 @@
                         <p>{{ __('CC Plant') }}</p>
                     </a>
                 </li>
-
+                
+                <li class="nav-header text-bold">{{ __('Reprocess Waste') }}</li>
+                <li class="nav-item">
+                    <a href="{{ route('reprocess.waste.entry.index') }}"
+                        class="nav-link {{ request()->routeIs('cc.plant.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-random"></i>
+                        <p>{{ __('Reprocess Waste') }}</p>
+                    </a>
+                </li>
 
 
                 <!-------------  Bag --------------------------->
