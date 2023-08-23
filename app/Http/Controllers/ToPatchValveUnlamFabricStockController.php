@@ -80,8 +80,17 @@ class ToPatchValveUnlamFabricStockController extends Controller
     }
 
     public function threeDiffStockData(Request $request){
-        $commonStockOfThreeStock =CommonStockOfThreeStock::with('curtexToPatchValFabric:id,name')->where('curtexToPatchValEntry_id',$request->bsw_lam_fabcurtexToPatchVal_entry_id)
+         $commonStockOfThreeStock =CommonStockOfThreeStock::with('curtexToPatchValFabric:id,name,fabric_type')->where('curtexToPatchValEntry_id',$request->bsw_lam_fabcurtexToPatchVal_entry_id)
         ->get();
-        return $commonStockOfThreeStock;
+        $fabricType=$commonStockOfThreeStock[0]->curtexToPatchValFabric->fabric_type;
+        $totalmeter = $commonStockOfThreeStock->sum('meter');
+        $totalNetWeight = $commonStockOfThreeStock->sum('net_weight');
+        $data=[
+           'commonStockOfThreeStock'=>$commonStockOfThreeStock,
+           'totalmeter'=>$totalmeter,
+           'netWeight'=>$totalNetWeight,
+           'fabricType'=>$fabricType
+        ];
+        return $data;
     }
 }

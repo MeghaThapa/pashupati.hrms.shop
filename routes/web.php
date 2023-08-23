@@ -85,7 +85,7 @@ Route::get('artisandone',function(){
     // \Artisan::call("make:model AutoloadItems");
     // \Artisan::call('make:migration create_autoload_items_stock_table');
 
-    // \Artisan::call('migrate --path=/database/migrations/2023_08_15_160938_add_status_to_fabric_sale_entry_table.php');         
+    // \Artisan::call('migrate --path=/database/migrations/2023_08_15_160938_add_status_to_fabric_sale_entry_table.php');
       return "done";
 });
 
@@ -473,7 +473,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post('/fabricSendReceive/entry/store', [FabricSendReceiveController::class,"store"])->name('fabricSendReceive.entry.store');
         Route::post('/fabricSendReceive/entry/delete', [FabricSendReceiveController::class,"delete"])->name('fabricSendReceive.entry.delete');
         /************* aile baki xa **************/
-     
+
         Route::get('fabricSendReceive/index/{id}', [FabricSendReceiveController::class,"indexrevised"])->name('fabricSendReceive.index.revised');//latest
 
         Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
@@ -481,7 +481,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
         Route::get('fabric/send/unlaminated/delete/{id}/revised',[FabricSendReceiveController::class,'sendunlaminateddeleterevised'])->name('fabricSendReceive.send.unlaminated.delete.revised');//latest
         Route::post("fabric/send/unlaminated/store/revised2",[FabricSendReceiveController::class,'sendunlaminatedrevised2'])->name("fabricSendReceive.send.unlaminated.revised2"); //latest
-        
+
         //getting unlaminated into form
 
         Route::get('fabric/get/unlaminated/{fsr_entry_id}',[FabricSendReceiveController::class,'getunlaminatedrevised'])->name('fabricSendReceive.get.unlaminated.revised');//latest
@@ -503,11 +503,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("entry/index/ajax","indexajax")->name("entry.index.ajax");
         Route::post("entry/store","store")->name('entry.store');
 
-        Route::get("create/{entry_id}","create")->name("create"); 
+        Route::get("create/{entry_id}","create")->name("create");
         Route::post("store","storeSale")->name("store");
         Route::get("get/list","getSales")->name("get.list");
 
-        Route::post("delete","delete")->name('delete'); 
+        Route::post("delete","delete")->name('delete');
         Route::post("final/submit","submit")->name("submit");
 
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
@@ -535,7 +535,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
-    
+
     Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
 
     //fabric opening
@@ -575,7 +575,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabricGodam/delete/list', 'FabricGodamController@deleteFabricGodamList')->name('fabricgodam.deleteFabricGodamList');
 
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("get.fabric.same.name");
-    
+
 
 
     //tripal
@@ -786,7 +786,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
 
-    
+
 
 
 
@@ -1426,7 +1426,7 @@ Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
     Route::post("store","store")->name('fabSendCuetxReceivePatchValveItems.store');
     Route::get("lamFabData","lamFabData")->name('fabSendCuetxReceivePatchValveItems.lamFabData');
     Route::get("getAvailableQty","getAvailableQty")->name('fabSendCuetxReceivePatchValveItems.getAvailableQty');
-
+    Route::delete("delete/{id}","delete")->name('fabSendCuetxReceivePatchValveItems.delete');
     Route::get("edit/{id}","edit")->name('fabSendCuetxReceivePatchValveItems.edit');
 });
 
@@ -1470,3 +1470,27 @@ Route::controller(PatchValDanaConsumptController::class)
     Route::delete("delete/{id}","delete")->name('patchValvDanaConsumpt.delete');
 });
 /**********************************PatchValDanaConsumptController end****************************************/
+
+/**************************************RawMaterialSalesController**************************************/
+Route::controller(RawMaterialSalesEntryController::class)
+->prefix('rawMaterialSalesEntry')
+->group(function(){
+    Route::get("index","index")->name('rawMaterialSalesEntry.index');
+    Route::get("create","create")->name('rawMaterialSalesEntry.create');
+    Route::post("store","store")->name('rawMaterialSalesEntry.store');
+    Route::get("yajraDatatables","yajraDatatables")->name('rawMaterialSalesEntry.yajraDatatables');
+    Route::get("edit/{id}","edit")->name('rawMaterialSalesEntry.edit');
+    Route::post("saveEntire","saveEntire")->name('rawMaterialSalesEntry.saveEntire');
+
+});
+/**************************************RawMaterialSalesController End**************************************/
+Route::controller(RawMaterialItemsSaleController::class)
+->prefix('rawMaterialItemsSalesEntry')
+->group(function(){
+    Route::get("create/{id}","create")->name('rawMaterialItemsSalesEntry.create');
+    Route::get("getDanaGroupDanaName","getDanaGroupDanaName")->name('rawMaterialItemsSalesEntry.getDanaGroupDanaName');
+    Route::get("getDanaStockQty","getDanaStockQty")->name('rawMaterialItemsSalesEntry.getDanaStockQty');
+    Route::post("store","store")->name('rawMaterialItemsSalesEntry.store');
+    Route::get("getSalesData","getSalesData")->name('rawMaterialItemsSalesEntry.getSalesData');
+    Route::delete("delete/{salesItem_id}","delete")->name('rawMaterialItemsSalesEntry.delete');
+});
