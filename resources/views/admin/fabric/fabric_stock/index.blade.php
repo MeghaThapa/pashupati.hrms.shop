@@ -11,7 +11,20 @@
     align-items: center;">
 
         <img class="lg-logo" src="{{ $settings->logo }}" alt="{{ $settings->companyName }}" width="250" height="50">
-        <h3>Fabric Stock</h3>
+        <h3>
+          <div class="col-md-1">
+            <form action="{{route('fabric-stock.viewBill')}}" method="post">
+                @csrf
+                <input type="hidden" name="godam_id" id="godamm_id" >
+                <input type="hidden" name="name" id="name_data">
+                <input type="hidden" name="type" id="type_data">
+                <input type="hidden" name="group" id="group_data">
+                <button class="btn btn-primary" style="width:150px"  id="">View Bill</button>
+                
+            </form>
+
+          </div>
+       </h3>
     </div>
     
     <div class="row">
@@ -63,7 +76,11 @@
             <button class="btn btn-primary" style="width:150px"  id="fabricStockSearch">Show Report</button>
 
         </div>
+
+        
+
     </div>
+
 
     <div class="row" id="replaceTable">
         <div class="col-md-12">
@@ -91,7 +108,7 @@
                                     <td>{{ ++$i }}</td>
                                      <td>{{ $stock->roll_no }}</td>
                                      <td>{{ $stock->loom_no }}</td>
-                                    <td>{{ $stock->name }} ({{$stock->fabricgroup->name}})</td>
+                                    <td>{{ $stock->name }}</td>
                                      <td>{{ $stock->gross_wt }}</td>
                                      <td>{{ $stock->net_wt }}</td>
                                      <td>{{ $stock->meter }}</td>
@@ -131,6 +148,7 @@
             let department_id =  $(this).val();
             let geturl = "{{ route('fabricSendReceive.get.planttype',['id'=>':id']) }}"
             $("#godam_ids").val(department_id);
+            $("#godamm_id").val(department_id);
             $.ajax({
                 url:geturl.replace(':id',department_id),
                 beforeSend:function(){
@@ -144,6 +162,24 @@
                 }
             });
         });
+
+        $("#fabric_id").change(function(e){
+            let department_id =  $(this).val();
+            $("#name_data").val(department_id);
+        });
+
+        $("#type").change(function(e){
+            // debugger;
+            let type =  $(this).val();
+            $("#type_data").val(type);
+        });
+
+        $("#fabricgroup_id").change(function(e){
+            let group =  $(this).val();
+            $("#group_data").val(group);
+        });
+
+
 
         function addfabrictype(data){
             $("#fabric_id").empty();
@@ -159,13 +195,48 @@
       $("body").on("click", "#fabricStockSearch", function(event){
         searchFunction();
       });
-      // $('#search_data').keypress(function(event){
-      //   var keycode = (event.keyCode ? event.keyCode : event.which);
-      //   if(keycode == '13'){
-      //     // alert('You pressed a "enter" key in textbox'); 
-      //     searchFunction();
-      //   }
-      // });
+
+      $("body").on("click", "#fabricStockviewBill", function(event){
+        viewBill();
+      });
+
+      function viewBill(){
+        var godam_id = $('#godam_id').val(),
+        fabric_id = $('#fabric_id').val(),
+        fabricgroup_id = $('#fabricgroup_id').val(),
+        type = $('#type').val();
+        var token = $('meta[name="csrf-token"]').attr('content');
+
+
+        $.ajax({
+          type:"GET",
+          dataType:"html",
+          url: "{{route('fabric-stock.viewBill')}}",
+          data: {
+            _token: token,
+            godam_id: godam_id,
+            fabric_id: fabric_id,
+            type: type,
+            fabricgroup_id: fabricgroup_id,
+          },
+          // success:function(response){
+          //   // $('#replaceTable').html("");
+          //   // $('#replaceTable').html(response);
+          // },
+          // error: function (e) {
+          //   alert('Sorry! we cannot load data this time');
+          //   return false;
+          // }
+        });
+      }
+      $("body").on("click", "#replaceTable a.page-link", function(event){
+        $.get($(this).attr('href'),function(data){
+          $('#replaceTable').html("");
+          $('#replaceTable').html(data);
+        })
+        return false;
+      });
+    
       function searchFunction(){
         var godam_id = $('#godam_id').val(),
         fabric_id = $('#fabric_id').val(),

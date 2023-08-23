@@ -22,7 +22,7 @@ class NonWovenStockController extends Controller
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
 
-       $nonwoven_stocks = NonwovenOpeningStock::paginate(35);
+       $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
        // $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
 
         // dd($nonwoven_stocks);

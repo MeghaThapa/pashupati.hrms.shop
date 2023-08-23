@@ -13,6 +13,7 @@ use App\Models\SaleFinalTripal;
 use App\Models\SaleFinalTripalList;
 use App\Models\SaleFinalTripalEntry;
 use App\Models\FinalTripalName;
+use App\Models\Godam;
 use App\Helpers\AppHelper;
 use Throwable;
 use Yajra\DataTables\DataTables;
@@ -122,7 +123,10 @@ class SaleFinalTripalController extends Controller
     public function addTripal($id)
     {
         $findtripal = SaleFinalTripal::find($id);
-        $fabrics = FinalTripalStock::get()->unique('name')->values()->all();
+        $godam_id = Godam::where('name','psi')->value('id');
+        // dd($item);
+        $fabrics = FinalTripalStock::where('department_id',$godam_id)->get()->unique('name')->values()->all();
+        // dd($fabrics);
         $salefinaltripals = SaleFinalTripal::paginate(20);
         return view('admin.sale.salefinaltripal.addtripal',compact('findtripal','fabrics','salefinaltripals','id'));
     }
@@ -154,9 +158,11 @@ class SaleFinalTripalController extends Controller
 
     public function getfinaltripalFilter(Request $request){
         if($request->ajax()){
+            $godam_id = Godam::where('name','psi')->value('id');
             $fabric_name_id = $request->fabric_name_id;
             $fabric_name = FinalTripalStock::where("id",$fabric_name_id)->value("name");
-            $fabrics = FinalTripalStock::where("name",$fabric_name)->get();
+            $fabrics = FinalTripalStock::where('department_id',$godam_id)->where("name",$fabric_name);
+            // dd($fabrics->count());
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()

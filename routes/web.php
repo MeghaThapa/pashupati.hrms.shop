@@ -517,6 +517,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("final/submit","submit")->name("submit");
 
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
+        Route::get("viewbill/{bill_id}","viewBill")->name("viewBill"); 
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -560,6 +561,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
 
     Route::post('fabrics/getstock/filterStocks/viewBill',[FabricStockController::class,'viewBill'])->name('fabric-stock.viewBill');
+
+    Route::post('test','FabricController@test')->name('test');
     
     Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
 
@@ -853,24 +856,24 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::prefix('nonwovenGodamTransfer')->group(function () {
         // Define routes here
         Route::get('index', 'GodamTransfer\NonwovenGodamController@index')->name('nonwovenGodamTransfer.index');
-        // Route::get('create', 'GodamTransfer\NonwovenGodamController@create')->name('nonwovenGodamTransfer.create');
-        // Route::post('store', 'GodamTransfer\NonwovenGodamController@store')->name('nonwovenGodamTransfer.store');
-        // Route::get('nonwovenGodam/dataTable', 'GodamTransfer\NonwovenGodamController@dataTable')->name('nonwovenGodam.dataTable');
-        // Route::get('transferFabric/{nonwovengodam_id}', 'GodamTransfer\NonwovenGodamController@transferFabric')->name('nonwovenGodam.transferFabric');
+        Route::get('create', 'GodamTransfer\NonwovenGodamController@create')->name('nonwovenGodamTransfer.create');
+        Route::post('store', 'GodamTransfer\NonwovenGodamController@store')->name('nonwovenGodamTransfer.store');
+        Route::get('nonwovenGodam/dataTable', 'GodamTransfer\NonwovenGodamController@dataTable')->name('nonwovenGodam.dataTable');
+        Route::get('transferFabric/{nonwovengodam_id}', 'GodamTransfer\NonwovenGodamController@transferFabric')->name('nonwovenGodam.transferFabric');
 
-        // Route::post('getFilter/transferFabric', 'GodamTransfer\NonwovenGodamController@getTransferFilter')->name('getFilterGodamNonwoven');
+        Route::post('getFilter/transferFabric', 'GodamTransfer\NonwovenGodamController@getTransferFilter')->name('getFilterGodamNonwoven');
 
-        // Route::post('transferFabric/storeEntryList', 'GodamTransfer\NonwovenGodamController@getNonwovenGodamStore')->name('getNonwovenGodamStore');
+        Route::post('transferFabric/storeEntryList', 'GodamTransfer\NonwovenGodamController@getNonwovenGodamStore')->name('getNonwovenGodamStore');
 
-        // Route::get("getTripalGodamList/filterData/List",'GodamTransfer\NonwovenGodamController@getNonwovenGodamList')->name("transferNonwoven.getList");
+        Route::get("getNonwovenGodamList/filterData/List",'GodamTransfer\NonwovenGodamController@getNonwovenGodamList')->name("transferNonwoven.getList");
 
-        // Route::get("getTripalGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
+        Route::get("getNonwovenGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
 
-        // Route::post("getTripalGodamList/storeData",'GodamTransfer\NonwovenGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
+        Route::post("getNonwovenGodamList/storeData",'GodamTransfer\NonwovenGodamController@getNonwovenGodamFinalStore')->name("getNonwovenGodamFinalStore");
 
-        // Route::get("getTripalGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
+        Route::get("getNonwovenGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
 
-        // Route::get("getTripalGodamList/viewBill/{nonwovengodam_id}",'GodamTransfer\NonwovenGodamController@viewBill')->name("nonwovenGodam.viewBill");
+        Route::get("getNonwovenGodamList/viewBill/{nonwovengodam_id}",'GodamTransfer\NonwovenGodamController@viewBill')->name("nonwovenGodam.viewBill");
 
     });
 

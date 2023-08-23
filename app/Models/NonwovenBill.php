@@ -5,19 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FabricNonWovenReceiveEntryStock extends Model
+class NonwovenBill extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'receive_date', 'receive_no', 'fabric_roll', 'fabric_gsm','fabric_name','fabric_color','length','gross_weight','net_weight','nonfabric_id','status','bill_id','godam_id'
+        'plantname_id','godam_id','planttype_id','shift_id','bill_no','bill_date',
+        'created_at','updated_at',
     ];
-
-    
-    public function isActive()
-    {
-        return $this->status == 1 ? true : false;
-    }
 
     public function getGodam()
     {

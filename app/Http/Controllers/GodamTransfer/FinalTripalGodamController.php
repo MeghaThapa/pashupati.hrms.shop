@@ -108,7 +108,7 @@ class FinalTripalGodamController extends Controller
     public function transferFabric($tripalgodam_id)
     {
         $find_data = TripalGodam::find($tripalgodam_id);
-        $stocks = FinalTripalStock::get();
+        $stocks = FinalTripalStock::where('department_id',$find_data->fromgodam_id)->get();
        
         return view('admin.godamtransfer.finaltripal.transferFabric',compact('stocks','tripalgodam_id','find_data'));
     }
