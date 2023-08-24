@@ -105,8 +105,8 @@
                         <div class="col-md-12">
                             <label for="receipt_no">To Godam</label>
                             <select class="form-control select2 advance-select-box" name="godam" disabled required>
-                                @foreach ($godam as $data)
-                                    <option selected value="{{ $data->id }}" {{ $data->id == $data->godam_id ? "selected" : ""  }}>{{ $data->name }}</option>
+                                @foreach ($godam as $godam)
+                                    <option selected value="{{ $godam->id }}" {{ $godam->id == $godam->godam_id ? "selected" : ""  }}>{{ $godam->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -127,10 +127,12 @@
                     <div class="col-md-4">
                         <label for="receipt_no">Shift</label>
                         <select class="form-control select2 advance-select-box" name="shift" id="shift" required>
-                            @foreach($shift as $data)
-                                <option value="{{ $data->id }}">{{ $data->name }}</option>
+                            @foreach($shift as $s)
+                                <option value="{{ $s->id }}">{{ $s->name }}</option>
                             @endforeach
+                            
                         </select>
+                        {{ dd($data) }}
                     </div>
                 </div>
         </div>
@@ -145,8 +147,8 @@
                                 <?php
                                     $danaGroup = \App\Models\DanaGroup::get();
                                 ?>
-                                @foreach($danaGroup as $data)
-                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                @foreach($danaGroup as $danag)
+                                    <option value="{{ $danag->id }}">{{ $danag->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -188,8 +190,8 @@
                 <div class="card-body">
                     <label for="">Dana Name</label>
                     <select name="raw_materials" id="raw_materials" class="form-control advance-select-box">
-                        @foreach($rawmaterials as $data)
-                            <option value="{{ $data->id }}">{{ $data->danaName->name }}</option>
+                        @foreach($rawmaterials as $rawmaterial)
+                            <option value="{{ $rawmaterial->id }}">{{ $rawmaterial->danaName->name }}</option>
                         @endforeach
                     </select>
                     <label for="">Quantity</label>

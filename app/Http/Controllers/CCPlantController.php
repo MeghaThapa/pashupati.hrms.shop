@@ -83,14 +83,14 @@ class CCPlantController extends Controller
     }
 
     public function create($entry_id){
-        $godam = Godam::all();
+        $godams = Godam::all();
         $rawmaterials = RawMaterialStock::all();
         $data = CCPlantEntry::where("id",$entry_id)->first();
         return  view("admin.cc_plant.create")->with([
             "data" => $data,
             "entry_id" => $entry_id,
             "shift" => Shift::get(),
-            "godam" => $godam,
+            "godams" => $godams,
             "rawmaterials" => $rawmaterials
         ]);
     }
