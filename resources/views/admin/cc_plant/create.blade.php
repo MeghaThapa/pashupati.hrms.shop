@@ -111,10 +111,26 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                
-                <hr>
 
+                    <div class="col-md-4">
+                        <label for="receipt_no">Dana Name</label>
+                        <input type="text" value="{{ $ccplant->danaName->name }}" id="dana_name"
+                            name="receipt_number" class="form-control" readonly required />
+                            <input type="hidden" value="{{ $ccplant->danaName->id }}" id="dana_name_id" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="receipt_no">Dana Group</label>
+                        <input type="text" value="{{ $ccplant->danaName->danagroup->name }}" id="dana_group"
+                            name="receipt_number" class="form-control" readonly required />
+                            <input type="hidden" value="{{ $ccplant->danaName->danagroup->id }}" id="dana_group_id" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="receipt_no">Dana Group</label>
+                        <input type="text" value="{{ $ccplant->dana_quantity }}" id="dana_quantity"
+                            name="receipt_number" class="form-control" readonly required />
+                    </div>
+                </div>
+                <hr>
                 <div class='row mt-2'>
                     <div class="col-md-4">
                         <label for="receipt_no">Plant Type</label>
@@ -259,7 +275,7 @@
             }
 
              //for plant name
-             $(document).on("change", '#planttype', function(e) {
+            $(document).on("change", '#planttype', function(e) {
                 let planttype = $('#planttype').val();
                 $.ajax({
                     url: "{{ route('cc.plant.get.plantname.ajax', ['planttype_id' => ':id']) }}".replace(":id",planttype),

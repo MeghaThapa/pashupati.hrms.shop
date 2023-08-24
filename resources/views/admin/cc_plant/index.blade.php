@@ -211,7 +211,7 @@
                     success: function(response) {
                         if(response.status == true){
                             $.each(response.data,function(k,v){
-                                $("#danaName").append('<option data-quantity="'+v.quantity+'" value="' + v.id +
+                                $("#danaName").append('<option data-quantity="'+v.quantity+'" value="' + v.dana_name.id +
                                     '">' + v.dana_name.name+ '   ( '+ v.dana_group.name +' )' + '</option>');
                             });
                         }

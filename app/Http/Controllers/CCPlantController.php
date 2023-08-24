@@ -112,12 +112,14 @@ class CCPlantController extends Controller
         $godams = Godam::all();
         $rawmaterials = RawMaterialStock::all();
         $data = CCPlantEntry::where("id",$entry_id)->first();
+        $ccplant = CCPlantEntry::with('godam','danaName.danagroup')->where("id",$entry_id)->first();
         return  view("admin.cc_plant.create")->with([
             "data" => $data,
             "entry_id" => $entry_id,
             "shift" => Shift::get(),
             "godams" => $godams,
-            "rawmaterials" => $rawmaterials
+            "rawmaterials" => $rawmaterials,
+            "ccplant" => $ccplant,
         ]);
     }
     /************************ Entry ******************************/
