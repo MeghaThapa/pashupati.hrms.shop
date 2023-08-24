@@ -105,7 +105,7 @@
                         <div class="col-md-12">
                             <label for="receipt_no">To Godam</label>
                             <select class="form-control select2 advance-select-box" name="godam" disabled required>
-                                @foreach ($godam as $godam)
+                                @foreach ($godams as $godam)
                                     <option selected value="{{ $godam->id }}" {{ $godam->id == $godam->godam_id ? "selected" : ""  }}>{{ $godam->name }}</option>
                                 @endforeach
                             </select>
@@ -130,9 +130,7 @@
                             @foreach($shift as $s)
                                 <option value="{{ $s->id }}">{{ $s->name }}</option>
                             @endforeach
-                            
                         </select>
-                        {{ dd($data) }}
                     </div>
                 </div>
         </div>
