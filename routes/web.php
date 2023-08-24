@@ -528,12 +528,21 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("entry/index","entryindex")->name("entry.index");
         Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
         Route::post("entry/store","entrystore")->name("entry.store");
+<<<<<<< HEAD
         
         Route::get("dananame-from-stock/{godam_id}","danaNameFromStock")->name("get.dananame.ajax");
+=======
+
+        //dana creation
+        Route::post("dana/creation/temp","danacreation")->name("dana.creation.temp");
+        Route::get("created/dana/{entry_id}","createdDana")->name("created.dana");
+
+>>>>>>> 64d8877cc578e9c04e09396ca309007e82dd343b
         Route::get("create/{entry_id}","create")->name("create");
         Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
         Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
 
+        //dana consumption
         Route::post("add.dana","addDana")->name("add.dana");
         Route::get("cc/raw/materials","getccrawmaterials")->name('get.cc.raw.materials');
         Route::get("cc/get/sum/{entry_id}","getsumquantity")->name('get.sum');
