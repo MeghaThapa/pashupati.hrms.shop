@@ -11,6 +11,7 @@ use App\Models\DanaName;
 use App\Models\Godam;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
+use App\Models\RawMaterial;
 use App\Models\RawMaterialStock;
 use App\Models\Shift;
 use Illuminate\Http\Request;
@@ -109,15 +110,14 @@ class CCPlantController extends Controller
     }
 
     public function create($entry_id){
-        $godams = Godam::all();
-        $rawmaterials = RawMaterialStock::all();
-        $data = CCPlantEntry::where("id",$entry_id)->first();
+        $ccPlantEntry = CCPlantEntry::with('godam')->where("id",$entry_id)->firstOrFail();
+        $danaNameIds = RawMaterialStock::where('godam_id',$ccPlantEntry->godam_id)->pluck('dana_name_id');
+        $danaNames = DanaName::with('danagroup','rawMaterialStock')->whereIn('id',$danaNameIds)->get();
         return  view("admin.cc_plant.create")->with([
-            "data" => $data,
+            "ccPlantEntry" => $ccPlantEntry,
+            "danaNames" => $danaNames,
             "entry_id" => $entry_id,
             "shift" => Shift::get(),
-            "godams" => $godams,
-            "rawmaterials" => $rawmaterials
         ]);
     }
     /************************ Entry ******************************/
@@ -142,9 +142,25 @@ class CCPlantController extends Controller
         return response(['status'=>true,'data'=>$rawMaterials]);
     }
 
+    public function danaFromDanaGroupGodam(Request $request){
+        $danaIds = RawMaterialStock::with('danaName','danaGroup')->where('godam_id',$request->godam_id)->pluck('dana_name_id');
+        $danaNames = DanaName::where('dana_group_id',$request->dana_group_id)->whereIn('id',$danaIds)->get();
+        return response(['status'=>true,'data'=>$danaNames]);
+    }
+
     public function addDana(){
         if($this->request->ajax()){
             try{
+                $ccPlantEntry = CCPlantEntry::findOrFail($this->request->cc_plant_entry_id);
+
+                DB::beginTransaction();
+
+                RawMaterialStock::where('godam_id',$ccPlantEntry->godam_id)
+                                        ->where('dana_name_id',$this->request->dana_id)
+                                        ->decrement('quantity',$this->request->quantity);
+                $rawMaterialStock =  RawMaterialStock::where('godam_id',$ccPlantEntry->godam_id)
+                ->where('dana_name_id',$this->request->dana_id)->first();
+
                 CCPlantItemsTemp::create([
                     "cc_plant_entry_id" => $this->request->cc_plant_entry_id,
                     "planttype_id" => $this->request->planttype_id,
@@ -152,6 +168,10 @@ class CCPlantController extends Controller
                     "dana_id" => $this->request->dana_id,
                     "quantity" => $this->request->quantity,
                 ]);
+
+                DB::commit();
+                return response(['status'=>true,'data'=>$rawMaterialStock]);
+
             }catch(Exception $e){
                 return response([
                     "message_err" => $e->getMessage()
@@ -160,12 +180,47 @@ class CCPlantController extends Controller
         }
     }
 
+    public function removeDana()
+    {
+        if($this->request->ajax()){
+            try{
+                $ccPlantEntry = CCPlantEntry::findOrFail($this->request->cc_plant_entry_id);
+                $ccPlantTemp = CCPlantItemsTemp::whereId($this->request->restore_id)->firstOrFail();
+
+                DB::beginTransaction();
+
+                RawMaterialStock::where('godam_id',$ccPlantEntry->godam_id)
+                                        ->where('dana_name_id',$ccPlantTemp->dana_id)
+                                        ->increment('quantity',$ccPlantTemp->quantity);
+
+                $ccPlantTemp->delete();
+
+                $rawMaterialStock =  RawMaterialStock::where('godam_id',$ccPlantEntry->godam_id)
+                ->where('dana_name_id',$this->request->dana_id)->first();
+
+                DB::commit();
+                return response(['status'=>true,'data'=>$rawMaterialStock]);
+
+            }catch(Exception $e){
+                return response([
+                    "message_err" => $e->getMessage()
+                ]);
+            }
+        }
+
+    }
+
     public function getccrawmaterials(){
         if($this->request->ajax()){
             return DataTables::of(CCPlantItemsTemp::where("cc_plant_entry_id",$this->request->cc_plant_entry_id)->get())
                         ->addIndexColumn()
                         ->addColumn("dana",function($row){
                             return $row->dananame->name;
+                        })
+                        ->addColumn('action',function($row){
+                            return "<button data-id='{$row->id}' class='btn btn-sm btn-danger item_recycle'>
+                                        <i class='fa fa-recycle'></i>
+                                    </button>";
                         })
                         ->make(true);
         }
@@ -203,21 +258,76 @@ class CCPlantController extends Controller
         }
     }
 
-    public function danacreation(){
-        if($this->request->ajax()){
+    public function updateDana(Request $request){
+
+        try{
+
+            DB::beginTransaction();
+
             CCPlantDanaCreationTemp::create([
-                "dananame" => $this->request->dana_name,
-                "danagroup_id" => $this->request->dana_group,
-                "entry_id" => $this->request->cc_plant_entry_id,
+                "dana_name_id" => $this->request->dana_name_id,
+                "dana_group_id" => $this->request->dana_group_id,
+                "cc_plant_entry_id" => $this->request->cc_plant_entry_id,
                 "quantity" => $this->request->quantity,
-                "planttype_id" => $this->request->planttype_id,
-                "plantname_id" => $this->request->plantname_id
+                "plant_type_id" => $this->request->plant_type_id,
+                "plant_name_id" => $this->request->plant_name_id,
             ]);
+
+            RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$request->dana_name_id)->increment('quantity',$request->quantity);
+
+            $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
+                ->where('dana_name_id',$request->dana_name_id)->first();
+
+            DB::commit();
+            return response(['status'=>true,'data'=>$rawMaterialStock]);
+
+        }catch(\Exception $e){
+            dd($e->getMessage());
         }
+
     }
+
+    public function removeRecycleDana(Request $request){
+
+        try{
+
+            DB::beginTransaction();
+
+            $ccPlantDanaCreation =  CCPlantDanaCreationTemp::findOrFail($request->restore_recycle_id);
+
+            RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$ccPlantDanaCreation->dana_name_id)->decrement('quantity',$ccPlantDanaCreation->quantity);
+
+            $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
+                ->where('dana_name_id',$request->dana_name_id)->first();
+
+            $ccPlantDanaCreation->delete();
+
+            DB::commit();
+            return response(['status'=>true,'data'=>$rawMaterialStock]);
+
+        }catch(\Exception $e){
+            dd($e->getMessage());
+        }
+
+    }
+
+
     public function createdDana($entry_id){
         if($this->request->ajax()){
-            return $entry_id;
+            return DataTables::of(CCPlantDanaCreationTemp::with('danaName','danaGroup')->where("cc_plant_entry_id",$entry_id)->get())
+                        ->addIndexColumn()
+                        ->addColumn("dana_group",function($row){
+                            return $row->danaGroup->name;
+                        })
+                        ->addColumn("dana_name",function($row){
+                            return $row->danaName->name;
+                        })
+                        ->addColumn('action',function($row){
+                            return "<button data-id='{$row->id}' class='btn btn-sm btn-danger item_recycle_remove'>
+                                        <i class='fa fa-recycle'></i>
+                                    </button>";
+                        })
+                        ->make(true);
         }
     }
 }

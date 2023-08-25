@@ -15,16 +15,24 @@ return new class extends Migration
     {
         Schema::create('cc_plant_dana_creation', function (Blueprint $table) {
             $table->id();
-            $table->string("dananame");
-            $table->unsignedBigInteger("danagroup_id");
-            $table->foreign("danagroup_id")->references("id")->on("dana_groups")->onDelete("cascade");
-            $table->unsignedBigInteger("entry_id");
-            $table->foreign("entry_id")->references("id")->on("ccplantentry")->onDelete("cascade");
+            
+            $table->unsignedBigInteger("dana_name_id");
+            $table->foreign("dana_name_id")->references("id")->on("dana_names")->onDelete("cascade");
+            
+            $table->unsignedBigInteger("dana_group_id");
+            $table->foreign("dana_group_id")->references("id")->on("dana_groups")->onDelete("cascade");
+
+            $table->unsignedBigInteger("cc_plant_entry_id");
+            $table->foreign("cc_plant_entry_id")->references("id")->on("ccplantentry")->onDelete("cascade");
+
+            
+            $table->unsignedBigInteger("plant_type_id");
+            $table->foreign("plant_type_id")->references("id")->on("processing_steps")->onDelete("cascade");
+            
+            $table->unsignedBigInteger("plant_name_id");
+            $table->foreign("plant_name_id")->references("id")->on("processing_subcats")->onDelete("cascade");
+            
             $table->string("quantity");
-            $table->unsignedBigInteger("planttype_id");
-            $table->foreign("planttype_id")->references("id")->on("processing_steps")->onDelete("cascade");
-            $table->unsignedBigInteger("plantname_id");
-            $table->foreign("plantname_id")->references("id")->on("processing_subcats")->onDelete("cascade");
             $table->timestamps();
         });
     }
