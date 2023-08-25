@@ -33,8 +33,11 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
       
         try{
             foreach($collection as $row){
-                 $size = trim($row['size']);
+
+                 $name_size = trim($row['size']);
                  $slug = $row['gram'];
+
+                 $size = $name_size .'('. $row['gram'].')';
             
                  $fabricgroup = FabricGroup::firstOrCreate([
                      'slug' => $slug
@@ -45,8 +48,21 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
                      
                  ]);
                  $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
+
+                 $input = $row['size'];
+                 $parts = explode(' ', $input);
+                 $firstString = $parts[0];   
+                         
+                 $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+                 $data = $find_name  ;
+
+                 $average = $row['grams'];
+
+                 $gram_wt = ($average) / $data;
+
             
-                 $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
+                 // $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
             
             
                  $fabric = Fabric::create( [

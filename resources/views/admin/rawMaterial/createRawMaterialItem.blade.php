@@ -530,7 +530,7 @@
                 let dana_name_id = form.elements['dana_name_id'];
                 let quantity_in_kg = form.elements['quantity_in_kg'];
                 let fromStockBool = JSON.parse(`{!! json_encode($fromRawMaterialStock) !!}`);
-                console.log('js :', fromStockBool);
+                // console.log('js :', fromStockBool);
                 $.ajax({
                     url: "{{ route('rawMaterialItem.store') }}",
                     method: 'POST',

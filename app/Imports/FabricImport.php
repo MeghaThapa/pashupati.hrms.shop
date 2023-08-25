@@ -108,9 +108,13 @@ class FabricImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
 
 
            foreach ($rows as $row) {
+
                // dd($row);
-               $size = trim($row['size']);
+
+               $name_size = trim($row['size']);
                $slug = $row['gram'];
+
+               $size = $name_size .'('. $row['gram'].')';
                // dd($row);
 
                $fabricgroup = FabricGroup::firstOrCreate([
