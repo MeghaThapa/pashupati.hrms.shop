@@ -80,10 +80,6 @@
                                 <p>Wastage Opening</p>
                             </a>
                         </li>
-
-
-
-
                         <li class="nav-item">
                             <a href="{{ route('openingnonwoven.index') }}"
                                 class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
