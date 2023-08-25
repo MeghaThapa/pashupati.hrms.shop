@@ -65,7 +65,7 @@ class OpeningTripalController extends Controller
            'net_wt' => $request['net_wt'],
            "meter" => $request['meter'],
            "average_wt" => $request['average'],
-           "gram" =>  $request['gram'],
+           // "gram" =>  $request['gram'],
            "loom_no" => '0',
            "status" => 'completed',
          

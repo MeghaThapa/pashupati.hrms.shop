@@ -152,7 +152,6 @@ class FinalTripalGodamController extends Controller
                     'name' => $find_name->name,
                     'slug' => $find_name->slug,
                     'roll' => $find_name->roll_no,
-                    'gram' => $find_name->gram,
                     'gross' => $find_name->gross_wt,
                     'net' => $find_name->net_wt,
                     'meter' => $find_name->meter,
