@@ -105,8 +105,8 @@
                         <div class="col-md-12">
                             <label for="receipt_no">To Godam</label>
                             <select class="form-control select2 advance-select-box" name="godam" disabled required>
-                                @foreach ($godam as $data)
-                                    <option selected value="{{ $data->id }}" {{ $data->id == $data->godam_id ? "selected" : ""  }}>{{ $data->name }}</option>
+                                @foreach ($godams as $godam)
+                                    <option selected value="{{ $godam->id }}" {{ $godam->id == $godam->godam_id ? "selected" : ""  }}>{{ $godam->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -127,30 +127,74 @@
                     <div class="col-md-4">
                         <label for="receipt_no">Shift</label>
                         <select class="form-control select2 advance-select-box" name="shift" id="shift" required>
-                            @foreach($shift as $data)
-                                <option value="{{ $data->id }}">{{ $data->name }}</option>
+                            @foreach($shift as $s)
+                                <option value="{{ $s->id }}">{{ $s->name }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
         </div>
         <hr>
-        <div class="table-responsive">
-            
-        </div>
+        <h3 class="text-center">CC Dana Creation</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="">DanaGroup</label>
+                            <select name="danagroup" id="creation-danagroup" class="form-control select2 advance-select-box">
+                                <?php
+                                    $danaGroup = \App\Models\DanaGroup::get();
+                                ?>
+                                @foreach($danaGroup as $danag)
+                                    <option value="{{ $danag->id }}">{{ $danag->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">DanaName</label>
+                            <input type="text" name="dananame" id="creation-dananame" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">Quantity</label>
+                            <input type="number" name="quantity" id="creation-quantity" class="form-control">
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <button class="btn btn-primary dana-creation">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered table-dana-creation w-100">
+                            <thead>
+                                <tr>
+                                    <th>SN</th>
+                                    <th>Dana Group</th>
+                                    <th>Dana Name</th>
+                                    <th>Quantity</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>   
+                    </div>
+                </div>
+            </div>
         <hr>
+        <h3 class="text-center">Dana Consumption</h3>
         <div class='row mt-3'>
             <div class="col-md-4 card">
                 <div class="card-body">
                     <label for="">Dana Name</label>
                     <select name="raw_materials" id="raw_materials" class="form-control advance-select-box">
-                        @foreach($rawmaterials as $data)
-                            <option value="{{ $data->id }}">{{ $data->danaName->name }}</option>
+                        @foreach($rawmaterials as $rawmaterial)
+                            <option value="{{ $rawmaterial->id }}">{{ $rawmaterial->danaName->name }}</option>
                         @endforeach
                     </select>
                     <label for="">Quantity</label>
                     <input type="text" class="form-control" id="quantity" name="quantity">
-                    <button class="btn btn-primary mt-3 add-dana-table">Add</button>
+                    <button class="btn btn-primary mt-3 consumption-dana-table">Add</button>
                 </div>
             </div>
             <div class="col-md-8">
@@ -254,7 +298,7 @@
                 });
             }
 
-            let table =  $(".table").DataTable({
+            let table =  $("#tape_entry_dana_table").DataTable({
                 serverside : true,
                 processing : true,
                 ajax : {
@@ -270,7 +314,20 @@
                 ]
             })
 
-            $(".add-dana-table").click(function(e){
+            let creationTable = $(".table-dana-creation").DataTable({
+                processing : true,
+                serverside : true,
+                ajax : "{{ route('cc.plant.created.dana',['entry_id' => ':entry_id']) }}".replace(":entry_id",$("#cc_plant_entry_id").val()),
+                columns : [
+                    { name : "DT_RowIndex" , data : "DT_RowIndex" },
+                    { name : "danagroup" , data : "danagroup" },
+                    { name : "dananame" , data : "dananame" },
+                    { name : "quantity" , data : "quantity" },
+                    { name : "action" , data : "action" },
+                ]
+            })
+
+            $(".consumption-dana-table").click(function(e){
                 e.preventDefault()
                 $.ajax({
                     url : "{{ route('cc.plant.add.dana') }}",
@@ -293,6 +350,27 @@
                 })
             })
 
+            $(".dana-creation").click(function(e){
+                e.preventDefault()
+                $.ajax({
+                    url : "{{ route('cc.plant.dana.creation.temp') }}",
+                    method : "post",
+                    data : {
+                        "_token" : $("meta[name='csrf-token']").attr("content"),
+                        "cc_plant_entry_id" : $("#cc_plant_entry_id").val(),
+                        "dana_name" : $("#creation-dananame").val(),
+                        "dana_group" : $("#creation-danagroup").val(),
+                        "quantity" : $("#creation-quantity").val(),
+                        "plantname_id" : $("#plantname").val(),
+                        "planttype_id" : $("#planttype").val(),
+                    },success:function(response){
+                        creationTable.ajax.reload()
+                    },error:function(error){
+                        console.log(error)
+                    }
+                })
+            })
+
             $(".finalsubmit").click(function(e){
                 e.preventDefault()
                 $.ajax({
@@ -302,7 +380,7 @@
                         "_token" : $("meta[name='csrf-token']").attr("content") ,
                         "cc_plant_entry_id" : $("#cc_plant_entry_id").val()
                     },success:function(response){
-                        location.href = '{{ route("cc.plant.entry.index") }}'
+                        // location.href = '{{ route("cc.plant.entry.index") }}'
                     },error:function(error){
                         console.log(error)
                     }
@@ -328,6 +406,9 @@
                         console.log(error)
                     }
                 })
+            }
+            function getCreatedDana(){
+
             }
         });
     </script>
