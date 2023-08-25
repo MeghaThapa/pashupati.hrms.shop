@@ -77,7 +77,7 @@
 
 @section('content')
 <div class="card-body p-0 m-0">
-    <form action="{{ route('salefinaltripal.store') }}" method="post" enctype="multipart/form-data">
+    <form enctype="multipart/form-data">
         @csrf
 
         <div class="row">
@@ -162,16 +162,6 @@
                 </span>
                 @enderror
             </div>
-            
-            
-            
-            
-            
-            <div>
-                <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
-                    Add
-                </button>
-            </div> 
 
         </div>
         
@@ -201,7 +191,7 @@
 <div class="row">
     <input type="hidden" name="saletripal_id" value="{{$id}}" id="saletripal_id">
     <div class="table-responsive table-custom my-3">
-        <table class="table table-hover table-striped" id="getSaleList">
+        <table class="table table-hover table-striped" id="getSaleTripalList">
             <thead class="table-info">
                 <tr>
                     <th>{{ __('Sr.No') }}</th>
@@ -212,35 +202,23 @@
                     <th>{{ __('Meter') }}</th>
                     <th>{{ __('Avg') }}</th>
                     <th>{{ __('Gram') }}</th>
+                    <th>{{ __('Bill') }}</th>
+                    <th>{{ __('Action') }}</th>
                 </tr>
             </thead>
-            <tbody id="getSaleList"></tbody>
+            <tbody id="getSaleTripalList"></tbody>
         </table>
-        <tfoot>
-            <tr>
-                <td colspan="9">
-                    <div class="row text-center">
-                        <div class="col-md-4">
-                            <label for="">Net Weight</label>
-                            <input type="text" class="form-control  net_wt" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="">Gross Weight</label>
-                            <input type="text" class="form-control  gross_wt" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="">Meter</label>
-                            <input type="text" class="form-control  meter" readonly>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tfoot>
+        
     </div>
 </div>
 
+<div class="card-footer">
+    {{-- <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly> --}}
+    <button type="submit" class="btn btn-info" id="finalUpdate">Update</button>
+ 
 
-<!-- /.card-body -->
+</div>
+
 
 <!-- pagination start -->
 {{ $salefinaltripals->links() }}
@@ -256,11 +234,35 @@
  <script>
      $(document).ready(function(){
          let fabricTable = null;
-         /**************************** Ajax Calls **************************/
-         // callunlaminatedfabricajax();
-         // comparelamandunlam();
+         let salesTripalTable = null;
 
           getTotal()
+          getTripalSalesData()
+
+          $("body").on("click","#finalUpdate", function(event){
+              // Pace.start();
+              // debugger;
+              var salefinal_id = $('#salefinal_id').val(),
+              token = $('meta[name="csrf-token"]').attr('content');
+                
+              $.ajax({
+                type:"POST",
+                dataType:"JSON",
+                url:"{{route('finalsaletripal.storeList')}}",
+                data:{
+                  _token: token,
+                  salefinal_id: salefinal_id,
+                },
+              success: function(response){
+                  // location.reload();
+                location.href = '{{route('salefinaltripal.index')}}';
+                
+              },
+              error: function(event){
+                  alert("Sorry");
+              }
+             });
+          })
 
          function getTotal(){
             var bill_id = $('#salefinal_id').val();
@@ -282,6 +284,135 @@
                  }
              })
          }
+
+         function comparelamandunlam(){
+
+
+            var salefinal_id = $('#salefinal_id').val(),
+            token = $('meta[name="csrf-token"]').attr('content');
+
+             $.ajax({
+                url : "{{ route('getSaleTripalList') }}",
+                method : "post",
+                data : {
+                     _token: token,
+                     salefinal_id: salefinal_id,
+                 },
+                 success:function(response){
+                     putonlamtbody(response);
+                 },
+                 error:function(error){
+                     console.log(error);
+                 }
+             });
+         }
+
+         function putonlamtbody(response){
+             response.datalist.forEach(element => {
+                 let tr = $("<tr></tr>").appendTo("#getSaleEntry");
+                 tr.append(`<td>#</td>`);
+                 tr.append(`<td>${element.name}</td>`);
+                 tr.append(`<td>${element.roll}</td>`);
+                 tr.append(`<td>${element.gross}</td>`);
+                 tr.append(`<td>${element.net}</td>`);
+                 tr.append(`<td>${element.meter}</td>`);
+                 tr.append(`<td>${element.average}</td>`);
+                 tr.append(`<td>${element.gram}</td>`);
+                 tr.append(`<td>${element.bill_no}</td>`);
+                 tr.append(`<td><div class="btn-group"><a id="deletelist" href="${element.id}" data-id="${element.id}" class="btn btn-danger">Delete</a></div></td>`);
+             });
+
+             
+         }
+
+         $(document).on("click",".deleteTripalEntry",function(e){
+             // debugger;
+             e.preventDefault()
+
+             let data_id = $(this).attr('data-id')
+
+           
+             $.ajax({
+                 url  : "{{ route('finalsaletripal.deleteFinalSaleEntry') }}",
+                 method : "get",
+                 data:{
+                     "_token" : $("meta[name='csrf-token']").attr("content"),
+                     "data_id" : data_id,
+                  
+                 },
+                 beforeSend:function(){
+                     console.log("sending")
+                 },
+                 success:function(response){
+                    salesTripalTable.ajax.reload();
+                 },
+                 error:function(error){
+                     console.log("error",error);
+                 }
+             })
+         })
+
+
+         function deletefromentrytable(data){
+            // debugger;
+            var data_id = data,
+            token = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+              type:"GET",
+              dataType:"JSON",
+              url:"{{route('finalsaletripal.deleteFinalSaleEntry')}}",
+              data:{
+                _token: token,
+                data_id: data_id,
+            },
+            success: function(response){
+               location.reload();
+            },
+            error: function(event){
+                alert("Sorry");
+            }
+            });
+
+          
+         }
+
+         function getTripalSalesData(){
+             if (salesTripalTable !== null) {
+                 salesTripalTable.destroy();
+             } 
+             // debugger;
+              let sale_id = $('#salefinal_id').val();
+
+             salesTripalTable = $("#getSaleTripalList").DataTable({
+                 serverside : true,
+                 processing : true,
+                 lengthmenu : [
+                         [5,10,25,50,100,250,500,-1],
+                         [5,10,25,50,100,250,500,"All"]
+                     ],
+                 ajax : {
+                     url : "{{ route('getSaleTripalList') }}",
+                     method : "get",
+                     data :{
+                         "_token" : $("meta[name='csrf-token']").attr("content"),
+                         'sale_id' : sale_id,
+                     }
+                 },
+                 columns:[
+                     { data : "DT_RowIndex" , name : "DT_RowIndex" },
+                     { data : "name" , name : "name" },
+                     { data : "roll" , name : "roll" },
+                     { data : "gross" , name : "gross" },
+                     { data : "net" , name : "net" },
+                     { data : "meter" , name : "meter" },
+                     { data : "average" , name : "average" },
+                     { data : "gram" , name : "gram" },
+                     { data : "bill_no" , name : "bill_no" },
+                     { data : "action" , name : "action" },
+                 ]
+             });
+         }
+
    
 
          $("#finaltripalstock_id").change(function(e){
@@ -318,18 +449,9 @@
          /**************************** Ajax Calls End **************************/
      });
 
-     /**************************** Ajax functions **************************/
-
-  
-
- 
-
-
-
-
-     /************************* Form Submission *************************/
+   
      $(document).on("click",".send_to_lower",function(e){
-         debugger;
+         // debugger;
          e.preventDefault()
 
          let data_id = $(this).attr('data-id')
@@ -339,7 +461,7 @@
 
        
          $.ajax({
-             url  : "{{ route('finalsaletripal.storeList') }}",
+             url  : "{{ route('finalsaletripal.storeEntryList') }}",
              method : "post",
              data:{
                  "_token" : $("meta[name='csrf-token']").attr("content"),
@@ -353,10 +475,7 @@
                  console.log("sending")
              },
              success:function(response){
-                location.reload();
-                 emptytable();
-                 // callunlaminatedfabricajax();
-                 // emptyform();
+                $('#getSaleTripalList').DataTable().ajax.reload();
              },
              error:function(error){
                  console.log("error",error);
@@ -364,110 +483,9 @@
          })
      })
 
-     $(document).ready(function(){
-         $(document).on('submit','#createRawMaterial',function(e){
-             e.preventDefault();
-             let action = $(this).attr('action');
-             let method = $(this).attr('method');
-             let formData = $(this).serialize();
-            $.ajax({
-             url:action,
-             method : method,
-             data:{
-                 '_token' : $('meta[name="csrf-token"]').attr('content'),
-                 'data' : formData
-             },
-             beforeSend:function(){
-             },
-             success:function(response){
-                 console.log(response);
-                 if(response.status == "200"){
-                     emptytable();
-                     callunlaminatedfabricajax();
-                     emptyform();
-                 }else{
-                     alert(response.message_error)
-                 }
-             },
-             error:function(error){
-             }
-            });
-         });
-     })
-
-
-
- 
-
-     function emptytable(){
-         $('#rawMaterialItemTbody').empty();
-     }
-
- 
-
-     function filltable(data){
-         console.log(data);
-         data.response.forEach(d => {
-             let title = d.fabric.name;
-             let group = d.gram.split('-')[0];
-             let result = parseFloat(title) * parseFloat(group);
-
-             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
-
-             tr.append(`<td>#</td>`);
-             tr.append(`<td>${d.fabric.name}</td>`);
-             tr.append(`<td>${d.roll_no}</td>`);
-             tr.append(`<td>${d.gross_wt}</td>`);
-             tr.append(`<td>${d.net_wt}</td>`);
-             tr.append(`<td>${d.meter}</td>`)
-             tr.append(`<td>${d.fabric.average_wt}</td>`);
-             tr.append(`<td>${d.gram}</td>`);
-             tr.append(`<td><div class="btn-group"><a id="sendforlamination" data-group='${d.gram}' data-standard='${result}' data-title='${d.fabric.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`);
-         });
-     }
-
-
-
  </script>   
 
- <script>
-     $(document).ready(function(){
-         let fabricTable = null;
-
-         if (fabricTable !== null) {
-             fabricTable.destroy();
-         }
-
-         let saletripal_id = $('#saletripal_id').val();
-         // debugger;
-
-         fabricTable = $("#getSaleList").DataTable({
-             serverside : true,
-             processing : true,
-             ajax : {
-                 url : "{{ route('getSaleTripalList') }}",
-                 method : "post",
-                 data : function(data){
-                     data._token = $("meta[name='csrf-token']").attr("content"),
-                     data.saletripal_id = saletripal_id
-                 }
-             },
-             columns:[
-                 { data : "DT_RowIndex" , name : "DT_RowIndex" },
-                 { data : "name" , name : "name" },
-                 { data : "roll" , name : "roll" },
-                 { data : "gross" , name : "gross" },
-                 { data : "net" , name : "net" },
-                 { data : "meter" , name : "meter" },
-                 { data : "average" , name : "average" },
-                 { data : "gram" , name : "gram" },
-             ]
-         });
-       
-     });
-
-
- </script>
+ 
 
 
 

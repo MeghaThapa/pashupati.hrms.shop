@@ -40,17 +40,46 @@ class FabricSendAndReceiveSaleController extends Controller
                                     </div>
                                 ";
                             }else{
-                                return "
-                                    <div class='btn-group'>
-                                        <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-secondary view-sale'><i class='fa fa-eye' aria-hidden='true'></i></a>
-                                    </div>
-                                ";
+                                return '<a href="' . route('fabric.sale.viewBill', ['bill_id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
+                                // return "
+                                //     <div class='btn-group'>
+                                //         <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-secondary view-sale'><i class='fa fa-eye' aria-hidden='true'></i></a>
+                                //     </div>
+                                // ";
                             }
                         })
                         ->rawColumns(["supplier","action"])
                         ->make(true);
         }
     }
+
+    public function viewBill($id)
+    {
+        $findsale = FabricSaleEntry::find($id);
+        $data = FabricSaleItems::where('sale_entry_id',$id);
+
+        $fabrics = $data->get();
+      
+
+        $totalstocks = FabricSaleItems::where('sale_entry_id',$id)->join('fabrics', function($join)
+              {
+                $join->on('fabrics.id', '=', 'fabric_sale_items.fabric_id');
+
+              })
+            ->select('name', DB::raw('SUM(gross_wt) as total_gross'),DB::raw('SUM(net_wt) as total_net'),DB::raw('SUM(meter) as total_meter'),DB::raw('COUNT(name) as total_count'))
+            ->groupBy('name')->orderBy('name');
+
+            // dd($totalstocks->get());
+
+        $total_gross = $totalstocks->sum('gross_wt');
+        $total_net = $totalstocks->sum('net_wt');
+        $total_meter = $totalstocks->sum('meter');
+
+        $totalstocks = $totalstocks->get();    
+
+        return view('admin.sale.fabricsale.viewbill',compact('findsale','fabrics','totalstocks','total_gross','total_net','total_meter'));
+    }
+
     public function store(){
         $this->request->validate([
             'bill_number' => "required",

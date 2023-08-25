@@ -332,7 +332,7 @@
             serverside : true,
             processing : true,
             ajax : {
-                url : "{{ route('get.fabric.same.name') }}",
+                url : "{{ route('getFilterFabric') }}",
                 method : "post",
                 data : function(data){
                     data._token = $("meta[name='csrf-token']").attr("content"),

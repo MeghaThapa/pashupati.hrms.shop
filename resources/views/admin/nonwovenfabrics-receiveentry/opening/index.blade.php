@@ -473,29 +473,6 @@
         $("#createRawMaterial")[0].reset();
     }
 
-    function deletefromunlamintedtable(data){
-        $.ajax({
-            url : "{{ route('fabricSendReceive.send.unlaminated.delete',['id'=>':id']) }}".replace(':id',data),
-            method:'get',
-            beforeSend:function(){
-                console.log('deleteing from unlamintaed table');
-            },
-            success:function(response){
-                if(response.response == '200'){
-                    emptytable();
-                    callunlaminatedfabricajax();
-                }else if(response.response == '400'){
-                    alert('Not Allowed OR Data is no longer there');
-                }
-            },
-            error:function(error){
-                console.log(error);
-            }
-        });
-    }
-    /************************* Other Functionalities ***********************/
-
-    /************************* Send for lamination **************************/
     $(document).ready(function(){
         $(document).on('click',"#sendforlamination",function(e){
             e.preventDefault();
@@ -510,16 +487,9 @@
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
             $("#idoffabricforsendtolamination").val(id);
-            // let action="{{ route('fabricSendReceive.store.laminated',['id'=>"+id+"]) }}";
-            // $('#sendtolaminationform').attr('action',action);
-            // let action = "{{ route('fabricSendReceive.store.laminated', ['id' => '']) }}";
-            // action = action.slice(0, -2) + `${id}`;
-            // $('#sendtolaminationform').attr('action', action);
-        });
+                   });
     });
-    // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
-    //     $(this).removeAttr('action');
-    // });
+   
         $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });

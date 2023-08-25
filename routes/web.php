@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CCPlantController;
 use App\Http\Controllers\FabricSendAndReceiveSaleController;
 use App\Http\Controllers\FabricTransferEntryForBagController;
 use App\Http\Controllers\InstallHelperController;
@@ -495,6 +496,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("add/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"addDanaConsumptionTablerevised"])->name("add.dana.consumption.fsr.revised");//latest
         Route::post("get/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"getDanaConsumptionTablerevised"])->name("get.dana.consumption.fsr.revised");//latest
         Route::post("delete/dana/consumption/revised",[FabricSendReceiveController::class,"removedDanaConsumptionTablerevised"])->name("delete.dana.consumption.revised");//lastest
+
+        Route::post("get/fabric/details/fsr",[FabricSendReceiveController::class,"getFabricDetailsAccRollNo"])->name('get/fabric/details/fsr');
+        Route::get("get/lam/sent/details/all",[FabricSendReceiveController::class,"getallSentData"])->name('get.lam.sent.details.all');
+        Route::get("edit.laminated.fabric/ajax",[FabricSendReceiveController::class,"getDatajax"])->name("edit.laminated.fabric.ajax");
+        Route::post("update/lam/sent",[FabricSendReceiveController::class,"updateLamSentFSr"])->name("update.lam.sent.fsr");
     //fabric send receive contoller End
 
     //fabric send and receive /fabric sale
@@ -511,9 +517,32 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("final/submit","submit")->name("submit");
 
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
+        Route::get("viewbill/{bill_id}","viewBill")->name("viewBill"); 
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
+    //fabric send and receive /fabric sale ends
 
+    //cc plant
+    Route::prefix("cc/plant/")->name("cc.plant.")->controller(CCPlantController::class)->group(function(){
+        Route::get("entry/index","entryindex")->name("entry.index");
+        Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
+        Route::post("entry/store","entrystore")->name("entry.store");
+
+        //dana creation
+        Route::post("dana/creation/temp","danacreation")->name("dana.creation.temp");
+        Route::get("created/dana/{entry_id}","createdDana")->name("created.dana");
+
+        Route::get("create/{entry_id}","create")->name("create");
+        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
+        Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
+
+        //dana consumption
+        Route::post("add.dana","addDana")->name("add.dana");
+        Route::get("cc/raw/materials","getccrawmaterials")->name('get.cc.raw.materials');
+        Route::get("cc/get/sum/{entry_id}","getsumquantity")->name('get.sum');
+
+        Route::post("final/submit","finalsubmit")->name("final.submit");
+    });
 
     // fabric_group route
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.pdf');
@@ -535,6 +564,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
+
+
+    Route::post('fabrics/getstock/filterStocks/viewBill',[FabricStockController::class,'viewBill'])->name('fabric-stock.viewBill');
 
     Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
 
@@ -574,7 +606,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('fabricGodam/delete/list', 'FabricGodamController@deleteFabricGodamList')->name('fabricgodam.deleteFabricGodamList');
 
-    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("get.fabric.same.name");
+
+    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("getFilterFabric");
+    
 
 
 
@@ -711,14 +745,26 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get("salefinaltripal/getTripalSale/Pdf/{id}",'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
     Route::get("salefinaltripal/getTripalSale/excel/{id}",'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
+ 
 
     //salefinaltripal filter
 
     Route::post("get/finalTripal/filterName",'Sale\SaleFinalTripalController@getfinaltripalFilter')->name("getfinaltripalFilter");
 
-    Route::post('salefinaltripal/store/list','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
+    Route::post('salefinaltripal/store/entryList','Sale\SaleFinalTripalController@finalTripalStoreEntryList')->name('finalsaletripal.storeEntryList');
 
-    Route::post("get/saleTripal/filterSaleTripalList",'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
+    Route::post('salefinaltripal/store/finalList','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
+
+    Route::get("get/saleTripal/filterSaleTripalList",'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
+
+    Route::get('salefinaltripal/delete/list', 'Sale\SaleFinalTripalController@deleteEntryList')->name('finalsaletripal.deleteFinalSaleEntry');
+
+    Route::get('saleFinalTripal/dataTable', 'Sale\SaleFinalTripalController@dataTable')->name('saleFinalTripal.dataTable');
+
+    Route::get('finaltripal/getstock/filterStocks','Tripal\FinalTripalStockController@filterStock')->name('finaltripal-stock.filterStock');
+
+    Route::get("restock",'Sale\SaleFinalTripalController@restock')->name("admin.restock");
+
 
 
     //double laminated tripal
@@ -783,11 +829,84 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //doubletripal name
     Route::post('doubletripal/name/store', 'Tripal\DoubleTripalController@storeTripalName')->name('doubletripal.storeName');
 
+    //godaam transfer tripal
+
+    Route::prefix('tripalGodamTransfer')->group(function () {
+        // Define routes here
+        Route::get('index', 'GodamTransfer\FinalTripalGodamController@index')->name('tripalGodamTransfer.index');
+        Route::get('create', 'GodamTransfer\FinalTripalGodamController@create')->name('tripalGodamTransfer.create');
+        Route::post('store', 'GodamTransfer\FinalTripalGodamController@store')->name('tripalGodamTransfer.store');
+        Route::get('tripalGodam/dataTable', 'GodamTransfer\FinalTripalGodamController@dataTable')->name('tripalGodam.dataTable');
+        Route::get('transferFabric/{tripalgodam_id}', 'GodamTransfer\FinalTripalGodamController@transferFabric')->name('tripalGodam.transferFabric');
+
+        Route::post('getFilter/transferFabric', 'GodamTransfer\FinalTripalGodamController@getTransferFilter')->name('getFilterGodamTripal');
+
+        Route::post('transferFabric/storeEntryList', 'GodamTransfer\FinalTripalGodamController@getTripalGodamStore')->name('getTripalGodamStore');
+
+        Route::get("getTripalGodamList/filterData/List",'GodamTransfer\FinalTripalGodamController@getTripalGodamList')->name("transfer.getList");
+
+        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+
+        Route::post("getTripalGodamList/storeData",'GodamTransfer\FinalTripalGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
+
+        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+
+        Route::get("getTripalGodamList/viewBill/{tripalgodam_id}",'GodamTransfer\FinalTripalGodamController@viewBill')->name("tripalGodam.viewBill");
+
+    });
+
+    //nonwoven tranfer
 
 
+    //nonwoven godam transfer
 
+    Route::prefix('nonwovenGodamTransfer')->group(function () {
+        // Define routes here
+        Route::get('index', 'GodamTransfer\NonwovenGodamController@index')->name('nonwovenGodamTransfer.index');
+        Route::get('create', 'GodamTransfer\NonwovenGodamController@create')->name('nonwovenGodamTransfer.create');
+        Route::post('store', 'GodamTransfer\NonwovenGodamController@store')->name('nonwovenGodamTransfer.store');
+        Route::get('nonwovenGodam/dataTable', 'GodamTransfer\NonwovenGodamController@dataTable')->name('nonwovenGodam.dataTable');
+        Route::get('transferFabric/{nonwovengodam_id}', 'GodamTransfer\NonwovenGodamController@transferFabric')->name('nonwovenGodam.transferFabric');
 
+        Route::post('getFilter/transferFabric', 'GodamTransfer\NonwovenGodamController@getTransferFilter')->name('getFilterGodamNonwoven');
 
+        Route::post('transferFabric/storeEntryList', 'GodamTransfer\NonwovenGodamController@getNonwovenGodamStore')->name('getNonwovenGodamStore');
+
+        Route::get("getNonwovenGodamList/filterData/List",'GodamTransfer\NonwovenGodamController@getNonwovenGodamList')->name("transferNonwoven.getList");
+
+        Route::get("getNonwovenGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
+
+        Route::post("getNonwovenGodamList/storeData",'GodamTransfer\NonwovenGodamController@getNonwovenGodamFinalStore')->name("getNonwovenGodamFinalStore");
+
+        Route::get("getNonwovenGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
+
+        Route::get("getNonwovenGodamList/viewBill/{nonwovengodam_id}",'GodamTransfer\NonwovenGodamController@viewBill')->name("nonwovenGodam.viewBill");
+
+    });
+
+    Route::prefix('tripalGodamTransfer')->group(function () {
+        // Define routes here
+        Route::get('index', 'GodamTransfer\FinalTripalGodamController@index')->name('tripalGodamTransfer.index');
+        Route::get('create', 'GodamTransfer\FinalTripalGodamController@create')->name('tripalGodamTransfer.create');
+        Route::post('store', 'GodamTransfer\FinalTripalGodamController@store')->name('tripalGodamTransfer.store');
+        Route::get('tripalGodam/dataTable', 'GodamTransfer\FinalTripalGodamController@dataTable')->name('tripalGodam.dataTable');
+        Route::get('transferFabric/{tripalgodam_id}', 'GodamTransfer\FinalTripalGodamController@transferFabric')->name('tripalGodam.transferFabric');
+
+        Route::post('getFilter/transferFabric', 'GodamTransfer\FinalTripalGodamController@getTransferFilter')->name('getFilterGodamTripal');
+
+        Route::post('transferFabric/storeEntryList', 'GodamTransfer\FinalTripalGodamController@getTripalGodamStore')->name('getTripalGodamStore');
+
+        Route::get("getTripalGodamList/filterData/List",'GodamTransfer\FinalTripalGodamController@getTripalGodamList')->name("transfer.getList");
+
+        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+
+        Route::post("getTripalGodamList/storeData",'GodamTransfer\FinalTripalGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
+
+        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+
+        Route::get("getTripalGodamList/viewBill/{tripalgodam_id}",'GodamTransfer\FinalTripalGodamController@viewBill')->name("tripalGodam.viewBill");
+
+    });
 
 
      // fabric_group route
@@ -804,6 +923,13 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('nonwovenfabrics/{id}/status', 'FabricNonWovenController@changeStatus')->name('nonwovenfabrics.status');
     Route::get('nonwovenfabrics/{id}/delete', 'FabricNonWovenController@destroy')->name('nonwovenfabrics.delete');
+
+    Route::post('nonwovenfabrics/storeBill', 'Nonwoven\NonWovenBillController@store')->name('nonwovenbill.store');
+    Route::get('nonwovenfabrics/entry/{bill_id}', 'NonwovenReceiveEntryController@create')->name('nonwovenentry.create');
+
+    Route::post("nonwoven/DanaConsumption/store",'Nonwoven\NonwovenDanaConsumptionController@store')->name('nonwovenDanaConsumption.store');
+
+    Route::get("delete/nonwovenDanaConsumption/{id}",'Nonwoven\NonwovenDanaConsumptionController@delDanaConsumption')->name("nonwovenDanaConsumption.delete");
 
     Route::resource('nonwovenfabrics-receiveentry', 'NonwovenReceiveEntryController', [
         'names' => [

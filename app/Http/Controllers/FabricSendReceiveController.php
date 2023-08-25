@@ -189,13 +189,13 @@ class FabricSendReceiveController extends Controller
                                  data-name='{$row->name}' 
                                  data-gross_wt='{$row->gross_wt}' 
                                  data-roll_no='{$row->roll_no}'  
-                                 data-id='{$row->id}' 
+                                 data-id='{$row->fabric_id}' 
                                  data-net_wt = '{$row->net_wt}'
                                  data-meter = '{$row->meter}'
                                  data-average_wt = '{$row->average_wt}'
                                  data-gram_wt = '{$row->fabricgroup->name}' 
                                  data-bill_no = '{$row->bill_no}'
-                                 href='{$row->id}'>Send</a>";
+                                 href='{$row->fabric_id}'>Send</a>";
                     })
                     ->rawColumns(["action","gram_wt"])
                     ->make(true);
@@ -209,6 +209,7 @@ class FabricSendReceiveController extends Controller
     
 
     public function sendunlaminatedrevised2(Request $request){ //latest changes //keep
+        // return $request;
         if($request->ajax()){
             $gram_wt = $request->gram_wt;
             $net_wt = $request->net_wt;
@@ -218,6 +219,9 @@ class FabricSendReceiveController extends Controller
             $fabric_id = $request->fabric_id;
             $roll_number = $request->roll_no;
             $fsr_entry_id = $request->fsr_entry_id;
+
+            // return FabricStock::where("fabric_id","{$request->fabric_id}")->get();
+            // return Fabric::where("id","914")->get();
 
             try{
                 DB::beginTransaction();
@@ -680,6 +684,7 @@ class FabricSendReceiveController extends Controller
                             "slug" => $data->temporarylamfabric->slug,
                             "gram_wt"  => $data->gram_wt,
                             'standard_wt' => $data->standard_wt,
+                            "fabid" => $data->temporarylamfabric->getfabric->fabric_id
                         ]);
 
                         FabricStock::where("fabric_id",$fabric_id_on_stock)->delete();
@@ -735,5 +740,40 @@ class FabricSendReceiveController extends Controller
             }
         }
     }
+    public function getallSentData(){
+        return view('admin.fabricSendReceive.edit');
+    }
 
+    public function getDatajax(Request $request){
+        if($request->ajax()){
+            return DataTables::of(FabricSendAndReceiveLaminatedSent::get())
+                ->addIndexColumn()
+                ->addColumn("name",function($row){
+                    return $row->fabric_name;
+                })
+                ->addColumn("action",function($row){
+                    return "
+                        <button class='edit-data btn btn-primary' data-roll='{$row->roll_no}' data-gross_wt='{$row->gross_wt}' data-id='{$row->id}'>Edit</button>
+                    ";
+                })
+                ->rawColumns(["action"])
+                ->make(true);
+        }
+    }
+
+    public function updateLamSentFSr(Request $request){
+        $request->validate([
+            "laminated_id" => "required",
+            "initial_fabric_id" => "required"
+        ]);
+        FabricSendAndReceiveLaminatedSent::where("id",$request->laminated_id)->update([
+            "ini_fab_id" => $request->initial_fabric_id
+        ]);
+    }
+
+    public function getFabricDetailsAccRollNo(Request $request){
+        if($request->ajax()){
+            return Fabric::where("roll_no",$request->roll_no)->first();
+        }
+    }
 }

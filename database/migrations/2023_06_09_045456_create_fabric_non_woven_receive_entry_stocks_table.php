@@ -24,22 +24,10 @@ return new class extends Migration
             $table->string('length');
             $table->string('gross_weight');
             $table->string('net_weight');
+            $table->string('bill_id')->nullable();
             // $table->string('dana_quantity');
             $table->unsignedBigInteger('nonfabric_id');
             $table->foreign('nonfabric_id')->references("id")->on('fabric_non_woven_recive_entries')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('godam_id');
-            $table->foreign('godam_id')->references("id")->on('godam')->onDelete('cascade');
-
-            $table->unsignedBigInteger('planttype_id');
-            $table->foreign('planttype_id')->references("id")->on('processing_steps')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('plantname_id');
-            $table->foreign('plantname_id')->references("id")->on('processing_subcats')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('shift_id');
-            $table->foreign('shift_id')->references("id")->on('shifts')->onDelete('cascade')->onUpdate('cascade');
-
             $table->enum("status",["sent","pending","completed"])->default("sent");
             $table->timestamps();
         });

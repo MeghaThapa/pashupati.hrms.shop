@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 use Symfony\Component\Mime\Encoder\Rfc2231Encoder;
+use Yajra\DataTables\DataTables;
 
 class FabricTransferEntryForBagController extends Controller
 {
@@ -53,7 +54,12 @@ class FabricTransferEntryForBagController extends Controller
 
   /********* For Revewing what was sent --report *********/
   public function viewSentItem($id){
-    return BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+    // return BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+
+    $data = BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
+    return view("admin.bag.fabricTransferForBag.viewBill", compact("data"));
+
+
   }
     /********* For Revewing what was sent --report end*********/
 
@@ -69,20 +75,51 @@ class FabricTransferEntryForBagController extends Controller
   public function getfabricsaccordinggodams(Request $request, $id)
   {
     if ($request->ajax()) {
-      $data = FabricStock::where("godam_id", $id)->orderBy('name', "asc")->with('fabricgroup')->get();
+      $data = FabricStock::where("godam_id", $id)->orderBy('name', "asc")->with(['fabricgroup','fabric'])->get()->unique("name")->values()->all();
       return response([
-        "data" => $data
-    ]);
+          "data" => $data
+      ]);
     }
   }
 
   public function getspecificfabricdetails(Request $request, $id)
   {
-    $name = FabricStock::where('id', $id)->first()->name;
-    $allfabswithsamenames = FabricStock::where("name", $name)->with('fabricgroup')->get();
-    return response([
-      "data" => $allfabswithsamenames
-    ]);
+      $name = FabricStock::where('fabric_id', $id)->first()->name;
+      $allfabswithsamenames = FabricStock::where("name", $name)->with(['fabricgroup','fabric'])->get();
+      return DataTables::of($allfabswithsamenames)
+                          ->addIndexColumn()
+                          ->addColumn("name",function($row){
+                            return $row->fabric->name;
+                          })
+                          ->addColumn("gross_wt",function($row){
+                            return $row->fabric->gross_wt;
+                          })
+                          ->addColumn("gross_wt",function($row){
+                            return $row->fabric->gross_wt;
+                          })
+                          ->addColumn("net_wt",function($row){
+                            return $row->fabric->net_wt;
+                          })
+                          ->addColumn("average_wt",function($row){
+                            return number_format($row->fabric->average_wt,2);
+                          })
+                          ->addColumn("gram_wt",function($row){
+                              
+                            $response = $this->gramWt($row);
+                            return $response; 
+                          })
+                          ->addColumn("action",function($row){
+                            $gram_wt = $this->gramWt($row);  
+                            return "<a class='btn btn-primary sendFabLower' data-gram_wt='{$gram_wt}' href='$row->fabric_id' data-id='$row->fabric_id'>send</a>";
+                          })
+                          ->rawColumns(['action'])
+                          ->make(true);
+  }
+  
+  protected function gramWt($row){
+    $size =number_format(floatVal(filter_var($row->fabric->name, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION)),2);
+    $average = number_format(floatval($row->average_wt),2);
+    return number_format($average/$size,2);
   }
 
   public function sendfabrictolower(Request $request, $id)
@@ -91,7 +128,7 @@ class FabricTransferEntryForBagController extends Controller
 
       $fabric_bag_entry_id = $request->fabric_bag_entry_id;
 
-      $fabricDetails = FabricStock::where("id", $id)->get();
+      $fabricDetails = FabricStock::where("fabric_id", $id)->get();
       try {
         DB::beginTransaction();
 
@@ -99,10 +136,10 @@ class FabricTransferEntryForBagController extends Controller
           BagTemporaryFabricReceive::create([
             "fabric_bag_entry_id" => $fabric_bag_entry_id,
             "fabric_id" => $id,
-            "gram" => $data->gram,
+            "gram" => $data->gram_wt,
             "gross_wt" => $data->gross_wt,
             "net_wt" => $data->net_wt,
-            "average"=>$data->average,
+            "average"=>$data->average_wt,
             "meter" => $data->meter,
             "roll_no" => $data->roll_no,
             "loom_no" => $data->loom_no
@@ -130,7 +167,7 @@ class FabricTransferEntryForBagController extends Controller
 
   public function discard(Request $request){
     if($request->ajax()){
-      BagTemporaryFabricReceive::truncate();
+      // BagTemporaryFabricReceive::truncate();
     }
   }
 
@@ -156,10 +193,12 @@ class FabricTransferEntryForBagController extends Controller
   }
 
   public function finalsave(Request $request){
+    // return $request;
     if($request->ajax()){
       $id = [];
       $fabric_entry_id = $request->fabric_id;
       $data = BagTemporaryFabricReceive::all();
+      $id_of_fabric_stock = [];
       try{
         DB::beginTransaction();
 
@@ -181,19 +220,26 @@ class FabricTransferEntryForBagController extends Controller
             "fabric_id" => $d->fabric_id,
             "gram" => $d->gram,
             "gross_wt" => $d->gross_wt,
+            "average" => $d->average,
             "net_wt" => $d->net_wt,
             "meter" => $d->meter,
             "roll_no" => $d->roll_no,
             "loom_no" => $d->loom_no
           ]);
 
-          $this->updateFabricTransferEntryForBag($fabric_entry_id);
-
           $id[] = $d->id;
 
+          $id_of_fabric_stock[] = $d->fabric_id;
         }
 
+        $this->updateFabricTransferEntryForBag($fabric_entry_id);
+
+        // return [
+        //   "details" => FabricStock::whereIn("fabric_id",$id_of_fabric_stock)->get(),
+        //   "ids" => $id_of_fabric_stock];
+
         BagTemporaryFabricReceive::whereIn("id",$id)->delete();
+        FabricStock::whereIn("fabric_id",$id_of_fabric_stock)->delete();
 
         DB::commit();
         return response([
