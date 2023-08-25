@@ -14,7 +14,7 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6 mt-2">
-                <h4><strong>Reprocess Waste Entry</strong></h4>
+                <h4><strong>Reprocess Wastage Entry</strong></h4>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -34,7 +34,7 @@
             </div>
             <div class="card mt-3">
                 <div class="card-header">
-                    <h4>Reprocess Waste entry</h4>
+                    <h4>Reprocess Wastage entry</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -49,7 +49,7 @@
                             @endforeach
                         </div>
                     @endif
-                    <form action="{{ route('reprocess.waste.entry.store') }}" method="post">
+                    <form action="{{ route('reprocess.wastage.entry.store') }}" method="post">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -91,7 +91,7 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4>Reprocess Wastes</h4>
+                    <h4>Reprocess Wastages</h4>
 
                 </div>
                 <div class="card-body table-responsive">
@@ -140,7 +140,7 @@
                     [10, 25, 50, 100, 250, 500],
                     [10, 25, 50, 100, 250, 500]
                 ],
-                ajax: "{{ route('reprocess.waste.entry.index.ajax') }}",
+                ajax: "{{ route('reprocess.wastage.entry.index.ajax') }}",
                 columns: [{
                         name: "DT_RowIndex",
                         data: "DT_RowIndex"

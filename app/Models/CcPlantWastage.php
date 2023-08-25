@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ReprocessWaste extends Model
+class CcPlantWastage extends Model
 {
     use HasFactory;
 
-    protected $guarded = []; 
-
-    public function godam()
+    protected $guarded = [];
+    
+    public function wastage()
     {
-        return $this->belongsTo(Godam::class,'godam_id');
+        return $this->belongsTo(Wastages::class,'wastage_id');
     }
 }

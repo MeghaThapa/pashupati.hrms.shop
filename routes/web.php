@@ -321,7 +321,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
      //AutoloadItemF
-   Route::post('autoloadItem/store',[AutoloadItemsController::class,'store'])->name('autoloadItem.store');
+    Route::post('autoloadItem/store',[AutoloadItemsController::class,'store'])->name('autoloadItem.store');
     Route::get('autoloadItem/getAutoloadItemsData/{autoload_id}',[AutoloadItemsController::class,'getAutoloadItemsData'])->name('autoloadItem.getAutoloadItemsData');
     Route::get('autoloadItem/getEditAutoloadItemData/{autoloadItem_id}',[AutoloadItemsController::class,'getEditAutoloadItemData'])->name('autoLoadItem.getEditAutoloadItemData');
     Route::post('autoloadItem/update',[AutoloadItemsController::class,'update'])->name('autoloadItem.update');
@@ -535,7 +535,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("create/{entry_id}","create")->name("create");
         Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
         Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
-
+        
         //dana consumption
         Route::post("danagroup-godam-dana","danaFromDanaGroupGodam")->name("danagroup.godam.dana");
         Route::post("add-dana","addDana")->name("add.dana");
@@ -544,11 +544,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("recycle-dana-remove","removeRecycleDana")->name("remove.recycle.dana");
         Route::get("cc/raw/materials","getccrawmaterials")->name('get.cc.raw.materials');
         Route::get("cc/get/sum/{entry_id}","getsumquantity")->name('get.sum');
-
+        
+        Route::post("stock-wastage-entry","updateWastageStock")->name("wastage.entry");
+        Route::get("created/wastage/{entry_id}","createdWastage")->name("created.wastage");
+        Route::post("recycle-wastage-remove","removeRecycleWastage")->name("remove.recycle.wastage");
         Route::post("final/submit","finalsubmit")->name("final.submit");
     });
     
-    Route::prefix("reprocess/waste/")->name("reprocess.waste.")->controller(ReprocessWasteController::class)->group(function(){
+    Route::prefix("reprocess/wastage/")->name("reprocess.wastage.")->controller(ReprocessWasteController::class)->group(function(){
         Route::get("entry/index","entryindex")->name("entry.index");
         Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
         Route::post("entry/store","entrystore")->name("entry.store");
@@ -558,8 +561,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
 
         Route::post("add-waste","addWaste")->name("add.waste");
+        Route::post("restore-wastage","restoreWastage")->name("restore.wastage");
+        Route::post("stock/entry","wastageStockEntry")->name('stock.entry');
+
+        Route::post("stock-dana-entry","updateDana")->name("dana.stock.entry");
+        Route::get("created/dana/{entry_id}","createdDana")->name("created.dana");
+        Route::post("recycle-dana-remove","removeRecycleDana")->name("remove.recycle.dana");
+
         Route::get("raw/materials","getWasteRawmaterials")->name('get.raw.materials');
+        Route::get("created/wastage/{entry_id}","createdWastage")->name("created.wastage");
         Route::get("get/sum/{entry_id}","getsumquantity")->name('get.sum');
+        Route::post("recycle-wastage-remove","removeRecycleWastage")->name("remove.recycle.wastage");
 
         Route::post("final/submit","finalsubmit")->name("final.submit");
     });

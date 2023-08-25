@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CCPlantDanaCreation;
-use App\Models\CCPlantDanaCreationTemp;
+use App\Models\Godam;
+use App\Models\Shift;
+use App\Models\DanaName;
+use App\Models\Wastages;
+use App\Models\WasteStock;
+use App\Models\RawMaterial;
 use App\Models\CCPlantEntry;
 use App\Models\CCPlantItems;
-use App\Models\CCPlantItemsTemp;
-use App\Models\DanaName;
-use App\Models\Godam;
-use App\Models\ProcessingStep;
-use App\Models\ProcessingSubcat;
-use App\Models\RawMaterial;
-use App\Models\RawMaterialStock;
-use App\Models\Shift;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\ProcessingStep;
+use App\Models\CCPlantItemsTemp;
+use App\Models\ProcessingSubcat;
+use App\Models\RawMaterialStock;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
+use App\Models\CCPlantDanaCreation;
+use App\Models\CCPlantDanaCreationTemp;
+use App\Models\CcPlantWastage;
 use Yajra\DataTables\Exceptions\Exception;
 
 class CCPlantController extends Controller
@@ -90,10 +93,13 @@ class CCPlantController extends Controller
             },
         ]);
 
+
         $rawMaterial = RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$request->dana_name)->firstOrFail();
-        if($rawMaterial->quantity>= $request->dana_quantity){
+        if($rawMaterial->quantity >= $request->dana_quantity){
             $rawMaterial->quantity = $rawMaterial->quantity - $request->dana_quantity;
             $rawMaterial->save();
+        }else{
+            return back()->with('error','Raw material is out of Stock');
         }
 
         CCPlantEntry::create([
@@ -113,11 +119,13 @@ class CCPlantController extends Controller
         $ccPlantEntry = CCPlantEntry::with('godam')->where("id",$entry_id)->firstOrFail();
         $danaNameIds = RawMaterialStock::where('godam_id',$ccPlantEntry->godam_id)->pluck('dana_name_id');
         $danaNames = DanaName::with('danagroup','rawMaterialStock')->whereIn('id',$danaNameIds)->get();
+        $wastages = Wastages::all();
         return  view("admin.cc_plant.create")->with([
             "ccPlantEntry" => $ccPlantEntry,
             "danaNames" => $danaNames,
             "entry_id" => $entry_id,
             "shift" => Shift::get(),
+            'wastages' => $wastages,
         ]);
     }
     /************************ Entry ******************************/
@@ -311,7 +319,6 @@ class CCPlantController extends Controller
 
     }
 
-
     public function createdDana($entry_id){
         if($this->request->ajax()){
             return DataTables::of(CCPlantDanaCreationTemp::with('danaName','danaGroup')->where("cc_plant_entry_id",$entry_id)->get())
@@ -330,4 +337,70 @@ class CCPlantController extends Controller
                         ->make(true);
         }
     }
+    
+    public function createdWastage($entry_id){
+        if($this->request->ajax()){
+            return DataTables::of(CcPlantWastage::with('wastage')->where("ccplantentry_id",$entry_id)->get())
+                        ->addIndexColumn()
+                        ->addColumn("wastage",function($row){
+                            return $row->wastage->name;
+                        })
+                        ->addColumn('action',function($row){
+                            return "<button data-id='{$row->id}' class='btn btn-sm btn-danger wastage_recycle_remove'>
+                                        <i class='fa fa-recycle'></i>
+                                    </button>";
+                        })
+                        ->make(true);
+        }
+    }
+
+    public function updateWastageStock(Request $request){
+
+        try{
+            DB::beginTransaction();
+
+            $ccPlantEntry = CCPlantEntry::findOrFail($request->cc_plant_entry_id);
+            
+            CcPlantWastage::create([
+                'ccplantentry_id' => $ccPlantEntry->id,
+                'godam_id' => $ccPlantEntry->godam_id,
+                'wastage_id' => $request->wastage_id,
+                'quantity' => $request->quantity,
+            ]);
+
+            WasteStock::where('godam_id',$ccPlantEntry->godam_id)->where('waste_id',$request->wastage_id)->increment('quantity_in_kg',$request->quantity);
+
+            DB::commit();
+
+            return response(['status'=>true,'message'=>'WastageStock Updated']);
+
+        }catch(\Exception $e){
+            dd($e->getMessage());
+        }
+
+    }
+    
+    public function removeRecycleWastage(Request $request){
+
+        try{
+            DB::beginTransaction();
+
+            $ccPlantEntry = CCPlantEntry::findOrFail($request->cc_plant_entry_id);
+            
+            $ccPlantWastage = CcPlantWastage::findOrFail($request->restore_wastage_id);
+
+            WasteStock::where('godam_id',$ccPlantEntry->godam_id)->where('waste_id',$ccPlantWastage->wastage_id)->decrement('quantity_in_kg',$ccPlantWastage->quantity);
+
+            $ccPlantWastage->delete();
+
+            DB::commit();
+
+            return response(['status'=>true,'message'=>'WastageStock Updated']);
+
+        }catch(\Exception $e){
+            dd($e->getMessage());
+        }
+
+    }
+
 }

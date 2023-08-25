@@ -562,12 +562,12 @@
                     </a>
                 </li>
                 
-                <li class="nav-header text-bold">{{ __('Reprocess Waste') }}</li>
+                <li class="nav-header text-bold">{{ __('Reprocess Wastage') }}</li>
                 <li class="nav-item">
-                    <a href="{{ route('reprocess.waste.entry.index') }}"
-                        class="nav-link {{ request()->routeIs('cc.plant.*') ? 'active' : '' }}">
+                    <a href="{{ route('reprocess.wastage.entry.index') }}"
+                        class="nav-link {{ request()->routeIs('reprocess.wastage.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-random"></i>
-                        <p>{{ __('Reprocess Waste') }}</p>
+                        <p>{{ __('Reprocess Wastage') }}</p>
                     </a>
                 </li>
 

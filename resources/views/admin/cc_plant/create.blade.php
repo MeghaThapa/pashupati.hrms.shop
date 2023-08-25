@@ -135,7 +135,7 @@
                 </div>
         </div>
         <hr>
-        <h3 class="text-center">CC Dana Creation</h3>
+        <h3 class="text-center">CC Raw Material Creation</h3>
         <div class="card">
             <div class="card-body">
                 <div class="row">
@@ -149,6 +149,7 @@
                             @foreach ($danaGroup as $danag)
                                 <option value="{{ $danag->id }}">{{ $danag->name }}</option>
                             @endforeach
+                            
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -223,15 +224,57 @@
                 </div>
             </div>
         </div>
+
         <hr>
         <div class="row d-flex justify-content-center">
             <div class="col-md-12">
                 <label>Total Row/Dana in Kg</label>
                 <input type="text" class="form-control" name="dana_in_kg" id="dana_in_kg" readonly required />
-                <button type="button" id="btn-update" class="finalsubmit btn btn-info mt-3" disabled>Update</button>
             </div>
         </div>
         <hr>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center">Add CC Wastage </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="">Select Wastage</label>
+                        <select name="danagroup" id="creationWasteID" class="form-control select2 advance-select-box">
+                            <option selected disabled>Select Wastage</option>
+                            @foreach ($wastages as $wastage)
+                                <option value="{{ $wastage->id }}">{{ $wastage->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">Quantity</label>
+                        <input type="number" name="quantity" id="wastageQuantity" class="form-control">
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <button id="processWaste" type="button" class="btn btn-primary process_waste_creation">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="wastage_table" class="table table-striped table-hover table-bordered  w-100">
+                        <thead>
+                            <tr>
+                                <th>SN</th>
+                                <th>Wastage</th>
+                                <th>Quantity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
         </form>
     </div>
     </div>
@@ -276,6 +319,26 @@
             </div>
         </div>
     </div>
+    <div id="restoreModal3" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure you want to remove this item?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Once removed your stock will get restored.</p>
+                    <input type="hidden" id="restore_wastage_id" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary confirm_waste_recycle_remove">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('extra-script')
@@ -312,7 +375,7 @@
                 var selectedOption = $(this).find('option:selected');
                 var availableQuantity = selectedOption.data('quanity');
                 $('#available_quantity').val(availableQuantity);
-                $('#dana_quantity').attr('min', availableQuantity);
+                $('#dana_quantity').attr('max', availableQuantity);
             });
 
             $('#raw_materials').trigger('change');
@@ -423,6 +486,30 @@
                     },
                 ]
             })
+            
+            let wastageTable = $("#wastage_table").DataTable({
+                processing: true,
+                serverside: true,
+                ajax: "{{ route('cc.plant.created.wastage', ['entry_id' => ':entry_id']) }}".replace(
+                    ":entry_id", $("#cc_plant_entry_id").val()),
+                columns: [{
+                        name: "DT_RowIndex",
+                        data: "DT_RowIndex"
+                    },
+                    {
+                        name: "wastage",
+                        data: "wastage"
+                    },
+                    {
+                        name: "quantity",
+                        data: "quantity"
+                    },
+                    {
+                        name: "action",
+                        data: "action"
+                    },
+                ]
+            });
 
             $(".consumption-dana-table").click(function(e) {
                 e.preventDefault()
@@ -602,6 +689,29 @@
                     }
                 })
             });
+            
+            $(".confirm_waste_recycle_remove").click(function(e) {
+                e.preventDefault()
+
+                $.ajax({
+                    url: "{{ route('cc.plant.remove.recycle.wastage') }}",
+                    method: "post",
+                    data: {
+                        "_token": $("meta[name='csrf-token']").attr("content"),
+                        "godam_id": $("#godam").val(),
+                        "restore_wastage_id": $('#restore_wastage_id').val(),
+                        "cc_plant_entry_id": $("#cc_plant_entry_id").val()
+                    },
+                    success: function(response) {
+                        wastageTable.ajax.reload();
+                        $('#restoreModal3').modal('hide');
+
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            });
 
 
             $('#creationDanaGroup').on('change',function(){
@@ -658,6 +768,34 @@
 
                         $('#dana_quantity').val('');
 
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                });
+
+            });
+
+            $(document).on('click','.wastage_recycle_remove',function(){
+                $('#restore_wastage_id').val($(this).data('id'));
+                $('#restoreModal3').modal('show');
+            });
+            
+            $(document).on('click','#processWaste',function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('cc.plant.wastage.entry') }}",
+                    method: "post",
+                    data: {
+                        "_token": $("meta[name='csrf-token']").attr("content"),
+                        "wastage_id" : $('#creationWasteID').val(),
+                        "quantity": $('#wastageQuantity').val(),
+                        "godam_id": $('#godam').val(),
+                        "cc_plant_entry_id": $("#cc_plant_entry_id").val(),
+                    },
+                    success: function(response) {
+                        wastageTable.ajax.reload();        
+                        putsum();
                     },
                     error: function(error) {
                         console.log(error)

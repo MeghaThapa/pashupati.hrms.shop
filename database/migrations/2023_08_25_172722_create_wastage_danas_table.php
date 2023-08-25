@@ -13,16 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('reprocess_waste_temps', function (Blueprint $table) {
+        Schema::create('wastage_danas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("reprocess_waste_id");
-            $table->foreign("reprocess_waste_id")->references("id")->on("reprocess_wastes");
+            $table->unsignedBigInteger("reprocess_wastage_id");
+            $table->foreign("reprocess_wastage_id")->references("id")->on("reprocess_wastes")->onDelete("cascade");
             $table->unsignedBigInteger("planttype_id");
             $table->foreign("planttype_id")->references("id")->on("processing_steps")->onDelete("cascade");
             $table->unsignedBigInteger("plantname_id");
             $table->foreign("plantname_id")->references("id")->on("processing_subcats")->onDelete("cascade");
-            $table->unsignedBigInteger("wastage_id");
-            $table->foreign("wastage_id")->references("id")->on("wastages")->onDelete("cascade");
+            $table->unsignedBigInteger("dana_id");
+            $table->foreign("dana_id")->references("id")->on("dana_names")->onDelete("cascade");
+            $table->unsignedBigInteger("dana_group_id");
+            $table->foreign("dana_group_id")->references("id")->on("dana_groups")->onDelete("cascade");
             $table->string("quantity");
             $table->timestamps();
         });
@@ -35,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reprocess_waste_temps');
+        Schema::dropIfExists('wastage_danas');
     }
 };
