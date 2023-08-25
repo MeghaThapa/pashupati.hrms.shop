@@ -193,7 +193,7 @@
     <div class="row">
         <div class="Ajaxdata col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table" id="bswSentLamFabTable">
+                <table class="table" id="bswSentFabToItems">
                     <thead>
                         <tr>
                             <th>{{ __('Sr.No') }}</th>
@@ -208,7 +208,7 @@
                         </tr>
                     </thead>
 
-                    <tbody id="bswSentLamFabTbody">
+                    <tbody id="bswSentFabToItemsTbody">
                     </tbody>
 
                 </table>
@@ -224,7 +224,7 @@
             <div>
                 <p style="font-weight: bold;">To Diffferent Stocks</p>
             </div>
-            <table class="table table-bordered" id="bswPrintedLamFab">
+            <table class="table table-bordered" id="threeDiffStockData">
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -722,6 +722,9 @@
 
     <script>
         $(document).ready(function() {
+
+            let fabTable = null;
+
             $("#nepali-date-picker").nepaliDatePicker({});
             let todayNepaliDate = {!! isset($bswFabSendcurtxReceivpatchvalveEntryData)
                 ? json_encode($bswFabSendcurtxReceivpatchvalveEntryData->date)
@@ -730,7 +733,7 @@
                 $("#nepali-date-picker").val(todayNepaliDate);
             }
             getSentFabItemsData();
-            getDataStoredInThreeDifferentStocks();
+            // getDataStoredInThreeDifferentStocks();
             getDanaConsumptionData();
             //megha thapa
             $('#tremWst, #fabricWst').on("input", function(event) {
@@ -772,54 +775,59 @@
 
 
             $('#fabricName').on('select2:select', function(e) {
+                if (fabTable != null) {
+                    fabTable.destroy()
+                }
 
-                fabTable.ajax.reload();
-            });
-            var fabTable = $('#fabTable').DataTable({
-                lengthMenu: [
-                    [5, 15, 30, -1],
-                    ['5 rows', '15 rows', '30 rows', 'Show all']
-                ],
-                style: 'bootstrap',
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '{{ route('fabSendCuetxReceivePatchValveItems.fabData') }}',
-                    data: function(data) {
-                        data.fabName = $('#fabricName').val();
-                        data.fabType = $('#fabricType').val();
-                        return data;
-                    },
 
-                    error: function(xhr, error, thrown) {
-                        console.log("Error fetching data:", error);
-                    }
-                },
-                columns: [{
-                        data: 'DT_RowIndex'
+                fabTable = $('#fabTable').DataTable({
+                    lengthMenu: [
+                        [5, 15, 30, -1],
+                        ['5 rows', '15 rows', '30 rows', 'Show all']
+                    ],
+                    style: 'bootstrap',
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: '{{ route('fabSendCuetxReceivePatchValveItems.fabData') }}',
+                        data: function(data) {
+                            data.fabName = $('#fabricName').val();
+                            data.fabType = $('#fabricType').val();
+                            return data;
+                        },
+
+                        error: function(xhr, error, thrown) {
+                            console.log("Error fetching data:", error);
+                        }
                     },
-                    {
-                        data: 'name'
-                    },
-                    {
-                        data: 'roll_no'
-                    },
-                    {
-                        data: 'gross_wt'
-                    },
-                    {
-                        data: 'net_wt'
-                    },
-                    {
-                        data: 'meter'
-                    },
-                    {
-                        data: 'average_wt'
-                    },
-                    {
-                        data: 'action'
-                    },
-                ],
+                    columns: [{
+                            data: 'DT_RowIndex'
+                        },
+                        {
+                            data: 'name'
+                        },
+                        {
+                            data: 'roll_no'
+                        },
+                        {
+                            data: 'gross_wt'
+                        },
+                        {
+                            data: 'net_wt'
+                        },
+                        {
+                            data: 'meter'
+                        },
+                        {
+                            data: 'average_wt'
+                        },
+                        {
+                            data: 'action'
+                        },
+                    ],
+
+                });
+
 
             });
             $('#curtexToPatchValFabricModel').submit(function(event) {
@@ -850,11 +858,8 @@
                         );
 
                         $('#curtexToPatchFabricModal').modal('hide');
-                        // response(function(item) {
-                        // console.log('sdfg', item);
                         setOptionInSelect('CortexToPatchValId', response.id,
                             response.name);
-                        // });
 
                     },
                     error: function(xhr, status, error) {
@@ -932,6 +937,7 @@
                         $('#staticBackdrop1').modal('hide');
                         $('#threeDiffStockDataTbody').empty();
                         getDataStoredInThreeDifferentStocks();
+
                         // $('#bswSentLamFabTbody').empty();
                         // getDataOfPrintedLamFab();
                     },
@@ -1035,6 +1041,7 @@
                 e.preventDefault()
                 // let name = $(this).data("name")
                 let fabric_id = $(this).data("fabric_id")
+                // console.log(fabric_id);
                 let is_laminated = $(this).data("is_laminated")
                 let gross_wt = $(this).data("gross_wt")
                 let roll_no = $(this).data("roll_no")
@@ -1080,11 +1087,11 @@
                         bsw_lam_fabcurtexToPatchVal_entry_id: bsw_lam_fabcurtexToPatchVal_entry_id
                     },
                     success: function(response) {
-                        // console.log('megha', response)
-                        tableData(response);
-                        // document.getElementById('totalLamMeter').value = response.totalMeter;
-                        // document.getElementById('totalLamNetWt').value = (response.totalNetWt).toFixed(
-                        //     2);
+                        console.log('meghaaaaa', response)
+                        tableData(response.items);
+                        document.getElementById('totalOutMeter').value = (response.totalMeter).toFixed(
+                            2);
+                        document.getElementById('totalOutNW').value = (response.totalNetWt).toFixed(2);
                         // console.log('frtyhbvcfgh', response);
                     },
                     error: function(error) {
@@ -1093,7 +1100,7 @@
                     }
                 });
             }
-            //three different stock
+
             function tableData(data) {
                 data.forEach(d => {
                     insertDataIntoTable(d)
@@ -1105,10 +1112,11 @@
                 let group = d.gram_wt.split('-')[0];
                 // let result = parseFloat(title) * parseFloat(group);
 
-                let tr = $("<tr></tr>").appendTo('#bswSentLamFabTbody');
+                let tr = $("<tr></tr>").appendTo('#bswSentFabToItemsTbody');
 
                 tr.append(`<td>#</td>`);
-                tr.append(`<td>${d.name}</td>`);
+                let fabricName = d.fabric ? d.fabric.name : d.printedfabric.name;
+                tr.append(`<td>${fabricName}</td>`);
                 tr.append(`<td>${d.roll_no}</td>`);
                 tr.append(`<td>${d.gross_wt}</td>`);
                 tr.append(`<td>${d.net_wt}</td>`);
@@ -1116,12 +1124,13 @@
                 tr.append(`<td>${d.average}</td>`);
                 tr.append(`<td>${d.gram_wt}</td>`);
                 tr.append(
-                    `<td><div class="btn-group"><a id="sendforCutAndFlat" data-group='${d.gram_wt}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`
+                    `<td><div class="btn-group"><a id="sendforCutAndFlat" data-group='${d.gram_wt}' data-title='${d.name}' href="${d.id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletecurtexToPatchValveItem" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`
                 );
             }
             //for different table stock
 
             function getDataStoredInThreeDifferentStocks() {
+                // console.log('fuck');
                 let bsw_lam_fabcurtexToPatchVal_entry_id = {!! $bswFabSendcurtxReceivpatchvalveEntryData->id !!}
                 $.ajax({
                     url: "{{ route('toPatchValveUnlamFabricStock.threeDiffStockData') }}",
@@ -1130,10 +1139,33 @@
                         bsw_lam_fabcurtexToPatchVal_entry_id: bsw_lam_fabcurtexToPatchVal_entry_id
                     },
                     success: function(response) {
-                        threeDiffTableData(response);
-                        // document.getElementById('totalLamMeter').value = response.totalMeter;
-                        // document.getElementById('totalLamNetWt').value = (response.totalNetWt).toFixed(
-                        //     2);
+
+                        if (response && response.commonStockOfThreeStock && response
+                            .commonStockOfThreeStock.length > 0) {
+                            threeDiffTableData(response.commonStockOfThreeStock);
+                            if (response.fabricType && response.fabricType != null) {
+
+                                if (response.fabricType ==
+                                    "valve") {
+                                    document.getElementById('totalValveMeter').value = (response
+                                            .totalmeter)
+                                        .toFixed(
+                                            2);
+                                    document.getElementById('totalValveNw').value = (response.netWeight)
+                                        .toFixed(
+                                            2);
+                                } else if (response.fabricType ==
+                                    "patch") {
+                                    document.getElementById('totalPatchMeter').value = (response
+                                            .totalmeter)
+                                        .toFixed(
+                                            2);
+                                    document.getElementById('totalPatchNW').value = (response.netWeight)
+                                        .toFixed(
+                                            2);
+                                } else {}
+                            }
+                        }
                         // console.log('frtyhbvcfgh', response);
                     },
                     error: function(error) {
@@ -1211,6 +1243,57 @@
                     `<td><div class="btn-group"><a id="deleteDanaConsumpt" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`
                 );
             }
+
+            //delete items
+            $(document).on('click', "#deletecurtexToPatchValveItem", function(e) {
+                e.preventDefault();
+                let itemId = this.getAttribute('data-id');
+                new swal({
+                        title: "Are you sure?",
+                        text: "Do you want to delete Item.",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                        closeOnClickOutside: false,
+                    })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            $.ajax({
+                                url: '{{ route('fabSendCuetxReceivePatchValveItems.delete', ['id' => ':lol']) }}'
+                                    .replace(':lol', itemId),
+                                type: "DELETE",
+                                data: {
+                                    "_method": "DELETE",
+                                    "_token": "{{ csrf_token() }}",
+                                },
+                                success: function(result) {
+                                    $('#bswSentFabToItemsTbody').empty();
+                                    getSentFabItemsData();
+
+                                    // getDanaConsumptionData();
+                                    // totalAmountCalculation();
+                                    new swal({
+                                        title: "Success",
+                                        text: "Data deleted",
+                                        type: 'success',
+                                        timer: '1500'
+                                    });
+                                    // checkRowInTable();
+                                },
+                                error: function(result) {
+                                    new swal({
+                                        title: "Error",
+                                        text: "something went wrong",
+                                        type: 'error',
+                                        timer: '1500'
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+            });
+
             $(document).on('click', "#deleteDanaConsumpt", function(e) {
                 e.preventDefault();
                 let itemId = this.getAttribute('data-id');
