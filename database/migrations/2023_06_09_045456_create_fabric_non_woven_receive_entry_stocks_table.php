@@ -26,8 +26,9 @@ return new class extends Migration
             $table->string('net_weight');
             $table->string('bill_id')->nullable();
             // $table->string('dana_quantity');
-            $table->unsignedBigInteger('nonfabric_id');
-            $table->foreign('nonfabric_id')->references("id")->on('fabric_non_woven_recive_entries')->onDelete('cascade')->onUpdate('cascade');
+            $table->integer('nonfabric_id')->nullable();
+            $table->integer('godam_id')->nullable();
+           
             $table->enum("status",["sent","pending","completed"])->default("sent");
             $table->timestamps();
         });
