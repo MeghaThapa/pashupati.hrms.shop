@@ -408,6 +408,17 @@
                 </li>
 
                 
+                <li class="nav-item">
+                    <a href="{{ route('fabric.entry.report') }}"
+                        class="nav-link {{ request()->is('admin/fabric/entry-report*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric Entry Report</p>
+                    </a>
+                </li>
+
+
+
+                
 
 
                 <li class="nav-item">

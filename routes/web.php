@@ -246,7 +246,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
     Route::post('rawMaterialStock/filterStocks',[RawMaterialStockController::class,'filterStocks'])->name('rawmaterial.filterStocks');
 
-
     //Godam
     Route::get('godam/index',[GodamController::class,'index'])->name('godam.index');
     Route::get('godam/create',[GodamController::class,'create'])->name('godam.create');
@@ -588,6 +587,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'update' => 'fabrics.update',
         ]
     ]);
+
+    Route::get('fabric/entry-report','FabricController@entryReport')->name('fabric.entry.report');
+    Route::get('fabric/entry-report-table','FabricController@entryReportTable')->name('fabric.entry.report.table');
+
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
 
@@ -1497,7 +1500,7 @@ Route::controller(RawmaterialOpeningItemController::class)
 Route::controller(WastageStockController::class)
 ->prefix('wastageStock')
 ->group(function(){
-     Route::get("index","index")->name('wastageStock.index');
+    Route::get("index","index")->name('wastageStock.index');
     Route::get("yajraDatatables","yajraDatatables")->name('wastageStock.yajraDatatables');
 });
 Route::post('openingWastage/import',[StockImportController::class,"openingWastageImport"])->name('openingWastage.openingWastageImport');

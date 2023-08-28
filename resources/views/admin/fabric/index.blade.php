@@ -43,10 +43,7 @@
                         </div>
                     </form>
                 </div>
-                <form action="{{route('test')}}" method="post">
-                    @csrf
-                    <input type="submit">
-                </form>
+              
                 <div class="col-lg-6 col-md-7 col-6">
                     <div class="card-tools text-md-right">
                        <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
@@ -102,6 +99,8 @@
 
                 </div>
             </div>
+            
+           
 
             {{-- <form action="{{ route('fabrics.discard') }}" method="POST" role="search">
                 @csrf
@@ -230,9 +229,5 @@ $(document).ready(function(){
         })
     });
 </script>
-
-
-
-
 
 @endsection 

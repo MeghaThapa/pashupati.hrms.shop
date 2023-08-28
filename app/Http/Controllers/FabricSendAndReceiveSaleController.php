@@ -15,72 +15,75 @@ use Yajra\DataTables\Exceptions\Exception;
 class FabricSendAndReceiveSaleController extends Controller
 {
     protected $request;
-    public function __construct(Request $request){
+    public function __construct(Request $request)
+    {
         $this->request = $request;
     }
-    public function index(){
-       
+    public function index()
+    {
+
         $fabrics = FabricStock::get()->unique('name')->values()->all();
-        $partyname = Supplier::where('status',1)->get();
-        return view('admin.sale.fabricsale.index',compact('fabrics','partyname'));
+        $partyname = Supplier::where('status', 1)->get();
+        return view('admin.sale.fabricsale.index', compact('fabrics', 'partyname'));
     }
 
-    public function indexajax(){
-        if($this->request->ajax()){
+    public function indexajax()
+    {
+        if ($this->request->ajax()) {
             return DataTables::of(FabricSaleEntry::with("getParty")->get())
-                        ->addIndexColumn()
-                        ->addColumn("supplier",function($row){
-                            return $row->getParty->name;
-                        })
-                        ->addColumn("action",function($row){
-                            if($row->status == "pending"){
-                                return "
+                ->addIndexColumn()
+                ->addColumn("supplier", function ($row) {
+                    return $row->getParty->name;
+                })
+                ->addColumn("action", function ($row) {
+                    if ($row->status == "pending") {
+                        return "
                                     <div class='btn-group'>
                                         <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-primary create-sale'><i class='fa fa-plus' aria-hidden='true'></i></a>
                                     </div>
                                 ";
-                            }else{
-                                return '<a href="' . route('fabric.sale.viewBill', ['bill_id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
-                                // return "
-                                //     <div class='btn-group'>
-                                //         <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-secondary view-sale'><i class='fa fa-eye' aria-hidden='true'></i></a>
-                                //     </div>
-                                // ";
-                            }
-                        })
-                        ->rawColumns(["supplier","action"])
-                        ->make(true);
+                    } else {
+                        return '<a href="' . route('fabric.sale.viewBill', ['bill_id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
+                        // return "
+                        //     <div class='btn-group'>
+                        //         <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-secondary view-sale'><i class='fa fa-eye' aria-hidden='true'></i></a>
+                        //     </div>
+                        // ";
+                    }
+                })
+                ->rawColumns(["supplier", "action"])
+                ->make(true);
         }
     }
 
     public function viewBill($id)
     {
         $findsale = FabricSaleEntry::find($id);
-        $data = FabricSaleItems::where('sale_entry_id',$id);
+        $fabrics = FabricSaleItems::where('sale_entry_id', $id)->get();
 
-        $fabrics = $data->get();
-      
+        $totalstocks = DB::table('fabric_sale_items')
+            ->join('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
+            ->select(
+                'fabrics.name',
+                DB::raw('SUM(fabrics.gross_wt) as total_gross'),
+                DB::raw('SUM(fabrics.net_wt) as total_net'),
+                DB::raw('SUM(fabrics.meter) as total_meter'),
+                DB::raw('COUNT(fabrics.name) as total_count')
+            )
+            ->where('fabric_sale_items.sale_entry_id', $id)
+            ->groupBy('fabrics.name')
+            ->orderBy('fabrics.name')
+            ->get();
 
-        $totalstocks = FabricSaleItems::where('sale_entry_id',$id)->join('fabrics', function($join)
-              {
-                $join->on('fabrics.id', '=', 'fabric_sale_items.fabric_id');
+        $total_gross = $totalstocks->sum('total_gross');
+        $total_net = $totalstocks->sum('total_net');
+        $total_meter = $totalstocks->sum('total_meter');
 
-              })
-            ->select('name', DB::raw('SUM(gross_wt) as total_gross'),DB::raw('SUM(net_wt) as total_net'),DB::raw('SUM(meter) as total_meter'),DB::raw('COUNT(name) as total_count'))
-            ->groupBy('name')->orderBy('name');
-
-            // dd($totalstocks->get());
-
-        $total_gross = $totalstocks->sum('gross_wt');
-        $total_net = $totalstocks->sum('net_wt');
-        $total_meter = $totalstocks->sum('meter');
-
-        $totalstocks = $totalstocks->get();    
-
-        return view('admin.sale.fabricsale.viewbill',compact('findsale','fabrics','totalstocks','total_gross','total_net','total_meter'));
+        return view('admin.sale.fabricsale.viewbill', compact('findsale', 'fabrics', 'totalstocks', 'total_gross', 'total_net', 'total_meter'));
     }
 
-    public function store(){
+    public function store()
+    {
         $this->request->validate([
             'bill_number' => "required",
             'bill_date' => "required",
@@ -101,40 +104,43 @@ class FabricSendAndReceiveSaleController extends Controller
             'remarks' => $this->request['remarks'],
         ]);
 
-    return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
+        return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
     }
 
-    public function create($entry_id){
-        try{
-            $fabricsaleentry = FabricSaleEntry::where("id",$entry_id)->firstorFail();
+    public function create($entry_id)
+    {
+        try {
+            $fabricsaleentry = FabricSaleEntry::where("id", $entry_id)->firstorFail();
             $fabrics = FabricStock::with("fabric")->get()->unique('name');
             return view("admin.sale.fabricsale.create")->with([
                 "fabricsaleentry" => $fabricsaleentry,
                 "fabrics" => $fabrics,
                 "entry_id" => $entry_id
             ]);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             abort(403);
-        }  
-    }
-
-    public function getidenticalfabricdetails(){
-        if($this->request->ajax()){
-            $fabric_id = $this->request->fabric_name_id;
-            $name = FabricStock::where("id",$fabric_id)->value('name');
-            return DataTables::of(FabricStock::where("name",$name)->get())
-                        ->addIndexColumn()
-                        ->addColumn("action",function($row){
-                            return "<a href='javascript:void(0)' class='btn btn-primary send-to-lower' data-id='{$row->id}'>Send </a>'";
-                        })
-                        ->rawColumns(['action'])
-                        ->make(true);
         }
     }
-    public function storeSale(){
-        if($this->request->ajax()){
+
+    public function getidenticalfabricdetails()
+    {
+        if ($this->request->ajax()) {
+            $fabric_id = $this->request->fabric_name_id;
+            $name = FabricStock::where("id", $fabric_id)->value('name');
+            return DataTables::of(FabricStock::where("name", $name)->get())
+                ->addIndexColumn()
+                ->addColumn("action", function ($row) {
+                    return "<a href='javascript:void(0)' class='btn btn-primary send-to-lower' data-id='{$row->id}'>Send </a>'";
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+    public function storeSale()
+    {
+        if ($this->request->ajax()) {
             // return $this->request->all();
-            $fabric = FabricStock::where("id",$this->request->fabric_id)->first();
+            $fabric = FabricStock::where("id", $this->request->fabric_id)->first();
             FabricSale::create([
                 "sale_entry_id" => $this->request->entry_id,
                 "fabric_id" => $fabric->fabric_id
@@ -142,65 +148,68 @@ class FabricSendAndReceiveSaleController extends Controller
         }
     }
 
-    public function getSales(){
-        if($this->request->ajax()){
-            return DataTables::of(FabricSale::where("sale_entry_id",$this->request->entry_id)->with(["getsaleentry","getfabric"])->get())
-                    ->addIndexColumn()
-                    ->addColumn("fabric_name",function($row){
-                        return $row->getfabric->name;
-                    })
-                    ->addColumn("gross_wt",function($row){
-                        return $row->getfabric->gross_wt;
-                    })
-                    ->addColumn("meter",function($row){
-                        return $row->getfabric->meter;
-                    })
-                    ->addColumn("net_wt",function($row){
-                        return $row->getfabric->net_wt;
-                    })
-                    ->addColumn("gram_wt",function($row){
-                        return $row->getfabric->gram_wt;
-                    })
-                    ->addColumn("roll",function($row){
-                        return $row->getfabric->roll_no;
-                    })
-                    ->addColumn("average_wt",function($row){
-                        return $row->getfabric->average_wt;
-                    })
-                    ->addColumn("action",function($row){
-                        return "<button class='btn btn-danger delete-sale' data-id='{$row->id}'> <i class='fa fa-trash' aria-hidden='true'></i> </button>";
-                    })
-                    ->rawColumns(["action"])
-                    ->make(true);
+    public function getSales()
+    {
+        if ($this->request->ajax()) {
+            return DataTables::of(FabricSale::where("sale_entry_id", $this->request->entry_id)->with(["getsaleentry", "getfabric"])->get())
+                ->addIndexColumn()
+                ->addColumn("fabric_name", function ($row) {
+                    return $row->getfabric->name;
+                })
+                ->addColumn("gross_wt", function ($row) {
+                    return $row->getfabric->gross_wt;
+                })
+                ->addColumn("meter", function ($row) {
+                    return $row->getfabric->meter;
+                })
+                ->addColumn("net_wt", function ($row) {
+                    return $row->getfabric->net_wt;
+                })
+                ->addColumn("gram_wt", function ($row) {
+                    return $row->getfabric->gram_wt;
+                })
+                ->addColumn("roll", function ($row) {
+                    return $row->getfabric->roll_no;
+                })
+                ->addColumn("average_wt", function ($row) {
+                    return $row->getfabric->average_wt;
+                })
+                ->addColumn("action", function ($row) {
+                    return "<button class='btn btn-danger delete-sale' data-id='{$row->id}'> <i class='fa fa-trash' aria-hidden='true'></i> </button>";
+                })
+                ->rawColumns(["action"])
+                ->make(true);
         }
     }
 
-    public function indexsumsajax(){
-        if($this->request->ajax()){
-            $fabrics = DB::table("fabric_sales")->where("sale_entry_id",$this->request->entry_id)
-                                            ->leftJoin("fabrics","fabrics.id", "=","fabric_sales.fabric_id")
-                                            ->get();
+    public function indexsumsajax()
+    {
+        if ($this->request->ajax()) {
+            $fabrics = DB::table("fabric_sales")->where("sale_entry_id", $this->request->entry_id)
+                ->leftJoin("fabrics", "fabrics.id", "=", "fabric_sales.fabric_id")
+                ->get();
             $sumnetwt = $fabrics->sum("net_wt");
             $sumgrosswt = $fabrics->sum("gross_wt");
             $summeter = $fabrics->sum("meter");
             return response([
                 "net_wt" => $sumnetwt,
-                 "gross_wt" => $sumgrosswt,
-                 "meter" => $summeter
+                "gross_wt" => $sumgrosswt,
+                "meter" => $summeter
             ]);
         }
     }
 
-    public function delete(){
-        if($this->request->ajax()){
-            try{
+    public function delete()
+    {
+        if ($this->request->ajax()) {
+            try {
                 $fabric_sale = FabricSale::findorfail($this->request->id);
                 $fabric_sale->delete();
                 return response([
                     "message" =>  "Deletion Completes",
                     "status" => 200
                 ]);
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 return response([
                     "message_err" => $e->getMessage()
                 ]);
@@ -208,23 +217,24 @@ class FabricSendAndReceiveSaleController extends Controller
         }
     }
 
-    public function submit(){
-        if($this->request->ajax()){
-            try{
-                DB::beginTransaction();                
-                foreach(FabricSale::where("sale_entry_id",$this->request->id)->get() as $data){
+    public function submit()
+    {
+        if ($this->request->ajax()) {
+            try {
+                DB::beginTransaction();
+                foreach (FabricSale::where("sale_entry_id", $this->request->id)->get() as $data) {
                     $sale_fabric_id = $data->fabric_id;
-                    
+
                     FabricSaleItems::create([
                         "fabric_id" => $data->fabric_id,
                         "sale_entry_id" => $data->sale_entry_id
                     ]);
-    
-                    FabricStock::where("fabric_id",$sale_fabric_id)->delete();
+
+                    FabricStock::where("fabric_id", $sale_fabric_id)->delete();
                 }
-    
-                FabricSale::where("sale_entry_id",$this->request->id)->delete();
-                FabricSaleEntry::where("id",$this->request->id)->update([
+
+                FabricSale::where("sale_entry_id", $this->request->id)->delete();
+                FabricSaleEntry::where("id", $this->request->id)->update([
                     "status" => "completed"
                 ]);
                 DB::commit();
@@ -232,7 +242,7 @@ class FabricSendAndReceiveSaleController extends Controller
                     "status" => 200,
                     "message" => "saved successfully"
                 ]);
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 DB::rollBack();
             }
         }
