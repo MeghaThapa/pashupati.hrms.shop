@@ -39,11 +39,11 @@
                                     value="{{ request('term') ? request('term') : '' }}" required>
                             <span class="input-group-append">
                                     <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
-                                </span>
+                            </span>
                         </div>
                     </form>
                 </div>
-              
+
                 <div class="col-lg-6 col-md-7 col-6">
                     <div class="card-tools text-md-right">
                        <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
@@ -99,6 +99,8 @@
 
                 </div>
             </div>
+                <a href="{{route('admin.test')}}">hello</a>
+
 
 
             <div class="p-0 table-responsive table-custom my-3">

@@ -59,10 +59,10 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
 
                  $average = $row['grams'];
 
-                 $gram_wt = ($average) / $data;
+                 $gram_wts = ($average) / $data;
 
-            
-                 // $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
+                 $average_wt = round($average, 2);
+                 $gram_wt = round($gram_wts, 2);
             
             
                  $fabric = Fabric::create( [
@@ -74,7 +74,7 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
                          'net_wt' => $row['net_wt'],
                          'meter' => $row['meter'],
                          'gram_wt' => $gram_wt,
-                         'average_wt' => $row['grams'],
+                         'average_wt' => $average_wt,
                          'godam_id' => $this->godam,
                          'date_np' => $this->date_np,
                          'bill_no' => $bill_no,
@@ -90,7 +90,7 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
                      'net_wt' => $row['net_wt'],
                      'meter' => $row['meter'],
                      'gram_wt' => $gram_wt,
-                     'average_wt' => $row['grams'],
+                     'average_wt' => $average_wt,
                      'godam_id' => $this->godam,
                      'bill_no' => $bill_no,
                      'fabric_id' => $fabric->id,
@@ -102,6 +102,7 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
           
             
         }catch(\Throwable $th){
+            // dd($th);
             $this->message = $th;
         }
     }
