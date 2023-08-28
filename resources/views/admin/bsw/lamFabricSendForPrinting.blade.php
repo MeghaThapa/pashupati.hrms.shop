@@ -686,9 +686,7 @@
     <script>
         $(document).ready(function() {
             $("#nepali-date-picker").nepaliDatePicker({});
-            let todayNepaliDate = {!! isset($bswLamFabForPrintingEntry)
-                ? json_encode($bswLamFabForPrintingEntry->date)
-                : 'null' !!};
+            let todayNepaliDate = {!! isset($bswLamFabForPrintingEntry) ? json_encode($bswLamFabForPrintingEntry->date) : 'null' !!};
             if (todayNepaliDate !== null) {
                 $("#nepali-date-picker").val(todayNepaliDate);
             }

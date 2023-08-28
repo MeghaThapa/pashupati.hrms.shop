@@ -39,11 +39,11 @@
                                     value="{{ request('term') ? request('term') : '' }}" required>
                             <span class="input-group-append">
                                     <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
-                                </span>
+                            </span>
                         </div>
                     </form>
                 </div>
-              
+
                 <div class="col-lg-6 col-md-7 col-6">
                     <div class="card-tools text-md-right">
                        <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
@@ -99,13 +99,7 @@
 
                 </div>
             </div>
-            
-           
 
-            {{-- <form action="{{ route('fabrics.discard') }}" method="POST" role="search">
-                @csrf
-                <input type="submit" name="button" value="discard">
-            </form> --}}
 
             <div class="p-0 table-responsive table-custom my-3">
                 <table class="table">
@@ -133,9 +127,7 @@
                                      <button type="button" id="rawMaterialDeleteBtn" class="btnEdit btn btn-sm btn-danger"  data-id="{{$fabric->id}}">
                                     <i class="fas fa-trash fa-lg"></i>
                                     </button>
-                                 {{--    <a 
-                                        class="dropdown-item" data-id="{{$fabric->id}}" id="rawMaterialDeleteBtn"><i class="fas fa-destroy"></i>
-                                        {{ __('Delete') }}</a> --}}
+                                   
                                 </td>
 
                             </tr>

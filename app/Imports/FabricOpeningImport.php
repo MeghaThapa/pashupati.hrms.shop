@@ -33,8 +33,11 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
       
         try{
             foreach($collection as $row){
-                 $size = trim($row['size']);
+
+                 $name_size = trim($row['size']);
                  $slug = $row['gram'];
+
+                 $size = $name_size .'('. $row['gram'].')';
             
                  $fabricgroup = FabricGroup::firstOrCreate([
                      'slug' => $slug
@@ -45,8 +48,21 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
                      
                  ]);
                  $fabricgroup_id = FabricGroup::where('slug',$slug)->value('id');
-            
-                 $gram_wt = (round(round($row['grams'], 2) / (int) filter_var($row['size'], FILTER_SANITIZE_NUMBER_INT) ));
+
+                 $input = $row['size'];
+                 $parts = explode(' ', $input);
+                 $firstString = $parts[0];   
+                         
+                 $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+                 $data = $find_name  ;
+
+                 $average = $row['grams'];
+
+                 $gram_wts = ($average) / $data;
+
+                 $average_wt = round($average, 2);
+                 $gram_wt = round($gram_wts, 2);
             
             
                  $fabric = Fabric::create( [
@@ -58,7 +74,7 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
                          'net_wt' => $row['net_wt'],
                          'meter' => $row['meter'],
                          'gram_wt' => $gram_wt,
-                         'average_wt' => $row['grams'],
+                         'average_wt' => $average_wt,
                          'godam_id' => $this->godam,
                          'date_np' => $this->date_np,
                          'bill_no' => $bill_no,
@@ -74,7 +90,7 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
                      'net_wt' => $row['net_wt'],
                      'meter' => $row['meter'],
                      'gram_wt' => $gram_wt,
-                     'average_wt' => $row['grams'],
+                     'average_wt' => $average_wt,
                      'godam_id' => $this->godam,
                      'bill_no' => $bill_no,
                      'fabric_id' => $fabric->id,
@@ -86,6 +102,7 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
           
             
         }catch(\Throwable $th){
+            // dd($th);
             $this->message = $th;
         }
     }

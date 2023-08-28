@@ -479,10 +479,6 @@
                         <p>{{ __('Sub Categories') }}</p>
                     </a>
                 </li>
-
-
-
-
                 <li class="nav-item">
                     <a href="{{ route('processing.index') }}"
                         class="nav-link {{ request()->is('admin/processing-products*') ? 'active' : '' }}">
@@ -519,6 +515,14 @@
                         class="nav-link {{ request()->is('rawMaterial/index*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-shopping-basket"></i>
                         <p>{{ __('Raw Material') }}</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('rawMaterialSalesEntry.index') }}"
+                        class="nav-link {{ request()->is('rawMaterialSalesEntry/index*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-shopping-basket"></i>
+                        <p>{{ __('Raw Material Sales') }}</p>
                     </a>
                 </li>
 

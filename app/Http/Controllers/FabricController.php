@@ -19,51 +19,14 @@ class FabricController extends Controller
 {
     public function index(Request $request)
     {
-        // $query = Fabric::query();
-        // if (request('term')) {
-        //     $term = request('term');
-        //     $query->where('name', 'Like', '%' . $term . '%');
-        // }
-        // $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
 
         $fabrics = FabricDetail::paginate(15);
 
         $departments = Godam::get();
         $shifts = Shift::get();
-$fabric_netweight = 0;
-        // $getFabricLastId = Fabric::latest()->first();
-
-
-        // // dd($getFabricLastId);
-
-        // if($getFabricLastId != null)
-        // {
-        //  $fabric_netweight = Fabric::where('bill_no',$getFabricLastId->bill_no)->sum('net_wt');
-
-        // }
-
-        // else{
-        //
-        // }
-
+        $fabric_netweight = 0;
 
         return view('admin.fabric.index', compact('fabrics','departments','shifts','fabric_netweight'));
-    }
-
-    public function test(){
-        $data = FabricStock::get();
-        // dd($data);
-        foreach ($data as $value) 
-            {
-                $group = FabricGroup::find($value->fabricgroup_id);
-                $final = $value->name .'('. $group->name.')';
-                // dd($final);
-                $sa = FabricStock::where('id',$value->id)->update(['name' => $final]); 
-
-                // dd($value,$group);
-            }
-        
-
     }
 
 

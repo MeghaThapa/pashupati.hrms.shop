@@ -102,6 +102,34 @@
                 </span>
                 @enderror
             </div>
+            <div class="col-md-3 form-group">
+                <label for="fromgodam">{{ __('From Godam') }}<span class="required-field">*</span></label>
+                <select class="advance-select-box form-control @error('fromgodam') is-invalid @enderror" id="fromgodam_id" name="fromgodam_id"  required>
+                    <option value="" selected disabled>{{ __('Select a fromgodam') }}</option>
+                    @foreach($fromgodams as $key => $fromgodam)
+                        <option value="{{ $fromgodam->id }}">{{ $fromgodam->name }}</option>
+                    @endforeach
+                </select>
+                @error('fromgodam_id')
+                <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                @enderror
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="togodam">{{ __('To Godam') }}<span class="required-field">*</span></label>
+                <select class="advance-select-box form-control @error('togodam') is-invalid @enderror" id="togodam_id" name="togodam_id"  required>
+                    <option value="" selected disabled>{{ __('Select a togodam') }}</option>
+                    @foreach($togodams as $key => $togodam)
+                        <option value="{{ $togodam->id }}">{{ $togodam->name }}</option>
+                    @endforeach
+                </select>
+                @error('togodam_id')
+                <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                @enderror
+            </div>
             
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Remarks') }}<span class="required-field">*</span>

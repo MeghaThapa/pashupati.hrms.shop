@@ -85,7 +85,7 @@
     <div class="row" id="replaceTable">
         <div class="col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table" >
+                <table class="table">
                     <thead>
                         <tr>
                             <th>{{ __('S.No') }}</th>
@@ -133,12 +133,14 @@
 
                 </table>
             </div>
-            @if ($fabric_stock)
-                {{ $fabric_stock->links() }}
-
-            @endif 
+           
         </div>
+
     </div>
+    @if ($fabric_stock)
+        {{ $fabric_stock->links() }}
+
+    @endif 
 @endsection
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>

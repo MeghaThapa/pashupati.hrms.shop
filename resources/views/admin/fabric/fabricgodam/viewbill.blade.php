@@ -78,8 +78,8 @@
 @section('content')
 <section class="content">
   <div class="container-fluid">
-    <a href="{{route('tripalsale.pdf',$id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a>
-    <a href="{{route('tripalsale.excel',$id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a>
+    {{-- <a href="{{route('tripalsale.pdf',$id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a> --}}
+    {{-- <a href="{{route('tripalsale.excel',$id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a> --}}
    
     
     <div class="row" id="printTable">
@@ -102,32 +102,31 @@
             <div class="col-sm-6 invoice-col">
               
               <address>
-                <strong> FromGodam : {{$find_data->getFromGodam->name}}</strong><br>
+                {{-- <strong> FromGodam : {{$find_data->fromgodam->name}}</strong><br> --}}
               
               </address>
             </div>
             <div class="col-sm-12 col-lg-6  text-right">
-              <b>ToGodam : {{$find_data->getToGodam->name}}</b><br>
+              {{-- <b>ToGodam : {{$find_data->togodam->name}}</b><br> --}}
               <br>
             </div>
             <div class="row col-lg-12" >
                 <div class="col-sm-6 col-lg-6  text-left">
-                    
                   <b>Invoice Number: {{$find_data->bill_no}}</b><br>
                   <br>
                 </div>
 
-                {{-- <div class="col-lg-6 text-right">
-                  <b>FromGodam : {{$find_data->getFromGodam->name}}</b><br>
+                <div class="col-lg-6 text-right">
+                  {{-- <b>Gate Pass: {{$findsale->gp_no}}</b><br> --}}
                   <br>
-                </div> --}}
+                </div>
                 
             </div>
 
             <div class="row">
 
                 <div class="col-sm-12 text-right ml-2">
-                  {{-- <b>Date: {{$findtripal->bill_date}}</b><br> --}}
+                  <b>Date: {{$find_data->bill_date}}</b><br>
                   <br>
                 </div>
                 
@@ -137,82 +136,39 @@
           </div>
           <div class="row">
             <div class="col-12 table-responsive">
-              <table class="table table-striped table-sm">
+              <table class="table table-bordered" style="padding: 0 30px; ">
                 
 
                 <tr>
                     <th width="10px">{{ __('Sr.No') }}</th>
                     <th width="10px">{{ __('Fabric Name') }}</th>
                     <th width="10px">{{ __('Roll No') }}</th>
-                    <th width="10px">{{ __('Gross Wght') }}</th>
-                    <th width="10px">{{ __('Net Wght') }}</th>
-                    <th width="10px">{{ __('Meter') }}</th>
-                    <th width="10px">{{ __('Avg Wght') }}</th>
-                    <th width="10px">{{ __('GSM') }}</th>
+                    <th width="10px">{{ __('Net Wt') }}</th>
                 </tr>
 
                 <tbody>
-                    @foreach($stocks as $tripal)
+                    @foreach($fabricdetails as $key=>$fabric)
                     <tr>
-                        <td>#</td>
-                        <td>{{$tripal->name}}</td>
-                        <td>{{$tripal->roll}}</td>
-                        <td>{{$tripal->gross}}</td>
-                        <td>{{$tripal->net}}</td>
-                        <td>{{$tripal->meter}}</td>
-                        <td>{{$tripal->average}}</td>
-                        <td>{{$tripal->gsm}}</td>
+                        <td>{{$key+1}}</td>
+                        <td>{{$fabric->name}}</td>
+                        <td>{{$fabric->roll}}</td>
+                        <td>{{$fabric->net_wt}}</td>
                     </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">GrandTotal</td>
+                        <td>{{$total_net}}</td>
+                    </tr>
+                </tfoot>
              
              
               </table>
           </div>
         </div>
 
-        {{-- <h3 class="m-0 text-center mt-2">SUMMARY</h3> --}}
-
-        {{--   <div class="row p-4">
-            <div class="col-12 table-responsive">
-              <table class="table table-striped table-sm">
-                
-
-                <tr>
-                    <th width="10px">{{ __('Sr.No') }}</th>
-                    <th width="10px">{{ __('Fabric Name') }}</th>
-                    <th width="10px">{{ __('Roll No') }}</th>
-                    <th width="10px">{{ __('Gross Wght') }}</th>
-                    <th width="10px">{{ __('Net Wght') }}</th>
-                    <th width="10px">{{ __('Meter') }}</th>
-                </tr>
-
-                <tbody>
-                    @foreach($totaltripals as $tripal)
-                    <tr>
-                        <td>#</td>
-                        <td>{{$tripal->name}}</td>
-                        <td>{{$tripal->total_count}}</td>
-                        <td>{{$tripal->total_gross}}</td>
-                        <td>{{$tripal->total_net}}</td>
-                        <td>{{$tripal->total_meter}}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-
-                <tfoot>
-                    <tr>
-                        <td colspan="3">GrandTotal</td>
-                        <td>{{$total_gross}}</td>
-                        <td>{{$total_net}}</td>
-                        <td>{{$total_meter}}</td>
-                    </tr>
-                </tfoot>
-             
-             
-              </table>
-          </div> --}}
-        </div>
+          
         
         <div class="row no-print">
           <div class="col-12">
@@ -226,23 +182,9 @@
 </div>
 </section>
 
-
-
-
-
-
-<!-- /.card-body -->
-
-<!-- pagination start -->
-
 @endsection
 @section('extra-script')
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
-
-    
-
-
-
 
 @endsection
