@@ -108,6 +108,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // setup route
     Route::get('setup', 'AdminController@setupPage')->name('admin.setup');
 
+    // setup route
+    Route::get('test', 'FabricController@test')->name('admin.test');
+
     // general settings routes
     Route::get('general-settings', 'AdminController@generalSettings')->name('admin.setup.general');
     Route::post('general-settings', 'AdminController@updateGeneralSettings')->name('admin.setup.general.update');
@@ -594,7 +597,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('fabricGodam/transferFabricGodam/{fabricgodam_id}', 'FabricGodamController@transferFabric')->name('fabricgodams.transferFabric');
 
-    Route::get('fabricGodam/transferFabricGodamDetail/{fabricgodam_id}', 'FabricGodamController@transferFabricDetail')->name('fabricgodams.transferFabricDetail');
+    Route::get('fabricGodam/viewbill/{fabricgodam_id}', 'FabricGodamController@viewbill')->name('fabricgodams.transferFabricDetail');
 
     Route::get('fabricGodam/fabricStockList', 'FabricGodamController@getFabricStockList')->name('godamfabrics.getFabricStockList');
 

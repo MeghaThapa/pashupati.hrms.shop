@@ -48,12 +48,6 @@ class FabricStockController extends Controller
                 return "Unsuccessful";
             }
             
-            // $importException = $fabricImport->getExceptionMessage();
-            // if($importException){
-            //     return $importException->getMessage();
-            // }else{
-            //     return "Import Successful";
-            // }
             
         }catch(Throwable $th){
             return $th->getMessage();
@@ -61,11 +55,11 @@ class FabricStockController extends Controller
     }
     public function index()
     {
+      
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
 
        $fabric_stock = FabricStock::orderBy('roll_no')->paginate(35);
-       // $fabric_stock = FabricStock::get();
 
        $godams=Godam::where('status','active')->get(['id','name']);
        $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
@@ -83,8 +77,6 @@ class FabricStockController extends Controller
     }
 
       public function filterStock(Request $request){
-
-        // dd('hey');
         
         $getname = Fabric::where('id',$request->fabric_id)->value('name');
 
@@ -131,6 +123,7 @@ class FabricStockController extends Controller
     }
 
       public function viewBill(Request $request){
+        // dd('ll');
 
         $helper= new AppHelper();
         $settings= $helper->getGeneralSettigns();
@@ -143,19 +136,24 @@ class FabricStockController extends Controller
 
         $sum = 0;
 
-        $fabrics = FabricStock::where('status',1);
+        $fabrics = FabricStock::join('fabric_groups', 'fabric_stock.fabricgroup_id', '=', 'fabric_groups.id')
+                           ->orderBy('fabric_groups.name')
+                           ->select('fabric_stock.*');
+
+        $totaldatas = FabricStock::where('status',1);                   
+    
 
             if ($godam_id  || $godam_id  != null) {
                 $fabrics = $fabrics->where('godam_id',$godam_id);
-                $sum = $fabrics->sum('net_wt');
+                $totaldatas = $totaldatas->where('godam_id',$godam_id);
                 
             }
             $find_godam = Godam::where('id',$godam_id)->value('name');
 
 
             if($fabricgroup_id || $fabricgroup_id !=null){
-                $fabrics = $fabrics->where('fabricgroup_id',$fabricgroup_id);
-                $sum = $fabrics->sum('net_wt');
+                $fabrics = $fabrics->where('fabric_stock.fabricgroup_id',$fabricgroup_id);
+                $totaldatas = $totaldatas->where('fabricgroup_id',$fabricgroup_id);
             }
 
             $find_group = FabricGroup::where('id',$fabricgroup_id)->value('name');
@@ -164,13 +162,14 @@ class FabricStockController extends Controller
             $find_name = FabricStock::where('id',$request->name)->value('name');
 
             if($fabric_name || $fabric_name !=null){
-                $fabrics = $fabrics->where('name',$find_name);
-                $sum = $fabrics->sum('net_wt');
+                $fabrics = $fabrics->where('fabric_stock.name',$find_name);
+                $totaldatas = $totaldatas->where('name',$find_name);
+
             }
 
             if($type || $type !=null){
-                $fabrics = $fabrics->where('is_laminated', $type);
-                $sum = $fabrics->sum('net_wt');
+                $fabrics = $fabrics->where('fabric_stock.is_laminated', $type);
+                $totaldatas = $totaldatas->where('is_laminated',$type);
             }
             // dd($type);
 
@@ -183,21 +182,21 @@ class FabricStockController extends Controller
             }
 
            
-
             // lm is true unlam is false
 
-            $datas= $fabrics->orderBy('name')->get();
-            
+            $datas= $fabrics->get();
+                         
+
             $total_gross = $fabrics->sum('gross_wt');
             $total_net = $fabrics->sum('net_wt');
             $total_meter = $fabrics->sum('meter');
 
-            $totaldatas = $fabrics->select('name', DB::raw('SUM(gross_wt) as total_gross'),DB::raw('SUM(net_wt) as total_net'),DB::raw('SUM(meter) as total_meter'),DB::raw('COUNT(name) as total_count'))
+            $totaldatas = $totaldatas->select('name', DB::raw('SUM(gross_wt) as total_gross'),DB::raw('SUM(net_wt) as total_net'),DB::raw('SUM(meter) as total_meter'),DB::raw('COUNT(name) as total_count'))
                 ->groupBy('name')
                 ->get();
 
 
         return view('admin.fabric.fabric_stock.viewbill',
-        compact('settings','sum','godams','request','datas','totaldatas','total_gross','total_net','total_meter','find_godam','find_name','find_type','find_group'));
+        compact('settings','sum','godams','request','datas','total_gross','total_net','total_meter','find_godam','find_name','find_type','find_group','totaldatas'));
     }
 }

@@ -59,6 +59,8 @@
                             <th>@lang('#')</th>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Receipt No') }}</th>
+                            <th>{{ __('From Godam') }}</th>
+                            <th>{{ __('To Godam') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -87,6 +89,12 @@
                             },
                             {
                                 data: 'bill_no'
+                            },
+                            {
+                                data: 'fromgodam'
+                            },
+                            {
+                                data: 'togodam'
                             },
                           
 
