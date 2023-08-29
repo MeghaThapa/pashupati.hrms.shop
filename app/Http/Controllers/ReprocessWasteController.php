@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\DanaName;
 use App\Models\Wastages;
 use App\Models\WasteStock;
+use App\Models\WastageDana;
 use App\Models\CCPlantEntry;
 use App\Models\CCPlantItems;
 use Illuminate\Http\Request;
@@ -16,26 +18,30 @@ use Illuminate\Validation\Rule;
 use App\Models\CCPlantItemsTemp;
 use App\Models\ProcessingSubcat;
 use App\Models\RawMaterialStock;
-use App\Models\ReprocessWastageDetail;
 use Yajra\DataTables\DataTables;
+use App\Services\NepaliConverter;
 use App\Models\ReprocessWasteTemp;
-use App\Models\WastageDana;
 use Illuminate\Support\Facades\DB;
+use App\Models\ReprocessWastageDetail;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Exceptions\Exception;
 
 class ReprocessWasteController extends Controller
 {
+
+    protected $neDate;
     protected $request;
     protected $entry_id;
-    public function __construct(Request $request)
-    {
+    
+    public function __construct(NepaliConverter $neDate,Request $request){
+        $this->neDate = $neDate;
         $this->request = $request;
     }
 
     /************************ Entry ******************************/
     public function entryindex()
     {
-        $godam = Godam::where("status", "active")->get();
+        $godams = Godam::where("status", "active")->get();
         $getData = DB::table("ccplantentry")->first();
         if (isset($getData)) {
             $entries = DB::table("ccplantentry")->latest()->first()->id;
@@ -45,14 +51,26 @@ class ReprocessWasteController extends Controller
         }
         return view("admin.reprocess_waste.index")->with([
             "receipt_number" => $receipt_number,
-            "godam" => $godam
+            "godams" => $godams
         ]);
     }
 
-    public function entryindexajax()
+    public function entryindexajax(Request $request)
     {
-        if ($this->request->ajax()) {
-            return DataTables::of(DB::table("reprocess_wastes")->get())
+        if ($request->ajax()) {
+            $query = ReprocessWaste::query();
+
+            if ($request->start_date && $request->end_date) {
+                $start_date = $request->input('start_date');
+                $end_date = $request->input('end_date');
+                $query->whereBetween('date', [$start_date, $end_date]);
+            }
+
+            if($request->godam_id){
+                $query->where('godam_id',(int)$request->godam_id);
+            }
+
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->editColumn('status', function ($row) {
                     if ($row->status == "Running") {
@@ -79,25 +97,34 @@ class ReprocessWasteController extends Controller
         }
     }
 
-    public function entrystore()
+    public function entrystore(Request $request)
     {
-        $this->request->validate([
+        $validator = Validator::make($request->all(), [
+            "receipt_number" => "required|unique:ccplantentry,receipt_number",
             "godam_id" => "required",
-            "date" => "required",
-            "receipt_number" => "required|unique:ccplantentry",
-            'status' => [
-                'required',
-                Rule::in(['Running', 'Completed']),
-            ],
+            "date" => "required|date_format:Y-m-d",
         ]);
 
-        ReprocessWaste::create([
-            "godam_id" => $this->request->godam_id,
-            "receipt_number" => $this->request->receipt_number,
-            "date" => $this->request->date,
-            "status" => $this->request->status,
-            "remarks" => $this->request->remarks
-        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $engDate = Carbon::parse($request->date)->format('Y-m-d');
+
+        $exploded_date = explode('-',$engDate);
+
+        $created_date = $this->neDate->eng_to_nep($exploded_date[0],$exploded_date[1],$exploded_date[2]);
+
+        $input = [
+            "godam_id" => $request->godam_id,
+            "receipt_number" => $request->receipt_number,
+            "date" =>  $created_date,
+            "remarks" => $request->remarks
+        ];
+
+        ReprocessWaste::create($input);
 
         return back()->with("success", "Created Successfully");
     }
@@ -117,11 +144,11 @@ class ReprocessWasteController extends Controller
     }
     /************************ Entry ******************************/
 
-    public function getPlantType()
+    public function getPlantType(Request $request)
     {
-        if ($this->request->ajax()) {
+        if ($request->ajax()) {
             return response([
-                "planttype" => ProcessingStep::where("godam_id", $this->request->godam_id)->get()
+                "planttype" => ProcessingStep::where("godam_id", $request->godam_id)->get()
             ]);
         }
     }
@@ -396,6 +423,43 @@ class ReprocessWasteController extends Controller
             dd($e->getMessage());
         }
 
+    }
+
+    public function entryDestroy(Request $request){
+        $reprocessWastage = ReprocessWaste::findOrFail($request->id);
+        try{
+
+            // since we add dana in wastage view page so we need to decrement wastage stock
+            $wastageDanas = WastageDana::where('reprocess_wastage_id',$reprocessWastage->id)->get();
+            foreach($wastageDanas as $dana){
+                RawMaterialStock::where('godam_id',$reprocessWastage->godam_id)->where('dana_name_id',$dana->dana_id)->decrement('quantity',$dana->quantity);
+                $dana->delete();
+            }
+
+            // Since wastage consumption we need to increment wastage stock while reversing
+            $reprocessWasteTemps = ReprocessWasteTemp::where('reprocess_waste_id',$reprocessWastage->id)->get();
+            foreach($reprocessWasteTemps as $reprocessTemp){
+                WasteStock::where('godam_id',$reprocessWastage->godam_id)->where('waste_id',$reprocessTemp->wastage_id)->increment('quantity_in_kg',$reprocessTemp->quantity);
+                $reprocessTemp->delete();
+            }
+
+            // Now since we have added stocks to erema lumps we need to reverse it 
+            $reprocessWastageDetails = ReprocessWastageDetail::where('reprocess_waste_id',$reprocessWastage->id)->get();
+            $wastage = Wastages::where('name','erema lumps')->first();
+            foreach($reprocessWastageDetails as $detail){
+                $total_quantity =  (int)$detail->dye_quantity + (int)$detail->cutter_quantity + (int)$detail->melt_quantity;
+                WasteStock::where('godam_id',$reprocessWastage->godam_id)->where('waste_id',$wastage->id)->decrement('quantity_in_kg',$total_quantity);
+                $detail->delete();
+            }
+
+            $reprocessWastage->delete();
+
+            DB::commit();
+            return response(['status'=>true,'message'=> 'Reprocess Wastage removed successfully']);
+
+        }catch(\Exception $e){
+            dd($e->getMessage());
+        }
     }
 
 }

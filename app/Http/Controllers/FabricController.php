@@ -12,6 +12,8 @@ use App\Models\TapeEntryStockModel;
 use App\Models\FabricStock;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FabricImport;
+use App\Models\FabricEntry;
+use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
 
@@ -19,27 +21,67 @@ class FabricController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $query = FabricDetail::with('getGodam');
+    
+            if ($request->start_date && $request->end_date) {
+                $start_date = $request->input('start_date');
+                $end_date = $request->input('end_date');
+                $query->whereBetween('bill_date', [$start_date, $end_date]);
+            }
+
+            if($request->godam_id){
+                $query->where('godam_id',(int)$request->godam_id);
+            }
+            
+            $totalNetweightSum = $query->sum('total_netweight');
+
+            $data = DataTables::of($query)
+                    ->addIndexColumn()
+                    ->addColumn('godam', function ($row) {
+                        return $row->getGodam->name;
+                    })
+                    ->addColumn('action',function($row){
+                        return '<button type="button" id="rawMaterialDeleteBtn" class="btnEdit btn btn-sm btn-danger"  data-id="'.$row->id.'"><i class="fas fa-trash fa-lg"></i></button>';
+                    })
+                    ->toArray();
+
+            $data['total_netweight_sum'] = $totalNetweightSum; 
+
+            return response()->json($data);
+        }
 
         $fabrics = FabricDetail::paginate(15);
-
         $departments = Godam::get();
         $shifts = Shift::get();
         $fabric_netweight = 0;
-
-        return view('admin.fabric.index', compact('fabrics','departments','shifts','fabric_netweight'));
+        return view('admin.fabric.index', compact('fabrics', 'departments', 'shifts', 'fabric_netweight'));
     }
 
 
-     public function create()
+
+    public function test()
+    {
+        $data = Fabric::get();
+        foreach ($data as $value) {
+            $group = FabricGroup::find($value->fabricgroup_id);
+            $final = $value->name . '(' . $group->name . ')';
+            $sa = Fabric::where('id', $value->id)->update(['name' => $final]);
+        }
+    }
+
+
+    public function create()
     {
         $fabricgroups = FabricGroup::get();
-         $godams = Godam::get();
+        $godams = Godam::get();
 
-        return view('admin.fabric.create',compact('fabricgroups','godams'));
+        return view('admin.fabric.create', compact('fabricgroups', 'godams'));
     }
 
     public function store(Request $request)
     {
+        dd($request->all());
         //validate form
         $validator = $request->validate([
             'name' => 'required|string|max:60|unique:fabrics',
@@ -49,7 +91,6 @@ class FabricController extends Controller
             // 'gross_wt' => 'required|integer',
             // 'net_wt' => 'required|integer',
         ]);
-
 
         // store subcategory
         $fabric = Fabric::create([
@@ -68,17 +109,65 @@ class FabricController extends Controller
         return redirect()->back()->withSuccess('Sub category created successfully!');
     }
 
-    public function import(Request $request){
-        // dd($request);
+    public function import(Request $request)
+    {
         $request->validate([
             "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
         ]);
-        $file = $request->file('file');
-        $import = Excel::import(new FabricImport($request->godam_id,$request->date_np), $file);
-        if($import){
-            return back()->with(["message"=>"Data imported successfully!"]);
-        }else{
-            return "Unsuccessful";
+        try{
+
+            DB::beginTransaction();
+
+            if ($request->file('file')) {
+                $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+                $request->file('file')->storeAs('uploads/fabric/import', $fileName, 'public');
+                $filePath =  '/storage/uploads/fabric/import/' . $fileName;
+            }else{
+                $filePath = null;
+            }
+
+            FabricEntry::create([
+                'entry_date' => $request->date_np,
+                'godam_id' => $request->godam_id,
+                'file_path' => $filePath,
+            ]);
+
+            $file = $request->file('file');
+            $import = Excel::import(new FabricImport($request->godam_id, $request->date_np), $file);
+            if ($import) {
+                return back()->with(["message" => "Data imported successfully!"]);
+            } else {
+                return "Unsuccessful";
+            }
+            
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
+    }
+
+    public function entryReport()
+    {
+        return view('admin.fabric.report');
+    }
+
+    public function entryReportTable(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = FabricEntry::with('godam');
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->editColumn('file_path',function($row){
+                    $fileName = asset($row->file_path);
+                    return '<a href="'.asset($fileName).'"> Download/View File</a>';
+                })
+                ->addColumn('godam',function($row){
+                    return $row->godam->name;
+                })
+                ->rawColumns(['file_path'])
+                ->make();
         }
     }
 
@@ -87,7 +176,7 @@ class FabricController extends Controller
         $fabrics = Fabric::where('slug', $slug)->first();
         $fabricgroups = FabricGroup::get();
         $godams = Godam::get();
-        return view('admin.fabric.edit', compact('fabrics','fabricgroups','godams'));
+        return view('admin.fabric.edit', compact('fabrics', 'fabricgroups', 'godams'));
     }
 
     /**
@@ -167,7 +256,6 @@ class FabricController extends Controller
 
     public function fabricDetail(Request $request)
     {
-        // dd($request);
         $godam_id = $request->to_godam_id;
         $planttype_id = $request->planttype_id;
         $plantname_id = $request->plantname_id;
@@ -190,12 +278,12 @@ class FabricController extends Controller
         $getLastId = Fabric::latest()->first();
         $bill_no = $getLastId->bill_no;
 
-        $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$godam_id)
-                                              // ->where('plantType_id',$planttype_id)
-                                              // ->where('plantName_id',$plantname_id)
-                                              // ->where('shift_id',$shift_id)
-                                              ->value('id');
-                                              // dd($gettapeQuantity);
+        $gettapeQuantity = TapeEntryStockModel::where('toGodam_id', $godam_id)
+            // ->where('plantType_id',$planttype_id)
+            // ->where('plantName_id',$plantname_id)
+            // ->where('shift_id',$shift_id)
+            ->value('id');
+        // dd($gettapeQuantity);
 
         $findTape = TapeEntryStockModel::find($gettapeQuantity);
         dd($findTape->tape_qty_in_kg);
@@ -204,14 +292,14 @@ class FabricController extends Controller
         $finalWastage = $totalwastage + $totalnetWeight;
 
         // dd($finalWastage,$findTape->tape_qty_in_kg);
-        if($totalnetWeight < $findTape->tape_qty_in_kg){
+        if ($totalnetWeight < $findTape->tape_qty_in_kg) {
 
             $final = $findTape->tape_qty_in_kg - $finalWastage;
             $findTape->tape_qty_in_kg = $final;
             $findTape->update();
 
-            $countData = FabricDetail::where('bill_number',$bill_no)->count();
-            if($countData != 1){
+            $countData = FabricDetail::where('bill_number', $bill_no)->count();
+            if ($countData != 1) {
                 // store subcategory
                 $fabric = FabricDetail::create([
                     'bill_number' => $bill_no,
@@ -227,9 +315,7 @@ class FabricController extends Controller
                     'run_loom' => $request['run_loom'],
                     'wrapping' => $request['wrapping'],
                 ]);
-
             }
-
         }
 
         return redirect()->back()->withSuccess('Sub category created successfully!');
@@ -238,10 +324,10 @@ class FabricController extends Controller
     public function fabricDetailDestroy($fabricDetail_id)
     {
 
-        try{
+        try {
             DB::beginTransaction();
 
-           
+
 
             // dd('ll');
             // dd($fabricDetail_id);
@@ -250,22 +336,22 @@ class FabricController extends Controller
 
 
             // dd($find_data->total_netweight,$find_data);
-            $getfabricstock = FabricStock::where('bill_no',$find_data->bill_number)->get();
+            $getfabricstock = FabricStock::where('bill_no', $find_data->bill_number)->get();
 
-            $getfabric = Fabric::where('bill_no',$find_data->bill_number)->get();
+            $getfabric = Fabric::where('bill_no', $find_data->bill_number)->get();
 
-            foreach($getfabric as $stock){
+            foreach ($getfabric as $stock) {
                 $stock->delete();
             }
 
-            foreach($getfabricstock as $stock){
+            foreach ($getfabricstock as $stock) {
                 $stock->delete();
             }
 
-              
 
-            $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$find_data->godam_id)
-                                                  ->value('id');
+
+            $gettapeQuantity = TapeEntryStockModel::where('toGodam_id', $find_data->godam_id)
+                ->value('id');
 
             $findTape = TapeEntryStockModel::find($gettapeQuantity);
             $totalwaste = $find_data->pipe_cutting + $find_data->bd_wastage + $find_data->other_wastage;
@@ -274,21 +360,21 @@ class FabricController extends Controller
 
             $final = $findTape->tape_qty_in_kg + $value;
             $findTape->tape_qty_in_kg = $final;
-            $findTape->update();  
+            $findTape->update();
 
-            FabricDetail::where('id',$id)->delete();
+            FabricDetail::where('id', $id)->delete();
 
 
             DB::commit();
 
             return back();
-        }catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             return response([
                 "exception" => $e->getMessage(),
             ]);
         }
-    
+
 
         // dd($getfabricstock);
         return back();
@@ -303,6 +389,4 @@ class FabricController extends Controller
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         return back();
     }
-
-
 }
