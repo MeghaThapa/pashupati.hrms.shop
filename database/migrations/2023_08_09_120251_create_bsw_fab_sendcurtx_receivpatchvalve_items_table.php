@@ -17,7 +17,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("entry_id");
             $table->foreign("entry_id")->references("id")->on("bsw_fab_sendcurtx_receivpatchvalve_entries")->onDelete("cascade");
-            $table->string('name');
+            $table->unsignedBigInteger("fabric_id")->index()->nullable();
+            $table->foreign("fabric_id")->references("id")->on("fabrics")->onDelete("cascade");
+
+            $table->unsignedBigInteger("printed_fabric_id")->index()->nullable();
+            $table->foreign("printed_fabric_id")->references("id")->on("printed_fabrics")->onDelete("cascade");
+            // $table->string('name');
             $table->string('roll_no');
             $table->string('gross_wt');
             $table->string('net_wt');

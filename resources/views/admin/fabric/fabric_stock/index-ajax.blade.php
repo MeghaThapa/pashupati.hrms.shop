@@ -1,7 +1,7 @@
- <div class="row" id="replaceTable">
+ <div class="row" >
         <div class="col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table">
+                <table class="table" id="replaceTable">
                     <thead>
                         <tr>
                             <th>{{ __('S.No') }}</th>
@@ -49,9 +49,9 @@
 
                 </table>
             </div>
-            @if ($fabric_stock)
+            {{-- @if ($fabric_stock)
                 {{ $fabric_stock->links() }}
                 
-            @endif 
+            @endif  --}}
         </div>
 </div>
