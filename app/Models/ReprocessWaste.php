@@ -10,4 +10,9 @@ class ReprocessWaste extends Model
     use HasFactory;
 
     protected $guarded = []; 
+
+    public function godam()
+    {
+        return $this->belongsTo(Godam::class,'godam_id');
+    }
 }

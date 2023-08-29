@@ -11,13 +11,9 @@ class ReprocessWasteTemp extends Model
 
     protected $guarded = [];
 
-    public function waste()
+    public function wastage()
     {
-        return $this->belongsTo(Wastages::class,'waste_id');
+        return $this->belongsTo(Wastages::class,'wastage_id');
     }
 
-    public function dana()
-    {
-        return $this->belongsTo(DanaName::class,'dana_id');
-    }
 }

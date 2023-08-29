@@ -21,14 +21,9 @@ return new class extends Migration
             $table->foreign("planttype_id")->references("id")->on("processing_steps")->onDelete("cascade");
             $table->unsignedBigInteger("plantname_id");
             $table->foreign("plantname_id")->references("id")->on("processing_subcats")->onDelete("cascade");
-            $table->unsignedBigInteger("dana_id");
-            $table->foreign("dana_id")->references("id")->on("dana_names")->onDelete("cascade");
-            $table->unsignedBigInteger("waste_id");
-            $table->foreign("waste_id")->references("id")->on("wastages")->onDelete("cascade");
+            $table->unsignedBigInteger("wastage_id");
+            $table->foreign("wastage_id")->references("id")->on("wastages")->onDelete("cascade");
             $table->string("quantity");
-            $table->unsignedBigInteger('dye_quantity');
-            $table->unsignedBigInteger('cutter_quantity');
-            $table->unsignedBigInteger('melt_quantity');
             $table->timestamps();
         });
     }

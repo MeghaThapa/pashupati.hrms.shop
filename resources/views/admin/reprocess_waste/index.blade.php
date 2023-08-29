@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
         integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('content')
@@ -14,7 +15,7 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6 mt-2">
-                <h4><strong>Reprocess Waste Entry</strong></h4>
+                <h4><strong>Reprocess Wastage Entry</strong></h4>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -34,7 +35,7 @@
             </div>
             <div class="card mt-3">
                 <div class="card-header">
-                    <h4>Reprocess Waste entry</h4>
+                    <h4>Reprocess Wastage entry</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -49,20 +50,20 @@
                             @endforeach
                         </div>
                     @endif
-                    <form action="{{ route('reprocess.waste.entry.store') }}" method="post">
+                    <form action="{{ route('reprocess.wastage.entry.store') }}" method="post">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="tape_receive_date">Godam<span class="text-danger">*</span></label>
                                 <select name="godam_id" class="advance-select-box form-control" id="godam_id">
-                                    @foreach ($godam as $data)
-                                        <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                    @foreach ($godams as $godam)
+                                        <option value="{{ $godam->id }}">{{ $godam->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="tape_receive_date">Date<span class="text-danger">*</span></label>
-                                <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}"
+                                <input id="engDate" type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}"
                                     required />
                             </div>
                             <div class="col-md-6">
@@ -71,12 +72,9 @@
                                     class="form-control" required />
                             </div>
                             <div class="col-md-6">
-                                <label for="status">Status<span class="text-danger">*</span></label>
-                                <select name="status" class="form-control">
-                                    <option disabled selected>Select Status</option>
-                                    <option>Running</option>
-                                    <option>Completed</option>
-                                </select>
+                                <label for="tape_receive_date">Nepali Date<span class="text-danger">*</span></label>
+                                <input type="text" id="nepDate" class="form-control" value="{{ date('Y-m-d') }}"
+                                    required readonly />
                             </div>
                             <div class="col-md-12">
                                 <label for="receipt_number">Remarks</label>
@@ -91,8 +89,31 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4>Reprocess Wastes</h4>
-
+                    <h4>Reprocess Wastages</h4>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="start_date">Start Date:</label>
+                            <input type="text" class="form-control ndp-nepali-calendar" id="start_date" name="start_date" value="">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="end_date">End Date:</label>
+                            <input type="text" class="form-control ndp-nepali-calendar" id="end_date" name="end_date" value="">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="godamID">Select Godam</label>
+                        <select class="form-control" id="godamID">
+                            <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
+                            @foreach ($godams as $data)
+                                <option value="{{ $data->id }}">{{ $data->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="card-body table-responsive">
                     <table class="table table-bordered table-hover table-striped" id="myTable">
@@ -113,6 +134,27 @@
         </div>
     </div>
 
+    <div id="deleteModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title">Are you sure you want to delete this entry?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Your transactions from this entry would be rolled back...</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="deleteID" />
+                    <button type="button" class="btn btn-danger confirm_remove">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('extra-script')
@@ -122,6 +164,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+    <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
     <script>
         $(".advance-select-box").select2()
     </script>
@@ -133,17 +176,27 @@
     <script>
         $(document).ready(function() {
 
-            $("#myTable").DataTable({
-                serverside: true,
+            var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
+
+            let table = $("#myTable").DataTable({
+                serverSide: true,
                 processing: true,
                 lengthMenu: [
                     [10, 25, 50, 100, 250, 500],
                     [10, 25, 50, 100, 250, 500]
                 ],
-                ajax: "{{ route('reprocess.waste.entry.index.ajax') }}",
+                ajax: {
+                    url: "{{ route('reprocess.wastage.entry.index.ajax') }}",
+                    data: function(data) {
+                        data.start_date = $('#start_date').val();
+                        data.end_date = $('#end_date').val();
+                        data.godam_id = $('#godamID').val();
+                    },
+                },
                 columns: [{
                         name: "DT_RowIndex",
-                        data: "DT_RowIndex"
+                        data: "DT_RowIndex",
+                        orderable:false,
                     },
                     {
                         name: "receipt_number",
@@ -166,7 +219,32 @@
                         data: "action"
                     },
                 ]
-            })
+            });
+
+            $('#start_date').val(currentDate);
+            $('#start_date').nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                disableAfter: currentDate,
+                onChange(){
+                    table.draw();
+                }
+            
+            });
+
+            $('#end_date').val(currentDate);
+            $('#end_date').nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                disableAfter: currentDate,
+                onChange(){
+                    table.draw();
+                }
+            });
+
+            $('#start_date, #end_date, #godamID').on('change', function () {
+                table.draw(); // Redraw the table
+            });
 
             $(document).on("click", ".create-cc", function(e) {
                 e.preventDefault()
@@ -174,6 +252,12 @@
                 location.href = "{{ route('cc.plant.create', ['entry_id' => ':id']) }}".replace(":id",
                     entry_id)
             })
+
+            $('#engDate').on('change',function(){
+                $('#nepDate').val( NepaliFunctions.AD2BS($('#engDate').val()) ); 
+            });
+
+            $('#engDate').change();
 
             $("#trash").submit(function(e) {
                 e.preventDefault();
@@ -209,6 +293,33 @@
                         });
                     }
                 });
+            });
+
+            $(document).on('click', ".delete-cc-entry", function(e) {
+                $('#deleteModal').modal('show');
+                $('#deleteID').val($(this).data('id'));
+            });
+
+            $(document).on('click',".confirm_remove",function(e) {
+                e.preventDefault()
+
+                $.ajax({
+                    url: "{{ route('reprocess.wastage.entry.destroy') }}",
+                    method: "post",
+                    data: {
+                        "_token": $("meta[name='csrf-token']").attr("content"),
+                        "id": $('#deleteID').val(),
+                    },
+                    success: function(response) {
+                        table.ajax.reload();
+                        $('#deleteModal').modal('hide');
+                        $('#deleteId').val('');
+
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
             });
         })
     </script>

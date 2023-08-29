@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
         integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('content')
@@ -54,9 +55,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="tape_receive_date">Godam<span class="text-danger">*</span></label>
-                                <select name="godam_id" class="advance-select-box form-control" id="godam_id" required>
-                                    <option disabled selected>Select Godam</option>
-                                    @foreach ($godam as $data)
+                                <select name="godam_id" class="advance-select-box form-control" id="godam_id">
+                                    @foreach ($godams as $data)
                                         <option value="{{ $data->id }}">{{ $data->name }}</option>
                                     @endforeach
                                 </select>
@@ -76,29 +76,38 @@
                                     class="form-control" required />
                             </div>
                             <div class="col-md-6">
-                                <label for="receipt_number">Dana Name</label>
-                                <select id="danaName" name="dana_name" class="form-control" required>
-                                    <option selected disabled>Select Dana</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="available_quantity">Available Quantity</label>
-                                <input type="text" id="available_quantity"  name="available_quantity" class="form-control" readonly />
-                            </div>
-                            <div class="col-md-3">
-                                <label for="dana_quantity">Dana Quantity</label>
-                                <input id="dana_quantity" type="number" name="dana_quantity" class="form-control" required />
-                            </div>
-                            <div class="col-md-12">
                                 <label for="receipt_number">Remarks</label>
                                 <input type="text" name="remarks" class="form-control" />
                             </div>
-                            
                             <div class="col-md-4 mt-2">
                                 <button class="btn btn-primary" type="submit">Create</button>
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="start_date">Start Date:</label>
+                        <input type="text" class="form-control ndp-nepali-calendar" id="start_date" name="start_date" value="">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="end_date">End Date:</label>
+                        <input type="text" class="form-control ndp-nepali-calendar" id="end_date" name="end_date" value="">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <label for="godamID">Select Godam</label>
+                    <select class="form-control" id="godamID">
+                        <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
+                        @foreach ($godams as $data)
+                            <option value="{{ $data->id }}">{{ $data->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="card">
@@ -114,16 +123,33 @@
                                 <th>Receipt Number</th>
                                 <th>Date</th>
                                 <th>Date NP</th>
-                                <th>Godam</th>
-                                <th>Dana Name</th>
-                                <th>Dana Group</th>
-                                <th>Dana Quantity</th>
                                 <th>Remarks</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title">Are you sure you want to delete this entry?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Your transactions from this entry would be rolled back...</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="deleteID" />
+                    <button type="button" class="btn btn-danger confirm_remove">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
@@ -138,6 +164,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+    <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
     <script>
         $(".advance-select-box").select2()
     </script>
@@ -148,18 +175,27 @@
     @endif
     <script>
         $(document).ready(function() {
+            var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
 
-            $("#myTable").DataTable({
-                serverside: true,
+            let table = $("#myTable").DataTable({
+                serverSide: true,
                 processing: true,
                 lengthMenu: [
                     [10, 25, 50, 100, 250, 500],
                     [10, 25, 50, 100, 250, 500]
                 ],
-                ajax: "{{ route('cc.plant.entry.index.ajax') }}",
+                ajax: {
+                    url: "{{ route('cc.plant.entry.index.ajax') }}",
+                    data: function(data) {
+                        data.start_date = $('#start_date').val();
+                        data.end_date = $('#end_date').val();
+                        data.godam_id = $('#godamID').val();
+                    },
+                },
                 columns: [{
                         name: "DT_RowIndex",
-                        data: "DT_RowIndex"
+                        data: "DT_RowIndex",
+                        orderable: false,
                     },
                     {
                         name: "receipt_number",
@@ -174,22 +210,6 @@
                         data: "date_np"
                     },
                     {
-                        name: "godam_name",
-                        data: "godam_name"
-                    },
-                    {
-                        name: "dana_name",
-                        data: "dana_name"
-                    },
-                    {
-                        name: "dana_group",
-                        data: "dana_group"
-                    },
-                    {
-                        name: "dana_quantity",
-                        data: "dana_quantity"
-                    },
-                    {
                         name: "remarks",
                         data: "remarks"
                     },
@@ -200,33 +220,29 @@
                 ]
             });
 
-            $(document).on('change','#godam_id',function(){
-                let godam_id = $(this).val();
-                $.ajax({
-                    url: "{{ route('cc.plant.get.dananame.ajax', ['godam_id' => ':id']) }}".replace(":id",godam_id),
-                    method : "get",
-                    beforeSend: function() {
-                        // console.log("Getting Plant Name");
-                    },
-                    success: function(response) {
-                        if(response.status == true){
-                            $.each(response.data,function(k,v){
-                                $("#danaName").append('<option data-quantity="'+v.quantity+'" value="' + v.id +
-                                    '">' + v.dana_name.name+ '   ( '+ v.dana_group.name +' )' + '</option>');
-                            });
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
+            $('#start_date').val(currentDate);
+            $('#start_date').nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                disableAfter: currentDate,
+                onChange(){
+                    table.draw();
+                }
+            
             });
 
-            $("#danaName").on("change", function() {
-                var selectedOption = $(this).find("option:selected");
-                var dataQuantity = selectedOption.data("quantity");
-                $('#available_quantity').val(dataQuantity);
-                $("#dana_quantity").attr("max", dataQuantity);
+            $('#end_date').val(currentDate);
+            $('#end_date').nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                disableAfter: currentDate,
+                onChange(){
+                    table.draw();
+                }
+            });
+
+            $('#start_date, #end_date, #godamID').on('change', function () {
+                table.draw(); // Redraw the table
             });
 
             $(document).on("click", ".create-cc", function(e) {
@@ -234,7 +250,36 @@
                 let entry_id = $(this).data("id")
                 location.href = "{{ route('cc.plant.create', ['entry_id' => ':id']) }}".replace(":id",
                     entry_id)
-            })
+            });
+
+            $(document).on('click', ".delete-cc-entry", function(e) {
+                $('#deleteModal').modal('show');
+                $('#deleteID').val($(this).data('id'));
+            });
+
+            $(document).on('click',".confirm_remove",function(e) {
+                e.preventDefault()
+
+                $.ajax({
+                    url: "{{ route('cc.plant.entry.destroy') }}",
+                    method: "post",
+                    data: {
+                        "_token": $("meta[name='csrf-token']").attr("content"),
+                        "id": $('#deleteID').val(),
+                    },
+                    success: function(response) {
+                        table.ajax.reload();
+                        $('#deleteModal').modal('hide');
+                        $('#deleteId').val('');
+
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            });
+
+
 
             $("#trash").submit(function(e) {
                 e.preventDefault();

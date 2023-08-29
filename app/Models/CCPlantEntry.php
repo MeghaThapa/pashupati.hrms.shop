@@ -14,8 +14,6 @@ class CCPlantEntry extends Model
         "date",
         "date_np",
         "receipt_number",
-        "dana_name_id",
-        "dana_quantity",
         "remarks",
         "status"
     ];

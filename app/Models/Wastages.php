@@ -13,4 +13,9 @@ class Wastages extends Model
     protected $fillable = [
         'name','status','created_at','updated_at'
     ];
+
+    public function wastageStock()
+    {
+        return $this->hasOne(WasteStock::class,'waste_id');
+    }
 }
