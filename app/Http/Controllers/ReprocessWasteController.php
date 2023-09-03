@@ -99,33 +99,15 @@ class ReprocessWasteController extends Controller
 
     public function entrystore(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             "receipt_number" => "required|unique:ccplantentry,receipt_number",
             "godam_id" => "required",
             "date" => "required|date_format:Y-m-d",
+            "remarks" => 'nullable|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $engDate = Carbon::parse($request->date)->format('Y-m-d');
-
-        $exploded_date = explode('-',$engDate);
-
-        $created_date = $this->neDate->eng_to_nep($exploded_date[0],$exploded_date[1],$exploded_date[2]);
-
-        $input = [
-            "godam_id" => $request->godam_id,
-            "receipt_number" => $request->receipt_number,
-            "date" =>  $created_date,
-            "remarks" => $request->remarks
-        ];
-
-        ReprocessWaste::create($input);
-
+        ReprocessWaste::create($request->only(['receipt_number', 'godam_id', 'date', 'remarks']));
+        
         return back()->with("success", "Created Successfully");
     }
 

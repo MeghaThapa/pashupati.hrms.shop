@@ -54,6 +54,7 @@ use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
+use App\Http\Controllers\FabricController;
 use App\Http\Controllers\ReprocessWasteController;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -78,6 +79,8 @@ Route::group(['prefix' => 'install',  'middleware' => ['web', 'install', 'isVeri
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Route::get('tempfix',[FabricController::class,'getData']);
 
 Route::get('artisandone',function(){
     // singlesidelaminated
@@ -593,8 +596,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
-    Route::get('fabric/entry-report','FabricController@entryReport')->name('fabric.entry.report');
+    Route::get('fabric/entry-report','FabricController@fabricEntryReport')->name('fabric.entry.report');
+    Route::post('fabric/generate-entry-report-view','FabricController@generateEntryReportView')->name('fabric.entry.report.view');
     Route::get('fabric/entry-report-table','FabricController@entryReportTable')->name('fabric.entry.report.table');
+
+    Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
+    Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view');
 
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');

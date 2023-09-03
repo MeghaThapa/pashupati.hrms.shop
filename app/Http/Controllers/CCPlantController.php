@@ -87,14 +87,12 @@ class CCPlantController extends Controller
     {
         $this->request->validate([
             "godam_id" => "required",
-            "date" => "required",
             "receipt_number" => "required|unique:ccplantentry",
-            "date_np" => "required",
+            "date_np" => "required|date_format:Y-m-d",
         ]);
 
         CCPlantEntry::create([
             "godam_id" => $this->request->godam_id,
-            "date" => $this->request->date,
             "date_np" => $this->request->date_np,
             "receipt_number" => $this->request->receipt_number,
             "remarks" => $this->request->remarks

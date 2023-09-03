@@ -258,8 +258,6 @@
                 }
             });
 
-            
-
             $('#start_date, #end_date, #godamID').on('change', function () {
                 table.draw(); // Redraw the table
             });
