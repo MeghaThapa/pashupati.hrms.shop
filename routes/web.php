@@ -103,6 +103,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // admin profile route
     Route::get('profile', 'AdminController@profilePage')->name('admin.profile');
 
+    Route::get('export', 'FabricController@export')->name('admin.exportfabric');
+
     // admin profile update route
     Route::put('profile/{email}', 'AdminController@profileUpdate')->name('admin.profile.update');
 
@@ -629,6 +631,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'update' => 'fabricgodams.update',
         ]
     ]);
+
+    Route::get('fabricGodam/test', 'FabricGodamController@test')->name('fabricGodam.test');
 
     Route::get('fabricGodam/dataTable', 'FabricGodamController@dataTable')->name('fabricGodam.dataTable');
 

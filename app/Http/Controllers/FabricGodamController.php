@@ -9,6 +9,7 @@ use App\Models\FabricGodamTransfer;
 use App\Models\FabricStock;
 use App\Models\FabricGroup;
 use App\Models\FabricGodamList;
+use App\Models\Fabric;
 use DB;
 use Throwable;
 use App\Helpers\AppHelper;
@@ -21,6 +22,23 @@ class FabricGodamController extends Controller
     {
        
         return view('admin.fabric.fabricgodam.index');
+    }
+
+    public function test(){
+        $data = FabricGodamList::get();
+        // dd($data->take(5));
+        foreach ($data as $value) 
+            {
+                // dd($value);
+                $fabric = Fabric::where('roll_no',$value->roll)->where('net_wt',$value->net_wt)->value('id');
+           
+                // dd($final);
+                $sa = FabricGodamList::where('id',$value->id)->update(['fabric_id' => $fabric]); 
+
+                // dd($value,$group);
+            }
+        
+
     }
 
     public function create()
@@ -57,7 +75,8 @@ class FabricGodamController extends Controller
     public function transferFabric($fabricgodam_id)
     {
         $find_data = FabricGodam::find($fabricgodam_id);
-        $fabricstocks = FabricStock::where('godam_id',$find_data->fromgodam_id)->get();
+        $fabricstocks = FabricStock::where('godam_id',$find_data->fromgodam_id)->get()->unique('name')->values()->all();
+        // dd($fabricstocks->take(5));
         $fromgodams = Godam::where('status','active')->get();
         $togodams = Godam::where('status','active')->get();
         $list = FabricGodamList::where('fabricgodam_id',$fabricgodam_id)->where('status','sent')->count();
@@ -102,8 +121,11 @@ class FabricGodamController extends Controller
     public function getfabricwithsamename(Request $request){
         if($request->ajax()){
             $fabric_name_id = $request->fabric_name_id;
-            $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
-            $fabrics = FabricStock::where("name",$fabric_name)->get();
+            $bill_no = $request->bill_number;
+            $getbillgodam = FabricGodam::where('bill_no',$bill_no)->value('fromgodam_id');
+            // dd($bill_no);
+            $fabric_name = FabricStock::where('godam_id',$getbillgodam)->where("id",$fabric_name_id)->value("name");
+            $fabrics = FabricStock::where('godam_id',$getbillgodam)->where("name",$fabric_name)->get();
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
@@ -146,6 +168,7 @@ class FabricGodamController extends Controller
                     'fromgodam_id' => $request->fromgodam_id,
                     'togodam_id' => $request->togodam_id,
                     'stock_id' => $request->ids,
+                    'fabric_id' => $find_name->fabric_id,
                 ]);
           
 

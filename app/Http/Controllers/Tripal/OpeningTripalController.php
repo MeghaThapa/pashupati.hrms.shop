@@ -52,7 +52,25 @@ class OpeningTripalController extends Controller
        // dd($request);
        $find_data = Singletripalname::find($request->fabric_id);
 
+       $singlestock = Singlesidelaminatedfabric::create([
+           "name" => $find_data->name,
+           "slug" => $find_data->slug,
+           "roll_no" => $request['roll'], 
+           "department_id" => $request['godam_id'],
+           "bill_number" => $request['bill_number'],
+           'bill_date' => $request['bill_date'],
+           'gross_wt' => $request['gross_wt'],
+           "roll_no" => $request['roll'],
+           'net_wt' => $request['net_wt'],
+           "meter" => $request['meter'],
+           "average_wt" => $request['average'],
+           "gram" => $request['gram'],
+           "loom_no" => '0',
+           "status" => 'completed',
+       ]);
+
        $single_stock = Singlesidelaminatedfabricstock::create([
+           "singlelamfabric_id" => $singlestock->id,
            "singletripalname_id" => $request->fabric_id,
            "name" => $find_data->name,
            "slug" => $find_data->slug,
@@ -65,13 +83,9 @@ class OpeningTripalController extends Controller
            'net_wt' => $request['net_wt'],
            "meter" => $request['meter'],
            "average_wt" => $request['average'],
-           // "gram" =>  $request['gram'],
            "loom_no" => '0',
+           "gram" => $request['gram'],
            "status" => 'completed',
-         
-           // "planttype_id" => $find_data->planttype_id,
-           // "plantname_id" => $find_data->plantname_id,
-           // "fabric_id" => $find_data->fabric_id,
        ]);
        return redirect()->back();
      
@@ -103,7 +117,27 @@ class OpeningTripalController extends Controller
     {
         $find_data = DoubleTripalName::find($request->fabric_id);
 
-        $single_stock = DoubleSideLaminatedFabricStock::create([
+        $double_stock = DoubleSideLaminatedFabric::create([
+            "doubletripalname_id" => $request->fabric_id,
+            "name" => $find_data->name,
+            "slug" => $find_data->slug,
+            "roll_no" => $request['roll'], 
+            "department_id" => $request['godam_id'],
+            "bill_number" => $request['bill_number'],
+            'bill_date' => $request['bill_date'],
+            "gram" =>  $request['gram'],
+            "average_wt" => $request['average'],
+            "roll_no" => $request['roll'],
+            'net_wt' => $request['net_wt'],
+            "meter" => $request['meter'],
+            "loom_no" => '0',
+            'gross_wt' => $request['gross_wt'],
+            "status" => 'completed',
+          
+        ]);
+
+        $double_stocks = DoubleSideLaminatedFabricStock::create([
+            "doublelamfabric_id" => $double_stock->id,
             "doubletripalname_id" => $request->fabric_id,
             "name" => $find_data->name,
             "slug" => $find_data->slug,
@@ -153,9 +187,8 @@ class OpeningTripalController extends Controller
     {
         // dd($request);
         $find_data = FinalTripalName::find($request->fabric_id);
-      
 
-        $finaltripalstock = FinalTripalStock::create([
+        $finaltripalstock = FinalTripal::create([
             "name" => $find_data->name,
             "slug" => $find_data->slug,
             "bill_number" => $request['bill_number'],
@@ -170,9 +203,31 @@ class OpeningTripalController extends Controller
             "meter" => $request['meter'],
             "average_wt" => $request['average'],
             "gsm" => $request['gsm'],
-            // "finaltripal_id" => $finaltripal->id,
-            "date_en" => date('Y-m-d'),
-            "date_np" => date('Y-m-d'),
+            "date_en" => $request['bill_date'],
+            "date_np" => $request['bill_date'],
+
+            "status" => 'completed',
+        ]);
+      
+
+        $finaltripalstocks = FinalTripalStock::create([
+            "finaltripal_id" => $finaltripalstock->id,
+            "name" => $find_data->name,
+            "slug" => $find_data->slug,
+            "bill_number" => $request['bill_number'],
+            'bill_date' => $request['bill_date'],
+            "department_id" => $request['godam_id'],
+            "finaltripalname_id" => $request->fabric_id,
+            "loom_no" => '0',
+            'gross_wt' => $request['gross_wt'],
+            "roll_no" => $request['roll'],
+            "gram" =>  $request['gsm'],
+            'net_wt' => $request['net_wt'],
+            "meter" => $request['meter'],
+            "average_wt" => $request['average'],
+            "gsm" => $request['gsm'],
+            "date_en" => $request['bill_date'],
+            "date_np" => $request['bill_date'],
 
             "status" => 'completed',
         ]);

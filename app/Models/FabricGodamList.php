@@ -10,7 +10,7 @@ class FabricGodamList extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bill_no', 'bill_date', 'fabricgodam_id','fromgodam_id','togodam_id','name','slug','roll','net_wt','stock_id'
+        'bill_no', 'bill_date', 'fabricgodam_id','fromgodam_id','togodam_id','name','slug','roll','net_wt','stock_id','fabric_id'
     ];
 
     public function getFromGodam()
