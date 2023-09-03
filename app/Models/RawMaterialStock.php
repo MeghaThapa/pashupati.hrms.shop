@@ -10,6 +10,7 @@ class RawMaterialStock extends Model
     use HasFactory;
     protected $table = 'raw_material_stocks';
     protected $fillable=[
+        'godam_id',
         'dana_group_id',
         'dana_name_id',
         'quantity'

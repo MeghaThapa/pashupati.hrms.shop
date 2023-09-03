@@ -603,6 +603,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
     Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view');
 
+    Route::get('fabric/laminated-report','FabricController@laminatedReport')->name('fabric.laminated.report');
+    Route::post('fabric/generate-laminated-report-view','FabricController@generateGodamTransferView')->name('fabric.laminated.report.view');
+
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
 

@@ -414,6 +414,11 @@ class FabricController extends Controller
         $godams = Godam::all();
         return view('admin.fabric.godam_transfer_report',compact('godams'));
     }
+    
+    public function fabricLaminatedReport(){
+        $godams = Godam::all();
+        return view('admin.fabric.laminated_report',compact('godams'));
+    }
 
     public function generateGodamTransferView(Request $request){
         if(!$request->start_date || !$request->end_date){
@@ -430,6 +435,7 @@ class FabricController extends Controller
                 $fabricGodams = $fabricGodams->where('fromgodam_id',$request->godam_id);
             }
             $fabricGodams = $fabricGodams->get();
+
             if(!$fabricGodams->isEmpty()){
                 $fabricView = view('admin.fabric.reportview.godam_transfer_datewise',compact('fabricGodams','nepaliDate'))->render();
                 array_push($reportData,$fabricView);
@@ -442,23 +448,24 @@ class FabricController extends Controller
         $nepaliEndDate = end($nepaliDates);
 
         $summaryFabrics = FabricGodamList::select(
-                        'name', DB::raw('SUM(fabrics.gross_wt) as gross_wt'), 
-                                DB::raw('SUM(fabrics.net_wt) as net_wt'),
-                                DB::raw('SUM(fabrics.meter) as meter')
-                        )
-                    ->join('fabric_godam_lists', 'fabrics.id', '=', 'fabric_godam_lists.fabric_id')
-                    ->groupBy('name');
+            'fabric_godam_lists.name',
+            DB::raw('COUNT(fabric_godam_lists.name) as roll_count'),
+            DB::raw('SUM(fabrics.gross_wt) as gross_wt'),
+            DB::raw('SUM(fabrics.net_wt) as net_wt'),
+            DB::raw('SUM(fabrics.meter) as meter')
+        )
+            ->join('fabrics','fabric_godam_lists.fabric_id', '=','fabrics.id' )
+            ->groupBy('fabric_godam_lists.name');
         
         if($request->start_date && $request->end_date){
-            $summaryFabrics = $summaryFabrics->where('date_np','>=',$request->start_date)->where('date_np','<=',$request->end_date);
+            $summaryFabrics = $summaryFabrics->where('fabric_godam_lists.bill_date','>=',$request->start_date)->where('fabric_godam_lists.bill_date','<=',$request->end_date);
         }
 
         if($request->godam_id){
-            $summaryFabrics = $summaryFabrics->where('godam_id',$request->godam_id);
+            $summaryFabrics = $summaryFabrics->where('fabric_godam_lists.fromgodam_id',$request->godam_id);
         }
 
-        // $summaryFabrics = $summaryFabrics->get();
-        $summaryFabrics = [];
+        $summaryFabrics = $summaryFabrics->get();
         $summaryView = view('admin.fabric.reportview.fabricsummary',compact('summaryFabrics','nepaliStartDate','nepaliEndDate'))->render();
         array_push($reportData,$summaryView);
         return response(['status'=>true,'data'=>$reportData]);

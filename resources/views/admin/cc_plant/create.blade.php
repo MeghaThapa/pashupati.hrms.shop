@@ -725,7 +725,7 @@
                         "godam_id": $('#godam').val(),
                     },
                     success: function(response) {
-                        
+                        $('#createDanaName').empty();
                         $(response.data).each(function(k,v){
                             $('#createDanaName').append('<option value="'+v.id+'">'+v.name+'</option>')
                         })
