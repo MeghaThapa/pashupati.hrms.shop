@@ -11,7 +11,6 @@ class CCPlantEntry extends Model
     protected $table = "ccplantentry";
     protected $fillable = [
         "godam_id",
-        "date",
         "date_np",
         "receipt_number",
         "remarks",

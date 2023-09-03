@@ -63,7 +63,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="tape_receive_date">Date<span class="text-danger">*</span></label>
-                                <input id="engDate" type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}"
+                                <input id="npDate" type="text" name="date" class="form-control" value="{{ date('Y-m-d') }}"
                                     required />
                             </div>
                             <div class="col-md-6">
@@ -72,11 +72,6 @@
                                     class="form-control" required />
                             </div>
                             <div class="col-md-6">
-                                <label for="tape_receive_date">Nepali Date<span class="text-danger">*</span></label>
-                                <input type="text" id="nepDate" class="form-control" value="{{ date('Y-m-d') }}"
-                                    required readonly />
-                            </div>
-                            <div class="col-md-12">
                                 <label for="receipt_number">Remarks</label>
                                 <input type="text" name="remarks" class="form-control" />
                             </div>
@@ -178,6 +173,37 @@
 
             var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
 
+            $('#start_date').val(currentDate);
+            $('#start_date').nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                disableAfter: currentDate,
+                onChange(){
+                    table.draw();
+                }
+            
+            });
+            
+            $('#npDate').val(currentDate);
+            $('#npDate').nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                disableAfter: currentDate,
+                onChange(){
+                    table.draw();
+                }
+            });
+
+            $('#end_date').val(currentDate);
+            $('#end_date').nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                disableAfter: currentDate,
+                onChange(){
+                    table.draw();
+                }
+            });
+
             let table = $("#myTable").DataTable({
                 serverSide: true,
                 processing: true,
@@ -221,26 +247,7 @@
                 ]
             });
 
-            $('#start_date').val(currentDate);
-            $('#start_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-                onChange(){
-                    table.draw();
-                }
             
-            });
-
-            $('#end_date').val(currentDate);
-            $('#end_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-                onChange(){
-                    table.draw();
-                }
-            });
 
             $('#start_date, #end_date, #godamID').on('change', function () {
                 table.draw(); // Redraw the table
