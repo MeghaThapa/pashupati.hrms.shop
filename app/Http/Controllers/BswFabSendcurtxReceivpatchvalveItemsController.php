@@ -96,9 +96,6 @@ class BswFabSendcurtxReceivpatchvalveItemsController extends Controller
         // ->where('entry_id','2')
         // ->get();
         // return ($bswFabSendcurtxReceivpatchvalveItems);
-
-
-
         $bswFabSendcurtxReceivpatchvalveEntryData=BswFabSendcurtxReceivpatchvalveEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name'])
         ->find($id);
         $CurtexToPatchValFabrics=CurtexToPatchValFabric::where('status','active')->get();
