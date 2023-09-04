@@ -847,6 +847,14 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ route('fabric.unlaminated.report') }}"
+                        class="nav-link {{ request()->is('admin/fabric/fabric/unlaminated-report*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Unlaminated Fabric Report</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
 
                     <a href="{{ route('fabricSendReceive.entry.create') }}" class="nav-link">
 
