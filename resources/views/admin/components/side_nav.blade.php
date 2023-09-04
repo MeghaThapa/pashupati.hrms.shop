@@ -838,13 +838,13 @@
                     </a>
                 </li>
 
-
-
-                
-
-
-
-
+                <li class="nav-item">
+                    <a href="{{ route('fabric.laminated.report') }}"
+                        class="nav-link {{ request()->is('admin/fabric/laminated-report*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Laminated Fabric Report</p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
 
