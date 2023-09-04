@@ -674,24 +674,24 @@
 
             $('#departmentIdModel').on('select2:select', function(e) {
                 let department_id = e.params.data.id;
-
                 getDepartmentPlacement(department_id, 'model');
-
             });
 
             $('#categorySelect').on('select2:select', function(e) {
                 let category_id = e.params.data.id;
-                // let click_by=blade;
                 getStoreinItemAccCat(category_id);
             });
 
-            $('#unit').on('select2:select', function(e) {
-                let unit_id = e.params.data.id;
+            $('#unit, #categorySelect, #items, #size').on('select2:select', function(e) {
+                let unit_id = $('#unit').val();
                 let category_id = $('#categorySelect').val();
                 let item_name = $('#items').val();
                 let side_id = $('#size').val();
-                getStockQtyRate(category_id, item_name, side_id, unit_id);
+                if (unit_id && category_id && item_name && side_id) {
+                    getStockQtyRate(category_id, item_name, side_id, unit_id);
+                }
             });
+
 
             $('#storeoutDepartments').on('select2:select', function(e) {
                 let department_id = e.params.data.id;
@@ -704,8 +704,6 @@
                     url: "{{ route('storeout.getStockQtyRate') }}",
                     method: 'get',
                     data: {
-                        // _token: "{{ csrf_token() }}",
-                        // dept_id: department_id,
                         cat_id: category_id,
                         item_name: item_name,
                         side_id: side_id,
@@ -771,7 +769,6 @@
 
                     method: 'GET',
                     success: function(object) {
-                        console.log('item event:', object);
                         // fillOptionInSelect(object.department,'#departments');
                         fillOptionInSelect(object.size, '#size');
                         fillOptionInSelect(object.units, '#unit');
@@ -816,7 +813,6 @@
                     status: status.value,
                 },
                 success: function(response) {
-                    console.log(response);
                     $('#storeoutDepartmentModel').modal('hide');
                     setOptionInSelect(
                         'storeoutDepartments',
@@ -874,7 +870,6 @@
                     through: through.value,
                 },
                 success: function(response) {
-                    //  console.log(response);
                     $('#editStoreoutModel').modal('hide');
 
                     updateTableRow(response.storeOutItem, storeOut_item_id.value);
@@ -1006,7 +1001,7 @@
                     through: through,
                 },
                 success: function(response) {
-                    console.log('stored :', response);
+
                     setIntoTable(response.storeOutItem);
                     $('#items').focus();
 

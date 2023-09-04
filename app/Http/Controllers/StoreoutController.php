@@ -318,14 +318,7 @@ public function getStockQtyRate(Request $request){
 }
 
     public function getDepartmentSizeUnit($items_of_storein_name, $category_id){
-
-        // $stocks =Stock::with('department:id,name','units:id,name','sizes:id,name')
-        // ->where('item_id',$items_of_storein_id)
-        // ->where('category_id',$category_id)
-        // ->groupBy(['size','unit','department_id'])
-        // ->get(['size','unit','department_id']);
-          $similarItems = ItemsOfStorein::where('name', 'like', '%' . $items_of_storein_name . '%')->pluck('id');
-
+    $similarItems = ItemsOfStorein::where('name', '=', $items_of_storein_name)->pluck('id');
     // Use the found item IDs to filter the Stock model
     $stocks = Stock::with('department:id,name', 'units:id,name', 'sizes:id,name')
         ->whereIn('item_id', $similarItems)
