@@ -627,7 +627,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post("fabric/opening/store",[FabricStockController::class,"openingStore"])->name("fabric.opening.store");
 
     //fabric stock
-
     Route::get('fabrics/getstock/index',[FabricStockController::class,'index'])->name('fabric-stock.index');
 
     //fabricgodam
@@ -657,7 +656,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post("fabric/godamTransfer/getFinalListStore",'FabricGodamController@getFabricGodamFinalStore')->name("getFabricGodamFinalStore");
 
     Route::get('fabricGodam/delete/list', 'FabricGodamController@deleteFabricGodamList')->name('fabricgodam.deleteFabricGodamList');
-
 
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("getFilterFabric");
     

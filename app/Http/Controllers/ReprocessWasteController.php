@@ -114,7 +114,7 @@ class ReprocessWasteController extends Controller
     public function create($entry_id)
     {
         $reprocessWaste = ReprocessWaste::with('godam')->where("id", $entry_id)->first();
-        $wasteIds = WasteStock::where('godam_id', $reprocessWaste->id)->pluck('waste_id');
+        $wasteIds = WasteStock::where('godam_id', $reprocessWaste->godam_id)->pluck('waste_id');
         $wastages = Wastages::with('wastageStock')->whereIn('id', $wasteIds)->get();
 
         return  view("admin.reprocess_waste.create")->with([
@@ -384,17 +384,21 @@ class ReprocessWasteController extends Controller
     }
 
     public function removeRecycleDana(Request $request){
-
         try{
-
             DB::beginTransaction();
-
             $ccPlantDanaCreation =  WastageDana::findOrFail($request->restore_recycle_id);
-
-            RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$ccPlantDanaCreation->dana_id)->decrement('quantity',$ccPlantDanaCreation->quantity);
-
+            
             $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
-                ->where('dana_name_id',$request->dana_id)->first();
+                ->where('dana_name_id',$ccPlantDanaCreation->dana_id)->first();
+
+            if($rawMaterialStock->quantity > $ccPlantDanaCreation->quantity){
+                RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$ccPlantDanaCreation->dana_id)->decrement('quantity',$ccPlantDanaCreation->quantity);
+            }else{
+                RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$ccPlantDanaCreation->dana_id)->update(['quantity'=>0]);
+            }
+            
+            $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
+                ->where('dana_name_id',$ccPlantDanaCreation->dana_id)->first();
 
             $ccPlantDanaCreation->delete();
 
