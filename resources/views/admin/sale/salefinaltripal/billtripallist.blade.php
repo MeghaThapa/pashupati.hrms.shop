@@ -136,7 +136,7 @@
           </div>
           <div class="row">
             <div class="col-12 table-responsive">
-              <table class="table table-striped table-sm">
+              <table class="table table-bordered" style="padding: 0 30px; ">
                 
 
                 <tr>
@@ -151,9 +151,9 @@
                 </tr>
 
                 <tbody>
-                    @foreach($salefinaltripals as $tripal)
+                    @foreach($salefinaltripals as $key=>$tripal)
                     <tr>
-                        <td>#</td>
+                        <td>{{$key+1}}</td>
                         <td>{{$tripal->name}}</td>
                         <td>{{$tripal->roll}}</td>
                         <td>{{$tripal->gross}}</td>
@@ -170,11 +170,11 @@
           </div>
         </div>
 
-        <h3 class="m-0 text-center mt-2">SUMMARY</h3>
+        <h3 class="m-0 text-center mt-4">SUMMARY</h3>
 
-          <div class="row p-4">
+          <div class="row px-4 py-3">
             <div class="col-12 table-responsive">
-              <table class="table table-striped table-sm">
+              <table class="table table-bordered">
                 
 
                 <tr>
@@ -187,9 +187,9 @@
                 </tr>
 
                 <tbody>
-                    @foreach($totaltripals as $tripal)
+                    @foreach($totaltripals as $key=>$tripal)
                     <tr>
-                        <td>#</td>
+                        <td>{{$key+1}}</td>
                         <td>{{$tripal->name}}</td>
                         <td>{{$tripal->total_count}}</td>
                         <td>{{$tripal->total_gross}}</td>

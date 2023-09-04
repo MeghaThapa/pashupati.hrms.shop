@@ -10,7 +10,7 @@ class SaleFinalTripal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bill_no','bill_date','partyname_id','bill_for','lorry_no','do_no','gp_no','remarks','created_at','updated_at'
+        'bill_no','bill_date','partyname_id','bill_for','lorry_no','do_no','gp_no','remarks','created_at','updated_at','status'
     ];
 
     public function getParty()

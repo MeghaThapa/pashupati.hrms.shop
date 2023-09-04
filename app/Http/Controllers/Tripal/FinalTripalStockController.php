@@ -14,8 +14,29 @@ class FinalTripalStockController extends Controller
        $helper = new AppHelper();
        $settings = $helper->getGeneralSettigns();
        $finaltripal = FinalTripalStock::paginate(50);
+       $finaltripalname = FinalTripalStock::get()->unique('name')->values()->all();
+       $sum = FinalTripalStock::sum('net_wt');
 
         return view('admin.tripal_stock.finaltripalstock.index',
-        compact('settings','finaltripal'));
+        compact('settings','finaltripal','finaltripalname','sum'));
+    }
+
+      public function filterStock(Request $request){
+
+        $helper= new AppHelper();
+        $settings= $helper->getGeneralSettigns();
+        $name = $request->name ?? null ;
+
+        $finaltripalname = FinalTripalStock::get()->unique('name')->values()->all();
+
+        $sum = 0;
+
+        if($name || $name !=null){
+                $finaltripal = FinalTripalStock::where('name', 'LIKE', '%'.$request->name.'%')->paginate(35);
+                $sum = $finaltripal->sum('net_wt');
+        }
+
+        return view('admin.tripal_stock.finaltripalstock.index-ajax',
+        compact('settings','finaltripal','finaltripalname','sum'));
     }
 }

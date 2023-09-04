@@ -43,6 +43,10 @@
                         </div>
                     </form>
                 </div>
+                <form action="{{route('test')}}" method="post">
+                    @csrf
+                    <input type="submit">
+                </form>
                 <div class="col-lg-6 col-md-7 col-6">
                     <div class="card-tools text-md-right">
                        <a href="{{ route('fabrics.create') }}" class="btn btn-primary">
@@ -56,7 +60,7 @@
                 <div class="col-lg-3 col-md-7 col-6">
                     <div class="card-tools text-md-right">
 
-                        <form action="{{ route('import.fabric') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('import.fabric') }}" method="POST" enctype="multipart/form-data" id="fabricimport">
                           @csrf
 
                           <div class=" form-group">
@@ -85,7 +89,7 @@
                               </div>
 
                           </div> 
-                          <button class="btn btn-primary">Import data</button>
+                          <button id="registerimport" class="btn btn-primary">Import data</button>
                           
                           @error('file')
                           <span class="text-danger font-italic" role="alert">
@@ -166,6 +170,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 
 <script type="text/javascript">
+
+    $('#fabricimport').on('submit', function () {
+       $('#registerimport').attr('disabled', 'true'); 
+    });
+
 $(document).ready(function(){
   var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
   $('#date_np').val(currentDate);
