@@ -14,6 +14,13 @@ class FabricSendAndReceiveLaminatedSent extends Model
     protected $fillable = [
         "fsr_entry_id", "fabric_name" , "slug" , "net_wt" , "average_wt" ,"gross_wt", "gram_wt" , "meter" ,"fabricgroup_id" , 'standard_wt' ,"loom_no" , "roll_no","fabid"
     ];
+
+    public function fabric()
+    {
+        return $this->belongsTo(Fabric::class,'fabid');
+    }
+
+
     public function fsrentry(){
         return $this->belongsTo(FabricSendAndReceiveEntry::class);
     }
