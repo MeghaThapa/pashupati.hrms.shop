@@ -607,7 +607,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('fabric/generate-laminated-report-view','FabricController@generateLaminatedFabricView')->name('fabric.laminated.report.view');
 
     Route::get('fabric/unlaminated-report','FabricController@unLaminatedReport')->name('fabric.unlaminated.report');
-    Route::post('fabric/generate-unlaminated-report-view','FabricController@generateUnLaminatedFabricView')->name('fabric.laminated.report.view');
+    Route::post('fabric/generate-unlaminated-report-view','FabricController@generateUnLaminatedFabricView')->name('fabric.unlaminated.report.view');
 
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
@@ -617,7 +617,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
 
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
-
 
     Route::post('fabrics/getstock/filterStocks/viewBill',[FabricStockController::class,'viewBill'])->name('fabric-stock.viewBill');
 

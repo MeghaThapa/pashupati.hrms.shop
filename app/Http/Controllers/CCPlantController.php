@@ -299,7 +299,6 @@ class CCPlantController extends Controller
 
     public function removeRecycleDana(Request $request)
     {
-
         try {
 
             DB::beginTransaction();
@@ -307,9 +306,15 @@ class CCPlantController extends Controller
             $ccPlantDanaCreation =  CCPlantDanaCreationTemp::findOrFail($request->restore_recycle_id);
 
             $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
-                ->where('dana_name_id', $request->dana_name_id)->first();
+                ->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->first();
 
-            RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->decrement('quantity', $ccPlantDanaCreation->quantity);
+            if($rawMaterialStock){
+                if($ccPlantDanaCreation->quantity < $rawMaterialStock->quantity){
+                    RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->decrement('quantity', $ccPlantDanaCreation->quantity);
+                }else{
+                    RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->update(['quantity'=> 0]);
+                }
+            }
 
             $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
                 ->where('dana_name_id', $request->dana_name_id)->first();

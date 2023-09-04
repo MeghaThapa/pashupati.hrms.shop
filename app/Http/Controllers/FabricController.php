@@ -419,8 +419,13 @@ class FabricController extends Controller
         $godams = Godam::all();
         return view('admin.fabric.laminated_report',compact('godams'));
     }
+    
+    public function unLaminatedReport(){
+        $godams = Godam::all();
+        return view('admin.fabric.unlaminated_report',compact('godams'));
+    }
 
-    public function generateLaminatedFabricView(Request $request){
+    public function generateUnLaminatedFabricView(Request $request){
         if(!$request->start_date || !$request->end_date){
             return response(['status'=>false,'message'=>'Please select Start date and End Date']);
         }
@@ -430,17 +435,16 @@ class FabricController extends Controller
         $godam_id = $request->godam_id;
         foreach($nepaliDates as $nepaliDate){
 
-            $laminatedFabrics = FabricSendAndReceiveLaminatedSent::join('fabrics','fabric_send_and_receive_laminated_sent.fabid', '=','fabrics.id' )
-                ->whereNotNull('fabric_send_and_receive_laminated_sent.fabid')->where('fabrics.date_np','>=',$nepaliDate);
+            $unLaminatedFabrics = Fabric::query()->with('godam');
 
             if($request->godam_id){
-                $laminatedFabrics = $laminatedFabrics->where('godam_id',$godam_id);
+                $unLaminatedFabrics->where('godam_id',$godam_id);
             }
 
-            $laminatedFabrics = $laminatedFabrics->get();
-            
-            if(!$laminatedFabrics->isEmpty()){
-                $fabricView = view('admin.fabric.reportview.laminated_datewise',compact('laminatedFabrics','nepaliDate'))->render();
+            $unLaminatedFabrics = $unLaminatedFabrics->where('date_np',$nepaliDate)->where('is_laminated','true')->get();
+
+            if(!$unLaminatedFabrics->isEmpty()){
+                $fabricView = view('admin.fabric.reportview.unlaminated_datewise',compact('unLaminatedFabrics','nepaliDate'))->render();
                 array_push($reportData,$fabricView);
             }
         }
@@ -450,16 +454,15 @@ class FabricController extends Controller
         $nepaliStartDate = $nepaliDates[0];
         $nepaliEndDate = end($nepaliDates);
 
-        $summaryFabrics = FabricSendAndReceiveLaminatedSent::select(
-            'fabric_send_and_receive_laminated_sent.fabric_name',
-            DB::raw('COUNT(fabric_send_and_receive_laminated_sent.fabric_name) as roll_count'),
-            DB::raw('SUM(fabric_send_and_receive_laminated_sent.gross_wt) as gross_wt'),
-            DB::raw('SUM(fabric_send_and_receive_laminated_sent.net_wt) as net_wt'),
-            DB::raw('SUM(fabric_send_and_receive_laminated_sent.meter) as meter')
+        $summaryFabrics = Fabric::select(
+            'name',
+            DB::raw('COUNT(name) as roll_count'),
+            DB::raw('SUM(gross_wt) as gross_wt'),
+            DB::raw('SUM(net_wt) as net_wt'),
+            DB::raw('SUM(meter) as meter')
         )
-            ->join('fabrics','fabric_send_and_receive_laminated_sent.fabid', '=','fabrics.id' )
-            ->whereNotNull('fabric_send_and_receive_laminated_sent.fabid')
-            ->groupBy('fabric_send_and_receive_laminated_sent.fabric_name');
+            ->where('is_laminated','true')
+            ->groupBy('name');
         
         if($request->start_date && $request->end_date){
             $summaryFabrics = $summaryFabrics->where('fabrics.date_np','>=',$request->start_date)->where('fabrics.date_np','<=',$request->end_date);
@@ -470,7 +473,7 @@ class FabricController extends Controller
         }
 
         $summaryFabrics = $summaryFabrics->get();
-        $summaryView = view('admin.fabric.reportview.lamfabricsummary',compact('summaryFabrics','nepaliStartDate','nepaliEndDate'))->render();
+        $summaryView = view('admin.fabric.reportview.unlamfabricsummary',compact('summaryFabrics','nepaliStartDate','nepaliEndDate'))->render();
         array_push($reportData,$summaryView);
         return response(['status'=>true,'data'=>$reportData]);
     }
