@@ -71,13 +71,12 @@ class ClosingStoreinReportController extends Controller
     //                 ->make(true);
 
     // }
-    public function yajraReport() {
+    public function yajraReport(Request $request) {
         $batchSize = 100;
-
         $items = DB::table('items_of_storeins')->select('id','name')->get();
-
-        // $today = Carbon::today()->format('Y-n-j');
         $today= Carbon::now()->format('Y-n-j');
+
+        $date =$request->date? Carbon::parse($request->date)->format('Y-n-j') : null;
 
         $reportData = [];
         $openingTotal = 0;
@@ -89,17 +88,38 @@ class ClosingStoreinReportController extends Controller
             $itemId = array_column($batchItems, 'id');
 
             $allData = DB::table('items_of_storeins as item')
-                ->leftJoin('opening_storein_reports as opening', function ($join) use ($today) {
-                    $join->on('opening.name', '=', 'item.id')->where('opening.date', $today);
+                ->leftJoin('opening_storein_reports as opening', function ($join) use ($today,$date) {
+                    $join->on('opening.name', '=', 'item.id');
+                    if($date){
+                        $join->where('opening.date', $date);
+                    }else{
+                        $join->where('opening.date', $today);
+                    }
+
                 })
-                ->leftJoin('purchase_storein_reports as purchase', function ($join) use ($today) {
-                    $join->on('purchase.name', '=', 'item.id')->where('purchase.date', $today);
+                ->leftJoin('purchase_storein_reports as purchase', function ($join) use ($today,$date) {
+                    $join->on('purchase.name', '=', 'item.id');
+                    if($date){
+                        $join->where('purchase.date', $date);
+                    }else{
+                        $join->where('purchase.date', $today);
+                    }
                 })
-                ->leftJoin('issued_storein_reports as issue', function ($join) use ($today) {
-                    $join->on('issue.name', '=', 'item.id')->where('issue.date', $today);
+                ->leftJoin('issued_storein_reports as issue', function ($join) use ($today,$date) {
+                    $join->on('issue.name', '=', 'item.id');
+                    if($date){
+                        $join->where('issue.date', $date);
+                    }else{
+                        $join->where('issue.date', $today);
+                    }
                 })
-                ->leftJoin('closing_storein_reports as closing', function ($join) use ($today) {
-                    $join->on('closing.name', '=', 'item.id')->where('closing.date', $today);
+                ->leftJoin('closing_storein_reports as closing', function ($join) use ($today,$date) {
+                    $join->on('closing.name', '=', 'item.id');
+                    if($date){
+                        $join->where('closing.date', $date);
+                    }else{
+                        $join->where('closing.date', $today);
+                    }
                 })
                 ->select(
                     'item.id as item_id',

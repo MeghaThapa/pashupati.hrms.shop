@@ -43,15 +43,9 @@ class RawMaterialStock extends Model
     {
         return $this->belongsTo('App\Models\DanaGroup', 'dana_group_id', "id");
     }
-    // public function department()
-    // {
-    //     return $this->belongsTo('App\Models\Department', 'department_id', "id");
-    // }
-     public function godam()
+
+    public function godam()
     {
         return $this->belongsTo('App\Models\Godam', 'godam_id', "id");
     }
-
-
 }
-

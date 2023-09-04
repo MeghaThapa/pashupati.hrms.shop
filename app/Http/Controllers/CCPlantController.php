@@ -306,6 +306,9 @@ class CCPlantController extends Controller
 
             $ccPlantDanaCreation =  CCPlantDanaCreationTemp::findOrFail($request->restore_recycle_id);
 
+            $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
+                ->where('dana_name_id', $request->dana_name_id)->first();
+
             RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->decrement('quantity', $ccPlantDanaCreation->quantity);
 
             $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
