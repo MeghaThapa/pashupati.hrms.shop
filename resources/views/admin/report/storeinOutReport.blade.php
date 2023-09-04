@@ -51,6 +51,10 @@
         <form action="{{ route('storeinStock.filter') }}">
             <div class="row m-2">
                 <div class="col-md-4">
+                    <label for="date">Date</label>
+                    <input class="form-control" type="date" id="date" placeholder="select date">
+                </div>
+                {{-- <div class="col-md-4">
                     <label for="category">Category</label>
                     <select class="advance-select-box form-control" id="storeinCategory" name="storein_category">
                         <option value="" selected disabled>{{ __('Select Category') }}</option>
@@ -59,22 +63,17 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
-                <div class="col-md-4">
+                </div> --}}
+                {{-- <div class="col-md-4">
                     <label for="department">Department</label>
                     <select class="advance-select-box form-control" id="storeinDepartment" name="storein_department">
-                        {{-- <option value="" selected disabled>{{ __('Select Department') }}</option> --}}
-                        {{-- @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}">{{ $department->name}}
-                                    </option>
-                                @endforeach --}}
                     </select>
                 </div>
 
                 <div class="col-md-4 mt-4">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
-            </div>
+            </div> --}}
         </form>
         <div class="container-fluid">
             {{-- <div class="card"> --}}
@@ -234,7 +233,12 @@
                 });
             });
         }
+
         $(document).ready(function() {
+
+            $('#date').on('change', function(e) {
+                table.ajax.reload();
+            });
             let openingTotal = 0;
             let purchaseTotal = 0;
             let issueTotal = 0;
@@ -248,7 +252,13 @@
                 style: 'bootstrap',
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('closingStoreinReport.yajraReport') }}",
+                ajax: {
+                    url: "{{ route('closingStoreinReport.yajraReport') }}",
+                    type: "GET",
+                    data: function(request) {
+                        request.date = $('#date').val();
+                    }
+                },
                 error: function(xhr, error, thrown) {
                     console.log("Error fetching data:", error);
                 },

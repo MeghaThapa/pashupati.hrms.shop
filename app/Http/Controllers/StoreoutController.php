@@ -270,10 +270,10 @@ private function generateNonRunningAction($row)
         ->join('items_of_storeins', 'items_of_storeins.id', 'stocks.item_id')
         ->join('storein_departments','storein_departments.id','=','stocks.department_id')
         ->select(
-        'items_of_storeins.id as id',
+        'items_of_storeins.name as id',
         DB::raw("CONCAT(items_of_storeins.name, ' /', storein_departments.name) as text")
         )
-        ->distinct('items_of_storeins.name','storein_departments.name');
+        ->distinct('items_of_storeins.name','items_of_storeins.id','storein_departments.name');
 
         if ($query !== null) {
             $queryBuilder->where('items_of_storeins.name', 'like', '%' . $query . '%');
@@ -288,21 +288,43 @@ private function generateNonRunningAction($row)
     }
 
     //For Stock QTY RATE AJAX REQUEST
-    public function getStockQtyRate(Request $request){
-        return DB::table('stocks')
+    // public function getStockQtyRate(Request $request){
+    //     return DB::table('stocks')
+    //     ->where('category_id', $request->cat_id)
+    //     ->where('item_id',$request->item_id)
+    //     ->where('size', $request->side_id)
+    //     ->where('unit', $request->unit_id)
+    //     ->first();
+    // }
+public function getStockQtyRate(Request $request){
+     $itemId = DB::table('items_of_storeins')
+        ->where('name', $request->item_name)
         ->where('category_id', $request->cat_id)
-        ->where('item_id',$request->item_id)
-        ->where('size', $request->side_id)
-        ->where('unit', $request->unit_id)
-        ->first();
-    }
+        ->where('size_id', $request->side_id)
+        ->where('unit_id', $request->unit_id)
+        ->value('id');
 
-    public function getDepartmentSizeUnit($items_of_storein_id, $category_id){
-        $stocks =Stock::with('department:id,name','units:id,name','sizes:id,name')
-        ->where('item_id',$items_of_storein_id)
-        ->where('category_id',$category_id)
-        ->groupBy(['size','unit','department_id'])
-        ->get(['size','unit','department_id']);
+    if ($itemId) {
+        // If the item_id is found, fetch the stock quantity
+        $stock = DB::table('stocks')
+            ->where('category_id', $request->cat_id)
+            ->where('item_id', $itemId)
+            ->where('size', $request->side_id)
+            ->where('unit', $request->unit_id)
+            ->first();
+
+        return $stock;
+    }
+}
+
+    public function getDepartmentSizeUnit($items_of_storein_name, $category_id){
+    $similarItems = ItemsOfStorein::where('name', '=', $items_of_storein_name)->pluck('id');
+    // Use the found item IDs to filter the Stock model
+    $stocks = Stock::with('department:id,name', 'units:id,name', 'sizes:id,name')
+        ->whereIn('item_id', $similarItems)
+        ->where('category_id', $category_id)
+        ->groupBy(['size', 'unit', 'department_id'])
+        ->get(['size', 'unit', 'department_id']);
 
         $ArrayStock =$stocks->toArray();
 
@@ -362,7 +384,7 @@ private function generateNonRunningAction($row)
         $request->validate([
             'category_id'=> 'required',
             'storeout_id' => 'required',
-            'item_id' =>'required',
+            'item_name' =>'required',
             'size' => 'required',
             'unit' => 'required',
             'quantity' => 'required',
@@ -372,8 +394,14 @@ private function generateNonRunningAction($row)
         ]);
         try {
             DB::beginTransaction();
+             $itemId = DB::table('items_of_storeins')
+            ->where('name', $request->item_name)
+            ->where('category_id', $request->category_id)
+            ->where('size_id', $request->size)
+            ->where('unit_id', $request->unit)
+            ->value('id');
 
-            $stock = Stock::where('item_id',$request->item_id)
+            $stock = Stock::where('item_id',$itemId)
             ->where('category_id',$request->category_id)
             ->where('size',$request->size)
             ->where('unit',$request->unit)
