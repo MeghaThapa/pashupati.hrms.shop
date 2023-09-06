@@ -14,18 +14,22 @@ class RawMaterial extends Model
     {
         return $this->belongsTo('App\Models\StoreinType', 'storein_type_id', 'id');
     }
+
     public function toGodam()
     {
         return $this->belongsTo('App\Models\Godam', 'to_godam_id', 'id');
     }
+
     public function fromGodam()
     {
         return $this->belongsTo('App\Models\Godam', 'from_godam_id', 'id');
     }
-     public function supplier()
+
+    public function supplier()
     {
         return $this->belongsTo('App\Models\Supplier', 'supplier_id', 'id');
     }
+
     public function rawMaterialsItem(){
         return $this->hasMany('App\Models\RawMaterialItem', 'raw_material_id', 'id');
     }

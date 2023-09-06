@@ -55,6 +55,7 @@ use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
 use App\Http\Controllers\FabricController;
+use App\Http\Controllers\RawMaterialReportController;
 use App\Http\Controllers\ReprocessWasteController;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -90,7 +91,7 @@ Route::get('artisandone',function(){
     // \Artisan::call("make:model AutoloadItems");
     // \Artisan::call('make:migration create_autoload_items_stock_table');
 
-    // \Artisan::call('migrate --path=/database/migrations/2023_08_15_160938_add_status_to_fabric_sale_entry_table.php');         
+    // \Artisan::call('migrate --path=/database/migrations/2023_08_15_160938_add_status_to_fabric_sale_entry_table.php');
       return "done";
 });
 
@@ -253,6 +254,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterialStock/filterAccDanaName/{danaName_id}',[RawMaterialStockController::class,'filterAccDanaName'])->name('rawMaterialStock.filterAccDanaName');
     Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
     Route::post('rawMaterialStock/filterStocks',[RawMaterialStockController::class,'filterStocks'])->name('rawmaterial.filterStocks');
+
+    Route::get('rawMaterial/report',[RawMaterialReportController::class,'index'])->name('rawmaterial.report');
+
+    Route::post('rawMaterial/report/ajax-filter',[RawMaterialReportController::class,'ajaxFilter'])->name('rawmaterial.ajax.report');
 
     //Godam
     Route::get('godam/index',[GodamController::class,'index'])->name('godam.index');
@@ -482,7 +487,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post('/fabricSendReceive/entry/store', [FabricSendReceiveController::class,"store"])->name('fabricSendReceive.entry.store');
         Route::post('/fabricSendReceive/entry/delete', [FabricSendReceiveController::class,"delete"])->name('fabricSendReceive.entry.delete');
         /************* aile baki xa **************/
-     
+
         Route::get('fabricSendReceive/index/{id}', [FabricSendReceiveController::class,"indexrevised"])->name('fabricSendReceive.index.revised');//latest
 
         Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
@@ -490,7 +495,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
         Route::get('fabric/send/unlaminated/delete/{id}/revised',[FabricSendReceiveController::class,'sendunlaminateddeleterevised'])->name('fabricSendReceive.send.unlaminated.delete.revised');//latest
         Route::post("fabric/send/unlaminated/store/revised2",[FabricSendReceiveController::class,'sendunlaminatedrevised2'])->name("fabricSendReceive.send.unlaminated.revised2"); //latest
-        
+
         //getting unlaminated into form
 
         Route::get('fabric/get/unlaminated/{fsr_entry_id}',[FabricSendReceiveController::class,'getunlaminatedrevised'])->name('fabricSendReceive.get.unlaminated.revised');//latest
@@ -517,15 +522,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("entry/index/ajax","indexajax")->name("entry.index.ajax");
         Route::post("entry/store","store")->name('entry.store');
 
-        Route::get("create/{entry_id}","create")->name("create"); 
+        Route::get("create/{entry_id}","create")->name("create");
         Route::post("store","storeSale")->name("store");
         Route::get("get/list","getSales")->name("get.list");
 
-        Route::post("delete","delete")->name('delete'); 
+        Route::post("delete","delete")->name('delete');
         Route::post("final/submit","submit")->name("submit");
 
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
-        Route::get("viewbill/{bill_id}","viewBill")->name("viewBill"); 
+        Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -541,9 +546,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("dana/creation/temp","danacreation")->name("dana.creation.temp");
         Route::get("created/dana/{entry_id}","createdDana")->name("created.dana");
         Route::get("create/{entry_id}","create")->name("create");
-        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
+        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");
         Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
-        
+
         //dana consumption
         Route::post("danagroup-godam-dana","danaFromDanaGroupGodam")->name("danagroup.godam.dana");
         Route::post("add-dana","addDana")->name("add.dana");
@@ -552,13 +557,13 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("recycle-dana-remove","removeRecycleDana")->name("remove.recycle.dana");
         Route::get("cc/raw/materials","getccrawmaterials")->name('get.cc.raw.materials');
         Route::get("cc/get/sum/{entry_id}","getsumquantity")->name('get.sum');
-        
+
         Route::post("stock-wastage-entry","updateWastageStock")->name("wastage.entry");
         Route::get("created/wastage/{entry_id}","createdWastage")->name("created.wastage");
         Route::post("recycle-wastage-remove","removeRecycleWastage")->name("remove.recycle.wastage");
         Route::post("final/submit","finalsubmit")->name("final.submit");
     });
-    
+
     Route::prefix("reprocess/wastage/")->name("reprocess.wastage.")->controller(ReprocessWasteController::class)->group(function(){
         Route::get("entry/index","entryindex")->name("entry.index");
         Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
@@ -566,7 +571,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("entry/destroy","entryDestroy")->name("entry.destroy");
 
         Route::get("create/{entry_id}","create")->name("create");
-        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
+        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");
         Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
 
         Route::post("add-waste","addWaste")->name("add.waste");
@@ -666,7 +671,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabricGodam/delete/list', 'FabricGodamController@deleteFabricGodamList')->name('fabricgodam.deleteFabricGodamList');
 
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("getFilterFabric");
-    
+
 
 
 
@@ -803,7 +808,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get("salefinaltripal/getTripalSale/Pdf/{id}",'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
     Route::get("salefinaltripal/getTripalSale/excel/{id}",'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
- 
+
 
     //salefinaltripal filter
 

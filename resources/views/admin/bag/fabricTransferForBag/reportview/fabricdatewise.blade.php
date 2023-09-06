@@ -15,27 +15,27 @@
         </tr>
     </thead>
     <tbody>
-        @php  
+        @php
             $i=1;
-            $total_gross_wt = 0; 
-            $total_net_wt = 0; 
-            $total_meter = 0; 
+            $total_gross_wt = 0;
+            $total_net_wt = 0;
+            $total_meter = 0;
         @endphp
         @foreach($fabrics as $fabric)
         <tr>
             <td>{{ $i }}</td>
-            <td>{{ $fabric->getfabric->name }}</td>
-            <td>{{ $fabric->getfabric->roll_no }}</td>
-            <td>{{ $fabric->getfabric->gross_wt }}</td>
-            <td>{{ $fabric->getfabric->net_wt }}</td>
-            <td>{{ $fabric->getfabric->meter }}</td>
-            <td>{{ $fabric->getfabric->godam->name }}</td>
+            <td>{{ $fabric->fabric_name }}</td>
+            <td>{{ $fabric->roll_no }}</td>
+            <td>{{ $fabric->gross_wt }}</td>
+            <td>{{ $fabric->net_wt }}</td>
+            <td>{{ $fabric->meter }}</td>
+            <td>{{ $fabric->godam_name }}</td>
         </tr>
-        @php 
+        @php
         $i++;
-        $total_gross_wt = $total_gross_wt + $fabric->gross_wt; 
-        $total_net_wt = $total_net_wt + $fabric->net_wt; 
-        $total_meter = $total_meter + $fabric->meter; 
+        $total_gross_wt = $total_gross_wt + $fabric->gross_wt;
+        $total_net_wt = $total_net_wt + $fabric->net_wt;
+        $total_meter = $total_meter + $fabric->meter;
         @endphp
         @endforeach
     </tbody>
