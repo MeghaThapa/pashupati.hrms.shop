@@ -14,9 +14,11 @@ class Fabric extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'slug', 'fabricgroup_id', 'status', 'average_wt', 'gram_wt', 'gross_wt', 'net_wt', 'meter', 'roll_no', 'loom_no', 'is_laminated', 'godam_id', 'bill_no', 'date_np'
-    ];
+    // protected $fillable = [
+    //     'name', 'slug', 'fabricgroup_id', 'status', 'average_wt', 'gram_wt', 'gross_wt', 'net_wt', 'meter', 'roll_no', 'loom_no', 'is_laminated', 'godam_id', 'bill_no', 'date_np'
+    // ];
+
+    protected $guarded = [];
 
     public function godam()
     {
@@ -64,5 +66,5 @@ class Fabric extends Model
         return $this->status == 1 ? true : false;
     }
 
-    
+
 }

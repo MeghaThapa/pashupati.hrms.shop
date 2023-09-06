@@ -72,7 +72,7 @@
                             <th>Tape</th>
                             <th>Lam</th>
                             <th>N.W</th>
-                            <th>Godam</th>
+                            <th>To Godam</th>
                             <th>Closing</th>
                         </tr>
                     </thead>
@@ -81,14 +81,14 @@
                         <tr>
                             <td>{{ $dateKey }}</td>
                             <td> {{ $datewiseQty['opening_quantity'] }} </td>
-                            <td>@if($datewiseQty['import_from'] == 'import' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-                            <td>@if($datewiseQty['import_from'] == 'local' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-                            <td>@if($datewiseQty['import_from'] == 'godam' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
+                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'import' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
+                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'local' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
+                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
+                            <td>{{ $datewiseQty['tape plant'] ?? 0 }} </td>
+                            <td>{{ $datewiseQty['lamination plant'] ?? 0 }}</td>
+                            <td>{{ $datewiseQty['nonwoven plant'] ?? 0 }}</td>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>@if($datewiseQty['import_from'] == 'closing' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
+                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'closing' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
 
                         </tr>
                         @endforeach

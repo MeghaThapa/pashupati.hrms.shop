@@ -492,7 +492,7 @@
 
                         </li>
 
-                        
+
 
 
 
@@ -506,7 +506,7 @@
 
                             </a>
 
-                        </li>                        
+                        </li>
 
 
 
@@ -520,7 +520,7 @@
 
                             </a>
 
-                        </li>                        
+                        </li>
 
 
 
@@ -814,7 +814,7 @@
 
                 </li>
 
-                
+
 
                 <li class="nav-item">
 
@@ -858,6 +858,14 @@
                         class="nav-link {{ request()->is('admin/fabric/fabric/unlaminated-report*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tags"></i>
                         <p>Unlaminated Fabric Report</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('fabricbag.entry.report') }}"
+                        class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Fabric transfer to Bag Report</p>
                     </a>
                 </li>
 
@@ -1163,7 +1171,7 @@
 
                 </li>
 
-                
+
 
                 <li class="nav-header text-bold">{{ __('Reprocess Wastage') }}</li>
 

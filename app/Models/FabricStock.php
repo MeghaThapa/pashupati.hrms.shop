@@ -12,9 +12,11 @@ class FabricStock extends Model
     use Sluggable;
     protected $table = 'fabric_stock';
     protected $id = 'id';
-    protected $fillable = [
-        'name','slug', 'fabricgroup_id', 'status','average_wt','gram_wt','gross_wt','net_wt','meter','roll_no','loom_no','is_laminated','godam_id','bill_no','fabric_id','date_np'
-    ];
+    // protected $fillable = [
+    //     'name','slug', 'fabricgroup_id', 'status','average_wt','gram_wt','gross_wt','net_wt','meter','roll_no','loom_no','is_laminated','godam_id','bill_no','fabric_id','date_np'
+    // ];
+
+    protected $guarded = [];
 
    /**
     * Return the sluggable configuration array for this model.

@@ -9,9 +9,11 @@ class FabricGroup extends Model
 {
     use Sluggable;
     protected $table="fabric_groups";
-    protected $fillable = [
-        'name', 'slug', 'status'
-    ];
+    // protected $fillable = [
+    //     'name', 'slug', 'status'
+    // ];
+
+    protected $guarded = [];
 
     public function sluggable(): array
     {

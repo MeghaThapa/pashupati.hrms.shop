@@ -156,13 +156,11 @@ class FabricController extends Controller
 
             $file = $request->file('file');
             $import = Excel::import(new FabricImport($request->godam_id, $request->date_np), $file);
-            if ($import) {
-                return back()->with(["message" => "Data imported successfully!"]);
-            } else {
-                return "Unsuccessful";
-            }
+
 
             DB::commit();
+            return back()->with(["message" => "Data imported successfully!"]);
+
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
@@ -414,12 +412,12 @@ class FabricController extends Controller
         $godams = Godam::all();
         return view('admin.fabric.godam_transfer_report',compact('godams'));
     }
-    
+
     public function laminatedReport(){
         $godams = Godam::all();
         return view('admin.fabric.laminated_report',compact('godams'));
     }
-    
+
     public function unLaminatedReport(){
         $godams = Godam::all();
         return view('admin.fabric.unlaminated_report',compact('godams'));
@@ -463,7 +461,7 @@ class FabricController extends Controller
         )
             ->where('is_laminated','true')
             ->groupBy('name');
-        
+
         if($request->start_date && $request->end_date){
             $summaryFabrics = $summaryFabrics->where('fabrics.date_np','>=',$request->start_date)->where('fabrics.date_np','<=',$request->end_date);
         }
@@ -477,7 +475,7 @@ class FabricController extends Controller
         array_push($reportData,$summaryView);
         return response(['status'=>true,'data'=>$reportData]);
     }
-    
+
     public function generateGodamTransferView(Request $request){
         if(!$request->start_date || !$request->end_date){
             return response(['status'=>false,'message'=>'Please select Start date and End Date']);
@@ -514,7 +512,7 @@ class FabricController extends Controller
         )
             ->join('fabrics','fabric_godam_lists.fabric_id', '=','fabrics.id' )
             ->groupBy('fabric_godam_lists.name');
-        
+
         if($request->start_date && $request->end_date){
             $summaryFabrics = $summaryFabrics->where('fabric_godam_lists.bill_date','>=',$request->start_date)->where('fabric_godam_lists.bill_date','<=',$request->end_date);
         }
@@ -557,14 +555,14 @@ class FabricController extends Controller
         $nepaliEndDate = end($nepaliDates);
 
         $summaryFabrics = Fabric::select(
-                        'name', 
+                        'name',
                         DB::raw('COUNT(name) as roll_count'),
-                        DB::raw('SUM(gross_wt) as gross_wt'), 
+                        DB::raw('SUM(gross_wt) as gross_wt'),
                         DB::raw('SUM(net_wt) as net_wt'),
                         DB::raw('SUM(meter) as meter')
                         )
                     ->groupBy('name');
-        
+
         if($request->start_date && $request->end_date){
             $summaryFabrics = $summaryFabrics->where('date_np','>=',$request->start_date)->where('date_np','<=',$request->end_date);
         }
