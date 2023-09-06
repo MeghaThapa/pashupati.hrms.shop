@@ -10,14 +10,14 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('Fabric Entry Report') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('Fabric Transfer to Bag Report') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('Fabric Entry Report') }}</li>
+                    <li class="breadcrumb-item active">{{ __('Fabric Transfer to Bag Report') }}</li>
                 </ol>
             </div>
         </div>
@@ -27,7 +27,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <h3>Fabric Entry Report</h3>
+                    <h3>Fabric Transfer To Bag Report</h3>
                 </div>
                 <div class="row container">
                     <div class="col-sm-3">

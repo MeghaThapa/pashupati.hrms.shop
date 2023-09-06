@@ -10,9 +10,11 @@ class Wastages extends Model
     use HasFactory;
     protected $table = "wastages";
     protected $id = 'id';
-    protected $fillable = [
-        'name','status','created_at','updated_at'
-    ];
+    // protected $fillable = [
+    //     'name','status','created_at','updated_at'
+    // ];
+
+    protected $guarded = [];
 
     public function wastageStock()
     {

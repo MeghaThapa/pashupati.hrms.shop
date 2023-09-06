@@ -32,7 +32,7 @@ class ReprocessWasteController extends Controller
     protected $neDate;
     protected $request;
     protected $entry_id;
-    
+
     public function __construct(NepaliConverter $neDate,Request $request){
         $this->neDate = $neDate;
         $this->request = $request;
@@ -42,9 +42,9 @@ class ReprocessWasteController extends Controller
     public function entryindex()
     {
         $godams = Godam::where("status", "active")->get();
-        $getData = DB::table("ccplantentry")->first();
+        $getData = DB::table("reprocess_wastes")->first();
         if (isset($getData)) {
-            $entries = DB::table("ccplantentry")->latest()->first()->id;
+            $entries = DB::table("reprocess_wastes")->latest()->first()->id;
             $receipt_number = "CC-" . getNepaliDate(date("Y-m-d")) . "-" . $entries + 1;
         } else {
             $receipt_number = "CC-" . getNepaliDate(date("Y-m-d")) . "-1";
@@ -107,7 +107,7 @@ class ReprocessWasteController extends Controller
         ]);
 
         ReprocessWaste::create($request->only(['receipt_number', 'godam_id', 'date', 'remarks']));
-        
+
         return back()->with("success", "Created Successfully");
     }
 
@@ -165,7 +165,7 @@ class ReprocessWasteController extends Controller
 
                 DB::commit();
 
-                return response(['status'=>true,'data'=>$wasteStock]);                
+                return response(['status'=>true,'data'=>$wasteStock]);
 
             } catch (Exception $e) {
                 return response([
@@ -213,18 +213,18 @@ class ReprocessWasteController extends Controller
 
 
             $reprocessWaste = ReprocessWaste::findOrFail($request->cc_plant_entry_id);
-    
+
             ReprocessWastageDetail::create([
                 'reprocess_waste_id' => $reprocessWaste->id,
                 'dye_quantity' => $request->dye_quantity,
                 'cutter_quantity' => $request->cutter_quantity,
                 'melt_quantity' => $request->melt_quantity,
             ]);
-    
+
             $total_quantity = (int)$request->dye_quantity + (int)$request->cutter_quantity + (int)$request->melt_quantity;
-    
+
             $wastage = Wastages::where('name','erema lumps')->first();
-    
+
             WasteStock::where('godam_id',$reprocessWaste->godam_id)->where('waste_id',$wastage->id)->increment('quantity_in_kg',$total_quantity);
 
             $wastageStock = WasteStock::where('godam_id',$reprocessWaste->godam_id)->where('waste_id',$wastage->id)->first();
@@ -313,13 +313,13 @@ class ReprocessWasteController extends Controller
             DB::beginTransaction();
 
             $reprocessWaste = ReprocessWaste::findOrFail($request->cc_plant_entry_id);
-            
+
             $reprocessWasteDetail = ReprocessWastageDetail::findOrFail($request->restore_wastage_id);
 
             $wastage = Wastages::where('name','erema lumps')->first();
 
             $total_quantity = $reprocessWasteDetail->dye_quantity + $reprocessWasteDetail->cutter_quantity + $reprocessWasteDetail->melt_quantity;
-    
+
             WasteStock::where('godam_id',$reprocessWaste->godam_id)->where('waste_id',$wastage->id)->decrement('quantity_in_kg',$total_quantity);
 
             $reprocessWasteDetail->delete();
@@ -387,7 +387,7 @@ class ReprocessWasteController extends Controller
         try{
             DB::beginTransaction();
             $ccPlantDanaCreation =  WastageDana::findOrFail($request->restore_recycle_id);
-            
+
             $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
                 ->where('dana_name_id',$ccPlantDanaCreation->dana_id)->first();
 
@@ -396,7 +396,7 @@ class ReprocessWasteController extends Controller
             }else{
                 RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$ccPlantDanaCreation->dana_id)->update(['quantity'=>0]);
             }
-            
+
             $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
                 ->where('dana_name_id',$ccPlantDanaCreation->dana_id)->first();
 
@@ -429,7 +429,7 @@ class ReprocessWasteController extends Controller
                 $reprocessTemp->delete();
             }
 
-            // Now since we have added stocks to erema lumps we need to reverse it 
+            // Now since we have added stocks to erema lumps we need to reverse it
             $reprocessWastageDetails = ReprocessWastageDetail::where('reprocess_waste_id',$reprocessWastage->id)->get();
             $wastage = Wastages::where('name','erema lumps')->first();
             foreach($reprocessWastageDetails as $detail){
