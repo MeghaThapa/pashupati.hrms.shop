@@ -315,7 +315,9 @@
 
         var bill_number = $('#bill_number').val(),
         bill_date = $('#date_np').val(),
-        stock_id = $('#stock_id').val();
+        stock_id = $('#stock_id').val(),
+        bill_id = $('#tripalgodam_id').val();
+        // debugger;
 
         let fabric_name_id = $(this).val();
         fabricTable = $("#sameFabricsTable").DataTable({
@@ -327,6 +329,7 @@
                 data : function(data){
                     data._token = $("meta[name='csrf-token']").attr("content"),
                     data.stock_id = stock_id
+                    data.bill_id = bill_id
                 }
             },
             columns:[

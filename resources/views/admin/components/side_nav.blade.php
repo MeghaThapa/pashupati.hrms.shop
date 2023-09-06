@@ -828,7 +828,14 @@
 
                     </a>
 
+                <li class="nav-item">
+                    <a href="{{ route('fabricbag.entry.report') }}"
+                        class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>FabricBag Entry Report</p>
+                    </a>
                 </li>
+
 
                 <li class="nav-item">
                     <a href="{{ route('fabric.godam.transfer.report') }}"

@@ -14,12 +14,24 @@ use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use App\Services\NepaliConverter;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 use Symfony\Component\Mime\Encoder\Rfc2231Encoder;
 use Yajra\DataTables\DataTables;
+use Illuminate\Database\Eloquent\Builder;
 
 class FabricTransferEntryForBagController extends Controller
 {
+
+  protected $neDate;
+
+  public function __construct(NepaliConverter $neDate)
+  {
+      $this->neDate = $neDate;
+  }
+
   /********** For Receipts ***********/
   public function index()
   {
@@ -257,6 +269,126 @@ class FabricTransferEntryForBagController extends Controller
     FabricTransferEntryForBag::where('id',$id)->update([
       "status" => "completed"
     ]);
+  }
+
+  public function fabricEntryReport()
+  {
+      $godams = Godam::all();
+      return view('admin.bag.fabricTransferForBag.entryreport', compact('godams'));
+  }
+
+  public function generateEntryReportView(Request $request)
+  {
+      if(!$request->start_date || !$request->end_date){
+          return response(['status'=>false,'message'=>'Please select Start date and End Date']);
+      }
+      $reportData = [];
+      $nepaliDates = [];
+      $nepaliDates = $this->getDateRangeNepali($request->start_date, $request->end_date);
+      // dd($nepaliDates);
+      foreach($nepaliDates as $nepaliDate){
+        // dd($nepaliDate);
+
+
+          $fabrics = DB::table('bag_fabric_receive_item_sent')
+                        ->join('bag_fabric_entry', 'bag_fabric_receive_item_sent.fabric_bag_entry_id', '=', 'bag_fabric_entry.id');
+                        // ->where('bag_fabric_entry.receipt_date_np',$nepaliDate);
+          // dd($fabrics->get());
+
+          // if($request->godam_id){
+          //     $fabrics = $fabrics->whereHas('fabric', function(Builder $query) use ($request){
+          //                                 $query->where('godam_id',$request->godam_id);
+          //                                });
+          // }
+
+          $fabrics = $fabrics->get();
+          // dd($fabrics->count());
+          if(!$fabrics->isEmpty()){
+              $fabricView = view('admin.bag.fabricTransferForBag.reportview.fabricdatewise',compact('fabrics','nepaliDate'))->render();
+              array_push($reportData,$fabricView);
+          }
+      }
+
+      // Summary Part Code
+
+      $nepaliStartDate = $nepaliDates[0];
+      $nepaliEndDate = end($nepaliDates);
+      // dd($nepaliStartDate,$nepaliEndDate);
+
+      $summaryFabrics = DB::table('bag_fabric_receive_item_sent')
+            ->join('fabrics', 'bag_fabric_receive_item_sent.fabric_id', '=', 'fabrics.id')
+            ->join('bag_fabric_entry', 'bag_fabric_receive_item_sent.fabric_bag_entry_id', '=', 'bag_fabric_entry.id')
+            ->select(
+                      'name', 
+                      DB::raw('COUNT(fabrics.name) as roll_count'),
+                      DB::raw('SUM(fabrics.gross_wt) as gross_wt'), 
+                      DB::raw('SUM(fabrics.net_wt) as net_wt'),
+                      DB::raw('SUM(fabrics.meter) as meter')
+                      )
+                  ->groupBy('fabrics.name');
+                  // dd($summaryFabrics->get());
+      
+      if($request->start_date && $request->end_date){
+          $summaryFabrics = $summaryFabrics->where('date_np','>=',$request->start_date)->where('bag_fabric_entry.receipt_date_np','<=',$request->end_date);
+      }
+
+      // if($request->godam_id){
+      //     $summaryFabrics = $summaryFabrics->where('godam_id',$request->godam_id);
+      // }
+
+      $summaryFabrics = $summaryFabrics->get();
+      $summaryView = view('admin.bag.fabricTransferForBag.reportview.fabricsummary',compact('summaryFabrics','nepaliStartDate','nepaliEndDate'))->render();
+      array_push($reportData,$summaryView);
+      return response(['status'=>true,'data'=>$reportData]);
+  }
+
+
+  private function getDateRangeNepali($npStartDate, $npEndDate)
+  {
+      $startEngDate = $this->getEngDate($npStartDate);
+      $endEngDate = $this->getEngDate($npEndDate);
+
+      $npDates = [];
+
+      $engDates = $this->getEngDateRange($startEngDate,$endEngDate);
+      foreach($engDates as $engDate){
+          array_push($npDates,$this->getNpDate($engDate));
+      }
+
+      return $npDates;
+  }
+
+  private function getEngDateRange($startDate,$endDate){
+
+      $startDate = Carbon::createFromFormat('Y-m-d', $startDate);
+      $endDate = Carbon::createFromFormat('Y-m-d', $endDate);
+
+      $dateRange = CarbonPeriod::create($startDate, $endDate);
+
+      $dates = array_map(fn ($date) => $date->format('Y-m-d'), iterator_to_array($dateRange));
+
+      return $dates;
+  }
+
+  private function getEngDate($npDate)
+  {
+      $explodedStartDate = explode('-', $npDate);
+      $date = $this->neDate->nep_to_eng($explodedStartDate[0], $explodedStartDate[1], $explodedStartDate[2]);
+
+      if($date['month'] < 10){
+          $month = '0'.$date['month'];
+      }else{
+          $month = $date['month'];
+      }
+
+      return $date['year'].'-'.$month.'-'.$date['date'];
+
+  }
+
+  private function getNpDate($engDate)
+  {
+      $explodedStartDate = explode('-', $engDate);
+      return $this->neDate->eng_to_nep($explodedStartDate[0], $explodedStartDate[1], $explodedStartDate[2]);
   }
 
 }

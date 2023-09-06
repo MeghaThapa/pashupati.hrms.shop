@@ -49,6 +49,10 @@
                             {{ __('Add Fabric') }} <i class="fas fa-plus-circle"></i>
                         </a>
 
+                        <a href="{{ route('admin.exportfabric') }}" class="btn btn-primary">
+                            {{ __('Export Fabric') }} <i class="fas fa-plus-circle"></i>
+                        </a>
+
                     </div>
 
 

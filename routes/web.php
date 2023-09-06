@@ -106,6 +106,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // admin profile route
     Route::get('profile', 'AdminController@profilePage')->name('admin.profile');
 
+    Route::get('export', 'FabricController@export')->name('admin.exportfabric');
+
     // admin profile update route
     Route::put('profile/{email}', 'AdminController@profileUpdate')->name('admin.profile.update');
 
@@ -603,6 +605,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
     Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view');
 
+    Route::get('fabricbag/entry-report','FabricTransferEntryForBagController@fabricEntryReport')->name('fabricbag.entry.report');
+    Route::post('fabricbag/generate-entry-report-view','FabricTransferEntryForBagController@generateEntryReportView')->name('fabricbag.entry.report.view');
+    Route::get('fabricbag/entry-report-table','FabricTransferEntryForBagController@entryReportTable')->name('fabricbag.entry.report.table');
+
     Route::get('fabric/laminated-report','FabricController@laminatedReport')->name('fabric.laminated.report');
     Route::post('fabric/generate-laminated-report-view','FabricController@generateLaminatedFabricView')->name('fabric.laminated.report.view');
 
@@ -640,6 +646,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'update' => 'fabricgodams.update',
         ]
     ]);
+
+    Route::get('fabricGodam/test', 'FabricGodamController@test')->name('fabricGodam.test');
 
     Route::get('fabricGodam/dataTable', 'FabricGodamController@dataTable')->name('fabricGodam.dataTable');
 

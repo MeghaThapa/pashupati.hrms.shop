@@ -16,4 +16,8 @@ class FabricSendAndReceiveLaminatedFabricDetails extends Model
     public function temporarylamfabric(){
         return $this->belongsTo(FabricSendAndReceiveTemporaryForLamination::class,"temp_lam","id");
     }
+
+    public function getfabricBill(){
+        return $this->belongsTo('App\Models\FabricSendAndReceiveEntry','fsr_entry_id');
+    }
 }

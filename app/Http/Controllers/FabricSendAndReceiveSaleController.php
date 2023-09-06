@@ -30,7 +30,7 @@ class FabricSendAndReceiveSaleController extends Controller
     public function indexajax()
     {
         if ($this->request->ajax()) {
-            return DataTables::of(FabricSaleEntry::with("getParty")->get())
+            return DataTables::of(FabricSaleEntry::with("getParty")->orderBy('id','DESC')->get())
                 ->addIndexColumn()
                 ->addColumn("supplier", function ($row) {
                     return $row->getParty->name;

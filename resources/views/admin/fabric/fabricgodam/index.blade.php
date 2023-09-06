@@ -49,6 +49,9 @@
                         <a href="{{ route('fabricgodams.create') }}" class="btn btn-primary">
                             {{ __('Add FabricGodam') }} <i class="fas fa-plus-circle"></i>
                         </a>
+                        <a href="{{ route('fabricGodam.test') }}" class="btn btn-primary">
+                            {{ __('Test') }} <i class="fas fa-plus-circle"></i>
+                        </a>
                     </div>
                 </div>
             </div>
