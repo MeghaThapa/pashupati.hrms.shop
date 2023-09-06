@@ -142,8 +142,8 @@ class CCPlantController extends Controller
 
     public function danaFromDanaGroupGodam(Request $request)
     {
-        $danaIds = RawMaterialStock::with('danaName', 'danaGroup')->where('godam_id', $request->godam_id)->pluck('dana_name_id');
-        $danaNames = DanaName::where('dana_group_id', $request->dana_group_id)->whereIn('id', $danaIds)->get();
+        // $danaIds = RawMaterialStock::with('danaName', 'danaGroup')->where('godam_id', $request->godam_id)->pluck('dana_name_id');
+        $danaNames = DanaName::where('dana_group_id', $request->dana_group_id)->get();
         return response(['status' => true, 'data' => $danaNames]);
     }
 
@@ -274,7 +274,18 @@ class CCPlantController extends Controller
                 "plant_name_id" => $this->request->plant_name_id,
             ]);
 
-            RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $request->dana_name_id)->increment('quantity', $request->quantity);
+            $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
+                ->where('dana_name_id', $request->dana_name_id)->first();
+            if($rawMaterialStock){
+                RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $request->dana_name_id)->increment('quantity', $request->quantity);
+            }else{
+                RawMaterialStock::create([
+                    'godam_id' => $request->godam_id,
+                    'dana_name_id' => $this->request->dana_name_id,
+                    'dana_group_id' => $this->request->dana_group_id,
+                    'quantity' => $this->request->quantity,
+                ]);
+            }
 
             $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
                 ->where('dana_name_id', $request->dana_name_id)->first();
@@ -288,14 +299,22 @@ class CCPlantController extends Controller
 
     public function removeRecycleDana(Request $request)
     {
-
         try {
 
             DB::beginTransaction();
 
             $ccPlantDanaCreation =  CCPlantDanaCreationTemp::findOrFail($request->restore_recycle_id);
 
-            RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->decrement('quantity', $ccPlantDanaCreation->quantity);
+            $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
+                ->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->first();
+
+            if($rawMaterialStock){
+                if($ccPlantDanaCreation->quantity < $rawMaterialStock->quantity){
+                    RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->decrement('quantity', $ccPlantDanaCreation->quantity);
+                }else{
+                    RawMaterialStock::where('godam_id', $request->godam_id)->where('dana_name_id', $ccPlantDanaCreation->dana_name_id)->update(['quantity'=> 0]);
+                }
+            }
 
             $rawMaterialStock =  RawMaterialStock::where('godam_id', $request->godam_id)
                 ->where('dana_name_id', $request->dana_name_id)->first();

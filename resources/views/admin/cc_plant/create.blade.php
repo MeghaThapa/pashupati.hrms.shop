@@ -661,7 +661,6 @@
                     method: "post",
                     data: {
                         "_token": $("meta[name='csrf-token']").attr("content"),
-                        "dana_name_id": $("#raw_materials").val(),
                         "godam_id": $("#godam").val(),
                         "restore_recycle_id": $('#restore_recycle_id').val(),
                         "cc_plant_entry_id": $("#cc_plant_entry_id").val()
@@ -725,7 +724,7 @@
                         "godam_id": $('#godam').val(),
                     },
                     success: function(response) {
-                        
+                        $('#createDanaName').empty();
                         $(response.data).each(function(k,v){
                             $('#createDanaName').append('<option value="'+v.id+'">'+v.name+'</option>')
                         })
