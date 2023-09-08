@@ -84,11 +84,11 @@
                             <td> {{ isset($datewiseQty['opening_quantity'])? $datewiseQty['opening_quantity'] :'' }} </td>
                             <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'import' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
                             <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'local' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
+                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' && $datewiseQty['from_godam_id']==2 && $datewiseQty['to_godam_id'] == 1 ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
                             <td>{{ $datewiseQty['tape plant'] ?? 0 }} </td>
                             <td>{{ $datewiseQty['lamination plant'] ?? 0 }}</td>
                             <td>{{ $datewiseQty['nonwoven plant'] ?? 0 }}</td>
-                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
+                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' && $datewiseQty['from_godam_id']==1 && $datewiseQty['to_godam_id'] == 2  ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
                             <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'closing' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
 
                         </tr>

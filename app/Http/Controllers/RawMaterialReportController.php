@@ -13,15 +13,13 @@ class RawMaterialReportController extends Controller
     {
         $rawMaterialArray = $this->getRawMaterialArray();
 
-        dd($rawMaterialArray);
-
         $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
 
         $autoLoadItemsArray = $this->getAutoLoadItemsArray();
 
         $mergedArray = $this->getMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray);
 
-        return view('admin.rawmaterial.report', compact('mergedArray'));
+        return view('admin.rawMaterial.report', compact('mergedArray'));
     }
 
     private function mergeArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray)
@@ -40,6 +38,8 @@ class RawMaterialReportController extends Controller
                 // Preserve "total_quantity" and "import_from" from $rawMaterialArray
                 $mergedArray[$danaName][$date]['total_quantity'] = $dateInfo['total_quantity'];
                 $mergedArray[$danaName][$date]['import_from'] = $dateInfo['import_from'];
+                $mergedArray[$danaName][$date]['from_godam_id'] = $dateInfo['from_godam_id'];
+                $mergedArray[$danaName][$date]['to_godam_id'] = $dateInfo['to_godam_id'];
             }
         }
 
@@ -100,8 +100,9 @@ class RawMaterialReportController extends Controller
                 DB::raw('SUM(raw_material_items.quantity) as total_quantity'),
                 'storein_types.name as import_from'
             )
-            ->where('raw_materials.to_godam_id', 2)
-            ->groupBy('dana_name', 'raw_materials.date', 'import_from')
+            ->where('raw_materials.to_godam_id', 1)
+            ->orWhere('raw_materials.from_godam_id', 1)
+            ->groupBy('dana_name', 'raw_materials.date', 'import_from', 'from_godam_id', 'to_godam_id')
             ->orderBy('dana_name', 'asc')
             ->orderBy('raw_materials.date', 'asc')
             ->get();
@@ -113,6 +114,8 @@ class RawMaterialReportController extends Controller
             $date = $resultRawMaterial->date;
             $totalQuantity = $resultRawMaterial->total_quantity;
             $importFrom = $resultRawMaterial->import_from;
+            $fromGodamId = $resultRawMaterial->from_godam_id;
+            $toGodamId = $resultRawMaterial->to_godam_id;
 
             // Check if the dana_name key exists in the resultRawMaterial array, if not, initialize it
             if (!isset($resultArray[$danaName])) {
@@ -123,6 +126,8 @@ class RawMaterialReportController extends Controller
             $resultArray[$danaName][$date] = [
                 'total_quantity' => $totalQuantity,
                 'import_from' => $importFrom,
+                'from_godam_id' => $fromGodamId,
+                'to_godam_id' => $toGodamId,
             ];
         }
 

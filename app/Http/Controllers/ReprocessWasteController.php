@@ -341,16 +341,18 @@ class ReprocessWasteController extends Controller
 
             DB::beginTransaction();
 
+            $reprocessWastage = ReprocessWaste::findOrFail($this->request->cc_plant_entry_id);
+
             WastageDana::create([
                 "dana_id" => $this->request->dana_name_id,
                 "dana_group_id" => $this->request->dana_group_id,
-                "reprocess_wastage_id" => $this->request->cc_plant_entry_id,
+                "reprocess_wastage_id" => $reprocessWastage->id,
                 "quantity" => $this->request->quantity,
                 "planttype_id" => $this->request->plant_type_id,
                 "plantname_id" => $this->request->plant_name_id,
             ]);
 
-            RawMaterialStock::where('godam_id',$request->godam_id)->where('dana_name_id',$request->dana_name_id)->increment('quantity',$request->quantity);
+            RawMaterialStock::where('godam_id',$reprocessWastage->godam_id)->where('dana_name_id',$request->dana_name_id)->increment('quantity',$request->quantity);
 
             $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
                 ->where('dana_name_id',$request->dana_name_id)->first();
