@@ -70,20 +70,19 @@ class FabricSendReceiveController extends Controller
 
     /************* For Entries **************/
 
-    public function create()
-    {
+    public function create(){
 
         $id = FabricSendAndReceiveEntry::latest()->value('id');
 
-        $bill_number = "FSR" . "-" . getNepaliDate(date('Y-m-d')) . "-" . $id + 1;
+        $bill_number = "FSR"."-".getNepaliDate(date('Y-m-d'))."-".$id+1;
 
         $bill_date  = date("Y-m-d");
 
         $bill_date_np = getNepaliDate(date("Y-m-d"));
 
-        $godam = Godam::where("status", "active")->get();
+        $godam = Godam::where("status","active")->get();
 
-        $shift = Shift::where("status", "active")->get();
+        $shift = Shift::where("status","active")->get();
 
         return view('admin.fabricSendReceive.create')->with([
 
@@ -98,46 +97,50 @@ class FabricSendReceiveController extends Controller
             "shift" => $shift
 
         ]);
+
     }
 
 
 
-    public function entrieslist(Request $request)
-    {
+    public function entrieslist(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
-            $data = FabricSendAndReceiveEntry::with(["getgodam", "getplanttype", "getplantname", "getshift"])->orderBy("id", "desc")->get();
+            $data = FabricSendAndReceiveEntry::with(["getgodam","getplanttype","getplantname","getshift"])->orderBy("id","desc")->get();
 
             return DataTables::of($data)
 
-                ->addIndexColumn()
+                            ->addIndexColumn()
 
-                ->addColumn("godam", function ($row) {
+                            ->addColumn("godam",function($row){
 
-                    return $row->getgodam->name;
-                })
+                                return $row->getgodam->name;
 
-                ->addColumn("planttype", function ($row) {
+                            })
 
-                    return $row->getplanttype->name;
-                })
+                            ->addColumn("planttype",function($row){
 
-                ->addColumn("plantname", function ($row) {
+                                return $row->getplanttype->name;
 
-                    return $row->getplantname->name;
-                })
+                            })
 
-                ->addColumn("shift", function ($row) {
+                            ->addColumn("plantname",function($row){
 
-                    return $row->getshift->name;
-                })
+                                return $row->getplantname->name;
 
-                ->addColumn("action", function ($row) {
+                            })
 
-                    if ($row->status == "pending") {
+                            ->addColumn("shift",function($row){
 
-                        return "
+                                return $row->getshift->name;
+
+                            })
+
+                            ->addColumn("action",function($row){
+
+                                if($row->status == "pending"){
+
+                                    return "
 
                                         <div class='btn-group'>
 
@@ -148,9 +151,10 @@ class FabricSendReceiveController extends Controller
                                         </div>
 
                                     ";
-                    } else {
 
-                        return "
+                                }else{
+
+                                    return "
 
                                     <div class='btn-group'>
 
@@ -159,23 +163,28 @@ class FabricSendReceiveController extends Controller
                                     </div>
 
                                 ";
-                    }
-                })
 
-                ->rawColumns([
+                                }
 
-                    "godam", "planttype", "plantname", "shift", "action"
 
-                ])
 
-                ->make(true);
+                            })
+
+                            ->rawColumns([
+
+                                "godam","planttype" ,"plantname" ,"shift","action"
+
+                            ])
+
+                            ->make(true);
+
         }
+
     }
 
 
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
 
         $request->validate([
 
@@ -199,11 +208,11 @@ class FabricSendReceiveController extends Controller
 
         FabricSendAndReceiveEntry::create([
 
-            "godam_id" => $request->godam,
+            "godam_id" => $request->godam ,
 
             "planttype_id" => $request->planttype,
 
-            "plantname_id" => $request->plantname,
+            "plantname_id" => $request->plantname ,
 
             "remarks" => $request->remarks,
 
@@ -211,68 +220,69 @@ class FabricSendReceiveController extends Controller
 
             "bill_number" => $request->bill_number,
 
-            "bill_date" => $request->bill_date,
+            "bill_date" => $request->bill_date ,
 
             "bill_date_np" => $request->bill_date_np
 
         ]);
 
-        return back()->with("success", "Creation Successful");
+        return back()->with("success","Creation Successful");
+
     }
 
 
 
-    public function delete(Request $request)
-    {
+    public function delete(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
-            FabricSendAndReceiveEntry::where("id", $request->id)->delete();
+            FabricSendAndReceiveEntry::where("id",$request->id)->delete();
 
             return response([
 
                 "status" => "200"
 
             ]);
+
         }
+
     }
 
     /************* End For Entries **************/
 
 
 
-    public function indexrevised($id)
-    {
+    public function indexrevised($id){
 
-        $dana = DanaName::where('status', 'active')->get();
+        $dana = DanaName::where('status','active')->get();
 
-        $data = FabricSendAndReceiveEntry::where("id", $id)->first();
+        $data = FabricSendAndReceiveEntry::where("id",$id)->first();
 
-        $getAllfabrics = FabricStock::where('status', '1')->where("godam_id", $data->godam_id)->get();
+        $getAllfabrics = FabricStock::where('status', '1')->where("godam_id",$data->godam_id)->get();
 
         $uniqueFabrics = $getAllfabrics->unique('name')->values()->all();
 
-        return view('admin.fabricSendReceive.indexrevised', compact("data", "dana", "uniqueFabrics"));
+        return view('admin.fabricSendReceive.indexrevised',compact("data","dana","uniqueFabrics"));
+
     }
 
 
 
-    public function getplanttype(Request $request)
-    {
+    public function getplanttype(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             $department_id =  $request->id;
 
 
 
-            $planttype = ProcessingStep::where('godam_id', $department_id)->get();
+            $planttype = ProcessingStep::where('godam_id',$department_id)->get();
 
 
 
-            $getAllfabrics = FabricStock::where('status', '1')->where("godam_id", $department_id)->get();
+            $getAllfabrics = FabricStock::where('status', '1')->where("godam_id",$department_id)->get();
 
-            $uniqueFabrics = $getAllfabrics->unique('name');
+             $uniqueFabrics = $getAllfabrics->unique('name');
 
 
 
@@ -285,17 +295,18 @@ class FabricSendReceiveController extends Controller
                 'godamfabrics' => $uniqueFabrics->values()->all()
 
             ]);
+
         }
+
     }
 
-    public function getplantname(Request $request)
-    {
+    public function getplantname(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             $department_id =  $request->id;
 
-            $plantname = ProcessingSubcat::where('processing_steps_id', $department_id)->get();
+            $plantname = ProcessingSubcat::where('processing_steps_id',$department_id)->get();
 
 
 
@@ -306,7 +317,9 @@ class FabricSendReceiveController extends Controller
 
 
             ]);
+
         }
+
     }
 
 
@@ -317,7 +330,7 @@ class FabricSendReceiveController extends Controller
 
         if ($request->ajax()) {
 
-            $getAllfabrics = FabricStock::where('status', '1')->where("godam_id", $request->godam_id)->get();
+            $getAllfabrics = FabricStock::where('status', '1')->where("godam_id",$request->godam_id)->get();
 
             $uniqueFabrics = $getAllfabrics->unique('name');
 
@@ -326,46 +339,48 @@ class FabricSendReceiveController extends Controller
                 'fabrics' => $uniqueFabrics->values()->all()
 
             ]);
+
         }
+
     }
 
 
 
-    public function getfabricwithsamename(Request $request)
-    {
+    public function getfabricwithsamename(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             $fabric_name_id = $request->fabric_name_id;
 
-            $fabric_name = FabricStock::where("id", $fabric_name_id)->value("name");
+            $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
 
-            $fabrics = FabricStock::where("name", $fabric_name)->get();
+            $fabrics = FabricStock::where("name",$fabric_name)->get();
 
 
 
             return DataTables::of($fabrics)
 
-                ->addIndexColumn()
+                    ->addIndexColumn()
 
-                ->addColumn("gram_wt", function ($row) {
+                    ->addColumn("gram_wt",function($row){
 
-                    return $row->fabricgroup->name;
-                })
+                        return $row->fabricgroup->name;
 
-                ->addColumn("action", function ($row) {
+                    })
 
-                    return "
+                    ->addColumn("action",function($row){
 
-                        <a class='btn btn-primary send_to_lower'  
+                        return "
 
-                                 data-name='{$row->name}' 
+                        <a class='btn btn-primary send_to_lower'
 
-                                 data-gross_wt='{$row->gross_wt}' 
+                                 data-name='{$row->name}'
 
-                                 data-roll_no='{$row->roll_no}'  
+                                 data-gross_wt='{$row->gross_wt}'
 
-                                 data-id='{$row->fabric_id}' 
+                                 data-roll_no='{$row->roll_no}'
+
+                                 data-id='{$row->fabric_id}'
 
                                  data-net_wt = '{$row->net_wt}'
 
@@ -373,16 +388,17 @@ class FabricSendReceiveController extends Controller
 
                                  data-average_wt = '{$row->average_wt}'
 
-                                 data-gram_wt = '{$row->fabricgroup->name}' 
+                                 data-gram_wt = '{$row->fabricgroup->name}'
 
                                  data-bill_no = '{$row->bill_no}'
 
                                  href='{$row->fabric_id}'>Send</a>";
-                })
 
-                ->rawColumns(["action", "gram_wt"])
+                    })
 
-                ->make(true);
+                    ->rawColumns(["action","gram_wt"])
+
+                    ->make(true);
 
 
 
@@ -393,14 +409,20 @@ class FabricSendReceiveController extends Controller
             // ]);
 
         }
+
     }
 
-    public function sendunlaminatedrevised2(Request $request)
-    { //latest changes //keep
+
+
+
+
+
+
+    public function sendunlaminatedrevised2(Request $request){ //latest changes //keep
 
         // return $request;
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             $gram_wt = $request->gram_wt;
 
@@ -426,7 +448,7 @@ class FabricSendReceiveController extends Controller
 
 
 
-            try {
+            try{
 
                 DB::beginTransaction();
 
@@ -436,7 +458,7 @@ class FabricSendReceiveController extends Controller
 
                     "fsr_entry_id" => $fsr_entry_id,
 
-                    'fabric_id' => $fabric_id,
+                    'fabric_id' =>$fabric_id ,
 
                     // 'roll_no' => $roll_number ,
 
@@ -455,7 +477,8 @@ class FabricSendReceiveController extends Controller
 
 
                 DB::commit();
-            } catch (Exception $e) {
+
+            }catch(Exception $e){
 
                 DB::rollBack();
 
@@ -464,67 +487,78 @@ class FabricSendReceiveController extends Controller
                     "message" => "Something went wrong!{$e->getMessage()}"
 
                 ]);
+
             }
+
         }
+
     }
 
 
 
 
 
-    public function getunlaminatedrevised($fsr_entry_id)
-    { //latest
+    public function getunlaminatedrevised($fsr_entry_id){//latest
 
-        $data = FabricSendAndReceiveUnlaminatedFabric::where('status', 'pending')->where("fsr_entry_id", $fsr_entry_id)->with('getfabric.fabricgroup')->get();
+        $data = FabricSendAndReceiveUnlaminatedFabric::where('status','pending')->where("fsr_entry_id",$fsr_entry_id)->with('getfabric.fabricgroup')->get();
 
-        if (count($data) != 0) {
+        if(count($data) != 0){
 
-            return response(['response' => $data]);
-        } else {
+            return response(['response'=>$data]);
 
-            return response(['response' => '404']);
+        }else{
+
+            return response(['response'=> '404']);
+
         }
+
     }
 
 
 
 
 
-    public function sendunlaminateddeleterevised(Request $request, $id)
-    { //latest
+    public function sendunlaminateddeleterevised(Request $request,$id){ //latest
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
-            try {
+           try{
 
                 DB::beginTransaction();
 
-                $count = FabricSendAndReceiveUnlaminatedFabric::where('id', $id)->get();
+                $count = FabricSendAndReceiveUnlaminatedFabric::where('id',$id)->get();
 
-                $unlaminatedStock = FabricSendAndReceiveUnlaminatedFabric::where('id', $id)->get();
+                $unlaminatedStock = FabricSendAndReceiveUnlaminatedFabric::where('id',$id)->get();
 
-                if (count($count) > 0 && count($unlaminatedStock) > 0) {
+                if(count($count) > 0 && count($unlaminatedStock) > 0 ){
 
-                    FabricSendAndReceiveUnlaminatedFabric::where('id', $id)->delete();
+                    FabricSendAndReceiveUnlaminatedFabric::where('id',$id)->delete();
 
                     DB::commit();
 
                     return response([
 
-                        'response' => "200",
+                        'response'=> "200",
 
                     ]);
-                } else {
+
+
+
+                }else{
 
                     DB::rollBack();
 
                     return response([
 
-                        'response' => "400",
+                        'response'=> "400",
 
                     ]);
+
                 }
-            } catch (Exception $e) {
+
+
+
+           }catch(Exception $e){
 
                 DB::rollBack();
 
@@ -533,24 +567,36 @@ class FabricSendReceiveController extends Controller
                     "message" => "Something went wrong!'{$e->getMessage()}'"
 
                 ]);
-            }
+
+           }
+
         }
+
     }
 
-    public function storelaminatedrevised(Request $request)
-    { //latset
 
-        try {
+
+
+
+
+
+    public function storelaminatedrevised(Request $request){ //latset
+
+        try{
 
             $data = [];
 
-            parse_str($request->data, $data);
+            parse_str($request->data,$data);
 
             $data['fsr_entry_id'] = $request->fsr_entry_id;
 
+
+
             $idoffabricforsendtolamination = $data['idoffabricforsendtolamination'];
 
-            $fabricunlaminated =  FabricSendAndReceiveUnlaminatedFabric::where('id', $idoffabricforsendtolamination)->with('getfabric')->first(); //where('id',$idoffabricforsendtolamination)->
+
+
+            $fabricunlaminated =  FabricSendAndReceiveUnlaminatedFabric::where('id',$idoffabricforsendtolamination)->with('getfabric')->first(); //where('id',$idoffabricforsendtolamination)->
 
             $loom_no = $fabricunlaminated->getfabric->loom_no;
 
@@ -606,59 +652,83 @@ class FabricSendReceiveController extends Controller
 
             $laminated_gram_3 = $data['laminated_gram_3'];
 
-            DB::beginTransaction();
-
-            $fabric =  FabricSendAndReceiveUnlaminatedFabric::with('getfabric')->where('id', $idoffabricforsendtolamination)->first();
-
-            $updatetosent = $fabric->update([
-
-                "status" => "sent"
-
-            ]);
-
-            if ($lamimated_roll_no != null && $laminated_gross_weight != null && $laminated_net_weight != null && $laminated_avg_weight != null && $laminated_gram != null) {
 
 
 
-                $lamfabriccreate = FabricSendAndReceiveTemporaryForLamination::create([
 
-                    "fsr_entry_id" => $data['fsr_entry_id'],
+           DB::beginTransaction();
 
-                    "unlam_fabric_id" => $fabricunlaminated->id,
 
-                    "fabric_name" =>  $data['laminated_fabric_name'],
 
-                    "slug" =>  Str::slug($data["laminated_fabric_name"]),
+                $fabric =  FabricSendAndReceiveUnlaminatedFabric::with('getfabric')->where('id',$idoffabricforsendtolamination)->first();
+
+                $updatetosent = $fabric->update([
+
+                    "status" => "sent"
 
                 ]);
 
 
 
-                FabricSendAndReceiveLaminatedFabricDetails::create([
 
-                    "temp_lam" => $lamfabriccreate->id,
 
-                    "gram_wt" =>  $laminated_gram,
+                if($lamimated_roll_no != null && $laminated_gross_weight != null && $laminated_net_weight != null && $laminated_avg_weight != null && $laminated_gram != null){
 
-                    "loom_no" => $loom_no,
 
-                    "average_wt" => $laminated_avg_weight,
 
-                    'gross_wt' => $laminated_gross_weight,
+                    $lamfabriccreate = FabricSendAndReceiveTemporaryForLamination::create([
 
-                    "roll_no" => $lamimated_roll_no,
+                        "fsr_entry_id" => $data['fsr_entry_id'],
 
-                    'net_wt' => $laminated_net_weight,
+                        "unlam_fabric_id" => $fabricunlaminated->id,
 
-                    "standard_wt" => $data["standard_wt"],
+                        "fabric_name" =>  $data['laminated_fabric_name'],
 
-                    "fbgrp_id" => $data["fabricgroup_id"],
+                        "slug" =>  Str::slug($data["laminated_fabric_name"]),
 
-                    "meter" => $meter1,
+                    ]);
 
-                ]);
 
-                if ($lamimated_roll_no_2 != null && $laminated_gross_weight_2 != null && $laminated_net_weight_2 != null && $laminated_avg_weight_2 != null && $laminated_gram_2 != null) {
+
+                    FabricSendAndReceiveLaminatedFabricDetails::create([
+
+                        "temp_lam" => $lamfabriccreate->id,
+
+                        "gram_wt" =>  $laminated_gram,
+
+                        "loom_no" => $loom_no,
+
+                        "average_wt" => $laminated_avg_weight,
+
+                        'gross_wt' => $laminated_gross_weight,
+
+                        "roll_no" => $lamimated_roll_no,
+
+                        'net_wt' => $laminated_net_weight,
+
+                        "standard_wt" => $data["standard_wt"] ,
+
+                        "fbgrp_id" => $data["fabricgroup_id"],
+
+                        "meter" => $meter1,
+
+                    ]);
+
+
+
+                if($lamimated_roll_no_2 != null && $laminated_gross_weight_2 != null && $laminated_net_weight_2 != null && $laminated_avg_weight_2 != null && $laminated_gram_2 != null){
+
+
+
+                    // $lamfabriccreate = FabricSendAndReceiveTemporaryForLamination::create([
+
+                    //     "fsr_entry_id" => $data['fsr_entry_id'],
+
+                    //     "unlam_fabric_id" => $fabricunlaminated->id,
+
+                    // ]);
+
+
 
                     FabricSendAndReceiveLaminatedFabricDetails::create([
 
@@ -676,16 +746,35 @@ class FabricSendReceiveController extends Controller
 
                         'net_wt' => $laminated_net_weight_2,
 
-                        "standard_wt" => $data["standard_wt"],
+                        "standard_wt" => $data["standard_wt"] ,
 
                         "fbgrp_id" => $data["fabricgroup_id"],
 
                         "meter" => $meter2,
 
                     ]);
+
+
+
                 }
 
-                if ($lamimated_roll_no_3 != null && $laminated_gross_weight_3 != null && $laminated_net_weight_3 != null && $laminated_avg_weight_3 != null && $laminated_gram_3 != null) {
+
+
+                if($lamimated_roll_no_3 != null && $laminated_gross_weight_3 != null && $laminated_net_weight_3 != null && $laminated_avg_weight_3 != null && $laminated_gram_3 != null){
+
+
+
+                    // $lamfabriccreate = FabricSendAndReceiveTemporaryForLamination::create([
+
+                    //     "fsr_entry_id" => $data['fsr_entry_id'],
+
+                    //     "unlam_fabric_id" => $fabricunlaminated->id ,
+
+                    //     ""
+
+                    // ]);
+
+
 
                     FabricSendAndReceiveLaminatedFabricDetails::create([
 
@@ -703,41 +792,49 @@ class FabricSendReceiveController extends Controller
 
                         'net_wt' => $laminated_net_weight_3,
 
-                        "standard_wt" => $data["standard_wt"],
+                        "standard_wt" => $data["standard_wt"] ,
 
                         "fbgrp_id" => $data["fabricgroup_id"],
 
                         "meter" => $meter3,
 
                     ]);
+
                 }
+
             }
 
-            DB::commit();
 
-            return "Done";
-        } catch (Exception $e) {
+
+           DB::commit();
+
+           return "Done";
+
+        }
+
+        catch(Exception $e){
 
             DB::rollback();
 
-            return "exception" . $e->getMessage();
+            return "exception".$e->getMessage();
+
         }
+
     }
 
+    public function comparelamandunlamrevised(Request $request,$entry_id){ //latest
 
+        // dd($entry_id);
 
-    public function comparelamandunlamrevised(Request $request, $entry_id)
-    { //latest
+        if($request->ajax()){
 
-        if ($request->ajax()) {
+            $unlam = FabricSendAndReceiveUnlaminatedFabric::with('getfabric')->where("fsr_entry_id",$entry_id)->where('status',"sent")->get();
 
-            $unlam = FabricSendAndReceiveUnlaminatedFabric::with('getfabric')->where("fsr_entry_id", $entry_id)->where('status', "sent")->get();
-
-            $ul_mtr_total = 0;
+            $ul_mtr_total=0;
 
             $ul_net_wt_total = 0;
 
-            foreach ($unlam as $data) {
+            foreach($unlam as $data){
 
                 $ul_mtr = $data->getfabric->meter;
 
@@ -748,24 +845,26 @@ class FabricSendReceiveController extends Controller
                 $ul_mtr_total += $ul_mtr;
 
                 $ul_net_wt_total += $ul_net_wt;
+
             }
 
             $lam = FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
 
-                ->whereHas('temporarylamfabric', function ($query) use ($entry_id) {
+                            ->whereHas('temporarylamfabric', function ($query) use ($entry_id) {
 
-                    $query->where('fsr_entry_id', $entry_id);
-                })
+                                $query->where('fsr_entry_id', $entry_id);
 
-                ->get();
+                            })
+
+                            ->get();
 
 
 
-            $lam_mtr_total = 0;
+            $lam_mtr_total=0;
 
             $lam_net_wt_total = 0;
 
-            foreach ($lam as $data) {
+            foreach($lam as $data){
 
                 $lam_mtr = floatval($data['meter']);
 
@@ -776,6 +875,7 @@ class FabricSendReceiveController extends Controller
                 $lam_mtr_total += $lam_mtr;
 
                 $lam_net_wt_total += $lam_net_wt;
+
             }
 
             return response([
@@ -793,19 +893,30 @@ class FabricSendReceiveController extends Controller
                 "lam_net_wt_total" => $lam_net_wt_total
 
             ]);
+
         }
+
     }
 
+    public function deleteLam(Request $request){
+        $lam = FabricSendAndReceiveLaminatedFabricDetails::findOrFail($request->delete_id);
+        $lam->delete();
+        return response(['status'=>true,'message'=>'Lam deleted successfully']);
+    }
 
+    public function deleteUnLam(Request $request){
+        $unLam = FabricSendAndReceiveUnlaminatedFabric::findOrFail($request->delete_id);
+        $unLam->delete();
+        return response(['status'=>true,'message'=>'Un Lam deleted successfully']);
+    }
 
-    public function discard(Request $request)
-    {
+    public function discard(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             return "Not Allowed";
 
-            try {
+            try{
 
                 $this->discardDelete();
 
@@ -814,21 +925,26 @@ class FabricSendReceiveController extends Controller
                     "message" => "200"
 
                 ]);
-            } catch (Exception $e) {
+
+            }
+
+            catch(Exception $e){
 
                 return response([
 
                     "message" => "{$e->getMessage()}"
 
                 ]);
+
             }
+
         }
+
     }
 
 
 
-    function discardDelete()
-    {
+    function discardDelete(){
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
@@ -839,14 +955,14 @@ class FabricSendReceiveController extends Controller
         DB::table('fabric_temporary_for_lamination')->truncate();
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
     }
 
 
 
-    public function subtractdanafromautoloder(Request $request)
-    {
+    public function subtractdanafromautoloder(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             $dana = $request->danaId;
 
@@ -870,22 +986,23 @@ class FabricSendReceiveController extends Controller
 
                 "data" => [
 
-                    "dana" => $dana,
+                    "dana"=> $dana,
 
                     "quantity" => $quantity
 
                 ]
 
-            ], 200);
+            ],200);
+
         }
+
     }
 
 
 
-    public function getStuffOfAutoloader(Request $request)
-    {
+    public function getStuffOfAutoloader(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             $godamId = $request->godam_id;
 
@@ -895,34 +1012,35 @@ class FabricSendReceiveController extends Controller
 
             $shift = $request->shift;
 
-            $data = AutoLoadItemStock::where("from_godam_id", $godamId)
+            $data = AutoLoadItemStock::where("from_godam_id",$godamId)
 
-                ->where("plant_name_id", $plantName)
+                                    ->where("plant_name_id",$plantName)
 
-                ->where("plant_type_id", $planttype)
+                                    ->where("plant_type_id",$planttype)
 
-                ->where("shift_id", $shift)
+                                    ->where("shift_id",$shift)
 
-                ->with("fromGodam", "danaName")
+                                    ->with("fromGodam","danaName")
 
-                ->get();
+                                    ->get();
 
             return response([
 
                 "data" => $data
 
             ]);
+
         }
+
     }
 
 
 
-    public function addDanaConsumptionTablerevised(Request $request)
-    { //latest
+    public function addDanaConsumptionTablerevised(Request $request){ //latest
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
-            $dana_group_id  = DanaName::where("id", $request->dana_name_id)->value("dana_group_id");
+            $dana_group_id  = DanaName::where("id",$request->dana_name_id)->value("dana_group_id");
 
 
 
@@ -942,7 +1060,7 @@ class FabricSendReceiveController extends Controller
 
 
 
-            $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $request->fsr_entry_id)->with("dananame");
+            $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id",$request->fsr_entry_id)->with("dananame");
 
             $consumptions = $query->get();
 
@@ -967,21 +1085,22 @@ class FabricSendReceiveController extends Controller
                 "total_consumption" => $total_consumption
 
             ]);
+
         }
+
     }
 
 
 
 
 
-    public function getDanaConsumptionTablerevised(Request $request)
-    { //latest
+    public function getDanaConsumptionTablerevised(Request $request){//latest
 
-        $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $request->fsr_entry_id)->with("dananame");
+        $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id",$request->fsr_entry_id)->with("dananame");
 
-        $consumptions = $query->get();
+            $consumptions = $query->get();
 
-        $total_consumption = $query->sum("consumption_quantity");
+            $total_consumption = $query->sum("consumption_quantity");
 
         return response([
 
@@ -990,6 +1109,7 @@ class FabricSendReceiveController extends Controller
             "total_consumption" => $total_consumption
 
         ]);
+
     }
 
 
@@ -998,12 +1118,11 @@ class FabricSendReceiveController extends Controller
 
 
 
-    public function removedDanaConsumptionTablerevised(Request $request)
-    { //latest
+    public function removedDanaConsumptionTablerevised(Request $request){//latest
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
-            FabricSendAndReceiveDanaConsumption::where("id", $request->id)->delete();
+            FabricSendAndReceiveDanaConsumption::where("id",$request->id)->delete();
 
             return response([
 
@@ -1011,16 +1130,17 @@ class FabricSendReceiveController extends Controller
 
                 "status" => 200
 
-            ], 200);
+            ],200);
+
         }
+
     }
 
 
 
-    public function finalsubmitfsrrevised(Request $request)
-    { //latest
+    public function finalsubmitfsrrevised(Request $request){//latest
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             $consumption = $request->consumption;
 
@@ -1038,11 +1158,11 @@ class FabricSendReceiveController extends Controller
 
             $danaData = [];
 
-            $fsr_entry_id = $request->fsr_entry_id;
+            $fsr_entry_id= $request->fsr_entry_id;
 
 
 
-            $fabric_entry = FabricSendAndReceiveEntry::where("id", $fsr_entry_id)->first();
+            $fabric_entry = FabricSendAndReceiveEntry::where("id",$fsr_entry_id)->first();
 
             $godam = $fabric_entry->godam_id;
 
@@ -1052,13 +1172,13 @@ class FabricSendReceiveController extends Controller
 
 
 
-            try {
+            try{
 
                 DB::beginTransaction();
 
-                $tempconsumptionfsr = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $fsr_entry_id)->get();
+                $tempconsumptionfsr = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id",$fsr_entry_id)->get();
 
-                foreach ($tempconsumptionfsr as $data) {
+                foreach($tempconsumptionfsr as $data){
 
                     // $stock = AutoLoadItemStock::where('dana_name_id',$data->dana_name_id)
 
@@ -1068,9 +1188,9 @@ class FabricSendReceiveController extends Controller
 
 
 
-                    $stock = AutoLoadItemStock::where('id', $data->autoloader_id)
+                    $stock = AutoLoadItemStock::where('id',$data->autoloader_id)
 
-                        ->first();
+                            ->first();
 
 
 
@@ -1094,10 +1214,11 @@ class FabricSendReceiveController extends Controller
 
 
 
-                    if ($deduction == 0) {
+                    if($deduction == 0){
 
                         $stock->delete();
-                    } elseif ($deduction < 0) {
+
+                    }elseif($deduction < 0){
 
                         DB::rollBack();
 
@@ -1107,238 +1228,251 @@ class FabricSendReceiveController extends Controller
 
                             "status" => "403"
 
-                        ]);
-                    } else {
+                            ]);
+
+                    }else{
 
                         $stock->update([
 
                             "quantity" => $deduction
 
                         ]);
+
                     }
+
                 }
 
 
 
                 //fabric stock creation
 
-                $lam = FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
+                    $lam = FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
 
-                    ->whereHas('temporarylamfabric', function ($query) use ($fsr_entry_id) {
+                            ->whereHas('temporarylamfabric', function ($query) use ($fsr_entry_id) {
 
-                        $query->where('fsr_entry_id', $fsr_entry_id);
-                    })
+                                $query->where('fsr_entry_id', $fsr_entry_id);
 
-                    ->get();
+                            })
 
+                            ->get();
 
 
-                foreach ($lam as $data) {
 
+                    foreach($lam as $data){
 
 
-                    $fabric_id_on_stock = $data->temporarylamfabric->getfabric->getfabric->id;
 
+                        $fabric_id_on_stock = $data->temporarylamfabric->getfabric->getfabric->id;
 
 
-                    $fabric = Fabric::create([
 
-                        'name' => $data->temporarylamfabric->fabric_name,
+                        $fabric = Fabric::create([
 
-                        "godam_id" => $godam,
+                            'name' => $data->temporarylamfabric->fabric_name,
 
-                        'slug' => $data->temporarylamfabric->slug,
+                            "godam_id" => $godam,
 
-                        'fabricgroup_id' => $data->fbgrp_id,
+                            'slug' => $data->temporarylamfabric->slug,
 
-                        'status' => "1",
+                            'fabricgroup_id' => $data->fbgrp_id,
 
-                        "average_wt" => $data->average_wt,
+                            'status' => "1",
 
-                        'gram_wt' => $data->gram_wt,
+                            "average_wt" => $data->average_wt,
 
-                        'gross_wt' => $data->gross_wt,
+                            'gram_wt' => $data->gram_wt,
 
-                        'net_wt' => $data->net_wt,
+                            'gross_wt' => $data->gross_wt,
 
-                        'meter' => $data->meter,
+                            'net_wt' => $data->net_wt,
 
-                        'roll_no' => $data->roll_no,
+                            'meter' => $data->meter,
 
-                        'loom_no' => $data->loom_no,
+                            'roll_no' => $data->roll_no,
 
-                        "is_laminated" => "true"
+                            'loom_no' => $data->loom_no,
 
-                    ]);
+                            "is_laminated" => "true"
 
+                        ]);
 
 
-                    FabricStock::create([
 
-                        'name' => $data->temporarylamfabric->fabric_name,
+                        FabricStock::create([
 
-                        "godam_id" => $godam,
+                            'name' => $data->temporarylamfabric->fabric_name,
 
-                        'slug' => $data->temporarylamfabric->slug,
+                            "godam_id" => $godam,
 
-                        'fabricgroup_id' => $data->fbgrp_id,
+                            'slug' => $data->temporarylamfabric->slug,
 
-                        'status' => "1",
+                            'fabricgroup_id' => $data->fbgrp_id,
 
-                        "average_wt" => $data->average_wt,
+                            'status' => "1",
 
-                        'gram_wt' => $data->gram_wt,
+                            "average_wt" => $data->average_wt,
 
-                        'gross_wt' => $data->gross_wt,
+                            'gram_wt' => $data->gram_wt,
 
-                        'net_wt' => $data->net_wt,
+                            'gross_wt' => $data->gross_wt,
 
-                        'meter' => $data->meter,
+                            'net_wt' => $data->net_wt,
 
-                        'roll_no' => $data->roll_no,
+                            'meter' => $data->meter,
 
-                        'loom_no' => $data->loom_no,
+                            'roll_no' => $data->roll_no,
 
-                        "is_laminated" => "true",
+                            'loom_no' => $data->loom_no,
 
-                        "fabric_id" => $fabric->id,
+                            "is_laminated" => "true",
 
-                        "date_np" => getNepaliDate(date('Y-m-d')),
+                            "fabric_id" => $fabric->id,
 
-                    ]);
+                            "date_np" => getNepaliDate(date('Y-m-d')),
 
+                        ]);
 
 
-                    $letlaminatedsentfsr = FabricSendAndReceiveLaminatedSent::create([
 
+                        $letlaminatedsentfsr = FabricSendAndReceiveLaminatedSent::create([
 
 
-                        // "fsr_entry_id", "fabric_name" , "slug" , "net_wt" , "average_wt" ,"gross_wt", "gram_wt" , "meter" ,"fabricgroup_id" , 'standard_wt' ,"loom_no" , "roll_no"
 
+                            // "fsr_entry_id", "fabric_name" , "slug" , "net_wt" , "average_wt" ,"gross_wt", "gram_wt" , "meter" ,"fabricgroup_id" , 'standard_wt' ,"loom_no" , "roll_no"
 
 
-                        'fabricgroup_id'  => $data->fbgrp_id,
 
-                        'roll_no' => $data->roll_no,
+                            'fabricgroup_id'  => $data->fbgrp_id,
 
-                        "loom_no" => $data->loom_no,
+                            'roll_no' => $data->roll_no,
 
-                        'gross_wt' => $data->gross_wt,
+                            "loom_no" => $data->loom_no,
 
-                        'net_wt' => $data->net_wt,
+                            'gross_wt' => $data->gross_wt,
 
-                        'meter' => $data->meter,
+                            'net_wt' => $data->net_wt ,
 
-                        'average_wt' => $data->average_wt,
+                            'meter' => $data->meter,
 
-                        'gram' => $data->gram_wt,
+                            'average_wt' => $data->average_wt,
 
-                        'plantname_id' => $data->plantname_id,
+                            'gram' => $data->gram_wt,
 
-                        'department_id' => $data->department_id,
+                            'plantname_id' => $data->plantname_id,
 
-                        'planttype_id' => $data->planttype_id,
+                            'department_id' => $data->department_id,
 
-                        'bill_number' => $data->bill_number,
+                            'planttype_id' => $data->planttype_id,
 
-                        'bill_date' => $data->bill_date,
+                            'bill_number' => $data->bill_number,
 
-                        "fsr_entry_id" => $fsr_entry_id,
+                            'bill_date' => $data->bill_date,
 
-                        'fabric_name' => $data->temporarylamfabric->fabric_name,
+                            "fsr_entry_id" => $fsr_entry_id,
 
-                        "slug" => $data->temporarylamfabric->slug,
+                            'fabric_name'=> $data->temporarylamfabric->fabric_name,
 
-                        "gram_wt"  => $data->gram_wt,
+                            "slug" => $data->temporarylamfabric->slug,
 
-                        'standard_wt' => $data->standard_wt,
+                            "gram_wt"  => $data->gram_wt,
 
-                        "fabid" => $data->temporarylamfabric->getfabric->fabric_id
+                            'standard_wt' => $data->standard_wt,
 
-                    ]);
+                            "fabid" => $data->temporarylamfabric->getfabric->fabric_id
 
+                        ]);
 
 
-                    FabricStock::where("fabric_id", $fabric_id_on_stock)->delete();
-                }
 
+                        FabricStock::where("fabric_id",$fabric_id_on_stock)->delete();
 
 
-                foreach ($tempconsumptionfsr as $data) {
 
-                    $fsrconsumption = FabricSendAndReceiveDanaConsumptionList::where("dana_name", $data->dana_name_id)
-
-                        ->where("dana_group", $data->dana_group_id)
-
-                        ->where("consumption_quantity", $data->consumption_quantity)
-
-                        ->first();
-
-                    if (is_null($fsrconsumption)) {
-
-                        $consumption =  new FabricSendAndReceiveDanaConsumptionList;
-
-                        $consumption->consumption_quantity = $data->consumption_quantity;
-                    } else {
-
-                        $consumption = $fsrconsumption;
-
-                        $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $data->consumption_quantity;
                     }
 
-                    $consumption->fsr_entry =  $fsr_entry_id;
-
-                    $consumption->dana_name =  $data->dana_name_id;
-
-                    $consumption->dana_group =  $data->dana_group_id;
-
-                    $consumption->godam_id =  FabricSendAndReceiveEntry::where("id", $fsr_entry_id)->value("godam_id");
-
-                    $consumption->save();
-                }
 
 
+                    foreach($tempconsumptionfsr as $data){
+
+                        $fsrconsumption = FabricSendAndReceiveDanaConsumptionList::where("dana_name" , $data->dana_name_id)
+
+                                                ->where("dana_group" , $data->dana_group_id)
+
+                                                ->where("consumption_quantity" , $data->consumption_quantity)
+
+                                                ->first();
+
+                        if(is_null($fsrconsumption)){
+
+                            $consumption =  new FabricSendAndReceiveDanaConsumptionList;
+
+                            $consumption->consumption_quantity = $data->consumption_quantity;
+
+                        }else{
+
+                            $consumption = $fsrconsumption;
+
+                            $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $data->consumption_quantity;
+
+                        }
+
+                            $consumption->fsr_entry =  $fsr_entry_id;
+
+                            $consumption->dana_name =  $data->dana_name_id;
+
+                            $consumption->dana_group =  $data->dana_group_id;
+
+                            $consumption->godam_id =  FabricSendAndReceiveEntry::where("id",$fsr_entry_id)->value("godam_id");
+
+                            $consumption->save();
+
+                    }
 
 
 
-                if ($total_waste > 0) {
 
-                    WasteStock::create([
 
-                        'godam_id' => '1',
+                    if($total_waste>0){
 
-                        'waste_id' => '1',
+                        WasteStock::create([
 
-                        'quantity_in_kg' => $total_waste,
+                            'godam_id' => '1',
+
+                            'waste_id' => '1',
+
+                            'quantity_in_kg' => $total_waste,
+
+                        ]);
+
+                    }
+
+                    FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
+
+                        ->whereHas('temporarylamfabric', function ($query) use ($fsr_entry_id) {
+
+                            $query->where('fsr_entry_id', $fsr_entry_id);
+
+                        })->delete();
+
+                    FabricSendAndReceiveDanaConsumption::where("fsr_entry_id",$fsr_entry_id)->delete();
+
+                    FabricSendAndReceiveUnlaminatedFabric::where('status','sent')->where("fsr_entry_id",$fsr_entry_id)->delete();
+
+
+
+                    FabricSendAndReceiveEntry::where("id",$fsr_entry_id)->update([
+
+                        "status" => "completed"
 
                     ]);
-                }
-
-                FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
-
-                    ->whereHas('temporarylamfabric', function ($query) use ($fsr_entry_id) {
-
-                        $query->where('fsr_entry_id', $fsr_entry_id);
-                    })->delete();
-
-                FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $fsr_entry_id)->delete();
-
-                FabricSendAndReceiveUnlaminatedFabric::where('status', 'sent')->where("fsr_entry_id", $fsr_entry_id)->delete();
-
-
-
-                FabricSendAndReceiveEntry::where("id", $fsr_entry_id)->update([
-
-                    "status" => "completed"
-
-                ]);
 
                 DB::commit();
 
 
 
                 return response(200);
-            } catch (Throwable $e) {
+
+            }catch(Throwable $e){
 
                 DB::rollBack();
 
@@ -1349,51 +1483,56 @@ class FabricSendReceiveController extends Controller
                     "exception" => $e->getMessage(),
 
                 ]);
+
             }
+
         }
+
     }
 
-    public function getallSentData()
-    {
+    public function getallSentData(){
 
         return view('admin.fabricSendReceive.edit');
+
     }
 
 
 
-    public function getDatajax(Request $request)
-    {
+    public function getDatajax(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
             return DataTables::of(FabricSendAndReceiveLaminatedSent::get())
 
                 ->addIndexColumn()
 
-                ->addColumn("name", function ($row) {
+                ->addColumn("name",function($row){
 
                     return $row->fabric_name;
+
                 })
 
-                ->addColumn("action", function ($row) {
+                ->addColumn("action",function($row){
 
                     return "
 
                         <button class='edit-data btn btn-primary' data-roll='{$row->roll_no}' data-gross_wt='{$row->gross_wt}' data-id='{$row->id}'>Edit</button>
 
                     ";
+
                 })
 
                 ->rawColumns(["action"])
 
                 ->make(true);
+
         }
+
     }
 
 
 
-    public function updateLamSentFSr(Request $request)
-    {
+    public function updateLamSentFSr(Request $request){
 
         $request->validate([
 
@@ -1403,21 +1542,24 @@ class FabricSendReceiveController extends Controller
 
         ]);
 
-        FabricSendAndReceiveLaminatedSent::where("id", $request->laminated_id)->update([
+        FabricSendAndReceiveLaminatedSent::where("id",$request->laminated_id)->update([
 
             "ini_fab_id" => $request->initial_fabric_id
 
         ]);
+
     }
 
 
 
-    public function getFabricDetailsAccRollNo(Request $request)
-    {
+    public function getFabricDetailsAccRollNo(Request $request){
 
-        if ($request->ajax()) {
+        if($request->ajax()){
 
-            return Fabric::where("roll_no", $request->roll_no)->first();
+            return Fabric::where("roll_no",$request->roll_no)->first();
+
         }
+
     }
+
 }

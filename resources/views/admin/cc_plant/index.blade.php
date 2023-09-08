@@ -179,7 +179,7 @@
                 onChange(){
                     table.draw();
                 }
-            
+
             });
 
             $('#end_date').val(currentDate);
@@ -201,8 +201,6 @@
                     table.draw();
                 }
             });
-            
-
 
             let table = $("#myTable").DataTable({
                 serverSide: true,
@@ -242,8 +240,6 @@
                     },
                 ]
             });
-
-            
 
             $('#start_date, #end_date, #godamID').on('change', function () {
                 table.draw(); // Redraw the table

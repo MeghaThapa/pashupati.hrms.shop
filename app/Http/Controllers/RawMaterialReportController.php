@@ -8,61 +8,107 @@ use Illuminate\Support\Facades\DB;
 
 class RawMaterialReportController extends Controller
 {
+
     public function index()
     {
-        $results = DB::table('raw_materials')
+        $rawMaterialArray = $this->getRawMaterialArray();
+
+        dd($rawMaterialArray);
+
+        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
+
+        $autoLoadItemsArray = $this->getAutoLoadItemsArray();
+
+        $mergedArray = $this->getMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray);
+
+        return view('admin.rawmaterial.report', compact('mergedArray'));
+    }
+
+    private function mergeArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray)
+    {
+        $mergedArray = [];
+
+        // Merge $rawMaterialArray into $mergedArray
+        foreach ($rawMaterialArray as $danaName => $rawMaterialData) {
+            if (!isset($mergedArray[$danaName])) {
+                $mergedArray[$danaName] = [];
+            }
+            foreach ($rawMaterialData as $date => $dateInfo) {
+                if (!isset($mergedArray[$danaName][$date])) {
+                    $mergedArray[$danaName][$date] = [];
+                }
+                // Preserve "total_quantity" and "import_from" from $rawMaterialArray
+                $mergedArray[$danaName][$date]['total_quantity'] = $dateInfo['total_quantity'];
+                $mergedArray[$danaName][$date]['import_from'] = $dateInfo['import_from'];
+            }
+        }
+
+        // Merge $rawMaterialOpeningsArray into $mergedArray
+        foreach ($rawMaterialOpeningsArray as $danaName => $openingData) {
+            if (!isset($mergedArray[$danaName])) {
+                $mergedArray[$danaName] = [];
+            }
+            foreach ($openingData as $openingDate => $openingInfo) {
+                if (!isset($mergedArray[$danaName][$openingDate])) {
+                    $mergedArray[$danaName][$openingDate] = [];
+                }
+                // Preserve "opening_quantity" from $rawMaterialOpeningsArray
+                $mergedArray[$danaName][$openingDate]['opening_quantity'] = $openingInfo['opening_quantity'];
+            }
+        }
+
+        // Merge $autoLoadItemsArray into $mergedArray
+        $mergedArray = $this->recursiveMerge($mergedArray, $autoLoadItemsArray);
+
+        foreach ($mergedArray as &$danaData) {
+            ksort($danaData);
+        }
+
+        return $mergedArray;
+    }
+
+    private function recursiveMerge($array1, $array2)
+    {
+        foreach ($array2 as $key => $value) {
+            if (is_array($value) && isset($array1[$key]) && is_array($array1[$key])) {
+                $array1[$key] = $this->recursiveMerge($array1[$key], $value);
+            } else {
+                $array1[$key] = $value;
+            }
+        }
+        return $array1;
+    }
+
+    private function getMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray)
+    {
+        $mergedData = $this->mergeArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray);
+        return $mergedData;
+    }
+
+    private function getRawMaterialArray()
+    {
+
+        $rawMaterialsResults = DB::table('raw_materials')
             ->join('raw_material_items', 'raw_materials.id', '=', 'raw_material_items.raw_material_id')
             ->join('storein_types', 'raw_materials.storein_type_id', '=', 'storein_types.id')
             ->join('dana_names', 'raw_material_items.dana_name_id', '=', 'dana_names.id')
             ->select(
                 'dana_names.name as dana_name',
                 'raw_materials.date',
+                'raw_materials.to_godam_id',
+                'raw_materials.from_godam_id',
                 DB::raw('SUM(raw_material_items.quantity) as total_quantity'),
                 'storein_types.name as import_from'
             )
+            ->where('raw_materials.to_godam_id', 2)
             ->groupBy('dana_name', 'raw_materials.date', 'import_from')
             ->orderBy('dana_name', 'asc')
             ->orderBy('raw_materials.date', 'asc')
             ->get();
 
-        $resultOpenings = DB::table('rawmaterial_opening_items as roi')
-            ->join('rawmaterial_opening_entries as roe', 'roi.rawmaterial_opening_entry_id', '=', 'roe.id')
-            ->join('dana_names', 'roi.dana_name_id', '=', 'dana_names.id') // Join dana_names table
-            ->select(
-                'dana_names.name as dana_name', // Select dana_names.name
-                'roe.opening_date',
-                DB::raw('SUM(roi.qty_in_kg) as total_quantity')
-            )
-            ->groupBy('dana_name', 'roe.opening_date') // Group by dana_name
-            ->orderBy('dana_name', 'asc')
-            ->orderBy('roe.opening_date', 'asc')
-            ->get();
-
-        // Initialize an empty result array
-        $openingArray = [];
-
-        // Loop through the query results and restructure the data for $openingArray
-        foreach ($resultOpenings as $resultOpening) {
-            $danaName = $resultOpening->dana_name;
-            $openingDate = $resultOpening->opening_date;
-            $totalQuantity = $resultOpening->total_quantity;
-
-            // Check if the danaName key exists in the $openingArray, if not, initialize it
-            if (!isset($openingArray[$danaName])) {
-                $openingArray[$danaName] = [];
-            }
-
-            // Add the openingDate and totalQuantity to the corresponding danaName
-            $openingArray[$danaName][$openingDate] = [
-                'opening_quantity' => $totalQuantity,
-                // You can add more keys here if needed
-            ];
-        }
-        // Initialize an empty result array
         $resultArray = [];
 
-        // Loop through the query results and restructure the data
-        foreach ($results as $resultRawMaterial) {
+        foreach ($rawMaterialsResults as $resultRawMaterial) {
             $danaName = $resultRawMaterial->dana_name;
             $date = $resultRawMaterial->date;
             $totalQuantity = $resultRawMaterial->total_quantity;
@@ -79,6 +125,49 @@ class RawMaterialReportController extends Controller
                 'import_from' => $importFrom,
             ];
         }
+
+        return $resultArray;
+    }
+
+    private function getRawMaterialOpeningArray()
+    {
+        $openingArray = [];
+        $resultOpenings = DB::table('rawmaterial_opening_items')
+            ->join('rawmaterial_opening_entries', 'rawmaterial_opening_entries.id', '=', 'rawmaterial_opening_items.rawmaterial_opening_entry_id')
+            ->join('dana_names', 'rawmaterial_opening_items.dana_name_id', '=', 'dana_names.id')
+            ->select(
+                'dana_names.name as dana_name', // Select dana_names.name
+                'rawmaterial_opening_entries.opening_date',
+                DB::raw('SUM(rawmaterial_opening_items.qty_in_kg) as total_quantity')
+            )
+            ->groupBy('dana_name', 'rawmaterial_opening_entries.opening_date') // Group by dana_name
+            ->orderBy('dana_name', 'asc')
+            ->orderBy('rawmaterial_opening_entries.opening_date', 'asc')
+            ->get();
+
+        foreach ($resultOpenings as $resultOpening) {
+            $danaName = $resultOpening->dana_name;
+            $openingDate = $resultOpening->opening_date;
+            $totalQuantity = $resultOpening->total_quantity;
+
+            // Check if the danaName key exists in the $openingArray, if not, initialize it
+            if (!isset($openingArray[$danaName])) {
+                $openingArray[$danaName] = [];
+            }
+
+            // Add the openingDate and totalQuantity to the corresponding danaName
+            $openingArray[$danaName][$openingDate] = [
+                'opening_quantity' => $totalQuantity,
+                // You can add more keys here if needed
+            ];
+        }
+
+        return $openingArray;
+    }
+
+    private function getAutoLoadItemsArray()
+    {
+        $autoLoadArray = [];
 
         $autoLoadData = DB::table('autoload_items as ai')
             ->leftJoin('auto_loads as al', 'ai.autoload_id', '=', 'al.id')
@@ -97,10 +186,6 @@ class RawMaterialReportController extends Controller
             ->orderBy('al.transfer_date', 'asc')
             ->get();
 
-        // Initialize an empty result array
-        $autoLoadArray = [];
-
-        // Loop through the query results and restructure the data
         foreach ($autoLoadData as $result) {
             $danaName = $result->dana_name;
             $transferDate = $result->transfer_date;
@@ -121,128 +206,6 @@ class RawMaterialReportController extends Controller
             $autoLoadArray[$danaName][$transferDate][$processingStepName] = $autoloadQuantity;
         }
 
-        $mergedArray = [];
-
-        foreach ($resultArray as $danaName => $dateData) {
-            // Initialize an array for the current dana_name
-            $danaNameArray = [];
-
-            // Loop through the date data for the current dana_name
-            foreach ($dateData as $date => $dateInfo) {
-                // Initialize an array for the current date
-                $dateArray = [
-                    'total_quantity' => $dateInfo['total_quantity'],  // Copy "total_quantity" from the original array
-                    'import_from' => $dateInfo['import_from'],         // Copy "import_from" from the original array
-                    'opening_quantity' => 0,                          // Default value for opening_quantity
-                ];
-
-                // Check if the current date exists in the openingArray and has opening_quantity
-                if (isset($openingArray[$danaName][$date]['opening_quantity'])) {
-                    // If it exists, set the opening_quantity from the openingArray
-                    $dateArray['opening_quantity'] = $openingArray[$danaName][$date]['opening_quantity'];
-                }
-
-                // Add the dateArray to the danaNameArray
-                $danaNameArray[$date] = $dateArray;
-            }
-
-            // Add the danaNameArray to the mergedArray with dana_name as the key
-            $mergedArray[$danaName] = $danaNameArray;
-        }
-
-        // Loop through $autoLoadArray and merge data into $mergedArray
-        foreach ($autoLoadArray as $danaName => $autoLoadData) {
-            // Check if the danaName key exists in $mergedArray, if not, initialize it
-            if (!isset($mergedArray[$danaName])) {
-                $mergedArray[$danaName] = [];
-            }
-
-            // Loop through $autoLoadData for the current danaName
-            foreach ($autoLoadData as $transferDate => $autoLoadInfo) {
-                // Check if the transferDate key exists in $mergedArray for the current danaName
-                if (!isset($mergedArray[$danaName][$transferDate])) {
-                    $mergedArray[$danaName][$transferDate] = [];
-                }
-
-                // Merge the data from $autoLoadInfo into $mergedArray
-                $mergedArray[$danaName][$transferDate] = array_merge(
-                    $mergedArray[$danaName][$transferDate],
-                    $autoLoadInfo
-                );
-
-                // Check if 'opening_quantity' exists in $openingArray for the current danaName and transferDate
-                if (isset($openingArray[$danaName][$transferDate]['opening_quantity'])) {
-                    // Merge 'opening_quantity' into $mergedArray
-                    $mergedArray[$danaName][$transferDate]['opening_quantity'] = $openingArray[$danaName][$transferDate]['opening_quantity'];
-                } else {
-                    // If 'opening_quantity' doesn't exist, set it to 0
-                    $mergedArray[$danaName][$transferDate]['opening_quantity'] = 0;
-                }
-            }
-        }
-
-        $finalMergedArray = [];
-
-            // Define a function to merge two arrays recursively
-            function mergeArraysRecursive($array1, $array2) {
-                foreach ($array2 as $key => $value) {
-                    if (is_array($value) && isset($array1[$key]) && is_array($array1[$key])) {
-                        $array1[$key] = mergeArraysRecursive($array1[$key], $value);
-                    } else {
-                        $array1[$key] = $value;
-                    }
-                }
-                return $array1;
-            }
-
-            // Merge $resultArray into $finalMergedArray
-            foreach ($resultArray as $danaName => $dateData) {
-                if (!isset($finalMergedArray[$danaName])) {
-                    $finalMergedArray[$danaName] = [];
-                }
-                foreach ($dateData as $date => $dateInfo) {
-                    if (!isset($finalMergedArray[$danaName][$date])) {
-                        $finalMergedArray[$danaName][$date] = [];
-                    }
-                    $finalMergedArray[$danaName][$date] = mergeArraysRecursive(
-                        $finalMergedArray[$danaName][$date],
-                        $dateInfo
-                    );
-                }
-            }
-
-            // Merge $openingArray into $finalMergedArray
-            foreach ($openingArray as $danaName => $dateData) {
-                if (!isset($finalMergedArray[$danaName])) {
-                    $finalMergedArray[$danaName] = [];
-                }
-                foreach ($dateData as $date => $dateInfo) {
-                    if (!isset($finalMergedArray[$danaName][$date])) {
-                        $finalMergedArray[$danaName][$date] = [];
-                    }
-                    $finalMergedArray[$danaName][$date] = mergeArraysRecursive(
-                        $finalMergedArray[$danaName][$date],
-                        $dateInfo
-                    );
-                }
-            }
-
-            // Merge $autoLoadArray into $finalMergedArray
-            foreach ($autoLoadArray as $danaName => $dateData) {
-                if (!isset($finalMergedArray[$danaName])) {
-                    $finalMergedArray[$danaName] = [];
-                }
-                foreach ($dateData as $date => $dateInfo) {
-                    if (!isset($finalMergedArray[$danaName][$date])) {
-                        $finalMergedArray[$danaName][$date] = [];
-                    }
-                    $finalMergedArray[$danaName][$date] = mergeArraysRecursive(
-                        $finalMergedArray[$danaName][$date],
-                        $dateInfo
-                    );
-                }
-            }
-
-        return view('admin.rawmaterial.report', compact('mergedArray'));
+        return $autoLoadArray;
     }
 }

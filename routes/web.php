@@ -503,7 +503,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name.fsr");
         Route::post('get/autoloader/godam/id/into/fsr',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
         Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
+
         Route::get('fabricSendReceive/compare/lamandunlam/revised/{entry_id}',[FabricSendReceiveController::class,'comparelamandunlamrevised'])->name('fabricSendReceive.compare.lamandunlam.revised');//lastest
+        Route::post('fabricSendReceive/lam/delete',[FabricSendReceiveController::class,'deleteLam'])->name('fabric.send.receive.lam.destroy');
+        Route::post('fabricSendReceive/unlam/delete',[FabricSendReceiveController::class,'deleteUnLam'])->name('fabric.send.receive.unlam.destroy');
+
+
         Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
         Route::post('final/submit/fsr/revised',[FabricSendReceiveController::class,'finalsubmitfsrrevised'])->name("final.submit.fsr.revised");//latest
         Route::post("add/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"addDanaConsumptionTablerevised"])->name("add.dana.consumption.fsr.revised");//latest

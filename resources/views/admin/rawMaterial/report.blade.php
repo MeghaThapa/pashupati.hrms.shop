@@ -53,11 +53,12 @@
             </div>
             <div class="p-3 card card-body">
                 @foreach($mergedArray as $key => $result)
-                {{ $key }}
-                <table class="table table-bordered" id="rawMaterialTable">
+                <h5>{{ $key }}</h5>
+                <table class="table table-bordered" id="rawMaterialTable" style="margin-bottom: 120px;">
                     <thead>
                         <tr>
-                            <th colspan="5">Receipt</th>
+                            <th></th>
+                            <th colspan="4">Received</th>
                             <th colspan="4">Issue</th>
                             <th></th>
                         </tr>
@@ -80,14 +81,14 @@
                         @foreach($result as $dateKey => $datewiseQty)
                         <tr>
                             <td>{{ $dateKey }}</td>
-                            <td> {{ $datewiseQty['opening_quantity'] }} </td>
+                            <td> {{ isset($datewiseQty['opening_quantity'])? $datewiseQty['opening_quantity'] :'' }} </td>
                             <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'import' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
                             <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'local' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
                             <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
                             <td>{{ $datewiseQty['tape plant'] ?? 0 }} </td>
                             <td>{{ $datewiseQty['lamination plant'] ?? 0 }}</td>
                             <td>{{ $datewiseQty['nonwoven plant'] ?? 0 }}</td>
-                            <td></td>
+                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
                             <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'closing' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
 
                         </tr>
