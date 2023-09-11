@@ -81,7 +81,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Route::get('tempfix',[FabricController::class,'getData']);
+Route::get('tempfix',[FabricController::class,'fixData']);
 
 Route::get('artisandone',function(){
     // singlesidelaminated
@@ -256,6 +256,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('rawMaterialStock/filterStocks',[RawMaterialStockController::class,'filterStocks'])->name('rawmaterial.filterStocks');
 
     Route::get('rawMaterial/report',[RawMaterialReportController::class,'index'])->name('rawmaterial.report');
+    Route::get('rawMaterial/report/fix',[RawMaterialReportController::class,'oldIndex'])->name('rawmaterial.report.fix');
 
     Route::post('rawMaterial/report/ajax-filter',[RawMaterialReportController::class,'ajaxFilter'])->name('rawmaterial.ajax.report');
 

@@ -95,14 +95,11 @@ class FabricController extends Controller
     {
         $fabricgroups = FabricGroup::get();
         $godams = Godam::get();
-
         return view('admin.fabric.create', compact('fabricgroups', 'godams'));
     }
 
     public function store(Request $request)
     {
-        dd($request->all());
-        //validate form
         $validator = $request->validate([
             'name' => 'required|string|max:60|unique:fabrics',
             'fabricgroup_id' => 'required|integer',
@@ -359,8 +356,6 @@ class FabricController extends Controller
             foreach ($getfabricstock as $stock) {
                 $stock->delete();
             }
-
-
 
             $gettapeQuantity = TapeEntryStockModel::where('toGodam_id', $find_data->godam_id)
                 ->value('id');
