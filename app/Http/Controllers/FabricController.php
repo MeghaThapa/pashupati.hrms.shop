@@ -66,9 +66,7 @@ class FabricController extends Controller
                 ->addColumn('godam', function ($row) {
                     return $row->getGodam->name;
                 })
-                ->addColumn('action', function ($row) {
-                    return '<button type="button" id="rawMaterialDeleteBtn" class="btnEdit btn btn-sm btn-danger"  data-id="' . $row->id . '"><i class="fas fa-trash fa-lg"></i></button>';
-                })
+            
                 ->toArray();
 
             $data['total_netweight_sum'] = $totalNetweightSum;
