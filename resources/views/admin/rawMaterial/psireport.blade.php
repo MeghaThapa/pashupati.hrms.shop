@@ -3,14 +3,14 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('Storein') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('Raw Material Report') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('Storein') }}</li>
+                    <li class="breadcrumb-item active">{{ __('Raw Material Report') }}</li>
                 </ol>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="p-3 card card-body">
-                @foreach($mergedArray as $key => $result)
+                @foreach($formattedReports as $key => $result)
                 <h5>{{ $key }}</h5>
                 <table class="table table-bordered" id="rawMaterialTable" style="margin-bottom: 120px;">
                     <thead>
@@ -79,20 +79,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($result as $dateKey => $datewiseQty)
+                        @foreach($result as $dateKey => $reportRow)
                         <tr>
                             <td>{{ $dateKey }}</td>
-                            <td> {{ isset($datewiseQty['opening_quantity'])? $datewiseQty['opening_quantity'] :'' }} </td>
-                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'import' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'local' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' && $datewiseQty['from_godam_id']==2 && $datewiseQty['to_godam_id'] == 1 ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-                            <td>{{ $datewiseQty['tape plant'] ?? 0 }} </td>
-                            <td>{{ $datewiseQty['lamination plant'] ?? 0 }}</td>
-                            <td>{{ $datewiseQty['nonwoven plant'] ?? 0 }}</td>
-                            <td>{{ $datewiseQty['sales_quantity'] ?? 0 }}</td>
-                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'godam' && $datewiseQty['from_godam_id']==1 && $datewiseQty['to_godam_id'] == 2  ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-                            <td>@if(isset($datewiseQty['import_from']) && $datewiseQty['import_from'] == 'closing' ) {{ $datewiseQty['total_quantity'] }} @else 0 @endif</td>
-
+                            <td> {{ $reportRow['opening_amount'] }} </td>
+                            <td> {{ $reportRow['import'] }} </td>
+                            <td> {{ $reportRow['local'] }} </td>
+                            <td> {{ $reportRow['from_godam'] }} </td>
+                            <td> {{ $reportRow['tape'] }} </td>
+                            <td> {{ $reportRow['lam'] }} </td>
+                            <td> {{ $reportRow['nw_plant'] }} </td>
+                            <td> {{ $reportRow['sales'] }} </td>
+                            <td> {{ $reportRow['to_godam'] }} </td>
+                            <td> {{ $reportRow['closing'] }} </td>
                         </tr>
                         @endforeach
                     </tbody>
