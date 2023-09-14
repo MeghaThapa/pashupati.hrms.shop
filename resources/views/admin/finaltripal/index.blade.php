@@ -208,13 +208,20 @@
                        
                         <td>
                             <div class="btn-group">
+                                @if($data->status == 'sent')
                                 <a href="{{ route('addfinaltripal.create', $data->id) }}"
                                     class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>
                                 </a>
-
                                 <a href="{{ route('addfinaltripal.edit', $data->id) }}"
                                         class="btn btn-primary" target="_blank"><i class="fas fa-edit"></i>
                                 </a>
+                                @else
+                                <a href="{{ route('finaltripal.viewbill', $data->id) }}"
+                                    class="btn btn-info" target="_blank"><i class="fas fa-print"></i>
+                                </a> 
+                                @endif
+
+                              
                                 
                             </div>
                         </td>

@@ -8,7 +8,9 @@ use App\Models\FinalTripalBill;
 use App\Models\Shift;
 use App\Models\Godam;
 use App\Models\ProcessingStep;
+use App\Models\FinalTripalStock;
 use App\Models\ProcessingSubcat;
+use App\Models\TripalEntry;
 use Illuminate\Support\Facades\DB;
 
 class FinalTripalBillController extends Controller
@@ -26,8 +28,8 @@ class FinalTripalBillController extends Controller
                 'planttype_id' => $request['plant_type_id'],
                 'plantname_id' =>  $request['plant_name_id'],
                 'shift_id' =>  $request['shift_name_id'],
+                'status' =>  'sent',
             ]);
-                
            DB::commit();
            return back();
         }
@@ -63,5 +65,16 @@ class FinalTripalBillController extends Controller
 
 
         return redirect()->route('finaltripal.index')->withSuccess('Fabric updated successfully!');
+    }
+
+    public  function viewBill($id){
+
+        $find_data = FinalTripalBill::find($id);
+        $tripal_entries = TripalEntry::where('bill_id',$id)->get();
+        $stocks = FinalTripalStock::where('bill_id',$id)->get();
+        // dd($stocks);
+          
+        return view('admin.finaltripal.viewBill',compact('tripal_entries','stocks','find_data'));
+
     }
 }

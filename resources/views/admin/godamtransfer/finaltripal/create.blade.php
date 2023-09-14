@@ -131,7 +131,6 @@
                         </span>
                 @enderror
             </div>
-            
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Remarks') }}<span class="required-field">*</span>
                 </label>
@@ -145,7 +144,7 @@
             </div> 
 
         </div>
-        
+
     </form>
 </div>
 

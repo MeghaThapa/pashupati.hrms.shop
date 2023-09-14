@@ -47,7 +47,7 @@ class FinalTripalController extends Controller
         ->distinct()
         ->get();
 
-        $datas = FinalTripalBill::get();
+        $datas = FinalTripalBill::orderBy('id', 'DESC')->get();
         // dd($fabrics);
         return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname','godams','sumdana','datas'));
     }
@@ -176,9 +176,6 @@ class FinalTripalController extends Controller
             ]);
         }
 
-       
-
-      
     }
 
     public function getTripalFabricEntry(Request $request){
@@ -229,12 +226,7 @@ class FinalTripalController extends Controller
         ]);
          return back();
 
-    
-
-   
     }
-
-
 
     public function store(Request $request){
         // dd('hey');
@@ -302,8 +294,8 @@ class FinalTripalController extends Controller
                "gsm" => $request['gsm'],
                'net_wt' => $request['net_wt'],
                "finaltripal_id" => $finaltripal->id,
-               "date_en" => $request['net_wt'],
-               "date_np" => $request['net_wt'],
+               "date_en" => $request['bill_date'],
+               "date_np" => $request['bill_date'],
                "bill_id" => $bill_id,
 
                "status" => "sent"
@@ -340,6 +332,7 @@ class FinalTripalController extends Controller
             $department = [];
 
             // dd($department);
+            // dd($request->bill_id);
 
             try{
                 DB::beginTransaction();
@@ -347,13 +340,16 @@ class FinalTripalController extends Controller
                   $getFabricLastId = FinalTripalStock::where('status','sent')->where('bill_number',$request->bill)->latest()->first();
 
                  
-                    $getsinglesidelaminatedfabric = TripalEntry::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']); 
+                    $getsinglesidelaminatedfabric = TripalEntry::where('bill_id',$request->bill_id)->update(['status' => 'completed']); 
 
-                    $getdoublesidelaminatedfabric = FinalTripal::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']); 
 
-                    $getdoublesidelaminatedfabricstock = FinalTripalStock::where('bill_number',$getFabricLastId->bill_number)->update(['status' => 'completed']); 
+                    $getdoublesidelaminatedfabric = FinalTripal::where('bill_id',$request->bill_id)->update(['status' => 'completed']); 
 
-                    $find_godam = FinalTripalStock::where('bill_number',$request->bill)->latest()->first();
+                    $getdoublesidelaminatedfabricstock = FinalTripalStock::where('bill_id',$request->bill_id)->update(['status' => 'completed']); 
+
+                    $finalbill = FinalTripalBill::where('id',$request->bill_id)->update(['status' => 'completed']); 
+
+                    $find_godam = FinalTripalStock::where('bill_id',$request->bill_id)->latest()->first();
 
                     if($fabric_waste != null){
 
@@ -371,11 +367,9 @@ class FinalTripalController extends Controller
 
                         $stock = WasteStock::where('godam_id', $find_godam->department_id)
                         ->where('waste_id', $wastage->id)->count();
-                        // dd($stock);
 
                         $getStock = WasteStock::where('godam_id', $find_godam->department_id)
                         ->where('waste_id', $wastage->id)->first();
-                        
 
                         if ($stock == 1) {
                             $getStock->quantity_in_kg += $fabric_waste;
@@ -391,12 +385,15 @@ class FinalTripalController extends Controller
 
                     }
 
+                   
+
 
                 DB::commit();
                 return response(200);
                 // return redirect()->route('finaltripal.index');
 
             }catch(Exception $e){
+                dd($e);
                 DB::rollBack();
                 return response([
                     "exception" => $e->getMessage(),

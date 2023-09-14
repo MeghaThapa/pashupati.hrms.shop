@@ -433,6 +433,33 @@
                             </a>
 
                         </li>
+                        <li class="nav-item">
+
+                            <a href="{{ route('nonwovenSale.index') }}"
+
+                                class="nav-link {{ request()->is('admin/nonwovenSale*') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Sales Nonwoven') }}</p>
+
+                            </a>
+
+                        </li>
+
+                        {{-- <li class="nav-item">
+
+                            <a href="{{ route('wastageSale.index') }}"
+
+                                class="nav-link {{ request()->is('admin/wastageSale*') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Sales Wastage') }}</p>
+
+                            </a>
+
+                        </li> --}}
 
 
 

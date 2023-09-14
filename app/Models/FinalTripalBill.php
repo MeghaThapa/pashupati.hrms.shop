@@ -10,7 +10,7 @@ class FinalTripalBill extends Model
     use HasFactory;
 
     protected $fillable = [
-        'plantname_id','godam_id','planttype_id','shift_id','bill_no','bill_date',
+        'plantname_id','godam_id','planttype_id','shift_id','bill_no','bill_date','status',
         'created_at','updated_at',
     ];
 
