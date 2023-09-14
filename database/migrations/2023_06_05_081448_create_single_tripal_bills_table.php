@@ -28,6 +28,7 @@ return new class extends Migration
 
             $table->bigInteger('shift_id')->unsigned()->index();
             $table->foreign('shift_id')->references('id')->on('shifts')->onDelete('cascade');
+            $table->enum('status',['sent','completed'])->default('sent');
            
             $table->timestamps();
         });

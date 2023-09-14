@@ -107,7 +107,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // admin profile route
     Route::get('profile', 'AdminController@profilePage')->name('admin.profile');
 
-    Route::get('export', 'FabricController@export')->name('admin.exportfabric');
+    Route::get('export', 'FabricController@fix')->name('admin.exportfabric');
 
     // admin profile update route
     Route::put('profile/{email}', 'AdminController@profileUpdate')->name('admin.profile.update');
@@ -703,6 +703,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
      Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
     Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
 
+    Route::get('finaltripals/viewBill/{id}', 'Tripal\FinalTripalBillController@viewBill')->name('finaltripal.viewbill');
+
     Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
     Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');
 
@@ -831,6 +833,54 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('finaltripal/getstock/filterStocks','Tripal\FinalTripalStockController@filterStock')->name('finaltripal-stock.filterStock');
 
     Route::get("restock",'Sale\SaleFinalTripalController@restock')->name("admin.restock");
+
+    Route::prefix('nonwovenSale')->group(function () {
+        // Define routes here
+        Route::get('index', 'Sale\NonwovenSaleController@index')->name('nonwovenSale.index');
+        Route::get('nonwovenSale/getSaleFinalTripalStockList','Sale\NonwovenSaleController@getSaleFinalTripalStockList')->name('nonwovenSale.getSaleFinalTripalStockList');
+
+        Route::post('nonwovenSale/store','Sale\NonwovenSaleController@store')->name('nonwovenSale.store');
+
+        Route::get('nonwovenSale/dataTable', 'Sale\NonwovenSaleController@dataTable')->name('nonwovenSale.dataTable');
+
+        Route::get('add/{id}','Sale\NonwovenSaleController@add')->name('nonwovenSale.add');
+
+        Route::get('nonwovenSale/viewTripal/{id}','Sale\NonwovenSaleController@viewTripal')->name('nonwovenSale.viewTripal');
+
+        Route::post('nonwovenSale/storeEntryList', 'Sale\NonwovenSaleController@storeEntryList')->name('finalnonwoven.storeEntryList');
+
+        Route::get("getfilterNonwovenList",'Sale\NonwovenSaleController@getSaleNonwovenList')->name("getSaleNonwovenList");
+
+        Route::post('salefinalnonwoven/store/finalList','Sale\NonwovenSaleController@finalNonwovenStoreList')->name('nonwovensalefinal.storeList');
+
+        Route::get("viewbill/{bill_id}",'Sale\NonwovenSaleController@viewbill')->name('nonwovenSale.viewBill');
+
+        Route::get('salefinalnonwoven/delete/list', 'Sale\NonwovenSaleController@deleteEntryList')->name('nonwovenSale.deleteFinalSaleEntry');
+
+      
+
+       
+
+    });
+
+    // Route::prefix('wastageSale')->group(function () {
+    //     // Define routes here
+    //     // Route::get('index', 'Sale\WastageSaleController@index')->name('wastageSale.index');
+    //     // Route::get('salefinaltripal','Sale\WastageSaleController@index')->name('salefinaltripal.index');
+    //     // Route::get('salefinaltripal/getSaleFinalTripalStockList','Sale\WastageSaleController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
+
+    //     // Route::post('salefinaltripal/store','Sale\WastageSaleController@store')->name('salefinaltripal.store');
+
+    //     // Route::get('salefinaltripal/addTripal/{id}','Sale\WastageSaleController@addTripal')->name('salefinaltripals.addTripal');
+
+    //     // Route::get('salefinaltripal/viewTripal/{id}','Sale\WastageSaleController@viewTripal')->name('salefinaltripals.viewTripal');
+
+    //     // Route::get('salefinaltripal/viewTripalBill/{id}','Sale\WastageSaleController@viewTripalBill')->name('salefinaltripals.viewTripalBill');
+      
+
+       
+
+    // });
 
 
 

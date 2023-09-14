@@ -88,17 +88,25 @@ class NonwovenGodamController extends Controller
         if($request->ajax()){
             // dd($request);
             $fabric_gsm = $request->fabric_gsm;
+            // dd($request->fabric_gsm);
 
-            $datas = FabricNonWovenReceiveEntryStock::get();
+            $datas = FabricNonWovenReceiveEntryStock::orderBy('receive_date');
 
-            // if(!empty($fabric_gsm)){
-            //   $datas = FabricNonWovenReceiveEntryStock::where('fabric_gsm', $fabric_gsm);
-            // }
+            if(!empty($fabric_gsm)){
+              $datas = $datas->where('fabric_gsm', $fabric_gsm);
+            }
 
-            // $datas = $datas->get();
-            // dd($datas);
+            if(!empty($request->fabric_name)){
+              $find_name = NonWovenFabric::where('slug',$request->fabric_name)->value('name');
+              // dd($find_name);
+              $datas = $datas->where('fabric_name', $find_name);
+            }
 
-           
+            if(!empty($request->fabric_color)){
+              $datas = $datas->where('fabric_color', $request->fabric_color);
+            }
+
+            $datas = $datas->get();
 
             return DataTables::of($datas)
                     ->addIndexColumn()

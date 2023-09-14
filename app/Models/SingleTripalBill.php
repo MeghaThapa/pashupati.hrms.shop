@@ -11,7 +11,7 @@ class SingleTripalBill extends Model
 
     protected $fillable = [
         'plantname_id','godam_id','planttype_id','shift_id','bill_no','bill_date',
-        'created_at','updated_at',
+        'created_at','updated_at','status',
     ];
 
     public function getGodam()

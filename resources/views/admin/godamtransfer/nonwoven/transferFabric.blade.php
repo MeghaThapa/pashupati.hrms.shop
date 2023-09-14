@@ -220,7 +220,7 @@
         // Pace.start();
         var fabric_gsm = $('#fabric_gsm').val(),
             token = $('meta[name="csrf-token"]').attr('content');
-          // $('#idcardShift').val(godam_id);
+       
         $.ajax({
           type:"POST",
           dataType:"JSON",
@@ -236,8 +236,9 @@
             $.each( response, function( i, val ) {
 
               $('#fabric_name').append(`<option value="${val.slug}">${val.name}</option>`);
-              // $('#fabric_name').append('<option value='+val.slug+'>'+val.name+'</option>');
+           
             });
+            filterData();
           },
           error: function(event){
             alert("Sorry");
@@ -268,12 +269,59 @@
               $.each( response, function( i, val ) {
                 $('#fabric_color').append('<option value='+val.color+'>'+val.color+'</option>');
             });
+              filterData();
           },
           error: function(event){
               alert("Sorry");
           }
       });
       });
+
+      $("body").on("change","#fabric_color", function(event){
+            filterData();
+      });
+
+      let fabricTable = null;
+
+      function filterData(){
+        // debugger;
+
+        if (fabricTable !== null) {
+            fabricTable.destroy();
+        }
+
+        var fabric_gsm = $('#fabric_gsm').val();
+        var fabric_name = $('#fabric_name').val();
+        var fabric_color = $('#fabric_color').val();
+        // debugger;
+
+        
+        fabricTable = $("#sameFabricsTable").DataTable({
+            serverside : true,
+            processing : true,
+            ajax : {
+                url : "{{ route('getFilterGodamNonwoven') }}",
+                method : "post",
+                data : function(data){
+                    data._token = $("meta[name='csrf-token']").attr("content"),
+                    data.fabric_gsm = fabric_gsm
+                    data.fabric_name = fabric_name
+                    data.fabric_color = fabric_color
+                }
+            },
+            columns:[
+                { data : "DT_RowIndex" , name : "DT_RowIndex" },
+                { data : "fabric_roll" , name : "fabric_roll" },
+                { data : "fabric_name" , name : "fabric_name" },
+                { data : "fabric_gsm" , name : "fabric_gsm" },
+                { data : "fabric_color" , name : "fabric_color" },
+                { data : "length" , name : "length" },
+                { data : "gross_weight" , name : "gross_weight" },
+                { data : "net_weight" , name : "net_weight" },
+                { data : "action" , name : "action" },
+            ]
+        });
+      }
 
     $(document).ready(function(){
       
@@ -374,50 +422,9 @@
 
     });
 
-    let fabricTable = null;
+ 
 
 
-      $("body").on("change","#fabric_gsm", function(event){
-
-        
-            // debugger;
-
-            if (fabricTable !== null) {
-                fabricTable.destroy();
-            }
-
-            var fabric_gsm = $('#fabric_gsm').val();
-            // bill_date = $('#date_np').val(),
-            // stock_id = $('#stock_id').val();
-
-            let fabric_name_id = $(this).val();
-            fabricTable = $("#sameFabricsTable").DataTable({
-                serverside : true,
-                processing : true,
-                ajax : {
-                    url : "{{ route('getFilterGodamNonwoven') }}",
-                    method : "post",
-                    data : function(data){
-                        data._token = $("meta[name='csrf-token']").attr("content"),
-                        data.fabric_gsm = fabric_gsm
-                    }
-                },
-                columns:[
-                    { data : "DT_RowIndex" , name : "DT_RowIndex" },
-                    { data : "fabric_roll" , name : "fabric_roll" },
-                    { data : "fabric_name" , name : "fabric_name" },
-                    { data : "fabric_gsm" , name : "fabric_gsm" },
-                    { data : "fabric_color" , name : "fabric_color" },
-                    { data : "length" , name : "length" },
-                    { data : "gross_weight" , name : "gross_weight" },
-                    { data : "net_weight" , name : "net_weight" },
-                    { data : "action" , name : "action" },
-                ]
-            });
-
-        
-        
-      });
 
 
    
