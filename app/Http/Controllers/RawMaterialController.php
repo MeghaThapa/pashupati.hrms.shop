@@ -52,6 +52,8 @@ class RawMaterialController extends Controller
             'raw_materials.receipt_no',
             'suppliers.name as supplier_name',
             'raw_materials.pp_no',
+            'raw_materials.challan_no',
+            'raw_materials.bill_no',
             'storein_types.name as storein_type_name',
             'toGodam.name as to_godam_name',
             'fromGodam.name as from_godam_name',
@@ -68,6 +70,8 @@ class RawMaterialController extends Controller
             'raw_materials.receipt_no',
             'suppliers.name',
             'raw_materials.pp_no',
+            'raw_materials.challan_no',
+            'raw_materials.bill_no',
             'storein_types.name',
             'toGodam.name',
             'fromGodam.name',
@@ -79,6 +83,15 @@ class RawMaterialController extends Controller
 
         return DataTables::of($rawMaterial)
             ->addIndexColumn()
+            ->editColumn('pp_no',function($row){
+                if($row->storein_type_name=="godam"){
+                    return $row->challan_no;
+                }elseif($row->storein_type_name=="local"){
+                    return $row->bill_no;
+                }else{
+                    return $row->pp_no;
+                }
+            })
             ->addColumn('action', function ($row) {
 
                 if($row->status=="complete"){
@@ -88,7 +101,7 @@ class RawMaterialController extends Controller
                 <a class="btn btn-sm btn-primary btnEdit" href="' . route('rawMaterial.edit', ["rawMaterial_id" => $row->id]) . '" >
                 <i class="fas fa-edit fa-lg"></i>
                 </a>
-                 <button type="button" id="rawMaterialDeleteBtn" class="btnEdit btn btn-sm btn-danger"  data-id="'.$row->id.'">
+                <button type="button" id="rawMaterialDeleteBtn" class="btnEdit btn btn-sm btn-danger"  data-id="'.$row->id.'">
                 <i class="fas fa-trash fa-lg"></i>
                 </button>
                 ';

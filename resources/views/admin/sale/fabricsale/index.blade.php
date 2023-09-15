@@ -104,7 +104,7 @@
                  <span class="invalid-feedback" role="alert">
                      <strong>{{ $message }}</strong>
                  </span>
-                 @enderror   
+                 @enderror
             </div>
 
             <div class="col-md-3 form-group">
@@ -119,7 +119,7 @@
                 </span>
                 @enderror
             </div>
-            
+
             <div class="col-md-6 form-group">
                 <label for="size" class="col-form-label">{{ __('PartyName') }}
                 </label>
@@ -150,39 +150,39 @@
                 </span>
                 @enderror
             </div>
-            
+
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Lorry No') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="lory_number"  name="lory_number"
-                    required /> 
+                    required />
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Dp No') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="dp_number" name="dp_number"
-                    required /> 
+                    required />
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('GP No') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="gp_number" name="gp_number"
-                    required /> 
+                    required />
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Remarks') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="remarks" name="remarks"
-                    required /> 
+                    required />
             </div>
             <div>
                 <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
                     Add
                 </button>
-            </div> 
+            </div>
 
         </div>
-        
+
     </form>
 </div>
 <div class="p-0 table-responsive table-custom my-3">
@@ -193,6 +193,7 @@
             <th>{{ __('Invoice No') }}</th>
             <th>{{ __('Invoice Date') }}</th>
             <th>{{ __('Supplier') }}</th>
+            <th>{{ __('Total Net wt') }}</th>
             <th class="text-right">{{ __('Action') }}</th>
         </tr>
         </thead>
@@ -222,20 +223,21 @@ $(document).ready(function(){
     ndpMonth: true,
     disableAfter: currentDate,
     });
-  
+
   });
 
   $(".table").DataTable({
-    serverside:true,
+    serverSide:true,
     processing:true,
     ajax : {
         url : "{{ route('fabric.sale.entry.index.ajax') }}",
     },
     columns : [
-        {data : "DT_RowIndex" , name : "DT_RowIndex"},
+        {data : "DT_RowIndex" , name : "DT_RowIndex",orderable:false,searchable: false,},
         {data : "bill_no" , name : "bill_no"},
         {data : "bill_date" , name : "bill_date"},
         {data : "supplier" , name : "supplier"},
+        {data : "net_wt" , name : "net_wt"},
         {data : "action" , name : "action"},
     ]
   })
