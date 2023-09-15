@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Supplier;
 use App\Models\FabricSale;
+use App\Models\FabricStock;
+use Illuminate\Http\Request;
 use App\Models\FabricSaleEntry;
 use App\Models\FabricSaleItems;
-use App\Models\FabricStock;
-use App\Models\Supplier;
-use DB;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Exceptions\Exception;
 
 class FabricSendAndReceiveSaleController extends Controller
@@ -29,21 +29,36 @@ class FabricSendAndReceiveSaleController extends Controller
 
     public function indexajax()
     {
+        $fabricSalesEntries = FabricSaleEntry::select(
+            'fabric_sale_entry.id as fabric_sale_id',
+            'fabric_sale_entry.bill_no',
+            'fabric_sale_entry.bill_date',
+            'fabric_sale_entry.status',
+            DB::raw('SUM(fabrics.net_wt) as total_net_wt'),
+            'suppliers.name as supplier_name' // Add this line to select the supplier name
+        )
+            ->leftJoin('fabric_sale_items', 'fabric_sale_entry.id', '=', 'fabric_sale_items.sale_entry_id')
+            ->leftJoin('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
+            ->leftJoin('suppliers', 'fabric_sale_entry.partyname_id', '=', 'suppliers.id')
+            ->groupBy('fabric_sale_entry.bill_no', 'fabric_sale_entry.bill_date', 'suppliers.name', 'fabric_sale_entry.id', 'fabric_sale_entry.status');
         if ($this->request->ajax()) {
-            return DataTables::of(FabricSaleEntry::with("getParty")->orderBy('id','DESC')->get())
+            return DataTables::of($fabricSalesEntries)
                 ->addIndexColumn()
                 ->addColumn("supplier", function ($row) {
-                    return $row->getParty->name;
+                    return $row->supplier_name;
+                })
+                ->addColumn('net_wt', function ($row) {
+                    return $row->total_net_wt;
                 })
                 ->addColumn("action", function ($row) {
                     if ($row->status == "pending") {
                         return "
                                     <div class='btn-group'>
-                                        <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-primary create-sale'><i class='fa fa-plus' aria-hidden='true'></i></a>
+                                        <a href='javascripy:void(0)' data-id={$row->fabric_sale_id} class='btn btn-primary create-sale'><i class='fa fa-plus' aria-hidden='true'></i></a>
                                     </div>
                                 ";
                     } else {
-                        return '<a href="' . route('fabric.sale.viewBill', ['bill_id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
+                        return '<a href="' . route('fabric.sale.viewBill', ['bill_id' => $row->fabric_sale_id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
                         // return "
                         //     <div class='btn-group'>
                         //         <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-secondary view-sale'><i class='fa fa-eye' aria-hidden='true'></i></a>
@@ -51,7 +66,7 @@ class FabricSendAndReceiveSaleController extends Controller
                         // ";
                     }
                 })
-                ->rawColumns(["supplier", "action"])
+                ->rawColumns(["action"])
                 ->make(true);
         }
     }
@@ -59,7 +74,22 @@ class FabricSendAndReceiveSaleController extends Controller
     public function viewBill($id)
     {
         $findsale = FabricSaleEntry::find($id);
-        $fabrics = FabricSaleItems::where('sale_entry_id', $id)->get();
+        $fabrics = FabricSaleItems::with('getfabric')->where('sale_entry_id', $id)
+            ->get();
+
+        $formattedData = [];
+
+        $fabrics->each(function ($fabric) use (&$formattedData) {
+            $formattedData[$fabric->getfabric->name][] = [
+                'name' => $fabric->getfabric->name,
+                'gross_wt' => $fabric->getfabric->gross_wt,
+                'net_wt' => $fabric->getfabric->net_wt,
+                'roll_no' => $fabric->getfabric->roll_no,
+                'meter' => $fabric->getfabric->meter,
+                'average_wt' => $fabric->getfabric->average_wt,
+                'gram_wt' => $fabric->getfabric->gram_wt
+            ];
+        });
 
         $totalstocks = DB::table('fabric_sale_items')
             ->join('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
@@ -79,7 +109,48 @@ class FabricSendAndReceiveSaleController extends Controller
         $total_net = $totalstocks->sum('total_net');
         $total_meter = $totalstocks->sum('total_meter');
 
-        return view('admin.sale.fabricsale.viewbill', compact('findsale', 'fabrics', 'totalstocks', 'total_gross', 'total_net', 'total_meter'));
+        return view('admin.sale.fabricsale.viewbill', compact('findsale', 'fabrics', 'totalstocks', 'total_gross', 'total_net', 'total_meter', 'formattedData'));
+    }
+
+    public function printViewBill($id)
+    {
+        $findsale = FabricSaleEntry::find($id);
+        $fabrics = FabricSaleItems::with('getfabric')->where('sale_entry_id', $id)
+            ->get();
+
+        $formattedData = [];
+
+        $fabrics->each(function ($fabric) use (&$formattedData) {
+            $formattedData[$fabric->getfabric->name][] = [
+                'name' => $fabric->getfabric->name,
+                'gross_wt' => $fabric->getfabric->gross_wt,
+                'net_wt' => $fabric->getfabric->net_wt,
+                'roll_no' => $fabric->getfabric->roll_no,
+                'meter' => $fabric->getfabric->meter,
+                'average_wt' => $fabric->getfabric->average_wt,
+                'gram_wt' => $fabric->getfabric->gram_wt
+            ];
+        });
+
+        $totalstocks = DB::table('fabric_sale_items')
+            ->join('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
+            ->select(
+                'fabrics.name',
+                DB::raw('SUM(fabrics.gross_wt) as total_gross'),
+                DB::raw('SUM(fabrics.net_wt) as total_net'),
+                DB::raw('SUM(fabrics.meter) as total_meter'),
+                DB::raw('COUNT(fabrics.name) as total_count')
+            )
+            ->where('fabric_sale_items.sale_entry_id', $id)
+            ->groupBy('fabrics.name')
+            ->orderBy('fabrics.name')
+            ->get();
+
+        $total_gross = $totalstocks->sum('total_gross');
+        $total_net = $totalstocks->sum('total_net');
+        $total_meter = $totalstocks->sum('total_meter');
+
+        return view('admin.sale.fabricsale.printviewbill', compact('findsale', 'fabrics', 'totalstocks', 'total_gross', 'total_net', 'total_meter', 'formattedData'));
     }
 
     public function store()
