@@ -78,25 +78,12 @@
 
 @section('content')
 <div class="card-body p-0 m-0">
-    <form action="{{ route('salefinaltripal.store') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('wastageSale.store') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
             <div class="col-md-3 form-group">
-                <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
-                </label>
-                <input type="text" class="form-control" id="billnumber" name="bill_number" />
-
-                 @error('bill_number')
-                 <span class="invalid-feedback" role="alert">
-                     <strong>{{ $message }}</strong>
-                 </span>
-                 @enderror   
-            </div>
-            
-
-            <div class="col-md-3 form-group">
-                <label for="size" class="col-form-label">{{ __('Invoice Date') }}
+                <label for="size" class="col-form-label">{{ __(' Date') }}
                 </label>
                 <input type="text" step="any" min="0" class="form-control calculator"
                     id="billDate" data-number="1" name="bill_date" placeholder="{{ __('Remarks') }}" min="1">
@@ -107,6 +94,19 @@
                 </span>
                 @enderror
             </div>
+
+            <div class="col-md-3 form-group">
+                <label for="size" class="col-form-label">{{ __('Challan No') }}<span class="required-field">*</span>
+                </label>
+                <input type="text" class="form-control" id="billnumber" name="bill_number" />
+
+                 @error('bill_number')
+                 <span class="invalid-feedback" role="alert">
+                     <strong>{{ $message }}</strong>
+                 </span>
+                 @enderror   
+            </div>
+            
             
             <div class="col-md-6 form-group">
                 <label for="size" class="col-form-label">{{ __('PartyName') }}
@@ -124,20 +124,7 @@
                 </span>
                 @enderror
             </div>
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('BillFor') }}
-                </label>
-                <select class="advance-select-box form-control" id="billfor" name="bill_for" >
-                    <option value="" selected disabled>{{ __('Select BillFor') }}</option>
-                    <option value="local">Local</option>
-                    <option value="export">Export</option>
-                </select>
-                @error('bill_for')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-            </div>
+            
             
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Lorry No') }}<span class="required-field">*</span>
@@ -157,12 +144,7 @@
                 <input type="text" class="form-control" id="gp_number" name="gp_number"
                     required /> 
             </div>
-            <div class="col-md-2 form-group">
-                <label for="size" class="col-form-label">{{ __('Remarks') }}<span class="required-field">*</span>
-                </label>
-                <input type="text" class="form-control" id="remarks" name="remarks"
-                    required /> 
-            </div>
+            
             <div>
                 <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
                     Add
@@ -177,7 +159,7 @@
 
 </div>
 <div class="p-0 table-responsive table-custom my-3">
-    <table class="table" id="rawMaterialTable">
+    <table class="table" id="wastageSaleTable">
         <thead>
         <tr>
             <th>@lang('#')</th>
@@ -191,11 +173,6 @@
     </table>
 </div>
 
-<!-- /.card-body -->
-
-<!-- pagination start -->
-{{ $salefinaltripals->links() }}
-
 @endsection
 @section('extra-script')
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
@@ -206,7 +183,7 @@
 <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
 <script>
     $('document').ready(function() {
-        var table = $('#rawMaterialTable').DataTable({
+        var table = $('#wastageSaleTable').DataTable({
             lengthMenu: [
                 [30, 40, 50, -1],
                 ['30 rows', '40 rows', '50 rows', 'Show all']
@@ -214,7 +191,7 @@
             style: 'bootstrap4',
             processing: true,
             serverSide: true,
-            ajax: "{{ route('saleFinalTripal.dataTable') }}",
+            ajax: "{{ route('wastageSale.dataTable') }}",
             columns: [{
                     data: 'DT_RowIndex'
                 },
