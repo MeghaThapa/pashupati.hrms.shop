@@ -537,6 +537,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
         Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
+        Route::get("print-view-bill/{bill_id}","printViewBill")->name("print.view.bill");
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -1482,9 +1483,9 @@ Route::controller(BagBundelEntryController::class)
 ->prefix('bagBundelling')
 ->group(function(){
     Route::get("index","index")->name('bagBundelling.index');
-     Route::get("createBagBundelEntry","createBagBundleEntry")->name('bagBundelling.createBagBundleEntry');
+    Route::get("createBagBundelEntry","createBagBundleEntry")->name('bagBundelling.createBagBundleEntry');
     Route::post("getBrandBag","getBrandBag")->name('bundelling.getBrandBag');
-     Route::post("update/{bagBundleEntryId}","update")->name('bagBundelling.update');
+    Route::post("update/{bagBundleEntryId}","update")->name('bagBundelling.update');
 
     Route::post("store","store")->name('bagBundelling.store');
     Route::get("edit/{bagBundelEntry_id}","edit")->name('bagBundelling.edit');
@@ -1495,7 +1496,7 @@ Route::controller(BagBundelEntryController::class)
 Route::controller(BagBundelItemController::class)
 ->prefix('bagBundelItem')
 ->group(function(){
-     Route::post("getAvailableStock","getAvailableStock")->name('bagBundelItem.getAvailableStock');
+    Route::post("getAvailableStock","getAvailableStock")->name('bagBundelItem.getAvailableStock');
     Route::get("createBagBundelItem/{bagBundelEntryId}","index")->name('bagBundelItem.index');
     Route::post("getBagBundelItemData","getBagBundelItemData")->name('bagBundelItem.getBagBundelItemData');
     Route::post("getBagBundelItem","store")->name('bagBundelItem.store');

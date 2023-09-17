@@ -7,22 +7,27 @@ use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\Fabric;
 use Carbon\CarbonPeriod;
+use App\Models\FabricSale;
 use App\Models\FabricEntry;
+use App\Models\FabricGodam;
 use App\Models\FabricGroup;
 use App\Models\FabricStock;
 use App\Models\FabricDetail;
 use Illuminate\Http\Request;
 use App\Imports\FabricImport;
-use App\Models\FabricGodam;
 use App\Models\FabricGodamList;
-use App\Models\FabricSendAndReceiveLaminatedSent;
+use App\Models\FabricSaleItems;
 use Yajra\DataTables\DataTables;
 use App\Services\NepaliConverter;
 use Illuminate\Support\Facades\DB;
 use App\Models\TapeEntryStockModel;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-
+use App\Models\BagFabricReceiveItemSent;
+use App\Models\FabricGodamTransfer;
+use App\Models\FabricSendAndReceiveLaminatedSent;
+use App\Models\Singlesidelaminatedfabric;
+use App\Models\Unlaminatedfabrictripal;
 
 class FabricController extends Controller
 {
@@ -33,16 +38,120 @@ class FabricController extends Controller
         $this->neDate = $neDate;
     }
 
-    public function fixData(){
+    public function fixData()
+    {
 
-        $fabricStocks = FabricStock::where('godam_id',1)->where('is_laminated','false')->pluck('roll_no')->toArray();
-        $laminatedFabrics = FabricSendAndReceiveLaminatedSent::pluck('roll_no')->toArray();
-        $result=array_intersect($fabricStocks,$laminatedFabrics);
+        $fabricStock = FabricStock::where('is_laminated',"true")->where('godam_id',1)->pluck('roll_no')->toArray();
+
+        $salesFabricIds = FabricSale::pluck('fabric_id')->toArray();
+
+        $fabricsFromSale = Fabric::whereIn('id',$salesFabricIds)->where('is_laminated','true')->pluck('roll_no')->toArray();
+
+        $result=array_intersect($fabricStock,$fabricsFromSale);
+        dd($result);
+        // $fabricGodamTransfers = FabricGodamTransfer::where('fromgodam_id',3)->where('togodam_id',1)->pluck('roll')->toArray();
+
+
+
+        // fixed fabric stock to fabric bag
+        $fabricStock = FabricStock::where('is_laminated',"false")->pluck('roll_no')->toArray();
+        $fabricToBags = BagFabricReceiveItemSent::pluck('roll_no')->toArray();
+        $result=array_intersect($fabricStock,$fabricToBags);
+        dd($result);
+    }
+
+    public function fixDataold2()
+    {
+        $soldFabricIds = FabricSaleItems::pluck('fabric_id')->toArray();
+
+        $soldFabricRolls = Fabric::whereIn('id',$soldFabricIds)->pluck('roll_no')->toArray();
+
+        $updatedItems = array_map(function ($soldFabricRolls) {
+            // Check if the last character of the item is 'A', 'B', 'C', or 'D'
+            if (in_array(substr($soldFabricRolls, -2), ['-A', '-B', '-C', '-D'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -2);
+            }
+
+            if (in_array(substr($soldFabricRolls, -1), ['A', 'B', 'C', 'D'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -1);
+            }
+
+            // If neither condition is met, return the original item
+            return $soldFabricRolls;
+        }, $soldFabricRolls);
+
+        $unlaminatedFabrics = FabricStock::where('godam_id',1)->where('is_laminated','false')->pluck('roll_no')->toArray();
+
+        $updatedUnLaminatedFabrics = array_map(function ($unlaminatedFabrics) {
+            // Check if the item starts with '01-'
+            if (strpos($unlaminatedFabrics, '01-') === 0) {
+                // Remove '01-' from the beginning and store the result
+                $unlaminatedFabrics = substr($unlaminatedFabrics, 3);
+            }
+
+            // If neither condition is met, return the original item
+            return $unlaminatedFabrics;
+        }, $unlaminatedFabrics);
+
+        $result=array_intersect($updatedUnLaminatedFabrics,$updatedItems);
+
+        dd($result);
+
+        $result = array_map(function ($item) {
+            return "01-$item";
+        }, $result);
+
+        // $laminatedFabricsFrom = FabricSendAndReceiveLaminatedSent::with('fsrentry')->whereNull('fabid')->pluck('roll_no')->toArray();
+
+        // $soldFabrics = FabricSale::with('getfabric','getsaleentry')->get();
+        // return view('admin.fabric.salepage',compact('soldFabrics'));
+    }
+
+
+
+    public function fixDataOld(){
+
+        $laminatedFabricsFrom = FabricSendAndReceiveLaminatedSent::with('fsrentry')->whereNull('fabid')->get();
+
+        return view('admin.fabric.fixpage',compact('laminatedFabricsFrom'));
+
+        dd(count($laminatedFabricsFrom));
+
+
+
+        $salesFabricIds = FabricSale::pluck('fabric_id')->toArray();
+
+        $fabricsFromSale = Fabric::whereIn('id',$salesFabricIds)->pluck('roll_no')->toArray();
+
+        $fabricStocks = Fabric::where('godam_id',1)->pluck('roll_no')->toArray();
+
+        $result=array_intersect($fabricStocks,$fabricsFromSale);
+
+
+
+        $fabricstocks = DB::table('fabric_stock')->whereIn('roll_no',$result)->get();
+
+        dd($fabricstocks);
+
+        dd('task done');
+
+
+        $laminatedFabricsFrom = FabricSendAndReceiveLaminatedSent::whereNotNull('fabid')->pluck('fabid');
+
+        dd(count($laminatedFabricsFrom));
+
+        $unlaminatedfabrics = Fabric::whereIn('id',$laminatedFabricsFrom)->where('godam_id',1)->pluck('roll_no')->toArray();
+        // dd($unlaminatedfabrics);
+
+
+        // $laminatedFabrics = FabricSendAndReceiveLaminatedSent::pluck('roll_no')->toArray();
+        $result=array_intersect($fabricStocks,$unlaminatedfabrics);
         dd($result);
         $fabricStocks = FabricStock::where('godam_id',1)->where('is_laminated','false')->whereIn('roll_no',$result)->delete();
         dd('done');
     }
-
 
     public function index(Request $request)
     {
@@ -66,7 +175,7 @@ class FabricController extends Controller
                 ->addColumn('godam', function ($row) {
                     return $row->getGodam->name;
                 })
-            
+
                 ->toArray();
 
             $data['total_netweight_sum'] = $totalNetweightSum;
@@ -432,7 +541,7 @@ class FabricController extends Controller
                 $unLaminatedFabrics->where('godam_id',$godam_id);
             }
 
-            $unLaminatedFabrics = $unLaminatedFabrics->where('date_np',$nepaliDate)->where('is_laminated','true')->get();
+            $unLaminatedFabrics = $unLaminatedFabrics->where('date_np',$nepaliDate)->where('is_laminated','false')->get();
 
             if(!$unLaminatedFabrics->isEmpty()){
                 $fabricView = view('admin.fabric.reportview.unlaminated_datewise',compact('unLaminatedFabrics','nepaliDate'))->render();
@@ -452,7 +561,7 @@ class FabricController extends Controller
             DB::raw('SUM(net_wt) as net_wt'),
             DB::raw('SUM(meter) as meter')
         )
-            ->where('is_laminated','true')
+            ->where('is_laminated','false')
             ->groupBy('name');
 
         if($request->start_date && $request->end_date){
