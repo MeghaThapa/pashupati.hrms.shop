@@ -294,7 +294,6 @@
       });
 
       let fabricTable = null;
-
      
 
       function filterData(){
@@ -306,10 +305,8 @@
         var fabric_gsm = $('#fabric_gsm').val();
         var fabric_name = $('#fabric_name').val();
         var fabric_color = $('#fabric_color').val();
-        // debugger;
-        
+        var page = 'nonwovensale';
 
-        // let fabric_name_id = $(this).val();
         fabricTable = $("#nonwovenList").DataTable({
             serverside : true,
             processing : true,
@@ -321,6 +318,7 @@
                     data.fabric_gsm = fabric_gsm
                     data.fabric_name = fabric_name
                     data.fabric_color = fabric_color
+                    data.page = page
                 }
             },
             columns:[

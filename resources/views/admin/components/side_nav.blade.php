@@ -447,7 +447,7 @@
 
                         </li>
 
-                        {{-- <li class="nav-item">
+                        <li class="nav-item">
 
                             <a href="{{ route('wastageSale.index') }}"
 
@@ -459,7 +459,7 @@
 
                             </a>
 
-                        </li> --}}
+                        </li> 
 
 
 

@@ -864,24 +864,29 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     });
 
-    // Route::prefix('wastageSale')->group(function () {
-    //     // Define routes here
-    //     // Route::get('index', 'Sale\WastageSaleController@index')->name('wastageSale.index');
-    //     // Route::get('salefinaltripal','Sale\WastageSaleController@index')->name('salefinaltripal.index');
-    //     // Route::get('salefinaltripal/getSaleFinalTripalStockList','Sale\WastageSaleController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
+    Route::prefix('wastageSale')->group(function () {
+        // Define routes here
+        Route::get('index', 'Sale\WastageSaleController@index')->name('wastageSale.index');
 
-    //     // Route::post('salefinaltripal/store','Sale\WastageSaleController@store')->name('salefinaltripal.store');
+        Route::post('wastageSale/store','Sale\WastageSaleController@store')->name('wastageSale.store');
 
-    //     // Route::get('salefinaltripal/addTripal/{id}','Sale\WastageSaleController@addTripal')->name('salefinaltripals.addTripal');
+        Route::get('wastageSale/dataTable', 'Sale\WastageSaleController@dataTable')->name('wastageSale.dataTable');
 
-    //     // Route::get('salefinaltripal/viewTripal/{id}','Sale\WastageSaleController@viewTripal')->name('salefinaltripals.viewTripal');
+        Route::get('add/{id}','Sale\WastageSaleController@add')->name('wastageSale.add');
+        Route::get("viewbill/{bill_id}",'Sale\WastageSaleController@viewbill')->name('wastageSale.viewBill');
 
-    //     // Route::get('salefinaltripal/viewTripalBill/{id}','Sale\WastageSaleController@viewTripalBill')->name('salefinaltripals.viewTripalBill');
+        Route::post('add/storeEntry','Sale\WastageSaleController@storeEntry')->name('wastageSale.storeEntry');
+
+        Route::post('getFilter/wastageData', 'Sale\WastageSaleController@getWastageList')->name('getFilterWastageList');
+        Route::post('finalwastage/storeEntryList', 'Sale\WastageSaleController@storeFinalEntry')->name('wastageSale.storeFinalEntry');
+        Route::get('getWastageQuantity', 'Sale\WastageSaleController@getWastageQuantity')->name('wastageSale.getQuantity');
+
+        Route::get('delete/list', 'Sale\WastageSaleController@deleteEntryList')->name('wastageSale.deleteWastageEntry');
       
 
        
 
-    // });
+    });
 
 
 

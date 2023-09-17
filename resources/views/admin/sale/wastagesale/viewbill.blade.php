@@ -78,8 +78,6 @@
 @section('content')
 <section class="content">
   <div class="container-fluid">
-    <a href="{{route('tripalsale.pdf',$id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a>
-    <a href="{{route('tripalsale.excel',$id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a>
    
     
     <div class="row" id="printTable">
@@ -102,22 +100,22 @@
             <div class="col-sm-6 invoice-col">
               
               <address>
-                <strong> PartyName : {{$findtripal->getParty->name}}</strong><br>
+                <strong> PartyName : {{$find_data->getParty->name}}</strong><br>
               
               </address>
             </div>
             <div class="col-sm-12 col-lg-6  text-right">
-              <b>A/C : {{$findtripal->getParty->name}}</b><br>
+              <b>A/C : {{$find_data->getParty->name}}</b><br>
               <br>
             </div>
             <div class="row col-lg-12" >
                 <div class="col-sm-6 col-lg-6  text-left">
-                  <b>Invoice Number: {{$findtripal->bill_no}}</b><br>
+                  <b>Invoice Number: {{$find_data->bill_no}}</b><br>
                   <br>
                 </div>
 
                 <div class="col-lg-6 text-right">
-                  <b>Gate Pass: {{$findtripal->gp_no}}</b><br>
+                  <b>Gate Pass: {{$find_data->gp_no}}</b><br>
                   <br>
                 </div>
                 
@@ -126,7 +124,7 @@
             <div class="row">
 
                 <div class="col-sm-12 text-right ml-2">
-                  <b>Date: {{$findtripal->bill_date}}</b><br>
+                  <b>Date: {{$find_data->bill_date}}</b><br>
                   <br>
                 </div>
                 
@@ -136,83 +134,27 @@
           </div>
           <div class="row">
             <div class="col-12 table-responsive">
-              <table class="table table-bordered" style="padding: 0 30px; ">
-                
-
-                <tr>
-                    <th width="10px">{{ __('Sr.No') }}</th>
-                    <th width="10px">{{ __('Fabric Name') }}</th>
-                    <th width="10px">{{ __('Roll No') }}</th>
-                    <th width="10px">{{ __('Gross Wght') }}</th>
-                    <th width="10px">{{ __('Net Wght') }}</th>
-                    <th width="10px">{{ __('Meter') }}</th>
-                    <th width="10px">{{ __('Avg Wght') }}</th>
-                    <th width="10px">{{ __('GSM') }}</th>
-                </tr>
-
-                <tbody>
-                    @foreach($salefinaltripals as $key=>$tripal)
-                    <tr>
-                        <td>{{$key+1}}</td>
-                        <td>{{$tripal->name}}</td>
-                        <td>{{$tripal->roll}}</td>
-                        <td>{{$tripal->gross}}</td>
-                        <td>{{$tripal->net}}</td>
-                        <td>{{$tripal->meter}}</td>
-                        <td>{{$tripal->average}}</td>
-                        <td>{{$tripal->gram}}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-             
-             
+              <table class="table table-hover table-striped" id="sameFabricsTable">
+                  <thead class="table-info">
+                      <tr>
+                          <th>{{ __('Sr.No') }}</th>
+                          <th>{{ __('Wastage') }}</th>
+                          <th>{{ __('Quantity') }}</th>
+                      </tr>
+                  </thead>
+                  <tbody id="same-fabrics">
+                      @foreach($nonwovenlist as $key=>$list)
+                      <tr>
+                          <td>{{$key+1}}</td>
+                          <td>{{$list->getWaste->wastage->name}}</td>
+                          <td>{{$list->quantity}}</td>
+                      </tr>
+                      @endforeach
+                  </tbody>
               </table>
           </div>
         </div>
 
-        <h3 class="m-0 text-center mt-4">SUMMARY</h3>
-
-          <div class="row px-4 py-3">
-            <div class="col-12 table-responsive">
-              <table class="table table-bordered">
-                
-
-                <tr>
-                    <th width="10px">{{ __('Sr.No') }}</th>
-                    <th width="10px">{{ __('Fabric Name') }}</th>
-                    <th width="10px">{{ __('Roll No') }}</th>
-                    <th width="10px">{{ __('Gross Wght') }}</th>
-                    <th width="10px">{{ __('Net Wght') }}</th>
-                    <th width="10px">{{ __('Meter') }}</th>
-                </tr>
-
-                <tbody>
-                    @foreach($totaltripals as $key=>$tripal)
-                    <tr>
-                        <td>{{$key+1}}</td>
-                        <td>{{$tripal->name}}</td>
-                        <td>{{$tripal->total_count}}</td>
-                        <td>{{$tripal->total_gross}}</td>
-                        <td>{{$tripal->total_net}}</td>
-                        <td>{{$tripal->total_meter}}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-
-                <tfoot>
-                    <tr>
-                        <td colspan="3">GrandTotal</td>
-                        <td>{{$total_gross}}</td>
-                        <td>{{$total_net}}</td>
-                        <td>{{$total_meter}}</td>
-                    </tr>
-                </tfoot>
-             
-             
-              </table>
-          </div>
-        </div>
-        
         <div class="row no-print">
           <div class="col-12">
             {{-- <span>Bill Printed By : {{$bill_total_student->getUser->name}}</span> --}}
@@ -225,23 +167,9 @@
 </div>
 </section>
 
-
-
-
-
-
-<!-- /.card-body -->
-
-<!-- pagination start -->
-
 @endsection
 @section('extra-script')
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
-
-    
-
-
-
 
 @endsection
