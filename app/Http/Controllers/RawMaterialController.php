@@ -82,7 +82,11 @@ class RawMaterialController extends Controller
             ->addColumn('action', function ($row) {
 
                 if($row->status=="complete"){
-                    return '<span class="badge badge-success">COMPLETED</span>';
+                    // return '<span class="badge badge-success">COMPLETED</span>';
+                    return  '
+                <a class="btn btn-sm btn-primary btnEdit" href="' . route('rawMaterial.report', ["rawMaterial_id" => $row->id]) . '" >
+                 <i class="fas fa-eye fa-lg"></i>
+                </a>';
                 }
                 $actionBtn = '
                 <a class="btn btn-sm btn-primary btnEdit" href="' . route('rawMaterial.edit', ["rawMaterial_id" => $row->id]) . '" >
@@ -92,13 +96,19 @@ class RawMaterialController extends Controller
                 <i class="fas fa-trash fa-lg"></i>
                 </button>
                 ';
-
-
                 return $actionBtn;
-
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+
+
+    public function report($rawMaterial_id){
+         $rawMaterial=RawMaterial::with('rawMaterialsItem.danaName','rawMaterialsItem.danaGroup','supplier:id,name','toGodam:id,name','fromGodam:id,name')
+        ->withSum('rawMaterialsItem', 'quantity')
+         ->find($rawMaterial_id);
+        //   return $rawMaterial;
+         return view('admin.rawMaterial.view',compact('rawMaterial'));
     }
     //godam transfer
     public function godamTransferDetail(){
@@ -364,6 +374,13 @@ class RawMaterialController extends Controller
             'pp_no' => $requestStoreinTypeName === 'import' ? 'required' : '',
         ]);
 
+         $previousEntries = RawMaterial::where('to_godam_id', $request->to_godam_id)
+            ->where('from_godam_id', $request->from_godam_id)
+            ->where('challan_no', $request->challan_no)
+            ->count();
+        if ($previousEntries > 0) {
+                 return back()->withErrors('There are previous entered the same challan no from and to godam.');
+            }
        //return $requestStoreinTypeName;
         if (strtolower($requestStoreinTypeName) === 'godam' && $request->to_godam_id === $request->from_godam_id) {
             return back()->withErrors('From Godam and To Godam cannot be similar');

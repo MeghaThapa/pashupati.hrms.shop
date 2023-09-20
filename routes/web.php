@@ -234,6 +234,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/create', 'RawMaterialController@create')->name('rawMaterial.create');
     Route::post('rawMaterial/store', 'RawMaterialController@store')->name('rawMaterial.store');
     Route::get('rawMaterial/edit/{rawMaterial_id}', 'RawMaterialController@edit')->name('rawMaterial.edit');
+
+    Route::get('rawMaterial/report/{rawMaterial_id}', 'RawMaterialController@report')->name('rawMaterial.report');
+
     Route::post('rawMaterial/update/{rawMaterial_id}', 'RawMaterialController@update')->name('rawMaterial.update');
     Route::get('rawMaterial/createRawMaterialItems/{rawMaterial_id}', 'RawMaterialController@createRawMaterialItems')->name('rawMaterial.createRawMaterialItems');
     Route::get('rawMaterial/dataTable', 'RawMaterialController@dataTable')->name('rawMaterial.dataTable');
@@ -517,7 +520,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("final/submit","submit")->name("submit");
 
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
-        Route::get("viewbill/{bill_id}","viewBill")->name("viewBill"); 
+        Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -533,7 +536,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("created/dana/{entry_id}","createdDana")->name("created.dana");
 
         Route::get("create/{entry_id}","create")->name("create");
-        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");  
+        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");
         Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
 
         //dana consumption
@@ -608,7 +611,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("getFilterFabric");
-    
+
 
 
 
@@ -745,7 +748,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get("salefinaltripal/getTripalSale/Pdf/{id}",'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
     Route::get("salefinaltripal/getTripalSale/excel/{id}",'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
- 
+
 
     //salefinaltripal filter
 
@@ -909,7 +912,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     });
 
 
-     // fabric_group route
+     // _group route
 
     Route::resource('nonwovenfabrics', 'FabricNonWovenController', [
         'names' => [
