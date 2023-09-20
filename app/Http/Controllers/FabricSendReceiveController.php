@@ -1260,9 +1260,11 @@ class FabricSendReceiveController extends Controller
 
                     foreach($lam as $data){
 
-
-
-                        $fabric_id_on_stock = $data->temporarylamfabric->getfabric->getfabric->id;
+                        if(isset($data->temporarylamfabric->getfabric->getfabric->id)){
+                            $fabric_id_on_stock = $data->temporarylamfabric->getfabric->getfabric->id;
+                        }else{
+                            dd($data->temporarylamfabric);
+                        }
 
 
 
@@ -1331,7 +1333,6 @@ class FabricSendReceiveController extends Controller
                             "date_np" => getNepaliDate(date('Y-m-d')),
 
                         ]);
-
 
 
                         $letlaminatedsentfsr = FabricSendAndReceiveLaminatedSent::create([
@@ -1476,7 +1477,7 @@ class FabricSendReceiveController extends Controller
 
                 DB::rollBack();
 
-                dd($e->getMessage());
+                dd($e->getMessage().' '. $e->getLine());
 
                 return response([
 

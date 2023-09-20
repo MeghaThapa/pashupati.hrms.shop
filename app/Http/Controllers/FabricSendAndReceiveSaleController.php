@@ -318,4 +318,40 @@ class FabricSendAndReceiveSaleController extends Controller
             }
         }
     }
+
+    public function report()
+    {
+        return view('admin.sale.fabricsale.report');
+    }
+
+    public function generateReportView(Request $request)
+    {
+        $fabricSalesEntries = FabricSaleEntry::with('getParty', 'fabricSaleItems.fabric')
+            ->where('bill_date', '>=', $request->start_date)
+            ->where('bill_date', '<=', $request->end_date)->where('bill_for', $request->bill_for)
+            ->orderBy('bill_date', 'ASC')
+            ->get();
+
+        $generatedView = view('admin.sale.fabricsale.reportview', compact('fabricSalesEntries'))->render();
+
+        $summaryReport = DB::table('fabric_sale_items')
+            ->select(
+                'fabrics.name as fabric_name',
+                DB::raw('SUM(fabrics.gross_wt) as total_gross_wt'),
+                DB::raw('SUM(fabrics.net_wt) as total_net_wt'),
+                DB::raw('SUM(fabrics.meter) as total_meter'),
+                DB::raw('COUNT(fabrics.name) as fabric_count')
+            )
+            ->join('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
+            ->join('fabric_sale_entry', 'fabric_sale_items.sale_entry_id', '=', 'fabric_sale_entry.id')
+            ->where('fabric_sale_entry.bill_date', '>=', $request->start_date)
+            ->where('fabric_sale_entry.bill_date', '<=', $request->end_date)
+            ->where('fabric_sale_entry.bill_for', '=', $request->bill_for)
+            ->groupBy('fabrics.name')
+            ->get();
+
+        $summaryView = view('admin.sale.fabricsale.summaryview', compact('summaryReport'))->render();
+
+        return response(['status' => true, 'data' => $generatedView, 'summary' => $summaryView]);
+    }
 }

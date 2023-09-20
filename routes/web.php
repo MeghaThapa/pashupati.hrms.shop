@@ -542,6 +542,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
         Route::get("print-view-bill/{bill_id}","printViewBill")->name("print.view.bill");
 
+        Route::get('report','report')->name('report');
+        Route::post('report-view','generateReportView')->name('report.view');
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -862,9 +864,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::get('salefinalnonwoven/delete/list', 'Sale\NonwovenSaleController@deleteEntryList')->name('nonwovenSale.deleteFinalSaleEntry');
 
-      
 
-       
+
+
 
     });
 
@@ -886,9 +888,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get('getWastageQuantity', 'Sale\WastageSaleController@getWastageQuantity')->name('wastageSale.getQuantity');
 
         Route::get('delete/list', 'Sale\WastageSaleController@deleteEntryList')->name('wastageSale.deleteWastageEntry');
-      
 
-       
+
+
 
     });
 
