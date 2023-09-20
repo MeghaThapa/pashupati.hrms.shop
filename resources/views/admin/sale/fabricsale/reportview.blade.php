@@ -40,46 +40,84 @@
             $meter = 0;
             $total_avg = 0;
             $total_gram_wt = 0;
+            $currentFabricName = null;
+
+            $billDateTotalGrossWt = 0;
+            $billDateTotalNetWt = 0;
+            $billDateTotalMeter = 0;
+
 
         @endphp
 
         @foreach($saleEntry->fabricSaleItems as $fabricSaleItem)
-        <tr>
-            <td> {{ ++$i }} </td>
-            <td>{{ $fabricSaleItem->fabric->roll_no }}</td>
-            <td>{{ $fabricSaleItem->fabric->name }}</td>
-            <td>{{ $fabricSaleItem->fabric->gross_wt }}</td>
-            <td>{{ $fabricSaleItem->fabric->net_wt }}</td>
-            <td>{{ $fabricSaleItem->fabric->meter }}</td>
-            <td>{{ $fabricSaleItem->fabric->average_wt }}</td>
-            <td>{{ $fabricSaleItem->fabric->gram_wt }}</td>
-        </tr>
+            @if($fabricSaleItem->fabric->name != $currentFabricName)
+                <!-- Display total for the previous fabric -->
+                @if($currentFabricName != null)
+                    <tr>
+                        <td colspan="3">Total</td>
+                        <td>{{ $gross_wt }}</td>
+                        <td>{{ $net_wt }}</td>
+                        <td>{{ $meter }}</td>
+                        <td> @if($i != 0) {{ $total_avg/$i }} @endif </td>
+                        <td> @if($i != 0) {{ $total_gram_wt/$i }} @endif </td>
+                    </tr>
+                @endif
 
-        @php
-            $gross_wt +=  $fabricSaleItem->fabric->gross_wt;
-            $net_wt +=  $fabricSaleItem->fabric->net_wt;
-            $meter +=  $fabricSaleItem->fabric->meter;
-            $total_avg += $fabricSaleItem->fabric->average_wt;
-            $total_gram_wt += $fabricSaleItem->fabric->gram_wt;
-        @endphp
+                <!-- Reset variables and start new fabric -->
+                @php
+                    $i = 0;
+                    $gross_wt = 0;
+                    $net_wt = 0;
+                    $meter = 0;
+                    $total_avg = 0;
+                    $total_gram_wt = 0;
+                    $currentFabricName = $fabricSaleItem->fabric->name;
+                @endphp
+            @endif
 
+            <!-- Display individual fabric item -->
+            <tr>
+                <td> {{ ++$i }} </td>
+                <td>{{ $fabricSaleItem->fabric->roll_no }}</td>
+                <td>{{ $fabricSaleItem->fabric->name }}</td>
+                <td>{{ $fabricSaleItem->fabric->gross_wt }}</td>
+                <td>{{ $fabricSaleItem->fabric->net_wt }}</td>
+                <td>{{ $fabricSaleItem->fabric->meter }}</td>
+                <td>{{ $fabricSaleItem->fabric->average_wt }}</td>
+                <td>{{ $fabricSaleItem->fabric->gram_wt }}</td>
+            </tr>
+
+            <!-- Update totals for the current fabric -->
+            @php
+                $gross_wt += (float)$fabricSaleItem->fabric->gross_wt;
+                $net_wt += (float)$fabricSaleItem->fabric->net_wt;
+                $meter += (float)$fabricSaleItem->fabric->meter;
+                $total_avg += (float)$fabricSaleItem->fabric->average_wt;
+                $total_gram_wt += (float)$fabricSaleItem->fabric->gram_wt;
+                $billDateTotalGrossWt += (float)$fabricSaleItem->fabric->gross_wt;
+                $billDateTotalNetWt += (float)$fabricSaleItem->fabric->net_wt;
+                $billDateTotalMeter += (float)$fabricSaleItem->fabric->meter;
+            @endphp
         @endforeach
 
+        <!-- Display total for the last fabric -->
+        @if($currentFabricName != null)
+            <tr>
+                <td colspan="3">Total</td>
+                <td>{{ $gross_wt }}</td>
+                <td>{{ $net_wt }}</td>
+                <td>{{ $meter }}</td>
+                <td> @if($i != 0) {{ $total_avg/$i }} @endif </td>
+                <td> @if($i != 0) {{ $total_gram_wt/$i }} @endif </td>
+            </tr>
+        @endif
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="3">Total</td>
-            <td>{{ $gross_wt }}</td>
-            <td>{{ $net_wt }}</td>
-            <td>{{ $meter }}</td>
-            <td> {{ $total_avg/$i }} </td>
-            <td> {{ $total_gram_wt/$i }} </td>
-        </tr>
-        <tr>
             <td colspan="3">Grand Total For no of Rolls: {{ $i }}</td>
-            <td>{{ $gross_wt }}</td>
-            <td>{{ $net_wt }}</td>
-            <td>{{ $meter }}</td>
+            <td>{{ $billDateTotalGrossWt }}</td>
+            <td>{{ $billDateTotalNetWt }}</td>
+            <td>{{ $billDateTotalMeter }}</td>
         </tr>
     </tfoot>
 </table>
