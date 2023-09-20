@@ -244,6 +244,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/create', 'RawMaterialController@create')->name('rawMaterial.create');
     Route::post('rawMaterial/store', 'RawMaterialController@store')->name('rawMaterial.store');
     Route::get('rawMaterial/edit/{rawMaterial_id}', 'RawMaterialController@edit')->name('rawMaterial.edit');
+
+    Route::get('rawMaterial/report/{rawMaterial_id}', 'RawMaterialController@report')->name('rawMaterial.report');
+
     Route::post('rawMaterial/update/{rawMaterial_id}', 'RawMaterialController@update')->name('rawMaterial.update');
     Route::get('rawMaterial/createRawMaterialItems/{rawMaterial_id}', 'RawMaterialController@createRawMaterialItems')->name('rawMaterial.createRawMaterialItems');
     Route::get('rawMaterial/dataTable', 'RawMaterialController@dataTable')->name('rawMaterial.dataTable');
@@ -538,6 +541,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
         Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
         Route::get("print-view-bill/{bill_id}","printViewBill")->name("print.view.bill");
+
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -1032,7 +1036,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     });
 
 
-     // fabric_group route
+     // _group route
 
     Route::resource('nonwovenfabrics', 'FabricNonWovenController', [
         'names' => [
