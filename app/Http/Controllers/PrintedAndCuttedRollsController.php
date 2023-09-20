@@ -149,7 +149,7 @@ class PrintedAndCuttedRollsController extends Controller
                 $query->select('id', 'name');
             }])
 
-            ->select('fabric_id as fabric_id', 'net_wt', 'gross_wt', 'average')
+            ->select('fabric_id as fabric_id', 'net_wt', 'gross_wt', 'average','meter')
 
             ->first();
     }
