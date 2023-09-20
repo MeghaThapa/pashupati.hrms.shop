@@ -16,6 +16,11 @@ class DanaName extends Model
     ];
 
     public function danagroup(){
-        return $this->belongsTo(DanaGroup::class);
+        return $this->belongsTo(DanaGroup::class,'dana_group_id');
+    }
+
+    public function rawMaterialStock()
+    {
+        return $this->hasOne(RawMaterialStock::class,'dana_name_id');
     }
 }

@@ -60,7 +60,7 @@
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Receipt No') }}</th>
                             <th>{{ __('Supplier Name') }}</th>
-                            <th>{{ __('PP No') }}</th>
+                            <th>{{ __('PP | Challan | Bill No') }}</th>
                             <th>{{ __('Storein Type') }}</th>
                             <th>{{ __('From Godam') }}</th>
                             <th>{{ __('To Godam') }}</th>

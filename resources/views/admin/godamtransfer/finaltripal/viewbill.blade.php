@@ -161,7 +161,7 @@
                         <td>{{$tripal->net}}</td>
                         <td>{{$tripal->meter}}</td>
                         <td>{{$tripal->average}}</td>
-                        <td>{{$tripal->gram}}</td>
+                        <td>{{$tripal->gsm}}</td>
                     </tr>
                     @endforeach
                 </tbody>

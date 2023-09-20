@@ -15,4 +15,13 @@ class BagFabricReceiveItemSent extends Model
     public function fabric(){
         return $this->belongsTo(Fabric::class);
     }
+
+     public function getfabric(){
+        return $this->belongsTo(Fabric::class);
+    }
+
+    public function getBagBill(){
+        
+        return $this->belongsTo(FabricTransferEntryForBag::class,'fabric_bag_entry_id','id');
+    }
 }

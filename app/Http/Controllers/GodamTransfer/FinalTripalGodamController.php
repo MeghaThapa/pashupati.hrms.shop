@@ -85,9 +85,10 @@ class FinalTripalGodamController extends Controller
     public function getTransferFilter(Request $request){
         if($request->ajax()){
             $stock_id = $request->stock_id;
-            $fabric_name = FinalTripalStock::where("id",$stock_id)->value("name");
-            $fabrics = FinalTripalStock::where("name",$fabric_name)->get();
-            // dd($fabrics->count());
+            $find_bill = TripalGodam::find($request->bill_id);
+            // dd($find_bill);
+            $fabric_name = FinalTripalStock::where('department_id',$find_bill->fromgodam_id)->where("id",$stock_id)->value("name");
+            $fabrics = FinalTripalStock::where('department_id',$find_bill->fromgodam_id)->where("name",$fabric_name)->get();
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
@@ -108,7 +109,8 @@ class FinalTripalGodamController extends Controller
     public function transferFabric($tripalgodam_id)
     {
         $find_data = TripalGodam::find($tripalgodam_id);
-        $stocks = FinalTripalStock::where('department_id',$find_data->fromgodam_id)->get();
+        $stocks = FinalTripalStock::where('department_id',$find_data->fromgodam_id)->get()->unique('name')->values()->all();
+        // dd('lol');
        
         return view('admin.godamtransfer.finaltripal.transferFabric',compact('stocks','tripalgodam_id','find_data'));
     }
@@ -152,7 +154,6 @@ class FinalTripalGodamController extends Controller
                     'name' => $find_name->name,
                     'slug' => $find_name->slug,
                     'roll' => $find_name->roll_no,
-                    'gram' => $find_name->gram,
                     'gross' => $find_name->gross_wt,
                     'net' => $find_name->net_wt,
                     'meter' => $find_name->meter,

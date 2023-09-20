@@ -37,27 +37,27 @@ class BagBrandController extends Controller
     {
         $request->validate([
             "name" => "required|unique:bag_brands,name",
-            "group_id"=>"required",
+            "group_id" => "required",
             "status" => "required"
-            ]);
-        $bagBrand=new BagBrand();
-        $bagBrand->name=$request->name;
+        ]);
+        $bagBrand = new BagBrand();
+        $bagBrand->name = $request->name;
         $bagBrand->group_id = $request->group_id;
         $bagBrand->status = $request->status;
         $bagBrand->save();
-         return response()->json([
-                'message' =>'Bag Brand Created Successfully',
-                'bagBrand' => $bagBrand,
-            ],201);
+        return response()->json([
+            'message' => 'Bag Brand Created Successfully',
+            'bagBrand' => $bagBrand,
+        ], 201);
     }
 
-    public function getBagBrandFromGroup($group_id){
-        $bagBrands=BagBrand::where('group_id',$group_id)->get(['id','name']);
-       // return $bagBrands;
+    public function getBagBrandFromGroup($group_id)
+    {
+        $bagBrands = BagBrand::where('group_id', $group_id)->get(['id', 'name']);
+        // return $bagBrands;
         return response()->json([
-
-                'bagBrands' => $bagBrands,
-            ],201);
+            'bagBrands' => $bagBrands,
+        ], 201);
     }
     public function show(BagBrand $bagBrand)
     {

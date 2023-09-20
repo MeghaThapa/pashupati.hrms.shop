@@ -10,8 +10,13 @@ class FabricGodamList extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bill_no', 'bill_date', 'fabricgodam_id','fromgodam_id','togodam_id','name','slug','roll','net_wt','stock_id'
+        'bill_no', 'bill_date', 'fabricgodam_id','fromgodam_id','togodam_id','name','slug','roll','net_wt','stock_id','fabric_id'
     ];
+
+    public function fabric()
+    {
+        return $this->belongsTo(Fabric::class,'roll','roll_no');
+    }
 
     public function getFromGodam()
     {
@@ -21,5 +26,10 @@ class FabricGodamList extends Model
     public function getToGodam()
     {
         return $this->belongsTo('App\Models\Godam','togodam_id');
+    }
+
+    public function fabricStock()
+    {
+        return $this->belongsTo(FabricStock::class,'stock_id');
     }
 }

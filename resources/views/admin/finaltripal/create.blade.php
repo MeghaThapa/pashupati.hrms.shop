@@ -252,11 +252,11 @@
                             <th>{{ __('Sr.No') }}</th>
                             <th>{{ __('Fabric Name') }}</th>
                             <th>{{ __('Roll No') }}</th>
-                            <th>{{ __('N.W') }}</th>
                             <th>{{ __('G.W') }}</th>
+                            <th>{{ __('N.W') }}</th>
                             <th>{{ __('Meter') }}</th>
                             <th>{{ __('Avg') }}</th>
-                            <th>{{ __('Gram') }}</th>
+                            
                         </tr>
                     </thead>
 
@@ -404,11 +404,11 @@
                             <th>{{ __('Sr.No') }}</th>
                             <th>{{ __('Fabric Name') }}</th>
                             <th>{{ __('Roll No') }}</th>
-                            <th>{{ __('N.W') }}</th>
                             <th>{{ __('G.W') }}</th>
+                            <th>{{ __('N.W') }}</th>
                             <th>{{ __('Meter') }}</th>
                             <th>{{ __('Avg') }}</th>
-                            <th>{{ __('Gram') }}</th>
+                            <th>{{ __('Gsm') }}</th>
                         </tr>
                     </thead>
 
@@ -1436,11 +1436,11 @@
             tr.append(`<td>#</td>`);
             tr.append(`<td>${element.name}</td>`);
             tr.append(`<td>${element.roll_no}</td>`);
-            tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.gross_wt}</td>`);
+            tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
             tr.append(`<td>${element.average_wt}</td>`);
-            tr.append(`<td>${element.gram}</td>`);
+            
         });
 
         response.finaltripal.forEach(element => {
@@ -1448,11 +1448,11 @@
             tr.append(`<td>#</td>`);
             tr.append(`<td>${element.name}</td>`);
             tr.append(`<td>${element.roll_no}</td>`);
-            tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.gross_wt}</td>`);
+            tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
             tr.append(`<td>${element.average_wt}</td>`);
-            tr.append(`<td>${element.gram}</td>`);
+            tr.append(`<td>${element.gsm}</td>`);
         });
 
         weightdiffs(response);
@@ -1573,12 +1573,12 @@
             let consumption = $("#add_dana_consumption_quantity").val();
             let fabric_waste = $("#fabric_waste").val();
             let total_waste = $('#total_waste').val();
-            let selectedDanaID = $("#selectedDanaID").val();
+            let bill_id = $("#bill_id").val();
             let polo_waste = $("#polo_waste").val();
             let godam_id = $("#toGodam").val();
             let bill =  $("#bill").val();
             // console.log(godam_id);
-            // debugger;
+            debugger;
 
             trimmedConsumption = consumption;
             trimmedFabricWaste = fabric_waste.trim();
@@ -1588,29 +1588,28 @@
             if(trimmedConsumption == '' || trimmedFabricWaste == ''){
                 alert('Waste and Consumption cannot be null');
             }else{
-            // subtractformautolad(danaNameId,consumption);
+            
                 $.ajax({
                     url : "{{ route('finaltripal.wastage.submit') }}",
                     method: "post",
                     data:{
                         "_token" : $('meta[name="csrf-token"]').attr('content'),
-                        "danaNameID" : danaNameId,
                         "consumption" : trimmedConsumption,
                         "fabric_waste" : trimmedFabricWaste,
                         "total_waste" : trimmedTotalWaste,
-                        "selectedDanaID" : selectedDanaID,
+                        "bill_id" : bill_id,
                         "bill" : bill
                     },
                     beforeSend:function(){
                         console.log("Before Send");
                     },
                     success:function(response){
-                        console.log(response);
-                        if(response == '200'){
-                            location.reload();
-                        }else{
+                        location.href = '{{route('finaltripal.index')}}';
+                        // if(response == '200'){
+                        //     location.reload();
+                        // }else{
 
-                        }
+                        // }
                     },
                     error:function(error){
                         console.log(error);
@@ -1618,24 +1617,6 @@
                 }); 
             }
         });
-
-    // function subtractformautolad(danaNameId,consumption){
-    //     $.ajax({
-    //         url:"{{ route('subtract.dana.from.autoloder') }}",
-    //         method: "post",
-    //         data:{
-    //             '_token' : $('meta[name="csrf-token"]').attr('content'),
-    //             "danaId" : danaNameId,
-    //             "quantity" : consumption
-    //         },
-    //         success:function(response){
-    //             console.log(response);
-    //         },
-    //         error:function(error){
-    //             console.log(error);
-    //         }
-    //     });
-    // }
 
     /************************** Check weights matches for consumption and lamination and final submit   **********************************/
 </script>

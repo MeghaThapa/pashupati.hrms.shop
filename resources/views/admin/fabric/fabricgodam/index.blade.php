@@ -49,6 +49,9 @@
                         <a href="{{ route('fabricgodams.create') }}" class="btn btn-primary">
                             {{ __('Add FabricGodam') }} <i class="fas fa-plus-circle"></i>
                         </a>
+                        <a href="{{ route('fabricGodam.test') }}" class="btn btn-primary">
+                            {{ __('Test') }} <i class="fas fa-plus-circle"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -59,6 +62,8 @@
                             <th>@lang('#')</th>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Receipt No') }}</th>
+                            <th>{{ __('From Godam') }}</th>
+                            <th>{{ __('To Godam') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -87,6 +92,12 @@
                             },
                             {
                                 data: 'bill_no'
+                            },
+                            {
+                                data: 'fromgodam'
+                            },
+                            {
+                                data: 'togodam'
                             },
                           
 

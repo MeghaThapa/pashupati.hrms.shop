@@ -88,6 +88,8 @@
                 <input type="text" class="form-control" id="bill_number" name="bill_number" value="{{$find_data->bill_no}}" 
                     readonly /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
                     <input type="hidden" name="fabricgodam_id" value="{{$fabricgodam_id}}" id="fabricgodam_id">
+                    <input type="hidden" name="fromgodam_id" value="{{$find_data->fromgodam_id}}" id="fromgodam_id">
+                    <input type="hidden" name="togodam_id" value="{{$find_data->togodam_id}}" id="togodam_id">
             </div>
 
             <div class="col-md-4 form-group">
@@ -111,40 +113,24 @@
             </div>
             <div class="col-md-3 form-group">
                 <label for="fromgodam">{{ __('From Godam') }}<span class="required-field">*</span></label>
-                <select class="advance-select-box form-control @error('fromgodam') is-invalid @enderror" id="fromgodam_id" name="fromgodam_id"  required>
-                    <option value="" selected disabled>{{ __('Select a fromgodam') }}</option>
-                    @foreach($fromgodams as $key => $fromgodam)
-                        <option value="{{ $fromgodam->id }}">{{ $fromgodam->name }}</option>
-                    @endforeach
-                </select>
-                @error('fromgodam_id')
-                <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                @enderror
+                <input type="text" class="form-control" id="remarks" name="remarks"
+                    value="{{$find_data->getFromGodam->name}}" readonly/> 
+              
             </div>
             <div class="col-md-3 form-group">
                 <label for="togodam">{{ __('To Godam') }}<span class="required-field">*</span></label>
-                <select class="advance-select-box form-control @error('togodam') is-invalid @enderror" id="togodam_id" name="togodam_id"  required>
-                    <option value="" selected disabled>{{ __('Select a togodam') }}</option>
-                    @foreach($togodams as $key => $togodam)
-                        <option value="{{ $togodam->id }}">{{ $togodam->name }}</option>
-                    @endforeach
-                </select>
-                @error('togodam_id')
-                <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                @enderror
+                
+                <input type="text" class="form-control" id="remarks" name="remarks"
+                    value="{{$find_data->getToGodam->name}}" readonly/> 
             </div>
 
             <div class="col-md-3 form-group">
                 <label for="fabricstock">{{ __('FabricStock') }}<span class="required-field">*</span></label>
                 <select class="advance-select-box form-control @error('fabricstock') is-invalid @enderror" id="fabricstock_id" name="fabricstock_id"  required>
-                  {{--   <option value="" selected disabled>{{ __('Select a fabricstock') }}</option>
+                    <option value="" selected disabled>{{ __('Select a fabricstock') }}</option>
                     @foreach($fabricstocks as $key => $fabricstock)
                         <option value="{{ $fabricstock->id }}">{{ $fabricstock->name }}</option>
-                    @endforeach --}}
+                    @endforeach
                 </select>
                 @error('togodam_id')
                 <span class="invalid-feedback" role="alert">
@@ -203,12 +189,9 @@
 
 <div class="card-footer">
     {{-- <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly> --}}
-    @if($list >= 1)
-    <button type="submit" class="btn btn-info" id="finalUpdate">Update</button>
-    @else
-    <button type="submit" class="btn btn-info" disabled id="finalUpdate">Update</button>
 
-    @endif
+    <button type="submit" class="btn btn-info" id="finalUpdate">Update</button>
+   
 </div>
 
 
@@ -245,7 +228,7 @@
                 fabricgodam_id: fabricgodam_id,
             },
             success: function(response){
-                location.reload();
+                location.href = "{{route('fabricgodams.index')}}";
               
             },
             error: function(event){
@@ -255,9 +238,15 @@
         });
 
         function comparelamandunlam(){
+            var fabricgodam_id = $('#fabricgodam_id').val(),
+            token = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
                 url : "{{ route('fabricgodam.getFabricGodamList') }}",
                 method:"get",
+                data:{
+                    _token: token,
+                    fabricgodam_id: fabricgodam_id,
+                },
                 success:function(response){
                     putonlamtbody(response);
                 },

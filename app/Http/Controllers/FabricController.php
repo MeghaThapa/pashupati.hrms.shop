@@ -2,82 +2,213 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Fabric;
-use App\Models\FabricGroup;
+use Carbon\Carbon;
 use App\Models\Godam;
 use App\Models\Shift;
-use App\Models\FabricDetail;
-use App\Models\TapeEntryStockModel;
+use App\Models\Fabric;
+use Carbon\CarbonPeriod;
+use App\Models\FabricSale;
+use App\Models\FabricEntry;
+use App\Models\FabricGodam;
+use App\Models\FabricGroup;
 use App\Models\FabricStock;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Models\FabricDetail;
+use Illuminate\Http\Request;
 use App\Imports\FabricImport;
+use App\Models\FabricGodamList;
+use App\Models\FabricSaleItems;
+use Yajra\DataTables\DataTables;
+use App\Services\NepaliConverter;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\TapeEntryStockModel;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\BagFabricReceiveItemSent;
+use App\Models\FabricGodamTransfer;
+use App\Models\FabricSendAndReceiveLaminatedSent;
+use App\Models\Singlesidelaminatedfabric;
+use App\Models\Unlaminatedfabrictripal;
 
 class FabricController extends Controller
 {
+    protected $neDate;
+
+    public function __construct(NepaliConverter $neDate)
+    {
+        $this->neDate = $neDate;
+    }
+
+    public function fixData()
+    {
+
+        $fabricStock = FabricStock::where('is_laminated',"true")->where('godam_id',1)->pluck('roll_no')->toArray();
+
+        $salesFabricIds = FabricSale::pluck('fabric_id')->toArray();
+
+        $fabricsFromSale = Fabric::whereIn('id',$salesFabricIds)->where('is_laminated','true')->pluck('roll_no')->toArray();
+
+        $result=array_intersect($fabricStock,$fabricsFromSale);
+        dd($result);
+        // $fabricGodamTransfers = FabricGodamTransfer::where('fromgodam_id',3)->where('togodam_id',1)->pluck('roll')->toArray();
+
+
+
+        // fixed fabric stock to fabric bag
+        $fabricStock = FabricStock::where('is_laminated',"false")->pluck('roll_no')->toArray();
+        $fabricToBags = BagFabricReceiveItemSent::pluck('roll_no')->toArray();
+        $result=array_intersect($fabricStock,$fabricToBags);
+        dd($result);
+    }
+
+    public function fixDataold2()
+    {
+        $soldFabricIds = FabricSaleItems::pluck('fabric_id')->toArray();
+
+        $soldFabricRolls = Fabric::whereIn('id',$soldFabricIds)->pluck('roll_no')->toArray();
+
+        $updatedItems = array_map(function ($soldFabricRolls) {
+            // Check if the last character of the item is 'A', 'B', 'C', or 'D'
+            if (in_array(substr($soldFabricRolls, -2), ['-A', '-B', '-C', '-D'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -2);
+            }
+
+            if (in_array(substr($soldFabricRolls, -1), ['A', 'B', 'C', 'D'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -1);
+            }
+
+            // If neither condition is met, return the original item
+            return $soldFabricRolls;
+        }, $soldFabricRolls);
+
+        $unlaminatedFabrics = FabricStock::where('godam_id',1)->where('is_laminated','false')->pluck('roll_no')->toArray();
+
+        $updatedUnLaminatedFabrics = array_map(function ($unlaminatedFabrics) {
+            // Check if the item starts with '01-'
+            if (strpos($unlaminatedFabrics, '01-') === 0) {
+                // Remove '01-' from the beginning and store the result
+                $unlaminatedFabrics = substr($unlaminatedFabrics, 3);
+            }
+
+            // If neither condition is met, return the original item
+            return $unlaminatedFabrics;
+        }, $unlaminatedFabrics);
+
+        $result=array_intersect($updatedUnLaminatedFabrics,$updatedItems);
+
+        dd($result);
+
+        $result = array_map(function ($item) {
+            return "01-$item";
+        }, $result);
+
+        // $laminatedFabricsFrom = FabricSendAndReceiveLaminatedSent::with('fsrentry')->whereNull('fabid')->pluck('roll_no')->toArray();
+
+        // $soldFabrics = FabricSale::with('getfabric','getsaleentry')->get();
+        // return view('admin.fabric.salepage',compact('soldFabrics'));
+    }
+
+
+
+    public function fixDataOld(){
+
+        $laminatedFabricsFrom = FabricSendAndReceiveLaminatedSent::with('fsrentry')->whereNull('fabid')->get();
+
+        return view('admin.fabric.fixpage',compact('laminatedFabricsFrom'));
+
+        dd(count($laminatedFabricsFrom));
+
+
+
+        $salesFabricIds = FabricSale::pluck('fabric_id')->toArray();
+
+        $fabricsFromSale = Fabric::whereIn('id',$salesFabricIds)->pluck('roll_no')->toArray();
+
+        $fabricStocks = Fabric::where('godam_id',1)->pluck('roll_no')->toArray();
+
+        $result=array_intersect($fabricStocks,$fabricsFromSale);
+
+
+
+        $fabricstocks = DB::table('fabric_stock')->whereIn('roll_no',$result)->get();
+
+        dd($fabricstocks);
+
+        dd('task done');
+
+
+        $laminatedFabricsFrom = FabricSendAndReceiveLaminatedSent::whereNotNull('fabid')->pluck('fabid');
+
+        dd(count($laminatedFabricsFrom));
+
+        $unlaminatedfabrics = Fabric::whereIn('id',$laminatedFabricsFrom)->where('godam_id',1)->pluck('roll_no')->toArray();
+        // dd($unlaminatedfabrics);
+
+
+        // $laminatedFabrics = FabricSendAndReceiveLaminatedSent::pluck('roll_no')->toArray();
+        $result=array_intersect($fabricStocks,$unlaminatedfabrics);
+        dd($result);
+        $fabricStocks = FabricStock::where('godam_id',1)->where('is_laminated','false')->whereIn('roll_no',$result)->delete();
+        dd('done');
+    }
+
     public function index(Request $request)
     {
-        // $query = Fabric::query();
-        // if (request('term')) {
-        //     $term = request('term');
-        //     $query->where('name', 'Like', '%' . $term . '%');
-        // }
-        // $fabrics = $query->orderBy('id', 'DESC')->paginate(15);
+        if ($request->ajax()) {
+            $query = FabricDetail::with('getGodam');
+
+            if ($request->start_date && $request->end_date) {
+                $start_date = $request->input('start_date');
+                $end_date = $request->input('end_date');
+                $query->whereBetween('bill_date', [$start_date, $end_date]);
+            }
+
+            if ($request->godam_id) {
+                $query->where('godam_id', (int)$request->godam_id);
+            }
+
+            $totalNetweightSum = $query->sum('total_netweight');
+
+            $data = DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('godam', function ($row) {
+                    return $row->getGodam->name;
+                })
+
+                ->toArray();
+
+            $data['total_netweight_sum'] = $totalNetweightSum;
+
+            return response()->json($data);
+        }
 
         $fabrics = FabricDetail::paginate(15);
-
         $departments = Godam::get();
         $shifts = Shift::get();
-$fabric_netweight = 0;
-        // $getFabricLastId = Fabric::latest()->first();
-
-
-        // // dd($getFabricLastId);
-
-        // if($getFabricLastId != null)
-        // {
-        //  $fabric_netweight = Fabric::where('bill_no',$getFabricLastId->bill_no)->sum('net_wt');
-
-        // }
-
-        // else{
-        //
-        // }
-
-
-        return view('admin.fabric.index', compact('fabrics','departments','shifts','fabric_netweight'));
+        $fabric_netweight = 0;
+        return view('admin.fabric.index', compact('fabrics', 'departments', 'shifts', 'fabric_netweight'));
     }
 
-    public function test(){
-        $data = FabricStock::get();
-        // dd($data);
-        foreach ($data as $value) 
-            {
-                $group = FabricGroup::find($value->fabricgroup_id);
-                $final = $value->name .'('. $group->name.')';
-                // dd($final);
-                $sa = FabricStock::where('id',$value->id)->update(['name' => $final]); 
-
-                // dd($value,$group);
-            }
-        
-
+    public function test()
+    {
+        $data = Fabric::get();
+        foreach ($data as $value) {
+            $group = FabricGroup::find($value->fabricgroup_id);
+            $final = $value->name . '(' . $group->name . ')';
+            $sa = Fabric::where('id', $value->id)->update(['name' => $final]);
+        }
     }
 
-
-     public function create()
+    public function create()
     {
         $fabricgroups = FabricGroup::get();
-         $godams = Godam::get();
-
-        return view('admin.fabric.create',compact('fabricgroups','godams'));
+        $godams = Godam::get();
+        return view('admin.fabric.create', compact('fabricgroups', 'godams'));
     }
 
     public function store(Request $request)
     {
-        //validate form
         $validator = $request->validate([
             'name' => 'required|string|max:60|unique:fabrics',
             'fabricgroup_id' => 'required|integer',
@@ -86,7 +217,6 @@ $fabric_netweight = 0;
             // 'gross_wt' => 'required|integer',
             // 'net_wt' => 'required|integer',
         ]);
-
 
         // store subcategory
         $fabric = Fabric::create([
@@ -105,17 +235,62 @@ $fabric_netweight = 0;
         return redirect()->back()->withSuccess('Sub category created successfully!');
     }
 
-    public function import(Request $request){
-        // dd($request);
+    public function import(Request $request)
+    {
         $request->validate([
             "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
         ]);
-        $file = $request->file('file');
-        $import = Excel::import(new FabricImport($request->godam_id,$request->date_np), $file);
-        if($import){
-            return back()->with(["message"=>"Data imported successfully!"]);
-        }else{
-            return "Unsuccessful";
+        try {
+
+            DB::beginTransaction();
+
+            if ($request->file('file')) {
+                $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+                $request->file('file')->storeAs('uploads/fabric/import', $fileName, 'public');
+                $filePath =  '/storage/uploads/fabric/import/' . $fileName;
+            } else {
+                $filePath = null;
+            }
+
+            FabricEntry::create([
+                'entry_date' => $request->date_np,
+                'godam_id' => $request->godam_id,
+                'file_path' => $filePath,
+            ]);
+
+            $file = $request->file('file');
+            $import = Excel::import(new FabricImport($request->godam_id, $request->date_np), $file);
+
+
+            DB::commit();
+            return back()->with(["message" => "Data imported successfully!"]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+    }
+
+    public function entryReport()
+    {
+        return view('admin.fabric.report');
+    }
+
+    public function entryReportTable(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = FabricEntry::with('godam');
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->editColumn('file_path', function ($row) {
+                    $fileName = asset($row->file_path);
+                    return '<a href="' . asset($fileName) . '"> Download/View File</a>';
+                })
+                ->addColumn('godam', function ($row) {
+                    return $row->godam->name;
+                })
+                ->rawColumns(['file_path'])
+                ->make();
         }
     }
 
@@ -124,7 +299,7 @@ $fabric_netweight = 0;
         $fabrics = Fabric::where('slug', $slug)->first();
         $fabricgroups = FabricGroup::get();
         $godams = Godam::get();
-        return view('admin.fabric.edit', compact('fabrics','fabricgroups','godams'));
+        return view('admin.fabric.edit', compact('fabrics', 'fabricgroups', 'godams'));
     }
 
     /**
@@ -204,7 +379,6 @@ $fabric_netweight = 0;
 
     public function fabricDetail(Request $request)
     {
-        // dd($request);
         $godam_id = $request->to_godam_id;
         $planttype_id = $request->planttype_id;
         $plantname_id = $request->plantname_id;
@@ -227,12 +401,12 @@ $fabric_netweight = 0;
         $getLastId = Fabric::latest()->first();
         $bill_no = $getLastId->bill_no;
 
-        $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$godam_id)
-                                              // ->where('plantType_id',$planttype_id)
-                                              // ->where('plantName_id',$plantname_id)
-                                              // ->where('shift_id',$shift_id)
-                                              ->value('id');
-                                              // dd($gettapeQuantity);
+        $gettapeQuantity = TapeEntryStockModel::where('toGodam_id', $godam_id)
+            // ->where('plantType_id',$planttype_id)
+            // ->where('plantName_id',$plantname_id)
+            // ->where('shift_id',$shift_id)
+            ->value('id');
+        // dd($gettapeQuantity);
 
         $findTape = TapeEntryStockModel::find($gettapeQuantity);
         dd($findTape->tape_qty_in_kg);
@@ -241,14 +415,14 @@ $fabric_netweight = 0;
         $finalWastage = $totalwastage + $totalnetWeight;
 
         // dd($finalWastage,$findTape->tape_qty_in_kg);
-        if($totalnetWeight < $findTape->tape_qty_in_kg){
+        if ($totalnetWeight < $findTape->tape_qty_in_kg) {
 
             $final = $findTape->tape_qty_in_kg - $finalWastage;
             $findTape->tape_qty_in_kg = $final;
             $findTape->update();
 
-            $countData = FabricDetail::where('bill_number',$bill_no)->count();
-            if($countData != 1){
+            $countData = FabricDetail::where('bill_number', $bill_no)->count();
+            if ($countData != 1) {
                 // store subcategory
                 $fabric = FabricDetail::create([
                     'bill_number' => $bill_no,
@@ -264,9 +438,7 @@ $fabric_netweight = 0;
                     'run_loom' => $request['run_loom'],
                     'wrapping' => $request['wrapping'],
                 ]);
-
             }
-
         }
 
         return redirect()->back()->withSuccess('Sub category created successfully!');
@@ -275,34 +447,27 @@ $fabric_netweight = 0;
     public function fabricDetailDestroy($fabricDetail_id)
     {
 
-        try{
+        try {
             DB::beginTransaction();
-
-           
-
-            // dd('ll');
-            // dd($fabricDetail_id);
             $id = $fabricDetail_id;
             $find_data = FabricDetail::find($id);
 
 
             // dd($find_data->total_netweight,$find_data);
-            $getfabricstock = FabricStock::where('bill_no',$find_data->bill_number)->get();
+            $getfabricstock = FabricStock::where('bill_no', $find_data->bill_number)->get();
 
-            $getfabric = Fabric::where('bill_no',$find_data->bill_number)->get();
+            $getfabric = Fabric::where('bill_no', $find_data->bill_number)->get();
 
-            foreach($getfabric as $stock){
+            foreach ($getfabric as $stock) {
                 $stock->delete();
             }
 
-            foreach($getfabricstock as $stock){
+            foreach ($getfabricstock as $stock) {
                 $stock->delete();
             }
 
-              
-
-            $gettapeQuantity = TapeEntryStockModel::where('toGodam_id',$find_data->godam_id)
-                                                  ->value('id');
+            $gettapeQuantity = TapeEntryStockModel::where('toGodam_id', $find_data->godam_id)
+                ->value('id');
 
             $findTape = TapeEntryStockModel::find($gettapeQuantity);
             $totalwaste = $find_data->pipe_cutting + $find_data->bd_wastage + $find_data->other_wastage;
@@ -311,23 +476,21 @@ $fabric_netweight = 0;
 
             $final = $findTape->tape_qty_in_kg + $value;
             $findTape->tape_qty_in_kg = $final;
-            $findTape->update();  
+            $findTape->update();
 
-            FabricDetail::where('id',$id)->delete();
+            FabricDetail::where('id', $id)->delete();
 
 
             DB::commit();
 
             return back();
-        }catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             return response([
                 "exception" => $e->getMessage(),
             ]);
         }
-    
 
-        // dd($getfabricstock);
         return back();
     }
 
@@ -341,5 +504,226 @@ $fabric_netweight = 0;
         return back();
     }
 
+    public function fabricEntryReport()
+    {
+        $godams = Godam::all();
+        return view('admin.fabric.entryreport', compact('godams'));
+    }
 
+    public function godamTransferReport(){
+        $godams = Godam::all();
+        return view('admin.fabric.godam_transfer_report',compact('godams'));
+    }
+
+    public function laminatedReport(){
+        $godams = Godam::all();
+        return view('admin.fabric.laminated_report',compact('godams'));
+    }
+
+    public function unLaminatedReport(){
+        $godams = Godam::all();
+        return view('admin.fabric.unlaminated_report',compact('godams'));
+    }
+
+    public function generateUnLaminatedFabricView(Request $request){
+        if(!$request->start_date || !$request->end_date){
+            return response(['status'=>false,'message'=>'Please select Start date and End Date']);
+        }
+        $reportData = [];
+        $nepaliDates = [];
+        $nepaliDates = $this->getDateRangeNepali($request->start_date, $request->end_date);
+        $godam_id = $request->godam_id;
+        foreach($nepaliDates as $nepaliDate){
+
+            $unLaminatedFabrics = Fabric::query()->with('godam');
+
+            if($request->godam_id){
+                $unLaminatedFabrics->where('godam_id',$godam_id);
+            }
+
+            $unLaminatedFabrics = $unLaminatedFabrics->where('date_np',$nepaliDate)->where('is_laminated','false')->get();
+
+            if(!$unLaminatedFabrics->isEmpty()){
+                $fabricView = view('admin.fabric.reportview.unlaminated_datewise',compact('unLaminatedFabrics','nepaliDate'))->render();
+                array_push($reportData,$fabricView);
+            }
+        }
+
+        // Summary Part Code
+
+        $nepaliStartDate = $nepaliDates[0];
+        $nepaliEndDate = end($nepaliDates);
+
+        $summaryFabrics = Fabric::select(
+            'name',
+            DB::raw('COUNT(name) as roll_count'),
+            DB::raw('SUM(gross_wt) as gross_wt'),
+            DB::raw('SUM(net_wt) as net_wt'),
+            DB::raw('SUM(meter) as meter')
+        )
+            ->where('is_laminated','false')
+            ->groupBy('name');
+
+        if($request->start_date && $request->end_date){
+            $summaryFabrics = $summaryFabrics->where('fabrics.date_np','>=',$request->start_date)->where('fabrics.date_np','<=',$request->end_date);
+        }
+
+        if($request->godam_id){
+            $summaryFabrics = $summaryFabrics->where('fabrics.godam_id',$request->godam_id);
+        }
+
+        $summaryFabrics = $summaryFabrics->get();
+        $summaryView = view('admin.fabric.reportview.unlamfabricsummary',compact('summaryFabrics','nepaliStartDate','nepaliEndDate'))->render();
+        array_push($reportData,$summaryView);
+        return response(['status'=>true,'data'=>$reportData]);
+    }
+
+    public function generateGodamTransferView(Request $request){
+        if(!$request->start_date || !$request->end_date){
+            return response(['status'=>false,'message'=>'Please select Start date and End Date']);
+        }
+        $reportData = [];
+        $nepaliDates = [];
+        $nepaliDates = $this->getDateRangeNepali($request->start_date, $request->end_date);
+        foreach($nepaliDates as $nepaliDate){
+
+            $fabricGodams = FabricGodamList::with('getToGodam','fabric')->where('bill_date', $nepaliDate);
+
+            if($request->godam_id){
+                $fabricGodams = $fabricGodams->where('fromgodam_id',$request->godam_id);
+            }
+            $fabricGodams = $fabricGodams->get();
+
+            if(!$fabricGodams->isEmpty()){
+                $fabricView = view('admin.fabric.reportview.godam_transfer_datewise',compact('fabricGodams','nepaliDate'))->render();
+                array_push($reportData,$fabricView);
+            }
+        }
+
+        // Summary Part Code
+
+        $nepaliStartDate = $nepaliDates[0];
+        $nepaliEndDate = end($nepaliDates);
+
+        $summaryFabrics = FabricGodamList::select(
+            'fabric_godam_lists.name',
+            DB::raw('COUNT(fabric_godam_lists.name) as roll_count'),
+            DB::raw('SUM(fabrics.gross_wt) as gross_wt'),
+            DB::raw('SUM(fabrics.net_wt) as net_wt'),
+            DB::raw('SUM(fabrics.meter) as meter')
+        )
+            ->join('fabrics','fabric_godam_lists.fabric_id', '=','fabrics.id' )
+            ->groupBy('fabric_godam_lists.name');
+
+        if($request->start_date && $request->end_date){
+            $summaryFabrics = $summaryFabrics->where('fabric_godam_lists.bill_date','>=',$request->start_date)->where('fabric_godam_lists.bill_date','<=',$request->end_date);
+        }
+
+        if($request->godam_id){
+            $summaryFabrics = $summaryFabrics->where('fabric_godam_lists.fromgodam_id',$request->godam_id);
+        }
+
+        $summaryFabrics = $summaryFabrics->get();
+        $summaryView = view('admin.fabric.reportview.fabricsummary',compact('summaryFabrics','nepaliStartDate','nepaliEndDate'))->render();
+        array_push($reportData,$summaryView);
+        return response(['status'=>true,'data'=>$reportData]);
+    }
+
+    public function generateEntryReportView(Request $request)
+    {
+        if(!$request->start_date || !$request->end_date){
+            return response(['status'=>false,'message'=>'Please select Start date and End Date']);
+        }
+        $reportData = [];
+        $nepaliDates = [];
+        $nepaliDates = $this->getDateRangeNepali($request->start_date, $request->end_date);
+        foreach($nepaliDates as $nepaliDate){
+
+            $fabrics = Fabric::where('date_np', $nepaliDate);
+
+            if($request->godam_id){
+                $fabrics = $fabrics->where('godam_id',$request->godam_id);
+            }
+            $fabrics = $fabrics->get();
+            if(!$fabrics->isEmpty()){
+                $fabricView = view('admin.fabric.reportview.fabricdatewise',compact('fabrics','nepaliDate'))->render();
+                array_push($reportData,$fabricView);
+            }
+        }
+
+        // Summary Part Code
+
+        $nepaliStartDate = $nepaliDates[0];
+        $nepaliEndDate = end($nepaliDates);
+
+        $summaryFabrics = Fabric::select(
+                        'name',
+                        DB::raw('COUNT(name) as roll_count'),
+                        DB::raw('SUM(gross_wt) as gross_wt'),
+                        DB::raw('SUM(net_wt) as net_wt'),
+                        DB::raw('SUM(meter) as meter')
+                        )
+                    ->groupBy('name');
+
+        if($request->start_date && $request->end_date){
+            $summaryFabrics = $summaryFabrics->where('date_np','>=',$request->start_date)->where('date_np','<=',$request->end_date);
+        }
+
+        if($request->godam_id){
+            $summaryFabrics = $summaryFabrics->where('godam_id',$request->godam_id);
+        }
+
+        $summaryFabrics = $summaryFabrics->get();
+        $summaryView = view('admin.fabric.reportview.fabricsummary',compact('summaryFabrics','nepaliStartDate','nepaliEndDate'))->render();
+        array_push($reportData,$summaryView);
+        return response(['status'=>true,'data'=>$reportData]);
+    }
+
+    private function getDateRangeNepali($npStartDate, $npEndDate)
+    {
+        $startEngDate = $this->getEngDate($npStartDate);
+        $endEngDate = $this->getEngDate($npEndDate);
+
+        $npDates = [];
+
+        $engDates = $this->getEngDateRange($startEngDate,$endEngDate);
+        foreach($engDates as $engDate){
+            array_push($npDates,$this->getNpDate($engDate));
+        }
+
+        return $npDates;
+    }
+
+    private function getEngDateRange($startDate,$endDate){
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDate);
+        $endDate = Carbon::createFromFormat('Y-m-d', $endDate);
+
+        $dateRange = CarbonPeriod::create($startDate, $endDate);
+
+        $dates = array_map(fn ($date) => $date->format('Y-m-d'), iterator_to_array($dateRange));
+
+        return $dates;
+    }
+
+    private function getEngDate($npDate)
+    {
+        $explodedStartDate = explode('-', $npDate);
+        $date = $this->neDate->nep_to_eng($explodedStartDate[0], $explodedStartDate[1], $explodedStartDate[2]);
+
+        if($date['month'] < 10){
+            $month = '0'.$date['month'];
+        }else{
+            $month = $date['month'];
+        }
+
+        return $date['year'].'-'.$month.'-'.$date['date'];
+
+    }
+
+    private function getNpDate($engDate)
+    {
+        $explodedStartDate = explode('-', $engDate);
+        return $this->neDate->eng_to_nep($explodedStartDate[0], $explodedStartDate[1], $explodedStartDate[2]);
+    }
 }

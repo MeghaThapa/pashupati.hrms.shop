@@ -39,7 +39,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="receipt_number">Opening Date</label>
-                                <input type="text" name="date_np" class="form-control" id="nepali-date-picker"
+                                <input type="date" name="date_np" class="form-control"
                                     @if ($rawmaterialOpeningEntryData) value="{{ $rawmaterialOpeningEntryData->opening_date }}" @endif>
                             </div>
                             <div class="col-md-6">
@@ -99,23 +99,23 @@
     <script>
         $(document).ready(function() {
 
-            $("#nepali-date-picker").nepaliDatePicker({});
+            // $("#nepali-date-picker").nepaliDatePicker({});
             let todayNepaliDate = {!! isset($nepaliDate) ? json_encode($nepaliDate) : 'null' !!};
             if (todayNepaliDate !== null) {
-                $("#nepali-date-picker").val(todayNepaliDate);
+                // $("#nepali-date-picker").val(todayNepaliDate);
             }
 
             let editObj = {!! json_encode($rawmaterialOpeningEntryData) !!};
             if (editObj === null) {
                 if (todayNepaliDate !== null) {
-                    $("#nepali-date-picker").val(todayNepaliDate);
+                    // $("#nepali-date-picker").val(todayNepaliDate);
                 }
             } else {
                 if (editObj.hasOwnProperty('opening_date')) {
-                    $("#nepali-date-picker").val(editObj.opening_date);
+                    // $("#nepali-date-picker").val(editObj.opening_date);
                 }
             }
-            
+
         })
     </script>
 @endsection

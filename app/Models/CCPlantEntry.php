@@ -11,10 +11,19 @@ class CCPlantEntry extends Model
     protected $table = "ccplantentry";
     protected $fillable = [
         "godam_id",
-        "date",
         "date_np",
         "receipt_number",
         "remarks",
         "status"
     ];
+
+    public function godam()
+    {
+        return $this->belongsTo(Godam::class);
+    }
+
+    public function danaName()
+    {
+        return $this->belongsTo(DanaName::class,'dana_name_id');
+    }
 }
