@@ -520,7 +520,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("delete/dana/consumption/revised",[FabricSendReceiveController::class,"removedDanaConsumptionTablerevised"])->name("delete.dana.consumption.revised");//lastest
 
         Route::post("get/fabric/details/fsr",[FabricSendReceiveController::class,"getFabricDetailsAccRollNo"])->name('get/fabric/details/fsr');
-        Route::get("get/lam/sent/details/all",[FabricSendReceiveController::class,"getallSentData"])->name('get.lam.sent.details.all');
+        Route::get("createPrintedRollssent/details/all",[FabricSendReceiveController::class,"getallSentData"])->name('get.lam.sent.details.all');
         Route::get("edit.laminated.fabric/ajax",[FabricSendReceiveController::class,"getDatajax"])->name("edit.laminated.fabric.ajax");
         Route::post("update/lam/sent",[FabricSendReceiveController::class,"updateLamSentFSr"])->name("update.lam.sent.fsr");
     //fabric send receive contoller End

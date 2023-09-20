@@ -65,8 +65,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
     </style>
 @endsection
 @section('content')
@@ -823,6 +823,7 @@
                         $('#netWeight').val(response.net_wt);
                         $('#grossWeight').val(response.gross_wt);
                         $('#average').val(response.average);
+                        $('#meter').val(response.meter);
                     },
                     error: function(xhr, status, error) {
                         setErrorMsg(xhr.responseJSON.message);
@@ -883,7 +884,7 @@
                             setErrorMsg(xhr.responseJSON.message);
                         }
                     });
-            });
+                });
             //current
             function updateStockQuantity() {
                 let godam_id = $('#godamId').val();
@@ -1199,6 +1200,8 @@
 
             function setOptionInSelect(elementId, optionId, optionText) {
                 let selectElement = $('#' + elementId);
+
+                selectElement.empty();
                 // create a new option element
                 let newOption = $('<option>');
 
@@ -1207,6 +1210,8 @@
 
                 // append the new option element to the select element
                 selectElement.append(newOption);
+
+                newOption.prop('selected', true);
 
                 // refresh the select2 element to update the UI
                 selectElement.trigger('change.select2');
