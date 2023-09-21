@@ -26,6 +26,7 @@ class DoubleTripalBillController extends Controller
                 'planttype_id' => $request['plant_type_id'],
                 'plantname_id' =>  $request['plant_name_id'],
                 'shift_id' =>  $request['shift_name_id'],
+                'status' =>  'sent',
             ]);
                 
            DB::commit();

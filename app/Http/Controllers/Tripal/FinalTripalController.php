@@ -24,6 +24,7 @@ use App\Helpers\AppHelper;
 use App\Models\FinalTripalDanaConsumption;
 use Carbon\Carbon;
 use App\Models\FinalTripalBill;
+use Yajra\DataTables\DataTables;
 
 
 class FinalTripalController extends Controller
@@ -50,6 +51,45 @@ class FinalTripalController extends Controller
         $datas = FinalTripalBill::orderBy('id', 'DESC')->get();
         // dd($fabrics);
         return view('admin.finaltripal.index',compact('bill_no','bill_date','godam','shifts','fabrics','dana','finaltripalname','godams','sumdana','datas'));
+    }
+
+    public function dataTable()
+    {
+        // dd('lol');
+        $tripalGodam = FinalTripalBill::orderBy('created_at','DESC')
+                       ->get();
+
+        return DataTables::of($tripalGodam)
+            ->addIndexColumn()
+            ->addColumn('planttype', function ($row) {
+                return $row->getPlantType->name;
+            })
+            ->addColumn('plantname', function ($row) {
+                return $row->getPlantName->name;
+            })
+            ->addColumn('shift', function ($row) {
+                return $row->getShift->name;
+            })
+            ->addColumn('godam', function ($row) {
+                return $row->getGodam->name;
+            })
+            ->addColumn('action', function ($row) {
+
+                if($row->status == "sent"){
+
+                    return '<a href="' . route('addfinaltripal.create', ['id' => $row->id]) . '" class="btn btn-info"><i class="fas fa-plus"></i></a>';
+
+                }
+                else{
+                    // return'completed';
+
+                    return '<a href="' . route('finaltripal.viewbill', ['id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
+
+                }
+
+            })
+            ->rawColumns(['fromgodam','togodam','action'])
+            ->make(true);
     }
 
 

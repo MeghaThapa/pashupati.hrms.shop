@@ -181,7 +181,7 @@
 <div class="row">
     <div class="Ajaxdata col-md-12">
         <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable" >
+            <table class="table" id="finalTripalListTable" >
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -196,7 +196,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach($datas as $data)
+                {{--     @foreach($datas as $data)
                     <tr>
                         <td>#</td>
                         <td>{{$data->bill_no}}</td>
@@ -227,7 +227,7 @@
                         </td>
                         
                     </tr>
-                    @endforeach
+                    @endforeach --}}
                 </tbody>
 
             </table>
@@ -340,5 +340,49 @@ $(document).ready(function(){
         });
     }
  
+</script>
+<script>
+    $('document').ready(function() {
+        var table = $('#finalTripalListTable').DataTable({
+            lengthMenu: [
+                [30, 40, 50, -1],
+                ['30 rows', '40 rows', '50 rows', 'Show all']
+            ],
+            style: 'bootstrap4',
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('finalTripal.dataTable') }}",
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'bill_no'
+                },
+                {
+                    data: 'bill_date'
+                },
+                {
+                    data: 'planttype'
+                },
+                {
+                    data: 'plantname'
+                },
+                {
+                    data: 'shift'
+                },
+                {
+                    data: 'godam'
+                },
+
+                {
+                    data: 'action',
+                    orderable: true,
+                    searchable: true,
+                },
+            ]
+        });
+   
+
+    });
 </script>
 @endsection

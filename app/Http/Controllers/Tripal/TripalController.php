@@ -4,13 +4,8 @@ namespace App\Http\Controllers\Tripal;
 
 use App\Http\Controllers\Controller;
 use App\Models\AutoLoadItemStock;
-use App\Models\DanaName;
 use App\Models\Godam;
-use App\Models\FabricLaminatedSentFSR;
 use App\Models\FabricStock;
-use App\Models\FabricTemporaryForLam;
-use App\Models\LaminatedFabric;
-use App\Models\LaminatedFabricStock;
 use App\Models\ProcessingStep;
 use App\Models\ProcessingSubcat;
 use App\Models\Shift;
@@ -19,7 +14,6 @@ use App\Models\Tripal;
 use App\Models\Unit;
 use App\Models\UnlaminatedFabric;
 use App\Models\Unlaminatedfabrictripal;
-use App\Models\UnlaminatedFabricStock;
 use App\Models\Wastages;
 use App\Models\WasteStock;
 use App\Models\Singletripalname;
@@ -32,6 +26,7 @@ use App\Models\Singlesidelaminatedfabricstock;
 use App\Models\SingleTripalDanaConsumption;
 use App\Models\SingleTripalBill;
 use App\Helpers\AppHelper;
+use Yajra\DataTables\DataTables;
 
 class TripalController extends Controller
 {
@@ -58,6 +53,56 @@ class TripalController extends Controller
         $datas = SingleTripalBill::get();
 
         return view('admin.tripal.index',compact('godam','planttype','plantname','shifts','bill_no',"dana",'bill_date','godams','sumdana','datas'));
+    }
+
+    public function dataTable()
+    {
+        // dd('lol');
+        $tripalGodam = SingleTripalBill::orderBy('created_at','DESC')
+                       ->get();
+
+        return DataTables::of($tripalGodam)
+            ->addIndexColumn()
+            ->addColumn('planttype', function ($row) {
+                return $row->getPlantType->name;
+            })
+            ->addColumn('plantname', function ($row) {
+                return $row->getPlantName->name;
+            })
+            ->addColumn('shift', function ($row) {
+                return $row->getShift->name;
+            })
+            ->addColumn('godam', function ($row) {
+                return $row->getGodam->name;
+            })
+            ->addColumn('action', function ($row) {
+
+                if($row->status == "sent"){
+
+                    return '<a href="' . route('addsingletripal.create', ['id' => $row->id]) . '" class="btn btn-info"><i class="fas fa-plus"></i></a>';
+
+                }
+                else{
+                    // return'completed';
+
+                    return '<a href="' . route('singleTripal.viewBill', ['bill_id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
+
+                }
+
+            })
+            ->rawColumns(['fromgodam','togodam','action'])
+            ->make(true);
+    }
+
+    public  function viewBill($bill_id){
+
+        $find_data = SingleTripalBill::find($bill_id);
+        $unlam_datas = Unlaminatedfabrictripal::where('bill_id',$bill_id)->get();
+        $stocks = SinglesidelaminatedfabricStock::where('bill_id',$bill_id)->get();
+        // dd($stocks);
+          
+        return view('admin.tripal.viewBill',compact('unlam_datas','stocks','bill_id','find_data'));
+
     }
 
     public function createSingletripal($id)
@@ -205,35 +250,7 @@ class TripalController extends Controller
         }   
     }
 
-    public function sendunlaminateddelete(Request $request,$id){
-        // if($request->ajax()){
-        //    try{
-        //         DB::beginTransaction();
-        //         $count = UnlaminatedFabric::where('id',$id)->get();
-        //         $unlaminatedStock = UnlaminatedFabricStock::where('id',$id)->get();
-        //         if(count($count) > 0 && count($unlaminatedStock) > 0 ){
-        //             UnlaminatedFabric::where('id',$id)->delete();
-        //             UnlaminatedFabricStock::where('id',$id)->delete();
-        //             DB::commit();
-        //             return response([
-        //                 'response'=> "200",
-        //             ]);
-                
-        //         }else{
-        //             DB::rollBack();
-        //             return response([
-        //                 'response'=> "400",
-        //             ]);
-        //         }
-                
-        //    }catch(Exception $e){
-        //         DB::rollBack();
-        //         return response([
-        //             "message" => "Something went wrong!'{$e->getMessage()}'"
-        //         ]);
-        //    }
-        // }
-    }
+   
     public function store(Request $request){
         try{
 
@@ -301,6 +318,7 @@ class TripalController extends Controller
             $laminated_gram = $data['laminated_gram'];
             $laminated_gram_2 = $data['laminated_gram_2'];
             $laminated_gram_3 = $data['laminated_gram_3'];
+            // dd($data['laminated_gram_3']);
 
             $laminated_meter = $data['laminated_meter'];
             $laminated_meter_2 = $data['laminated_meter_2'];
@@ -394,7 +412,7 @@ class TripalController extends Controller
                    "slug" => Str::slug($data["laminated_fabric_name"]),
                    "roll_no" => $lamimated_roll_no_2, 
                    "department_id" => $data['godam_id'],
-                   "gram" =>  $laminated_gram,
+                   "gram" =>  $laminated_gram_2,
                    "loom_no" => $fabricmodelquery->loom_no,
                    "average_wt" => $laminated_avg_weight_2,
                    'gross_wt' => $laminated_gross_weight_2,
@@ -444,7 +462,7 @@ class TripalController extends Controller
                     "slug" => Str::slug($data["laminated_fabric_name"]),
                     "roll_no" => $lamimated_roll_no_3, 
                     "department_id" => $data['godam_id'],
-                    "gram" =>  $laminated_gram,
+                    "gram" =>  $laminated_gram_3,
                     "loom_no" => $fabricmodelquery->loom_no,
                     "average_wt" => $laminated_avg_weight_3,
                     'gross_wt' => $laminated_gross_weight_3,
@@ -648,12 +666,15 @@ class TripalController extends Controller
 
                     }
 
+                    $singlebill = SingleTripalBill::where('id',$request->bill_id)->update(['status' => 'completed']);
+
 
                 DB::commit();
 
                 return response(200);
             }catch(Exception $e){
                 DB::rollBack();
+                // dd($e);
                 return response([
                     "exception" => $e->getMessage(),
                 ]);

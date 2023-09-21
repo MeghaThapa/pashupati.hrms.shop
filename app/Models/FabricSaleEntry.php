@@ -16,4 +16,9 @@ class FabricSaleEntry extends Model
     {
         return $this->belongsTo('App\Models\Supplier','partyname_id');
     }
+
+    public function fabricSaleItems()
+    {
+        return $this->hasMany(FabricSaleItems::class,'sale_entry_id','id');
+    }
 }
