@@ -244,6 +244,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/create', 'RawMaterialController@create')->name('rawMaterial.create');
     Route::post('rawMaterial/store', 'RawMaterialController@store')->name('rawMaterial.store');
     Route::get('rawMaterial/edit/{rawMaterial_id}', 'RawMaterialController@edit')->name('rawMaterial.edit');
+
+    Route::get('rawMaterial/report/{rawMaterial_id}', 'RawMaterialController@report')->name('rawMaterial.report');
+
     Route::post('rawMaterial/update/{rawMaterial_id}', 'RawMaterialController@update')->name('rawMaterial.update');
     Route::get('rawMaterial/createRawMaterialItems/{rawMaterial_id}', 'RawMaterialController@createRawMaterialItems')->name('rawMaterial.createRawMaterialItems');
     Route::get('rawMaterial/dataTable', 'RawMaterialController@dataTable')->name('rawMaterial.dataTable');
@@ -517,7 +520,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("delete/dana/consumption/revised",[FabricSendReceiveController::class,"removedDanaConsumptionTablerevised"])->name("delete.dana.consumption.revised");//lastest
 
         Route::post("get/fabric/details/fsr",[FabricSendReceiveController::class,"getFabricDetailsAccRollNo"])->name('get/fabric/details/fsr');
-        Route::get("get/lam/sent/details/all",[FabricSendReceiveController::class,"getallSentData"])->name('get.lam.sent.details.all');
+        Route::get("createPrintedRollssent/details/all",[FabricSendReceiveController::class,"getallSentData"])->name('get.lam.sent.details.all');
         Route::get("edit.laminated.fabric/ajax",[FabricSendReceiveController::class,"getDatajax"])->name("edit.laminated.fabric.ajax");
         Route::post("update/lam/sent",[FabricSendReceiveController::class,"updateLamSentFSr"])->name("update.lam.sent.fsr");
     //fabric send receive contoller End
@@ -538,6 +541,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
         Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
         Route::get("print-view-bill/{bill_id}","printViewBill")->name("print.view.bill");
+
+        Route::get('report','report')->name('report');
+        Route::post('report-view','generateReportView')->name('report.view');
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -861,9 +867,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::get('salefinalnonwoven/delete/list', 'Sale\NonwovenSaleController@deleteEntryList')->name('nonwovenSale.deleteFinalSaleEntry');
 
-      
 
-       
+
+
 
     });
 
@@ -885,9 +891,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get('getWastageQuantity', 'Sale\WastageSaleController@getWastageQuantity')->name('wastageSale.getQuantity');
 
         Route::get('delete/list', 'Sale\WastageSaleController@deleteEntryList')->name('wastageSale.deleteWastageEntry');
-      
 
-       
+
+
 
     });
 
@@ -1040,7 +1046,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     });
 
 
-     // fabric_group route
+     // _group route
 
     Route::resource('nonwovenfabrics', 'FabricNonWovenController', [
         'names' => [

@@ -927,6 +927,17 @@
                             <p>Fabric transfer to Bag Report</p>
                         </a>
                     </li>
+<<<<<<< HEAD
+=======
+
+                    <li class="nav-item">
+                        <a href="{{ route('fabric.sale.report') }}"
+                            class="nav-link {{ request()->is('admin/fabric/sale/report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Fabric Sale Report</p>
+                        </a>
+                    </li>
+>>>>>>> d307f3b472c45b06ea1270110ed23fa145d8bd8a
                 </ul>
 
 
