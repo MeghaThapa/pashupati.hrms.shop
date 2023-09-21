@@ -141,27 +141,27 @@
                 
 
                 <tr>
-                    <th width="10px">{{ __('Sr.No') }}</th>
-                    <th width="10px">{{ __('Fabric Name') }}</th>
-                    <th width="10px">{{ __('Roll No') }}</th>
-                    <th width="10px">{{ __('Gross Wght') }}</th>
-                    <th width="10px">{{ __('Net Wght') }}</th>
-                    <th width="10px">{{ __('Meter') }}</th>
-                    <th width="10px">{{ __('Avg Wght') }}</th>
-                    <th width="10px">{{ __('GSM') }}</th>
+                    <th>{{ __('Sr.No') }}</th>
+                    <th>{{ __('Fabric Name') }}</th>
+                    <th>{{ __('Fabric ROll') }}</th>
+                    <th>{{ __('Fabric Color') }}</th>
+                    <th>{{ __('Fabric Gsm') }}</th>
+                    <th>{{ __('Length') }}</th>
+                    <th>{{ __('Gross Weight') }}</th>
+                    <th>{{ __('Net Weight') }}</th>
                 </tr>
 
                 <tbody>
-                    @foreach($stocks as $tripal)
+                    @foreach($stocks as $key=>$list)
                     <tr>
-                        <td>#</td>
-                        <td>{{$tripal->name}}</td>
-                        <td>{{$tripal->roll}}</td>
-                        <td>{{$tripal->gross}}</td>
-                        <td>{{$tripal->net}}</td>
-                        <td>{{$tripal->meter}}</td>
-                        <td>{{$tripal->average}}</td>
-                        <td>{{$tripal->gram}}</td>
+                        <td>{{$key+1}}</td>
+                        <td>{{$list->name}}</td>
+                        <td>{{$list->roll}}</td>
+                        <td>{{$list->color}}</td>
+                        <td>{{$list->gsm}}</td>
+                        <td>{{$list->length}}</td>
+                        <td>{{$list->gross}}</td>
+                        <td>{{$list->net}}</td>
                     </tr>
                     @endforeach
                 </tbody>
