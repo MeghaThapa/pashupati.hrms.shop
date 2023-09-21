@@ -542,6 +542,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
         Route::get("print-view-bill/{bill_id}","printViewBill")->name("print.view.bill");
 
+        Route::get('report','report')->name('report');
+        Route::post('report-view','generateReportView')->name('report.view');
     });
     Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
@@ -661,7 +663,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
-    Route::get('fabricGodam/test', 'FabricGodamController@test')->name('fabricGodam.test');
+    Route::get('fabricGodam/test', 'FabricNonwovenController@test')->name('fabricGodam.test');
 
     Route::get('fabricGodam/dataTable', 'FabricGodamController@dataTable')->name('fabricGodam.dataTable');
 
@@ -694,6 +696,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'update' => 'tripal.update',
         ]
     ]);
+
+    Route::get('singleTripal/dataTable', 'Tripal\TripalController@dataTable')->name('singleTripal.dataTable');
+    Route::get('singleTripal/viewBill/{bill_id}', 'Tripal\TripalController@viewBill')->name('singleTripal.viewBill');
 
 
 
@@ -906,6 +911,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
+    Route::get('doubleTripal/dataTable', 'Tripal\DoubleTripalController@dataTable')->name('doubleTripal.dataTable');
+    Route::get('doubleTripal/viewBill/{bill_id}', 'Tripal\DoubleTripalController@viewBill')->name('doubleTripal.viewBill');
+
 
 
     Route::get('doubletripal/getSingleLaminatedFabric/List','Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
@@ -939,6 +947,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
     //get doublelamlist
+
+    Route::get('finalTripal/dataTable', 'Tripal\FinalTripalController@dataTable')->name('finalTripal.dataTable');
 
     Route::get('tripal/getDoubleFabricStockList/final', 'Tripal\FinalTripalController@getDoubleFabricStockList')->name('finaltripal.getDoubleFabricStockList');
 
@@ -1618,6 +1628,8 @@ Route::controller(BswSendLamFabForPrintingController::class)
     Route::get("lamFabData","lamFabData")->name('BswLamFabSendForPrinting.lamFabData');
     Route::get("getBrandBag","getBrandBag")->name('BswLamFabSendForPrinting.getBrandBag');
 });
+
+Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
 
 Route::controller(BswSentLamFabController::class)
 ->prefix('bswSentLamFab')

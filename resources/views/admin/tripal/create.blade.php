@@ -782,8 +782,7 @@
 <script>
     $(document).ready(function(){
         /**************************** Ajax Calls **************************/
-        // callunlaminatedfabricajax();
-         // $('#fabricNameId').prop('disabled',true);
+   
         comparelamandunlam();
 
         pageRefresh();
@@ -1001,23 +1000,6 @@
             }
         }
 
-        // function setIntoConsumptionTable(res) {
-        //     var html = "";
-        //     html = "<tr id=editConsumptRow-" + res.id + "><td>" + sn +
-        //         "</td><td class='rowGodamName'>" + res.godam.name +
-        //         "</td><td class='rowDanaName'>" + res.dana_name.name +
-        //         "</td><td class='rowQuantity'>" + res.quantity +
-        //         "</td></tr>";
-
-        //         // tr.append(``);
-
-
-        //     document.getElementById('printsCutsDanaConsumpt').innerHTML += html;
-        //     sn++;
-        //     // Clearing the input fields
-        //     // clearInputFields();
-        // }
-
         function getdanaConsumptionData() {
             return new Promise(function(resolve, reject) {
                 let bill_id = $("#bill_id").val();
@@ -1098,15 +1080,8 @@
         
         });
 
-
-
-
-        /**************************** Ajax Calls End **************************/
     });
 
-    /**************************** Ajax functions **************************/
-
- 
 
     function addplanttype(data){
         $("#plantType").empty();
@@ -1287,9 +1262,7 @@
          
         });
     });
-    // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
-    //     $(this).removeAttr('action');
-    // });
+ 
     $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });
@@ -1349,9 +1322,7 @@
             }
         });
     }
-    /************************* Send for lamination **************************/
 
-    /********** put on tbodys compare *********************/
     function emptycomparelamtbody(){
         $("#comparelamtbody").empty();
     }
@@ -1360,7 +1331,7 @@
     }
 
     function putonlamtbody(response){
-        console.log(response);
+        
         response.lam.forEach(element => {
             let tr = $("<tr></tr>").appendTo("#comparelamtbody");
             tr.append(`<td>#</td>`);
@@ -1386,9 +1357,7 @@
         });
         
     }
-    /********** put on tbodys *********************/
 
-    /********************** dana consumption and wastage and weight differences ******************************/
     function weightdiffs(response){
         let total_ul_in_mtr = response.ul_mtr_total;
         let total_ul_net_wt = response.ul_net_wt_total;
@@ -1442,19 +1411,6 @@
                 console.log('Getting Plant type');
             },
             success:function(response){
-                // console.log(response.itemquantity);
-
-             // if(consumption > response.itemquantity){
-             //    alert('kk');
-             // }
-             // else{
-             //    alert('issue');
-
-             // }
-
-                // if(response.itemquantity > consumption ? 'hi' : 'ok'){
-                //     alert('stock exceeded');
-                // }
              
                 if (consumption.trim() === '') {
                     alert("add quantity");
@@ -1469,11 +1425,8 @@
                 console.log(error);
             }
 
-
         });
 
-      
-       
 
 
     });
@@ -1516,84 +1469,59 @@
 
     });
 
-    /********************** dana consumption and wastage and differences ******************************/
 
-    /************************** Check weights matches for consumption and lamination and final submit   **********************************/
-        /*******
-         * @this portion adds to fabric stock and subtraction from fabric stock
-         ********/
+    $(document).on("click","#finalUpdate",function(e){
 
-         $(document).on("click","#finalUpdate",function(e){
-
-            let danaNameId = $("#selectedDanaID").val();
-            let consumption = $("#add_dana_consumption_quantity").val();
-            let fabric_waste = $("#fabric_waste").val();
-            let total_waste = $('#total_waste').val();
-            let selectedDanaID = $("#selectedDanaID").val();
-            let polo_waste = $("#polo_waste").val();
-            let godam_id = $("#toGodam").val();
-            let bill = $("#bill").val();
-            // console.log(godam_id);
-
-            trimmedConsumption = consumption;
-            trimmedPoloWaste = polo_waste.trim();
-            trimmedFabricWaste = fabric_waste.trim();
-            trimmedTotalWaste = total_waste.trim();
+        let danaNameId = $("#selectedDanaID").val();
+        let consumption = $("#add_dana_consumption_quantity").val();
+        let fabric_waste = $("#fabric_waste").val();
+        let total_waste = $('#total_waste').val();
+        let selectedDanaID = $("#selectedDanaID").val();
+        let polo_waste = $("#polo_waste").val();
+        let godam_id = $("#toGodam").val();
+        let bill = $("#bill").val();
+        let bill_id = $("#bill_id").val();
 
 
-            if(trimmedFabricWaste == '' || trimmedPoloWaste == ''){
-                alert('Waste and Consumption cannot be null');
-            }else{
+        trimmedConsumption = consumption;
+        trimmedPoloWaste = polo_waste.trim();
+        trimmedFabricWaste = fabric_waste.trim();
+        trimmedTotalWaste = total_waste.trim();
+
+
+        if(trimmedFabricWaste == '' || trimmedPoloWaste == ''){
+            alert('Waste and Consumption cannot be null');
+        }else{
             // subtractformautolad(danaNameId,consumption);
-                $.ajax({
-                    url : "{{ route('tripal.wastage.submit') }}",
-                    method: "post",
-                    data:{
-                        "_token" : $('meta[name="csrf-token"]').attr('content'),
-                        "danaNameID" : danaNameId,
-                        "consumption" : trimmedConsumption,
-                        "fabric_waste" : trimmedFabricWaste,
-                        "polo_waste" : trimmedPoloWaste,
-                        "total_waste" : trimmedTotalWaste,
-                        "selectedDanaID" : selectedDanaID,
-                        "bill" : bill
-                    },
-                    beforeSend:function(){
-                        console.log("Before Send");
-                    },
-                    success:function(response){
-                        console.log(response);
-                        if(response == '200'){
-                            location.reload();
-                        }else{
+            $.ajax({
+                url : "{{ route('tripal.wastage.submit') }}",
+                method: "post",
+                data:{
+                    "_token" : $('meta[name="csrf-token"]').attr('content'),
+                    "danaNameID" : danaNameId,
+                    "consumption" : trimmedConsumption,
+                    "fabric_waste" : trimmedFabricWaste,
+                    "polo_waste" : trimmedPoloWaste,
+                    "total_waste" : trimmedTotalWaste,
+                    "selectedDanaID" : selectedDanaID,
+                    "bill" : bill,
+                    "bill_id" : bill_id,
+                },
+                beforeSend:function(){
+                    console.log("Before Send");
+                },
+                success:function(response){
+                    location.href = '{{route('tripal.index')}}';
 
-                        }
-                    },
-                    error:function(error){
-                        console.log(error);
-                    }
-                }); 
-            }
-        });
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            }); 
+        }
+    });
 
-    // function subtractformautolad(danaNameId,consumption){
-    //     $.ajax({
-    //         url:"{{ route('subtract.dana.from.autoloder') }}",
-    //         method: "post",
-    //         data:{
-    //             '_token' : $('meta[name="csrf-token"]').attr('content'),
-    //             "danaId" : danaNameId,
-    //             "quantity" : consumption
-    //         },
-    //         success:function(response){
-    //             console.log(response);
-    //         },
-    //         error:function(error){
-    //             console.log(error);
-    //         }
-    //     });
-    // }
+   
 
-    /************************** Check weights matches for consumption and lamination and final submit   **********************************/
 </script>
 @endsection

@@ -1219,8 +1219,7 @@
             let action = $(this).attr('action');
             let method = $(this).attr('method');
             let formData = $(this).serialize();
-            // console.log(action);
-            debugger;
+            
            $.ajax({
             url:action,
             method : method,
@@ -1339,7 +1338,6 @@
                 ids = $(this).attr('data-id'),
                 token = $('meta[name="csrf-token"]').attr('content');
 
-                // debugger;
 
                 $.ajax({
                   type:"POST",
@@ -1361,9 +1359,7 @@
             
         });
     });
-    // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
-    //     $(this).removeAttr('action');
-    // });
+ 
     $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });
@@ -1434,7 +1430,7 @@
     }
 
     function putonlamtbody(response){
-        console.log(response);
+        // console.log(response);
         response.lam.forEach(element => {
             let tr = $("<tr></tr>").appendTo("#comparelamtbody");
             tr.append(`<td>#</td>`);
@@ -1510,82 +1506,57 @@
         let total_waste = polo_waste + fabric_waste;
         $("#total_waste").val(total_waste);
     });
-    /********************** dana consumption and wastage and differences ******************************/
 
-    /************************** Check weights matches for consumption and lamination and final submit   **********************************/
-        /*******
-         * @this portion adds to fabric stock and subtraction from fabric stock
-         ********/
 
-         $(document).on("click","#finalUpdate",function(e){
+    $(document).on("click","#finalUpdate",function(e){
 
-            let danaNameId = $("#selectedDanaID").val();
-            let consumption = $("#add_dana_consumption_quantity").val();
-            let fabric_waste = $("#fabric_waste").val();
-            let total_waste = $('#total_waste').val();
-            let selectedDanaID = $("#selectedDanaID").val();
-            let polo_waste = $("#polo_waste").val();
-            let bill = $("#bill").val();
+        let danaNameId = $("#selectedDanaID").val();
+        let consumption = $("#add_dana_consumption_quantity").val();
+        let fabric_waste = $("#fabric_waste").val();
+        let total_waste = $('#total_waste').val();
+        let selectedDanaID = $("#selectedDanaID").val();
+        let polo_waste = $("#polo_waste").val();
+        let bill = $("#bill").val();
+        let bill_id = $("#bill_id").val();
 
-            trimmedConsumption = consumption;
-            trimmedPoloWaste = polo_waste.trim();
-            trimmedFabricWaste = fabric_waste.trim();
-            trimmedTotalWaste = total_waste.trim();
+        trimmedConsumption = consumption;
+        trimmedPoloWaste = polo_waste.trim();
+        trimmedFabricWaste = fabric_waste.trim();
+        trimmedTotalWaste = total_waste.trim();
 
             // debugger;
 
-            if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
-                alert('Waste and Consumption cannot be null');
-            }else{
+        if(trimmedConsumption == '' || trimmedFabricWaste == '' || trimmedPoloWaste == ''){
+            alert('Waste and Consumption cannot be null');
+        }else{
             // subtractformautolad(danaNameId,consumption);
-                $.ajax({
-                    url : "{{ route('doubletripal.wastage.submit') }}",
-                    method: "post",
-                    data:{
-                        "_token" : $('meta[name="csrf-token"]').attr('content'),
-                        "danaNameID" : danaNameId,
-                        "consumption" : trimmedConsumption,
-                        "fabric_waste" : trimmedFabricWaste,
-                        "polo_waste" : trimmedPoloWaste,
-                        "total_waste" : trimmedTotalWaste,
-                        "selectedDanaID" : selectedDanaID,
-                        "bill" : bill
-                    },
-                    beforeSend:function(){
-                        console.log("Before Send");
-                    },
-                    success:function(response){
-                        console.log(response);
-                        if(response == '200'){
-                            location.reload();
-                        }else{
-
-                        }
-                    },
-                    error:function(error){
-                        console.log(error);
-                    }
-                }); 
+            $.ajax({
+                url : "{{ route('doubletripal.wastage.submit') }}",
+                method: "post",
+                data:{
+                    "_token" : $('meta[name="csrf-token"]').attr('content'),
+                    "danaNameID" : danaNameId,
+                    "consumption" : trimmedConsumption,
+                    "fabric_waste" : trimmedFabricWaste,
+                    "polo_waste" : trimmedPoloWaste,
+                    "total_waste" : trimmedTotalWaste,
+                    "selectedDanaID" : selectedDanaID,
+                    "bill" : bill,
+                    "bill_id" : bill_id,
+                },
+                beforeSend:function(){
+                    console.log("Before Send");
+                },
+                success:function(response){
+                 location.href = '{{route('doubletripal.index')}}'
+             },
+             error:function(error){
+                console.log(error);
             }
-        });
+        }); 
+        }
+    });
 
-    // function subtractformautolad(danaNameId,consumption){
-    //     $.ajax({
-    //         url:"{{ route('subtract.dana.from.autoloder') }}",
-    //         method: "post",
-    //         data:{
-    //             '_token' : $('meta[name="csrf-token"]').attr('content'),
-    //             "danaId" : danaNameId,
-    //             "quantity" : consumption
-    //         },
-    //         success:function(response){
-    //             console.log(response);
-    //         },
-    //         error:function(error){
-    //             console.log(error);
-    //         }
-    //     });
-    // }
 
     /************************** Check weights matches for consumption and lamination and final submit   **********************************/
 </script>

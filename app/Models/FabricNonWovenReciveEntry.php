@@ -9,7 +9,7 @@ class FabricNonWovenReciveEntry extends Model
 {
 
   protected $fillable = [
-      'receive_date', 'receive_no', 'fabric_roll', 'fabric_gsm','fabric_name','fabric_color','length','gross_weight','net_weight','nonwovenfabric_id','status','bill_id'
+      'receive_date', 'receive_no', 'fabric_roll', 'fabric_gsm','fabric_name','fabric_color','length','gross_weight','net_weight','nonwovenfabric_id','status','bill_id','godam_id'
   ];
 
   
