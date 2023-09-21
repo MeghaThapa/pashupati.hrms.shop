@@ -133,8 +133,13 @@ class NonwovenSaleController extends Controller
     {
 
         $unit = NonwovenSaleEntry::find($request->data_id);
+        
+        $value = FabricNonWovenReceiveEntryStock::find($unit->stock_id);
+        $value->status_type = 'active';
+        $value->update();
 
         $unit->delete();
+
         return response([
             "message" => "Deleted Successfully" 
         ]);
@@ -145,7 +150,7 @@ class NonwovenSaleController extends Controller
     {
         try{
             $find_name = FabricNonWovenReceiveEntryStock::find($request->data_id);
-            
+
                 $nonwovensale = NonwovenSaleEntry::create([
                     'fabric_name' => $find_name->fabric_name,
                     'fabric_roll' => $find_name->fabric_roll,
@@ -159,6 +164,8 @@ class NonwovenSaleController extends Controller
                     'stock_id' => $request->data_id,
                     'status' => 'sent',
                 ]);
+            $find_name->status_type = 'inactive';
+            $find_name->update();    
 
         return response(['message'=>'sale Transferred Successfully']);
         }

@@ -148,9 +148,9 @@
                       </tr>
                   </thead>
                   <tbody id="same-fabrics">
-                      @foreach($nonwovenlist as $list)
+                      @foreach($nonwovenlist as $key=>$list)
                       <tr>
-                          <td>#</td>
+                          <td>{{$key+1}}</td>
                           <td>{{$list->fabric_name}}</td>
                           <td>{{$list->fabric_roll}}</td>
                           <td>{{$list->fabric_color}}</td>

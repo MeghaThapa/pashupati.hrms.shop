@@ -412,7 +412,7 @@
     
 
          $(document).on("click",".deleteTripalEntry",function(e){
-             debugger;
+             
              e.preventDefault()
 
              let data_id = $(this).attr('data-id')
@@ -431,6 +431,7 @@
                  },
                  success:function(response){
                     salesTripalTable.ajax.reload();
+                    $('#nonwovenList').DataTable().ajax.reload();
                  },
                  error:function(error){
                      console.log("error",error);
@@ -501,6 +502,7 @@
              },
              success:function(response){
                 $('#getSaleNonwovenList').DataTable().ajax.reload();
+                $('#nonwovenList').DataTable().ajax.reload();
              },
              error:function(error){
                  console.log("error",error);

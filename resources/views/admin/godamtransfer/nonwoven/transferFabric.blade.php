@@ -410,6 +410,7 @@
            },
            success: function(response){
               $('#getSaleTripalList').DataTable().ajax.reload();
+              $('#sameFabricsTable').DataTable().ajax.reload();
            },
            error: function(event){
                alert("Sorry");
@@ -421,14 +422,6 @@
 
 
     });
-
- 
-
-
-
-
-   
-    
 
 
     $(document).ready(function(){
@@ -450,6 +443,7 @@
             },
             success: function(response){
                 $('#getSaleTripalList').DataTable().ajax.reload();
+                $('#sameFabricsTable').DataTable().ajax.reload();
 
             },
             error: function(event){
