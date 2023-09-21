@@ -12,6 +12,7 @@ use App\Models\Charges;
 use App\Models\StoreinDepartment;
 use App\Models\SubCategory;
  use App\Models\StoreinType;
+ use App\Models\Godam;
 
 // use DBApp\Models\Setupstoreout;
 use App\Models\Storein;
@@ -42,8 +43,8 @@ class StoreinController extends Controller
     {
 
         $storeinDatas = Storein::with('supplier')->orderBy('created_at', 'DESC')->get();
-
-        return view('admin.storein.index', compact('storeinDatas'));
+        $godams=Godam::where('status','active')->get(['id','name']);
+        return view('admin.storein.index', compact('storeinDatas','godams'));
     }
 
     /**
@@ -156,8 +157,9 @@ class StoreinController extends Controller
     //         ->make(true);
     // }
 
-    public function storinYajraDatabales()
+    public function storinYajraDatabales(Request $request)
 {
+
     $batchSize = 100;
 
     $storein = DB::table('storein')
@@ -177,6 +179,18 @@ class StoreinController extends Controller
         )
         ->orderBy('storein.id', 'DESC')
         ->get();
+
+        if ($request->start_date && $request->end_date ) {
+
+                $start_date = $request->input('start_date');
+                $end_date = $request->input('end_date');
+                $storein->whereBetween('purchase_date', [$start_date, $end_date]);
+                // return response()->json(['message' => $request->start_date ]);
+
+        }
+        //   if ($request->godam_id) {
+        //         $query->where('godam_id', (int)$request->godam_id);
+        //     }
 
     $storeinChunks = array_chunk($storein->toArray(), $batchSize);
 

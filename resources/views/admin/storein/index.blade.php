@@ -21,6 +21,32 @@
         </div>
     </div>
     <!-- /.content-header -->
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" class="form-control ndp-nepali-calendar" id="start_date" name="start_date"
+                    value="">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" class="form-control ndp-nepali-calendar" id="end_date" name="end_date"
+                    value="">
+            </div>
+        </div>
+        {{-- <div class="col-sm-3">
+            <label for="godamID">Select Godam</label>
+            <select class="form-control" id="godamID">
+                <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
+                @foreach ($godams as $godam)
+                    <option value="{{ $godam->id }}">{{ $godam->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div> --}}
+    </div>
 
     <!-- Main content -->
     <div class="content">
@@ -82,93 +108,105 @@
 
 @section('extra-script')
     <script>
-        var table = $('#storeinTable').DataTable({
-            lengthMenu: [
-                [30, 40, 50, -1],
-                ['30 rows', '40 rows', '50 rows', 'Show all']
-            ],
-            style: 'bootstrap4',
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('storein.storinYajraDatabales') }}",
-            columns: [{
-                    data: 'DT_RowIndex'
-                },
-                {
-                    data: 'purchase_date'
-                },
-                {
-                    data: 'storein_type_name'
-                },
-                {
-                    data: 'supplier_name'
-                },
-                {
-                    data: 'sr_no'
-                },
-                {
-                    data: 'bill_no'
-                },
-                {
-                    data: 'pp_no'
-                },
-                {
-                    data: 'total_discount'
-                },
-                {
-                    data: 'grand_total'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'action',
-                    orderable: true,
-                    searchable: true,
-                },
-            ]
-        });
-        $('body').on('click', '#dltstorein', function() {
-            let id = this.getAttribute('data-id');
-            // let id = $(this).attr('data-id').val();
-            console.log(id);
-            new swal({
-                    title: "Are you sure?",
-                    text: "Once deleted, data will move to trash!!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, cancel!',
-                    reverseButtons: true
-
-                })
-                .then((willDelete) => {
-                    if (willDelete.isConfirmed) {
-
-                        $.ajax({
-                            type: "DELETE",
-                            url: "/storein/delete/" + id,
-                            data: {
-                                '_token': $('meta[name=csrf-token]').attr("content"),
-                                "storein": id,
-                            },
-                            success: function(data) {
-                                console.log(data);
-                                new swal
-                                    ({
-                                        text: "Poof! Your data has been deleted!",
-                                        title: "Deleted",
-                                        icon: "success",
-                                    });
-                                location.reload();
-                            },
-                            error: function(xhr) {
-                                console.log(xhr.responseJSON.message);
-                            }
-                        })
-
+        $(document).ready(function() {
+            var table = $('#storeinTable').DataTable({
+                lengthMenu: [
+                    [30, 40, 50, -1],
+                    ['30 rows', '40 rows', '50 rows', 'Show all']
+                ],
+                style: 'bootstrap4',
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('storein.storinYajraDatabales') }}",
+                    data: function(data) {
+                        data.start_date = $('#start_date').val() ?? null;
+                        data.end_date = $('#end_date').val() ?? null;
                     }
-                })
-        })
+                },
+                columns: [{
+                        data: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'purchase_date'
+                    },
+                    {
+                        data: 'storein_type_name'
+                    },
+                    {
+                        data: 'supplier_name'
+                    },
+                    {
+                        data: 'sr_no'
+                    },
+                    {
+                        data: 'bill_no'
+                    },
+                    {
+                        data: 'pp_no'
+                    },
+                    {
+                        data: 'total_discount'
+                    },
+                    {
+                        data: 'grand_total'
+                    },
+                    {
+                        data: 'status'
+                    },
+                    {
+                        data: 'action',
+                        orderable: true,
+                        searchable: true,
+                    },
+                ]
+            });
+
+            $('#start_date, #end_date').on('change', function() {
+                table.ajax.reload(); // Redraw the table
+            });
+            $('body').on('click', '#dltstorein', function() {
+                let id = this.getAttribute('data-id');
+                // let id = $(this).attr('data-id').val();
+                console.log(id);
+                new swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, data will move to trash!!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, cancel!',
+                        reverseButtons: true
+
+                    })
+                    .then((willDelete) => {
+                        if (willDelete.isConfirmed) {
+
+                            $.ajax({
+                                type: "DELETE",
+                                url: "/storein/delete/" + id,
+                                data: {
+                                    '_token': $('meta[name=csrf-token]').attr("content"),
+                                    "storein": id,
+                                },
+                                success: function(data) {
+                                    console.log(data);
+                                    new swal
+                                        ({
+                                            text: "Poof! Your data has been deleted!",
+                                            title: "Deleted",
+                                            icon: "success",
+                                        });
+                                    location.reload();
+                                },
+                                error: function(xhr) {
+                                    console.log(xhr.responseJSON.message);
+                                }
+                            })
+
+                        }
+                    })
+            })
+        });
     </script>
 @endsection
