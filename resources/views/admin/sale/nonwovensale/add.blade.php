@@ -199,6 +199,26 @@
             </thead>
             <tbody id="getSaleNonwovenList"></tbody>
         </table>
+
+        <tfoot>
+            <tr>
+                <td>Total Net: {{$total_net}}</td>
+          
+            </tr>
+            <tr>
+                <td>Total Gross: {{$total_gross}}</td>
+          
+            </tr>
+            <tr>
+                <td>Total length: {{$total_length}}</td>
+          
+            </tr>
+            <tr>
+                <td>Total Roll: {{$total_roll}}</td>
+          
+            </tr>
+                  
+        </tfoot>
         
     </div>
 </div>
@@ -447,9 +467,9 @@
                      { data : "fabric_roll" , name : "fabric_roll" },
                      { data : "fabric_gsm" , name : "fabric_gsm" },
                      { data : "fabric_color" , name : "fabric_color" },
+                     { data : "length" , name : "length" },
                      { data : "net_weight" , name : "net_weight" },
                      { data : "gross_weight" , name : "gross_weight" },
-                     { data : "length" , name : "length" },
                      { data : "action" , name : "action" },
                  ]
              });

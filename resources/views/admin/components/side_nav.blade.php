@@ -460,6 +460,20 @@
                             </a>
 
                         </li> 
+                        
+                         <li class="nav-item">
+
+                            <a href="{{ route('rawMaterialSalesEntry.index') }}"
+
+                                class="nav-link {{ request()->is('admin/rawMaterialSalesEntry*') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Sales RawMaterial') }}</p>
+
+                            </a>
+
+                        </li> 
 
 
 
@@ -841,60 +855,86 @@
 
                 </li>
 
+                {{-- Pasted Code --}}
 
+                <li class="nav-item has-treeview {{ request()->is('admin/fabric/*') ? 'menu-open' : '' }}">
 
-                <li class="nav-item">
+                    <a href="#" class="nav-link {{ request()->is('admin/fabric/*') ? 'active' : '' }}">
 
-                    <a href="{{ route('fabric.entry.report') }}"
+                        <i class="nav-icon fas fa-star"></i>
 
-                        class="nav-link {{ request()->is('admin/fabric/entry-report*') ? 'active' : '' }}">
+                        <p>
 
-                        <i class="nav-icon fas fa-tags"></i>
+                            Fabric Report
 
-                        <p>Fabric Entry Report</p>
+                            <i class="fas fa-angle-left right"></i>
+
+                        </p>
 
                     </a>
 
-                <li class="nav-item">
-                    <a href="{{ route('fabricbag.entry.report') }}"
-                        class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>FabricBag Entry Report</p>
-                    </a>
-                </li>
+                <ul class="nav nav-treeview ">
+
+                    <li class="nav-item">
+
+                        <a href="{{ route('fabric.entry.report') }}"
+
+                            class="nav-link {{ request()->is('admin/fabric/entry-report*') ? 'active' : '' }}">
+
+                            <i class="nav-icon fas fa-tags"></i>
+
+                            <p>Fabric Entry Report</p>
+
+                        </a>
+
+                    <li class="nav-item">
+                        <a href="{{ route('fabricbag.entry.report') }}"
+                            class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>FabricBag Entry Report</p>
+                        </a>
+                    </li>
 
 
-                <li class="nav-item">
-                    <a href="{{ route('fabric.godam.transfer.report') }}"
-                        class="nav-link {{ request()->is('admin/fabric/godam-transfer-report*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric Godam Transfer Report</p>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{ route('fabric.godam.transfer.report') }}"
+                            class="nav-link {{ request()->is('admin/fabric/godam-transfer-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Fabric Godam Transfer Report</p>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('fabric.laminated.report') }}"
-                        class="nav-link {{ request()->is('admin/fabric/laminated-report*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Laminated Fabric Report</p>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{ route('fabric.laminated.report') }}"
+                            class="nav-link {{ request()->is('admin/fabric/laminated-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Laminated Fabric Report</p>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('fabric.unlaminated.report') }}"
-                        class="nav-link {{ request()->is('admin/fabric/fabric/unlaminated-report*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Unlaminated Fabric Report</p>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{ route('fabric.unlaminated.report') }}"
+                            class="nav-link {{ request()->is('admin/fabric/fabric/unlaminated-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Unlaminated Fabric Report</p>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('fabricbag.entry.report') }}"
-                        class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tags"></i>
-                        <p>Fabric transfer to Bag Report</p>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{ route('fabricbag.entry.report') }}"
+                            class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Fabric transfer to Bag Report</p>
+                        </a>
+                    </li>
+                </ul>
+
+
+                {{-- Pasted Code End --}}
+
+
+
+
 
                 <li class="nav-item">
 

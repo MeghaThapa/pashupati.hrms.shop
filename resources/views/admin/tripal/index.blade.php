@@ -181,7 +181,7 @@
 <div class="row">
     <div class="Ajaxdata col-md-12">
         <div class="p-0 table-responsive table-custom my-3">
-            <table class="table" id="rawMaterialItemTable" >
+            <table class="table" id="tripalListTable" >
                 <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -196,7 +196,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach($datas as $data)
+                  {{--   @foreach($datas as $data)
                     <tr>
                         <td>#</td>
                         <td>{{$data->bill_no}}</td>
@@ -219,7 +219,7 @@
                         </td>
                         
                     </tr>
-                    @endforeach
+                    @endforeach --}}
                 </tbody>
 
             </table>
@@ -332,5 +332,100 @@ $(document).ready(function(){
         });
     }
  
+</script>
+
+<script>
+    $('document').ready(function() {
+        var table = $('#tripalListTable').DataTable({
+            lengthMenu: [
+                [30, 40, 50, -1],
+                ['30 rows', '40 rows', '50 rows', 'Show all']
+            ],
+            style: 'bootstrap4',
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('singleTripal.dataTable') }}",
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'bill_no'
+                },
+                {
+                    data: 'bill_date'
+                },
+                {
+                    data: 'planttype'
+                },
+                {
+                    data: 'plantname'
+                },
+                {
+                    data: 'shift'
+                },
+                {
+                    data: 'godam'
+                },
+
+                {
+                    data: 'action',
+                    orderable: true,
+                    searchable: true,
+                },
+            ]
+        });
+        $('body').on('click', '#rawMaterialDeleteBtn', function(e) {
+            let rawMaterial_id = this.getAttribute('data-id');
+            console.log('js', rawMaterial_id);
+            new swal({
+                title: "Are you sure?",
+                text: "Once deleted, data will deleted completely!!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+
+            }).then((willDelete) => {
+                if (willDelete.isConfirmed) {
+
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('rawMaterial.delete', ['rawMaterial_id' => ':id']) }}"
+                            .replace(':id', rawMaterial_id),
+                        data: {
+                            '_token': $('meta[name=csrf-token]').attr("content"),
+                        },
+                        success: function(data) {
+                            console.log('controller:', data);
+                            new swal
+                                ({
+                                    text: "Poof! Your data has been deleted!",
+                                    title: "Deleted",
+                                    icon: "success",
+                                });
+                            location.reload();
+                        },
+                        error: function(xhr) {
+                            setMessage('RawMaterialError', xhr.responseJSON.message)
+
+                            //console.log(xhr.responseJSON.message);
+                        }
+                    })
+
+                }
+            })
+        });
+
+        function setMessage(element_id, message) {
+            let errorContainer = document.getElementById(element_id);
+            errorContainer.hidden = false;
+            errorContainer.innerHTML = message;
+            setTimeout(function() {
+                errorContainer.hidden = true;
+            }, 2000);
+        }
+
+    });
 </script>
 @endsection
