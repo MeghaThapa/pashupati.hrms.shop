@@ -23,6 +23,8 @@ use App\Models\StoreinItem;
 use App\Models\Tax;
 use App\Models\PurchaseStoreinReport;
 use Carbon\Carbon;
+
+use Carbon\CarbonPeriod;
 use DB;
 use Illuminate\Http\Request;
 use PDF;
@@ -45,6 +47,100 @@ class StoreinController extends Controller
         $storeinDatas = Storein::with('supplier')->orderBy('created_at', 'DESC')->get();
         $godams=Godam::where('status','active')->get(['id','name']);
         return view('admin.storein.index', compact('storeinDatas','godams'));
+    }
+
+    public function entryReport(){
+        return view('admin.storein.entryReport');
+    }
+      private function getEngDateRange($startDate, $endDate)
+    {
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDate);
+        $endDate   = Carbon::createFromFormat('Y-m-d', $endDate);
+
+        $dateRange = CarbonPeriod::create($startDate, $endDate);
+
+        $dates = array_map(fn ($date) => $date->format('Y-m-d'), iterator_to_array($dateRange));
+
+        return $dates;
+    }
+     public function generateEntryReportView(Request $request)
+    {
+        // return "megha";
+        if (!$request->start_date || !$request->end_date) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date']);
+        }
+        $reportData = [];
+        $nepaliDates = [];
+        $nepaliDates = $this->getEngDateRange($request->start_date, $request->end_date);
+        // dd($nepaliDates);
+        foreach ($nepaliDates as $nepaliDate) {
+           $fabrics = DB::table('storein_item')
+            ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
+            ->join('storein_categories', 'storein_item.storein_category_id', '=', 'storein_categories.id')
+            ->join('items_of_storeins', 'storein_item.storein_item_id', '=', 'items_of_storeins.id')
+            ->join('sizes', 'storein_item.size_id', '=', 'sizes.id')
+            ->join('units', 'storein_item.unit_id', '=', 'units.id')
+            ->join('storein_departments', 'storein_item.department_id', '=', 'storein_departments.id')
+            ->select(
+                'storein_item.*',
+                'storein_categories.name as storein_categories_name',
+                'storein_departments.name as storein_departments_name',
+                'items_of_storeins.name as item_name',
+                'sizes.name as sizes_name',
+                'units.name as units_name',
+                'storein.purchase_date'
+
+            )
+            ->where('storein.purchase_date', $nepaliDate);
+
+
+ // ->join('storein_categories', 'bag_fabric_receive_item_sent.fabric_id', '=', 'fabrics.id')
+                            // ->join('storein_item', 'fabrics.godam_id', '=', 'godam.id')
+                            // ->join('storein_departments', 'fabrics.godam_id', '=', 'godam.id')
+                    // if($request->godam_id){
+                    //     $fabrics = $fabrics->where('fabrics.godam_id',$request->godam_id);
+                    // }
+
+            $fabrics = $fabrics->get();
+            // dd($fabrics);
+            if (!$fabrics->isEmpty()) {
+                // dd('hello');
+                $fabricView = view('admin.storein.reportview.dateWiseReport', compact('fabrics', 'nepaliDate'))->render();
+                array_push($reportData, $fabricView);
+            }
+
+        }
+        return response(['status' => true, 'data' => $reportData]);
+        // Summary Part Code
+
+        // $nepaliStartDate = $nepaliDates[0];
+        // $nepaliEndDate = end($nepaliDates);
+
+        // $summaryFabrics = DB::table('bag_fabric_receive_item_sent')
+        //     ->join('fabrics', 'bag_fabric_receive_item_sent.fabric_id', '=', 'fabrics.id')
+        //     ->join('bag_fabric_entry', 'bag_fabric_receive_item_sent.fabric_bag_entry_id', '=', 'bag_fabric_entry.id')
+        //     ->select(
+        //         'name',
+        //         DB::raw('COUNT(fabrics.name) as roll_count'),
+        //         DB::raw('SUM(fabrics.gross_wt) as gross_wt'),
+        //         DB::raw('SUM(fabrics.net_wt) as net_wt'),
+        //         DB::raw('SUM(fabrics.meter) as meter')
+        //     )
+        //     ->groupBy('fabrics.name');
+
+        // if ($request->start_date && $request->end_date) {
+        //     $summaryFabrics = $summaryFabrics->where('bag_fabric_entry.receipt_date_np', '>=', $request->start_date)->where('bag_fabric_entry.receipt_date_np', '<=', $request->end_date);
+        // }
+
+        // if($request->godam_id){
+        //     $summaryFabrics = $summaryFabrics->where('fabrics.godam_id',$request->godam_id);
+        // }
+
+        // $summaryFabrics = $summaryFabrics->get();
+        // $summaryView = view('admin.bag.fabricTransferForBag.reportview.fabricsummary', compact('summaryFabrics', 'nepaliStartDate', 'nepaliEndDate'))->render();
+        // array_push($reportData, $summaryView);
+        // return response(['status' => true, 'data' => $reportData]);
     }
 
     /**
@@ -177,17 +273,20 @@ class StoreinController extends Controller
             'storein.status',
             'storein.grand_total',
         )
-        ->orderBy('storein.id', 'DESC')
-        ->get();
+        ->orderBy('storein.id', 'DESC');
+        if ($request->start_date) {
+                $start_date = $request->input('start_date');
+                $end_date =  now()->format('Y-m-d');
+                $storein->whereBetween('purchase_date', [$start_date, $end_date]);
 
+        }
         if ($request->start_date && $request->end_date ) {
-
                 $start_date = $request->input('start_date');
                 $end_date = $request->input('end_date');
                 $storein->whereBetween('purchase_date', [$start_date, $end_date]);
-                // return response()->json(['message' => $request->start_date ]);
 
         }
+       $storein=$storein->get();
         //   if ($request->godam_id) {
         //         $query->where('godam_id', (int)$request->godam_id);
         //     }

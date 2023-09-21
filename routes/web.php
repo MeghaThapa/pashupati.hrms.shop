@@ -1257,10 +1257,14 @@ Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 
 //Storein route
 // Route::resource('storein',StoreinController::class);
+Route::post('storein/generate-entry-report-view','StoreinController@generateEntryReportView')->name('storein.entry.report.view');
+
 Route::get('storein/getItemsDepartment/{items_of_storein_name}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
 Route::get('storein/getUnitOfItems/{items_of_storein_name}', 'StoreinController@getUnitOfItems')->name('storein.getUnitOfItems');
 
 Route::get('storein/getDepartentAccCat/{category_id}', 'StoreinController@getDepartentAccCat')->name('storein.getDepartentAccCat');
+
+Route::get('storein/entry-report','StoreinController@entryReport')->name('storein.entryReport');
 
 Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
 Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');

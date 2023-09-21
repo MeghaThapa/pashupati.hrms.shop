@@ -38,7 +38,7 @@ class StoreoutController extends Controller
         return view('admin.storeout.index', compact('storeOutDatas'));
     }
 
-    public function storoutYajraDatabales()
+    public function storoutYajraDatabales(Request $request)
     {
     $batchSize = 100;
 
@@ -52,8 +52,20 @@ class StoreoutController extends Controller
             'storeout.total_amount',
             'storeout.status',
         )
-        ->orderBy('storeout.id', 'DESC')
-        ->get();
+        ->orderBy('storeout.id', 'DESC');
+         if ($request->start_date) {
+                $start_date = $request->input('start_date');
+                $end_date =  now()->format('Y-m-d');
+                $storeout->whereBetween('receipt_date', [$start_date, $end_date]);
+
+        }
+         if ($request->start_date && $request->end_date ) {
+                $start_date = $request->input('start_date');
+                $end_date = $request->input('end_date');
+                $storeout->whereBetween('receipt_date', [$start_date, $end_date]);
+
+        }
+       $storeout=$storeout->get();
 
     $storeoutChunks = array_chunk($storeout->toArray(), $batchSize);
 
