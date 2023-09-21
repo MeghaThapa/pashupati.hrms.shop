@@ -144,6 +144,7 @@
                             <th>{{ __('BillNO') }}</th>
                             <th>{{ __('Date Np') }}</th>
                             <th>{{ __('Net Weight') }}</th>
+                            <th>{{ __('Net Weight') }}</th>
                             
                         </tr>
                     </thead>
@@ -155,6 +156,7 @@
                             <th></th> 
                             <th></th> 
                             <th></th> 
+                            <th></th>
                             <th></th>
                             
                         </tr>
@@ -217,6 +219,10 @@
                         name: "total_netweight",
                         data: "total_netweight"
                     },
+                    {
+                        name: "action",
+                        data: "action"
+                    },
                    
                 ],
                 footerCallback: function (tfoot, data, start, end, display) {
@@ -262,6 +268,49 @@
             $('#start_date, #end_date, #godamID').on('change', function () {
                 table.draw(); // Redraw the table
             });
+        });
+
+        $('body').on('click', '#rawMaterialDeleteBtn', function(e) {
+            let fabricDetail_id = this.getAttribute('data-id');
+            // console.log('js', fabricDetail_id);
+            new swal({
+                title: "Are you sure?",
+                text: "Once deleted, data will deleted completely!!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+
+            }).then((willDelete) => {
+                if (willDelete.isConfirmed) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('fabricdetail.destroy', ['fabricDetail_id' => ':id']) }}"
+                            .replace(':id', fabricDetail_id),
+                        data: {
+                            '_token': $('meta[name=csrf-token]').attr("content"),
+                        },
+                        success: function(data) {
+                            console.log('controller:', data);
+                            new swal
+                                ({
+                                    text: "Poof! Your data has been deleted!",
+                                    title: "Deleted",
+                                    icon: "success",
+                                });
+                            location.reload();
+                        },
+                        error: function(xhr) {
+                            setMessage('RawMaterialError', xhr.responseJSON.message)
+
+                            //console.log(xhr.responseJSON.message);
+                        }
+                    })
+
+                }
+            })
         });
 
     </script>

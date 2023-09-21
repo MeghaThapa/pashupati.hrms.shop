@@ -459,7 +459,21 @@
 
                             </a>
 
-                        </li>
+                        </li> 
+                        
+                         <li class="nav-item">
+
+                            <a href="{{ route('rawMaterialSalesEntry.index') }}"
+
+                                class="nav-link {{ request()->is('admin/rawMaterialSalesEntry*') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Sales RawMaterial') }}</p>
+
+                            </a>
+
+                        </li> 
 
 
 
@@ -913,6 +927,8 @@
                             <p>Fabric transfer to Bag Report</p>
                         </a>
                     </li>
+<<<<<<< HEAD
+=======
 
                     <li class="nav-item">
                         <a href="{{ route('fabric.sale.report') }}"
@@ -921,6 +937,7 @@
                             <p>Fabric Sale Report</p>
                         </a>
                     </li>
+>>>>>>> d307f3b472c45b06ea1270110ed23fa145d8bd8a
                 </ul>
 
 

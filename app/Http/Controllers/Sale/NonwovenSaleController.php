@@ -90,8 +90,12 @@ class NonwovenSaleController extends Controller
         $find_data = NonwovenSale::find($id);
         $godam_id = Godam::where('name','psi')->value('id');
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
+        $total_net = NonwovenSaleEntry::where('bill_id',$id)->sum('net_weight');
+        $total_gross = NonwovenSaleEntry::where('bill_id',$id)->sum('gross_weight');
+        $total_length = NonwovenSaleEntry::where('bill_id',$id)->sum('length');
+        $total_roll = NonwovenSaleEntry::where('bill_id',$id)->count();
        
-        return view('admin.sale.nonwovensale.add',compact('find_data','id','nonwovenfabrics'));
+        return view('admin.sale.nonwovensale.add',compact('find_data','id','nonwovenfabrics','total_net','total_gross','total_length','total_roll'));
     }
 
     public function getSaleNonwovenList(Request $request){
