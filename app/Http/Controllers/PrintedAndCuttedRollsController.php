@@ -1,27 +1,15 @@
 <?php
-
-
-
 namespace App\Http\Controllers;
-
-
-
 use App\Models\PrintedAndCuttedRolls;
-
 use App\Models\PrintedAndCuttedRollsEntry;
-
 use App\Models\BagFabricReceiveItemSentStock;
-
+use App\Models\PrintingAndCuttingBagItem;
 use App\Models\AutoLoadItemStock;
-
 use App\Models\Godam;
-
 use App\Models\Wastages;
-
+use App\Models\BagBrand;
 use App\Models\Group;
-
 use Illuminate\Http\Request;
-
 use DB;
 
 class PrintedAndCuttedRollsController extends Controller
@@ -30,13 +18,50 @@ class PrintedAndCuttedRollsController extends Controller
 
     /*************** For Entry *********/
 
+    public function datafixes(){
+
+        // try{
+        //     DB::beginTransaction();
+        // $tests=PrintingAndCuttingBagItem::with('brandBag:id,name')->get();
+        //     foreach( $tests as $test ){
+        //         // return $test->brandBag->name;
+
+        //         $brandbagid=BagBrand::where('name',$test->brandBag->name)->first()->id;
+        //         // return $brandbagid;
+        //         $test->update([
+        //             'bag_brand_id'=>$brandbagid,
+        //         ]);
+        //     }
+        //     DB::commit();
+        //     return 'done';
+        //     }catch(Exception $ex){
+        //         DB::rollback();
+        //     }
+
+
+        // try{
+        //     DB::beginTransaction();
+        //     $duplicateNames = BagBrand::groupBy('name')
+        //     ->havingRaw('COUNT(*) > 1')
+        //     ->get('name');
+        //     // return $duplicateNames;
+        //     foreach ($duplicateNames as $name) {
+        //         $recordsToDelete = BagBrand::where('name', $name->name)->skip(1)->take(PHP_INT_MAX)->get();
+
+        //         foreach ($recordsToDelete as $record) {
+        //             $record->delete();
+        //         }
+        //     }
+        //     DB::commit();
+        //     return 'done';
+        //     }catch(Exception $ex){
+        //         DB::rollback();
+        //     }
+
+    }
     public function index()
     {
-
-
-
         $data = PrintedAndCuttedRollsEntry::all();
-
         return view("admin.bag.printsandcuts.index", compact("data"));
     }
 

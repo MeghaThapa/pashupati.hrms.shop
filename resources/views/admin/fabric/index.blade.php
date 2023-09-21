@@ -114,13 +114,15 @@
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label for="start_date">Start Date:</label>
-                        <input type="text" class="form-control ndp-nepali-calendar" id="start_date" name="start_date" value="">
+                        <input type="text" class="form-control ndp-nepali-calendar" id="start_date" name="start_date"
+                            value="">
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label for="end_date">End Date:</label>
-                        <input type="text" class="form-control ndp-nepali-calendar" id="end_date" name="end_date" value="">
+                        <input type="text" class="form-control ndp-nepali-calendar" id="end_date" name="end_date"
+                            value="">
                     </div>
                 </div>
                 <div class="col-sm-3">
@@ -144,8 +146,7 @@
                             <th>{{ __('BillNO') }}</th>
                             <th>{{ __('Date Np') }}</th>
                             <th>{{ __('Net Weight') }}</th>
-                            <th>{{ __('Net Weight') }}</th>
-                            
+
                         </tr>
                     </thead>
                     <tbody>
@@ -153,12 +154,11 @@
                     <tfoot>
                         <tr>
                             <th></th>
-                            <th></th> 
-                            <th></th> 
-                            <th></th> 
                             <th></th>
                             <th></th>
-                            
+                            <th></th>
+                            <th></th>
+
                         </tr>
                     </tfoot>
                 </table>
@@ -197,8 +197,7 @@
                         data.godam_id = $('#godamID').val();
                     },
                 },
-                columns: [
-                    {
+                columns: [{
                         name: "DT_RowIndex",
                         data: "DT_RowIndex",
                         orderable: false
@@ -219,20 +218,18 @@
                         name: "total_netweight",
                         data: "total_netweight"
                     },
-                    {
-                        name: "action",
-                        data: "action"
-                    },
-                   
+
                 ],
-                footerCallback: function (tfoot, data, start, end, display) {
+                footerCallback: function(tfoot, data, start, end, display) {
                     var api = this.api();
-                    var totalNetweightSum = api.ajax.json().total_netweight_sum; // Get the sum from the JSON response
+                    var totalNetweightSum = api.ajax.json()
+                    .total_netweight_sum; // Get the sum from the JSON response
                     $(api.column(4).footer()).html('Total: ' + totalNetweightSum);
                 },
-                drawCallback: function (settings) {
+                drawCallback: function(settings) {
                     var api = this.api();
-                    var totalNetweightSum = api.ajax.json().total_netweight_sum; // Get the sum from the JSON response
+                    var totalNetweightSum = api.ajax.json()
+                    .total_netweight_sum; // Get the sum from the JSON response
                     $(api.column(4).footer()).html('Total: ' + totalNetweightSum);
                 }
             });
@@ -243,16 +240,15 @@
                 ndpMonth: true,
                 disableAfter: currentDate,
             });
-            
+
             $('#start_date').val(currentDate);
             $('#start_date').nepaliDatePicker({
                 ndpYear: true,
                 ndpMonth: true,
                 disableAfter: currentDate,
-                onChange(){
+                onChange() {
                     table.draw();
                 }
-            
             });
 
             $('#end_date').val(currentDate);
@@ -260,58 +256,14 @@
                 ndpYear: true,
                 ndpMonth: true,
                 disableAfter: currentDate,
-                onChange(){
+                onChange() {
                     table.draw();
                 }
             });
 
-            $('#start_date, #end_date, #godamID').on('change', function () {
+            $('#start_date, #end_date, #godamID').on('change', function() {
                 table.draw(); // Redraw the table
             });
         });
-
-        $('body').on('click', '#rawMaterialDeleteBtn', function(e) {
-            let fabricDetail_id = this.getAttribute('data-id');
-            // console.log('js', fabricDetail_id);
-            new swal({
-                title: "Are you sure?",
-                text: "Once deleted, data will deleted completely!!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-
-            }).then((willDelete) => {
-                if (willDelete.isConfirmed) {
-
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ route('fabricdetail.destroy', ['fabricDetail_id' => ':id']) }}"
-                            .replace(':id', fabricDetail_id),
-                        data: {
-                            '_token': $('meta[name=csrf-token]').attr("content"),
-                        },
-                        success: function(data) {
-                            console.log('controller:', data);
-                            new swal
-                                ({
-                                    text: "Poof! Your data has been deleted!",
-                                    title: "Deleted",
-                                    icon: "success",
-                                });
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            setMessage('RawMaterialError', xhr.responseJSON.message)
-
-                            //console.log(xhr.responseJSON.message);
-                        }
-                    })
-
-                }
-            })
-        });
-
     </script>
 @endsection

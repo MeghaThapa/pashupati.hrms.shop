@@ -1444,6 +1444,9 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
         //prints and cuts starts
         //entry
     Route::get("prints/and/cuts/index",[PrintedAndCuttedRollsController::class,"index"])->name('prints.and.cuts.index');
+//megha
+    Route::get("printCuts/datafixes",[PrintedAndCuttedRollsController::class,"datafixes"])->name('printCuts.datafixes');
+
     Route::get("prints/and/cuts/create/entry",[PrintedAndCuttedRollsController::class,"createEntry"])->name('prints.and.cuts.create.entry');
     Route::post("prints/and/cuts/store/entry",[PrintedAndCuttedRollsController::class,"storeEntry"])->name('prints.and.cuts.store.entry');
 
