@@ -11,7 +11,7 @@ class FinalTripalStock extends Model
 
     protected $fillable = [
         'fabric_id','doublefabric_id','roll_no','gross_wt','net_wt','meter','gram','created_at','updated_at','bill_id',
-        'plantname_id','department_id','planttype_id','bill_number','bill_date','name','slug','loom_no','average_wt','status','date_en','date_np','finaltripal_id','finaltripalname_id','date_en','date_np','gsm'
+        'plantname_id','department_id','planttype_id','bill_number','bill_date','name','slug','loom_no','average_wt','status','date_en','date_np','finaltripal_id','finaltripalname_id','date_en','date_np','gsm','status_type'
     ];
 
     public function getGodam()
