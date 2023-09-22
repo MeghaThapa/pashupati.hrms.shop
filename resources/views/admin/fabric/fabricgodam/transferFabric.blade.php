@@ -85,8 +85,10 @@
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
+                <input type="hidden" class="form-control" id="bill_id" name="bill_id" value="{{$find_data->id}}" 
+                    readonly />
                 <input type="text" class="form-control" id="bill_number" name="bill_number" value="{{$find_data->bill_no}}" 
-                    readonly /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                    readonly /> 
                     <input type="hidden" name="fabricgodam_id" value="{{$fabricgodam_id}}" id="fabricgodam_id">
                     <input type="hidden" name="fromgodam_id" value="{{$find_data->fromgodam_id}}" id="fromgodam_id">
                     <input type="hidden" name="togodam_id" value="{{$find_data->togodam_id}}" id="togodam_id">
@@ -183,6 +185,14 @@
                 </tr>
             </thead>
             <tbody id="getFabricGodamList"></tbody>
+            <tfoot>
+                <tr>
+                    <td>Total Net:</td>
+                    <td>Total Gross:</td>
+                    <td>Total Meter:</td>
+                    <td>Total Roll:</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
@@ -314,7 +324,8 @@
         bill_date = $('#date_np').val(),
         fromgodam_id = $('#fromgodam_id').val(),
         togodam_id = $('#togodam_id').val(),
-        fabricstock_id = $('#fabricstock_id').val();
+        fabricstock_id = $('#fabricstock_id').val(),
+        bill_id = $('#bill_id').val();
 
         let fabric_name_id = $(this).val();
         fabricTable = $("#sameFabricsTable").DataTable({
@@ -329,7 +340,8 @@
                     data.bill_number = bill_number,
                     data.bill_date = bill_date,
                     data.fromgodam_id = fromgodam_id,
-                    data.togodam_id = togodam_id
+                    data.togodam_id = togodam_id,
+                    data.bill_id = bill_id
                     // data.fabricstock_id = fabricstock_id
                 }
             },

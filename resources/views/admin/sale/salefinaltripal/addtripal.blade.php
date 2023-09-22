@@ -201,7 +201,7 @@
                     <th>{{ __('N.W') }}</th>
                     <th>{{ __('Meter') }}</th>
                     <th>{{ __('Avg') }}</th>
-                    <th>{{ __('Gram') }}</th>
+                    <th>{{ __('GSM') }}</th>
                     <th>{{ __('Bill') }}</th>
                     <th>{{ __('Action') }}</th>
                 </tr>
@@ -406,7 +406,7 @@
                      { data : "net" , name : "net" },
                      { data : "meter" , name : "meter" },
                      { data : "average" , name : "average" },
-                     { data : "gram" , name : "gram" },
+                     { data : "gsm" , name : "gsm" },
                      { data : "bill_no" , name : "bill_no" },
                      { data : "action" , name : "action" },
                  ]
@@ -458,6 +458,7 @@
          let bill_no = $("#bill_no").val()
          let billDate = $("#bill_date").val()
          let salefinal_id = $("#salefinal_id").val()
+         debugger;
 
        
          $.ajax({

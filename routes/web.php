@@ -663,7 +663,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
-    Route::get('fabricGodam/test', 'FabricNonwovenController@test')->name('fabricGodam.test');
+    Route::get('fabricGodam/test', 'FabricGodamController@test')->name('fabricGodam.test');
 
     Route::get('fabricGodam/dataTable', 'FabricGodamController@dataTable')->name('fabricGodam.dataTable');
 
@@ -681,7 +681,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('fabricGodam/delete/list', 'FabricGodamController@deleteFabricGodamList')->name('fabricgodam.deleteFabricGodamList');
 
-    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("getFilterFabric");
+    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getFilterFabricGodamList')->name("getFilterFabric");
 
 
 
@@ -714,6 +714,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
 
     Route::get('finaltripals/viewBill/{id}', 'Tripal\FinalTripalBillController@viewBill')->name('finaltripal.viewbill');
+
+    Route::get('finaltripals/getFilterFinalStock', 'Tripal\FinalTripalStockController@getFilterList')->name('finaltripal.getFilterList');
 
     Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
     Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');

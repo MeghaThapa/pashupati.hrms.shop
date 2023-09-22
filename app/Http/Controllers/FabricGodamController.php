@@ -25,15 +25,18 @@ class FabricGodamController extends Controller
     }
 
     public function test(){
+        // dd('ll');
         $data = FabricGodamList::get();
+        // dd($data->take(5));
         // dd($data->take(5));
         foreach ($data as $value)
             {
                 // dd($value);
-                $fabric = Fabric::where('roll_no',$value->roll)->where('net_wt',$value->net_wt)->value('id');
+                $fabric = FabricGodamList::where('bill_no',$value->bill_no)->where('bill_date',$value->bill_date)->where('roll',$value->roll)->value('bill_id');
+                // dd($fabric);
 
-                // dd($final);
-                $sa = FabricGodamList::where('id',$value->id)->update(['fabric_id' => $fabric]);
+             
+                $sa = FabricGodamTransfer::where('bill_no',$value->bill_no)->where('bill_date',$value->bill_date)->where('roll',$value->roll)->update(['bill_id' => $fabric]);
 
                 // dd($value,$group);
             }
@@ -118,14 +121,16 @@ class FabricGodamController extends Controller
 
     }
 
-    public function getfabricwithsamename(Request $request){
+    public function getFilterFabricGodamList(Request $request){
         if($request->ajax()){
             $fabric_name_id = $request->fabric_name_id;
-            $bill_no = $request->bill_number;
-            $getbillgodam = FabricGodam::where('bill_no',$bill_no)->value('fromgodam_id');
-            // dd($bill_no);
-            $fabric_name = FabricStock::where('godam_id',$getbillgodam)->where("id",$fabric_name_id)->value("name");
+            $bill_id = $request->bill_id;
+            $getbillgodam = FabricGodam::where('id',$bill_id)->value('fromgodam_id');
+            // dd($bill_no,$getbillgodam);
+            $fabric_name = FabricStock::where("id",$fabric_name_id)->value("name");
+            // dd($fabric_name);
             $fabrics = FabricStock::where('godam_id',$getbillgodam)->where("name",$fabric_name)->get();
+            // dd($fabrics);
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()

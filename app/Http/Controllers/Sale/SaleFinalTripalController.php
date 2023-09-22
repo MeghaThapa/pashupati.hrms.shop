@@ -256,6 +256,7 @@ class SaleFinalTripalController extends Controller
         return response(['message'=>'sale Transferred Successfully']);
         }
         catch (Exception $ex){
+            dd($ex);
             return $ex;
         }
     
