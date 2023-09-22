@@ -178,13 +178,13 @@
                                             @endforeach
                                             <tr>
                                                 <td></td>
+                                                <td>Total</td>
                                                 <td></td>
-                                                <td></td>
-                                                <td>Total Gross: {{ $totals['gross_wt'] }}</td>
-                                                <td>Total Net: {{ $totals['net_wt'] }}</td>
-                                                <td>Total Meter: {{ $totals['meter'] }}</td>
-                                                <td>Total Avg Wgt: {{ $totals['average_wt'] }}</td>
-                                                <td>Total Avg Gram: {{ $totals['gram_wt'] }}</td>
+                                                <td>{{ $totals['gross_wt'] }}</td>
+                                                <td>{{ $totals['net_wt'] }}</td>
+                                                <td>{{ $totals['meter'] }}</td>
+                                                <td>{{ $totals['average_wt'] }}</td>
+                                                <td>{{ $totals['gram_wt'] }}</td>
                                             </tr>
                                         </tbody>
                                     </table>

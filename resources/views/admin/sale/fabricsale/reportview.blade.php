@@ -22,9 +22,10 @@
             </th>
         </tr>
         <tr>
+            <th>S.N.</th>
+            <th>Particulars</th>
             <th>No of Rolls</th>
             <th>Roll No</th>
-            <th>Particulars</th>
             <th>Gross Wt</th>
             <th>Net Wt</th>
             <th>Meter</th>
@@ -77,9 +78,9 @@
 
             <!-- Display individual fabric item -->
             <tr>
+                <td>{{ $fabricSaleItem->fabric->name }}</td>
                 <td> {{ ++$i }} </td>
                 <td>{{ $fabricSaleItem->fabric->roll_no }}</td>
-                <td>{{ $fabricSaleItem->fabric->name }}</td>
                 <td>{{ $fabricSaleItem->fabric->gross_wt }}</td>
                 <td>{{ $fabricSaleItem->fabric->net_wt }}</td>
                 <td>{{ $fabricSaleItem->fabric->meter }}</td>
@@ -107,7 +108,7 @@
                 <td>{{ $gross_wt }}</td>
                 <td>{{ $net_wt }}</td>
                 <td>{{ $meter }}</td>
-                <td> @if($i != 0) {{ $total_avg/$i }} @endif </td>
+                <td> @if($meter != 0) {{ ($net_wt/$meter) * 1000  }} @endif </td>
                 <td> @if($i != 0) {{ $total_gram_wt/$i }} @endif </td>
             </tr>
         @endif
