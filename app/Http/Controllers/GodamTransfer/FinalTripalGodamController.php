@@ -111,8 +111,13 @@ class FinalTripalGodamController extends Controller
         $find_data = TripalGodam::find($tripalgodam_id);
         $stocks = FinalTripalStock::where('department_id',$find_data->fromgodam_id)->get()->unique('name')->values()->all();
         // dd('lol');
+
+        $total_net = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('net');
+        $total_gross = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('gross');
+        $total_meter = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('meter');
+        $total_roll = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->count();
        
-        return view('admin.godamtransfer.finaltripal.transferFabric',compact('stocks','tripalgodam_id','find_data'));
+        return view('admin.godamtransfer.finaltripal.transferFabric',compact('stocks','tripalgodam_id','find_data','total_net','total_gross','total_meter','total_roll'));
     }
 
     public function transferFabricDetail($fabricgodam_id)
@@ -285,8 +290,13 @@ class FinalTripalGodamController extends Controller
         $find_data = TripalGodam::find($tripalgodam_id);
         $stocks = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->get();
         $id = $tripalgodam_id;
+
+        $total_net = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('net');
+        $total_gross = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('gross');
+        $total_meter = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('meter');
+        $total_roll = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->count();
           
-        return view('admin.godamtransfer.finaltripal.viewBill',compact('stocks','tripalgodam_id','find_data','id'));
+        return view('admin.godamtransfer.finaltripal.viewBill',compact('stocks','tripalgodam_id','find_data','id','total_net','total_gross','total_meter','total_roll'));
 
     }
 

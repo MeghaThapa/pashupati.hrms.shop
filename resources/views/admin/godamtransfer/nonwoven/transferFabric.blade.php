@@ -193,6 +193,14 @@
                 </tr>
             </thead>
             <tbody id="getSaleTripalList"></tbody>
+            <tfoot>
+                <tr>
+                    <td>Total Net: {{$total_net}}</td>
+                    <td>Total Gross: {{$total_gross}}</td>
+                    <td>Total length: {{$total_length}}</td>
+                    <td>Total Roll: {{$total_roll}}</td>
+                      
+            </tfoot>
         </table>
     </div>
 </div>

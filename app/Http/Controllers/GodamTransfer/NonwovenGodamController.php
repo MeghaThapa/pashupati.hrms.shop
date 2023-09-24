@@ -156,8 +156,13 @@ class NonwovenGodamController extends Controller
         $find_data = NonwovenGodam::find($nonwovengodam_id);
         $stocks = FinalTripalStock::get();
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
+
+        $total_net = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('net');
+        $total_gross = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('gross');
+        $total_length = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('length');
+        $total_roll = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->count();
        
-        return view('admin.godamtransfer.nonwoven.transferFabric',compact('stocks','nonwovengodam_id','find_data','nonwovenfabrics'));
+        return view('admin.godamtransfer.nonwoven.transferFabric',compact('stocks','nonwovengodam_id','find_data','nonwovenfabrics','total_net','total_gross','total_length','total_roll'));
     }
 
     public function transferFabricDetail($fabricgodam_id)
@@ -332,8 +337,13 @@ class NonwovenGodamController extends Controller
         $find_data = NonwovenGodam::find($nonwovengodam_id);
         $stocks = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->get();
         $id = $nonwovengodam_id;
+
+        $total_net = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('net');
+        $total_gross = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('gross');
+        $total_length = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('length');
+        $total_roll = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->count();
           
-        return view('admin.godamtransfer.nonwoven.viewbill',compact('stocks','nonwovengodam_id','find_data','id'));
+        return view('admin.godamtransfer.nonwoven.viewbill',compact('stocks','nonwovengodam_id','find_data','id','total_net','total_gross','total_length','total_roll'));
 
     }
 
