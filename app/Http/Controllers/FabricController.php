@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\Fabric;
@@ -20,14 +21,14 @@ use App\Models\FabricSaleItems;
 use Yajra\DataTables\DataTables;
 use App\Services\NepaliConverter;
 use Illuminate\Support\Facades\DB;
+use App\Models\FabricGodamTransfer;
 use App\Models\TapeEntryStockModel;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\BagFabricReceiveItemSent;
-use App\Models\FabricGodamTransfer;
-use App\Models\FabricSendAndReceiveLaminatedSent;
-use App\Models\Singlesidelaminatedfabric;
 use App\Models\Unlaminatedfabrictripal;
+use App\Models\BagFabricReceiveItemSent;
+use App\Models\Singlesidelaminatedfabric;
+use App\Models\FabricSendAndReceiveLaminatedSent;
 
 class FabricController extends Controller
 {
@@ -38,7 +39,75 @@ class FabricController extends Controller
         $this->neDate = $neDate;
     }
 
-    public function fixData()
+    public function fixData(){
+        $users = User::all();
+        foreach($users as $user){
+            if($user->id==1){
+                $user->assignRole('Admin');
+            }else{
+                $user->assignRole('User');
+            }
+        }
+    }
+
+    public function fixDataSpaceBlanks()
+    {
+        $fabrics = FabricStock::where('name', 'LIKE', '%(Lam)%')->get();
+
+        foreach ($fabrics as $fabric) {
+            $fabric->name = str_replace(' (Lam)', '(Lam)', $fabric->name);
+            $fabric->save();
+        }
+
+        $html = '<table>';
+        $html .= '<thead>';
+        // Add your table header rows here
+        $html .= '</thead>';
+        $html .= '<tbody>';
+
+        // Loop through your data and generate table rows
+        foreach ($fabrics as $fabric) {
+            $html .= '<tr>';
+            $html .= '<td>' . $fabric->name . '</td>'; // Replace with actual column names
+            // Add more columns here as needed
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+        echo $html;
+
+    }
+
+    public function fixLamCentertoEndData(){
+        $fabrics = FabricStock::where('name', 'REGEXP', '\\(Lam\\)\\(.*\\)')->get();
+        foreach ($fabrics as $fabric) {
+            $fabric->name = str_replace('(Lam)', '', $fabric->name) . ' (Lam)';
+            $fabric->save();
+        }
+        $html = '<table>';
+        $html .= '<thead>';
+        // Add your table header rows here
+        $html .= '</thead>';
+        $html .= '<tbody>';
+
+        // Loop through your data and generate table rows
+        foreach ($fabrics as $fabric) {
+            $html .= '<tr>';
+            $html .= '<td>' . $fabric->name . '</td>'; // Replace with actual column names
+            // Add more columns here as needed
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+        echo $html;
+
+    }
+
+    public function fixDataMergedunlamSentfabric()
     {
         $unlaminatedFabrics = FabricStock::where('godam_id', 1)->where('is_laminated', 'false')->pluck('roll_no')->toArray();
 

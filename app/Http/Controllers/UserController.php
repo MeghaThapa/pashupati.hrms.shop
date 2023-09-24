@@ -69,6 +69,12 @@ class UserController extends Controller
             'status' => $request->status,
         ]);
 
+        if($request->accountType==0){
+            $user->assignRole('User');
+        }else{
+            $user->assignRole('Admin');
+        }
+
         return redirect()->route('users.index')->withSuccess('User added successfully!');
     }
 

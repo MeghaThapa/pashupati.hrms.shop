@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use App\Models\FabricSale;
 use App\Models\FabricStock;
+use App\Rules\ValidDpNumber;
 use Illuminate\Http\Request;
 use App\Models\FabricSaleEntry;
 use App\Models\FabricSaleItems;
@@ -161,7 +162,10 @@ class FabricSendAndReceiveSaleController extends Controller
             'partyname' => "required",
             'bill_for' => "required",
             'lory_number' => "required",
-            'dp_number' => "required",
+            'dp_number' => [
+                'required',
+                new ValidDpNumber,
+            ],
             'gp_number' => "required"
         ]);
         $fabric = FabricSaleEntry::create([

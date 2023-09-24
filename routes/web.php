@@ -54,6 +54,7 @@ use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
+use App\Http\Controllers\DeliveryOrderController;
 use App\Http\Controllers\FabricController;
 use App\Http\Controllers\RawMaterialReportController;
 use App\Http\Controllers\ReprocessWasteController;
@@ -687,8 +688,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getFilterFabricGodamList')->name("getFilterFabric");
 
-
-
+    Route::resource('delivery-order',DeliveryOrderController::class);
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [
