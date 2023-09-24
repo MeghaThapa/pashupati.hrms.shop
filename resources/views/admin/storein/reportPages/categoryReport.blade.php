@@ -10,14 +10,14 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('Storein Entry Report') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('Storein Category Report') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('Storein Entry Report') }}</li>
+                    <li class="breadcrumb-item active">{{ __('Storein Category Report') }}</li>
                 </ol>
             </div>
         </div>
@@ -27,9 +27,9 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <h3>Storein Entry Report</h3>
+                    <h3>Storein Category Report</h3>
                 </div>
-                <div class="row container">
+                <div class="row p-2">
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
@@ -45,11 +45,31 @@
                         </div>
                     </div>
                     {{-- <div class="col-sm-3">
-                        <label for="godamID">Select Godam</label>
-                        <select class="form-control" id="godamID">
-                            <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                            @foreach ($godams as $data)
-                                <option value="{{ $data->id }}">{{ $data->name }}
+                        <label for="godamID">Storein Department</label>
+                        <select class="form-control" id="storeinDeptId" name="storein_dept_id">
+                            <option value="" selected disabled>{{ __('Select storein Department') }}</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->id }}">{{ $department->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div> --}}
+                    <div class="col-sm-3">
+                        <label for="godamID">Storein category</label>
+                        <select class="form-control" id="storeinCategoryId">
+                            <option value="" selected disabled>{{ __('Select storein Category') }}</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    {{-- <div class="col-sm-3">
+                        <label for="godamID">Items of storein </label>
+                        <select class="form-control" id="itemId">
+                            <option value="" selected disabled>{{ __('Select itemsOf Storein') }}</option>
+                            @foreach ($itemNames as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -60,6 +80,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="table-custom card-body table-responsive" id="reportView">
                 </div>
             </div>
@@ -90,13 +111,15 @@
             $("#generateReport").click(function(e) {
                 e.preventDefault()
                 $.ajax({
-                    url: "{{ route('storein.entry.report.view') }}",
+                    url: "{{ route('storein.itemCatgoryReport.view') }}",
                     method: "post",
                     data: {
                         "_token": $("meta[name='csrf-token']").attr("content"),
                         // "godam_id": $('#godamID').val(),
                         "start_date": $('#start_date').val(),
                         "end_date": $('#end_date').val(),
+                        "storein_cat_id": $('#storeinCategoryId').val(),
+
                     },
                     success: function(response) {
                         console.log('megha', response);

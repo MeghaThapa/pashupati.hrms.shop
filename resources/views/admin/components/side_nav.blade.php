@@ -11,21 +11,17 @@
 
 
         @if (session()->get('isDark') == true || session()->get('isSidebarDark') == true)
-
             <img class="lg-logo" src="{{ $settings['darkLogo'] }}" alt="{{ $settings['compnayName'] }}">
 
             <!-- Small Device -->
 
             <img class="sm-logo" src="{{ $settings['smallDarkLogo'] }}" alt="{{ $settings['compnayName'] }}">
-
         @else
-
             <img class="lg-logo" src="{{ $settings['logo'] }}" alt="{{ $settings['compnayName'] }}">
 
             <!-- Small Device -->
 
             <img class="sm-logo" src="{{ $settings['smallLogo'] }}" alt="{{ $settings['compnayName'] }}">
-
         @endif
 
 
@@ -41,7 +37,6 @@
         <nav class="mt-2">
 
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-
                 data-accordion="false">
 
                 <li class="nav-header text-bold">{{ __('ACTIVITY') }}</li>
@@ -67,7 +62,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('openingRawmaterialEntry.index') }}"
-
                                 class="nav-link {{ request()->is('openingRawmaterialEntry.index') ? 'active' : '' }}">
 
                                 <i class="far fa-circle nav-icon"></i>
@@ -83,7 +77,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('openingtripal.index') }}"
-
                                 class="nav-link {{ request()->is('admin/openingtripal*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -99,7 +92,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('openingdoubletripal.index') }}"
-
                                 class="nav-link {{ request()->is('admin/openingdoubletripal*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -115,7 +107,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('openingfinaltripal.index') }}"
-
                                 class="nav-link {{ request()->is('admin/openingfinaltripal*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -135,7 +126,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('fabric.opening') }}"
-
                                 class="nav-link {{ request()->routeIs('admin.fabric.opening') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -151,7 +141,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('wastageStock.index') }}"
-
                                 class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -173,7 +162,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('openingnonwoven.index') }}"
-
                                 class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -193,6 +181,7 @@
                     </ul>
 
                 </li>
+
 
 
 
@@ -217,7 +206,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('autoloadStock.index') }}"
-
                                 class="nav-link {{ request()->is('autoloadStock/index*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-spinner"></i>
@@ -249,7 +237,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('fabric-stock.index') }}"
-
                                 class="nav-link {{ request()->is('admin/fabric-stock*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -267,7 +254,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('tapeentry-stock.index') }}"
-
                                 class="nav-link {{ request()->is('admin/tape-entry-stock/index') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-random"></i>
@@ -283,7 +269,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('stock.index') }}"
-
                                 class="nav-link {{ request()->is('stock/index*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-boxes"></i>
@@ -299,7 +284,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('bagBundelStock.index') }}"
-
                                 class="nav-link {{ request()->routeIs('bagBundelStock.index') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-chart-area"></i>
@@ -313,7 +297,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('bagSalesStock.index') }}"
-
                                 class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-chart-area"></i>
@@ -333,7 +316,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('nonwovenfabrics-receiveentrystock.index') }}"
-
                                 class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-chart-area"></i>
@@ -349,7 +331,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('singletripal-stock.index') }}"
-
                                 class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-chart-area"></i>
@@ -365,7 +346,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('doubletripal-stock.index') }}"
-
                                 class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-chart-area"></i>
@@ -381,7 +361,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('finaltripal-stock.index') }}"
-
                                 class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-chart-area"></i>
@@ -423,7 +402,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('salefinaltripal.index') }}"
-
                                 class="nav-link {{ request()->is('admin/salefinaltripal*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -436,7 +414,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('nonwovenSale.index') }}"
-
                                 class="nav-link {{ request()->is('admin/nonwovenSale*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -450,7 +427,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('wastageSale.index') }}"
-
                                 class="nav-link {{ request()->is('admin/wastageSale*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -459,12 +435,11 @@
 
                             </a>
 
-                        </li> 
-                        
-                         <li class="nav-item">
+                        </li>
+
+                        <li class="nav-item">
 
                             <a href="{{ route('rawMaterialSalesEntry.index') }}"
-
                                 class="nav-link {{ request()->is('admin/rawMaterialSalesEntry*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -473,14 +448,13 @@
 
                             </a>
 
-                        </li> 
+                        </li>
 
 
 
                         <li class="nav-item">
 
                             <a href="{{ route('fabric.sale.entry.index') }}"
-
                                 class="nav-link {{ request()->routeIs('fabric.sale.*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -520,7 +494,6 @@
                         <li class="nav-item">
 
                             <a href="{{ route('fabricgodams.index') }}"
-
                                 class="nav-link {{ request()->is('admin/fabricgodams*') ? 'active' : '' }}">
 
                                 <i class="nav-icon fas fa-tags"></i>
@@ -574,7 +547,6 @@
                 <li class="nav-item">
 
                     <a href=" {{ route('staff.index') }} "
-
                         class="nav-link {{ request()->is('admin/staff*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-users"></i>
@@ -588,7 +560,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('suppliers.index') }}"
-
                         class="nav-link {{ request()->is('admin/suppliers*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-people-carry"></i>
@@ -600,11 +571,9 @@
                 </li>
 
                 @if (auth()->user()->isAdmin())
-
                     <li class="nav-item">
 
                         <a href="{{ route('users.index') }}"
-
                             class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}">
 
                             <i class="nav-icon fas fa-users-cog"></i>
@@ -614,15 +583,145 @@
                         </a>
 
                     </li>
-
                 @endif
 
                 <li class="nav-header text-bold">{{ __('Report') }}</li>
+                {{-- megha --}}
 
+
+                <li class="nav-item has-treeview {{ request()->is('home/main-entry/*') ? 'menu-open' : '' }}">
+
+                    <a href="#" class="nav-link {{ request()->is('home/main-entry/*') ? 'active' : '' }}">
+
+                        <i class="nav-icon fas fa-star"></i>
+
+                        <p>
+
+                            Storein Report
+
+                            <i class="fas fa-angle-left right"></i>
+
+                        </p>
+
+                    </a>
+
+                    <ul class="nav nav-treeview ">
+
+                        <li class="nav-item">
+
+                            <a href="{{ route('storein.entryReport') }}"
+                                class="nav-link {{ request()->is('storein.entryReport') ? 'active' : '' }}">
+
+                                <i class="far fa-circle nav-icon"></i>
+
+                                <p>{{ __('Storein Department Report') }}</p>
+
+                            </a>
+
+                        </li>
+
+
+
+                        <li class="nav-item">
+
+                            <a href="{{ route('storein.categoryReport') }}"
+                                class="nav-link {{ request()->is('storein.categoryReport') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Category wise report') }}</p>
+
+                            </a>
+
+                        </li>
+
+
+
+                        <li class="nav-item">
+
+                            <a href="{{ route('storein.supplierReport') }}"
+                                class="nav-link {{ request()->is('storein.supplierReport') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Supplier Wise report') }}</p>
+
+                            </a>
+
+                        </li>
+                        <li class="nav-item">
+
+                            <a href="{{ route('storein.storeinTypeReport') }}"
+                                class="nav-link {{ request()->is('storein.storeinTypeReport') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Storein Type wise') }}</p>
+
+                            </a>
+
+                        </li>
+                        <li class="nav-item">
+
+                            <a href="{{ route('storein.srNoReport') }}"
+                                class="nav-link {{ request()->routeIs('storein.srNoReport') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>SrNo wise report</p>
+
+                            </a>
+
+                        </li>
+
+
+
+                        <li class="nav-item">
+
+                            <a href="{{ route('storein.itemReport') }}"
+                                class="nav-link {{ request()->is('storein.itemReport') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>Item wise report</p>
+
+                            </a>
+
+                        </li>
+
+
+
+
+
+
+
+
+
+                        <li class="nav-item">
+
+                            <a href="{{ route('openingnonwoven.index') }}"
+                                class="nav-link {{ request()->is('admin/openingnonwoven*') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>NonWoven Opening</p>
+
+                            </a>
+
+                        </li>
+
+
+
+
+
+
+
+                    </ul>
+
+                </li>
                 <li class="nav-item">
 
                     <a href="{{ route('closingStoreinReport.index') }}"
-
                         class="nav-link {{ request()->is('admin/closingStoreinReport/index*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-list-alt"></i>
@@ -636,7 +735,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('expCategories.index') }}"
-
                         class="nav-link {{ request()->is('admin/expense-categories*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-list-alt"></i>
@@ -650,7 +748,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('BswLamFabSendForPrinting.index') }}"
-
                         class="nav-link {{ request()->routeIs('BswLamFabSendForPrinting.index') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-tags"></i>
@@ -664,7 +761,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('fabSendCuetxReceivePatchValveEntry.index') }}"
-
                         class="nav-link {{ request()->routeIs('fabSendCuetxReceivePatchValveEntry.index') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-tags"></i>
@@ -678,7 +774,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('expenses.index') }}"
-
                         class="nav-link {{ request()->is('admin/expenses*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-wallet"></i>
@@ -696,7 +791,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('purchases.index') }}"
-
                         class="nav-link {{ request()->is('admin/purchases*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-shopping-basket"></i>
@@ -710,7 +804,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('purchaseReturn.index') }}"
-
                         class="nav-link {{ request()->is('admin/return-purchases*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-undo-alt"></i>
@@ -724,7 +817,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('purchaseDamage.index') }}"
-
                         class="nav-link {{ request()->is('admin/damage-purchases*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-trash-alt"></i>
@@ -740,7 +832,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('purchaseInventory.index') }}"
-
                         class="nav-link {{ request()->is('admin/purchase-inventory*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-boxes"></i>
@@ -758,7 +849,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('tripal.index') }}"
-
                         class="nav-link {{ request()->is('admin/tripal*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-tags"></i>
@@ -776,7 +866,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('doubletripal.index') }}"
-
                         class="nav-link {{ request()->is('admin/doubletripal*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-tags"></i>
@@ -792,7 +881,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('finaltripal.index') }}"
-
                         class="nav-link {{ request()->is('admin/finaltripal*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-tags"></i>
@@ -822,7 +910,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('fabric-groups.index') }}"
-
                         class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-tags"></i>
@@ -842,7 +929,6 @@
                 <li class="nav-item">
 
                     <a href="{{ route('fabrics.index') }}"
-
                         class="nav-link {{ request()->is('admin/fabrics*') ? 'active' : '' }}">
 
                         <i class="nav-icon fas fa-tags"></i>
@@ -873,137 +959,131 @@
 
                     </a>
 
-                <ul class="nav nav-treeview ">
+                    <ul class="nav nav-treeview ">
 
-                    <li class="nav-item">
+                        <li class="nav-item">
 
-                        <a href="{{ route('fabric.entry.report') }}"
+                            <a href="{{ route('fabric.entry.report') }}"
+                                class="nav-link {{ request()->is('admin/fabric/entry-report*') ? 'active' : '' }}">
 
-                            class="nav-link {{ request()->is('admin/fabric/entry-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
 
-                            <i class="nav-icon fas fa-tags"></i>
+                                <p>Fabric Entry Report</p>
 
-                            <p>Fabric Entry Report</p>
+                            </a>
 
-                        </a>
-
-                    <li class="nav-item">
-                        <a href="{{ route('fabricbag.entry.report') }}"
-                            class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <p>FabricBag Entry Report</p>
-                        </a>
-                    </li>
-
-
-                    <li class="nav-item">
-                        <a href="{{ route('fabric.godam.transfer.report') }}"
-                            class="nav-link {{ request()->is('admin/fabric/godam-transfer-report*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <p>Fabric Godam Transfer Report</p>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="{{ route('fabric.laminated.report') }}"
-                            class="nav-link {{ request()->is('admin/fabric/laminated-report*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <p>Laminated Fabric Report</p>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="{{ route('fabric.unlaminated.report') }}"
-                            class="nav-link {{ request()->is('admin/fabric/fabric/unlaminated-report*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <p>Unlaminated Fabric Report</p>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="{{ route('fabricbag.entry.report') }}"
-                            class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <p>Fabric transfer to Bag Report</p>
-                        </a>
-                    </li>
-<<<<<<< HEAD
-=======
-
-                    <li class="nav-item">
-                        <a href="{{ route('fabric.sale.report') }}"
-                            class="nav-link {{ request()->is('admin/fabric/sale/report*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <p>Fabric Sale Report</p>
-                        </a>
-                    </li>
->>>>>>> d307f3b472c45b06ea1270110ed23fa145d8bd8a
-                </ul>
+                        <li class="nav-item">
+                            <a href="{{ route('fabricbag.entry.report') }}"
+                                class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>FabricBag Entry Report</p>
+                            </a>
+                        </li>
 
 
-                {{-- Pasted Code End --}}
+                        <li class="nav-item">
+                            <a href="{{ route('fabric.godam.transfer.report') }}"
+                                class="nav-link {{ request()->is('admin/fabric/godam-transfer-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Fabric Godam Transfer Report</p>
+                            </a>
+                        </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('fabric.laminated.report') }}"
+                                class="nav-link {{ request()->is('admin/fabric/laminated-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Laminated Fabric Report</p>
+                            </a>
+                        </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('fabric.unlaminated.report') }}"
+                                class="nav-link {{ request()->is('admin/fabric/fabric/unlaminated-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Unlaminated Fabric Report</p>
+                            </a>
+                        </li>
 
-
-
-                <li class="nav-item">
-
-                    <a href="{{ route('fabricSendReceive.entry.create') }}" class="nav-link">
-
-                        {{ request()->is('fabricSendReceive.entry.*') ? 'active' : '' }}
-
-                        <i class="nav-icon fas fa-tags"></i>
-
-                        <p>Fabric Send Receive Entry</p>
-
-                    </a>
-
+                        <li class="nav-item">
+                            <a href="{{ route('fabricbag.entry.report') }}"
+                                class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Fabric transfer to Bag Report</p>
+                            </a>
+                        </li>
+                        <<<<<<< HEAD=======<li class="nav-item">
+                            <a href="{{ route('fabric.sale.report') }}"
+                                class="nav-link {{ request()->is('admin/fabric/sale/report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Fabric Sale Report</p>
+                            </a>
                 </li>
+                >>>>>>> d307f3b472c45b06ea1270110ed23fa145d8bd8a
+            </ul>
+
+
+            {{-- Pasted Code End --}}
 
 
 
 
 
-                <li class="nav-item">
+            <li class="nav-item">
 
-                    <a href="{{ route('nonwovenfabrics.index') }}"
+                <a href="{{ route('fabricSendReceive.entry.create') }}" class="nav-link">
 
-                        class="nav-link {{ request()->is('admin/nonwovenfabrics*') ? 'active' : '' }}">
+                    {{ request()->is('fabricSendReceive.entry.*') ? 'active' : '' }}
 
-                        <i class="nav-icon fas fa-tags"></i>
+                    <i class="nav-icon fas fa-tags"></i>
 
-                        <p>Non Woven Fabric</p>
+                    <p>Fabric Send Receive Entry</p>
 
-                        {{-- <p>{{ __('Categories') }}</p> --}}
+                </a>
 
-                    </a>
-
-                </li>
-
-
-
-                <li class="nav-item">
-
-                    <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
-
-                        class="nav-link {{ request()->is('admin/nonwovenfabrics-receiveentry*') ? 'active' : '' }}">
-
-                        <i class="nav-icon fas fa-tags"></i>
-
-                        <p>Non Woven Fabric Received Entry</p>
-
-                    </a>
-
-                </li>
+            </li>
 
 
 
 
 
+            <li class="nav-item">
+
+                <a href="{{ route('nonwovenfabrics.index') }}"
+                    class="nav-link {{ request()->is('admin/nonwovenfabrics*') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Non Woven Fabric</p>
+
+                    {{-- <p>{{ __('Categories') }}</p> --}}
+
+                </a>
+
+            </li>
 
 
-                {{-- <li class="nav-item">
+
+            <li class="nav-item">
+
+                <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
+                    class="nav-link {{ request()->is('admin/nonwovenfabrics-receiveentry*') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Non Woven Fabric Received Entry</p>
+
+                </a>
+
+            </li>
+
+
+
+
+
+
+
+            {{-- <li class="nav-item">
 
                       <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
 
@@ -1019,493 +1099,465 @@
 
 
 
-                <li class="nav-header text-bold">{{ __('PRODUCT') }}</li>
+            <li class="nav-header text-bold">{{ __('PRODUCT') }}</li>
 
-                <li class="nav-item">
+            <li class="nav-item">
 
-                    <a href="{{ route('items.index') }}"
+                <a href="{{ route('items.index') }}"
+                    class="nav-link {{ request()->is('admin/items*') ? 'active' : '' }}">
 
-                        class="nav-link {{ request()->is('admin/items*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-tags"></i>
 
-                        <i class="nav-icon fas fa-tags"></i>
+                    <p>{{ __('Item') }}</p>
 
-                        <p>{{ __('Item') }}</p>
+                </a>
 
-                    </a>
+            </li>
 
-                </li>
+            <li class="nav-item">
 
-                <li class="nav-item">
+                <a href="{{ route('categories.index') }}"
+                    class="nav-link {{ request()->is('admin/categories*') ? 'active' : '' }}">
 
-                    <a href="{{ route('categories.index') }}"
+                    <i class="nav-icon fas fa-tags"></i>
 
-                        class="nav-link {{ request()->is('admin/categories*') ? 'active' : '' }}">
+                    <p>{{ __('Categories') }}</p>
 
-                        <i class="nav-icon fas fa-tags"></i>
+                </a>
 
-                        <p>{{ __('Categories') }}</p>
+            </li>
 
-                    </a>
+            <li class="nav-item">
 
-                </li>
+                <a href="{{ route('subCategories.index') }}"
+                    class="nav-link {{ request()->is('admin/sub-categories*') ? 'active' : '' }}">
 
-                <li class="nav-item">
+                    <i class="nav-icon fas fa-code-branch"></i>
 
-                    <a href="{{ route('subCategories.index') }}"
+                    <p>{{ __('Sub Categories') }}</p>
 
-                        class="nav-link {{ request()->is('admin/sub-categories*') ? 'active' : '' }}">
+                </a>
 
-                        <i class="nav-icon fas fa-code-branch"></i>
+            </li>
 
-                        <p>{{ __('Sub Categories') }}</p>
 
-                    </a>
 
-                </li>
 
 
 
 
 
 
+            <li class="nav-item">
 
+                <a href="{{ route('processing.index') }}"
+                    class="nav-link {{ request()->is('admin/processing-products*') ? 'active' : '' }}">
 
+                    <i class="nav-icon fas fa-tools"></i>
 
-                <li class="nav-item">
+                    <p>{{ __('Processing') }}</p>
 
-                    <a href="{{ route('processing.index') }}"
+                </a>
 
-                        class="nav-link {{ request()->is('admin/processing-products*') ? 'active' : '' }}">
+            </li>
 
-                        <i class="nav-icon fas fa-tools"></i>
+            <li class="nav-item">
 
-                        <p>{{ __('Processing') }}</p>
+                <a href="{{ route('finished.index') }}"
+                    class="nav-link {{ request()->is('admin/finished-products*') ? 'active' : '' }}">
 
-                    </a>
+                    <i class="nav-icon fas fa-th-list"></i>
 
-                </li>
+                    <p>{{ __('Finished') }}</p>
 
-                <li class="nav-item">
+                </a>
 
-                    <a href="{{ route('finished.index') }}"
+            </li>
 
-                        class="nav-link {{ request()->is('admin/finished-products*') ? 'active' : '' }}">
+            <li class="nav-item">
 
-                        <i class="nav-icon fas fa-th-list"></i>
+                <a href="{{ route('transferred.index') }}"
+                    class="nav-link {{ request()->is('admin/transferred-products*') ? 'active' : '' }}">
 
-                        <p>{{ __('Finished') }}</p>
+                    <i class="nav-icon fas fa-random"></i>
 
-                    </a>
+                    <p>{{ __('Transferred') }}</p>
 
-                </li>
+                </a>
 
-                <li class="nav-item">
+            </li>
 
-                    <a href="{{ route('transferred.index') }}"
+            <li class="nav-header text-bold">{{ __('Storein/out') }}</li>
 
-                        class="nav-link {{ request()->is('admin/transferred-products*') ? 'active' : '' }}">
+            <li class="nav-item">
 
-                        <i class="nav-icon fas fa-random"></i>
+                <a href="{{ route('autoload.index') }}"
+                    class="nav-link {{ request()->is('autoload/index*') ? 'active' : '' }}">
 
-                        <p>{{ __('Transferred') }}</p>
+                    <i class="nav-icon fas fa-spinner"></i>
 
-                    </a>
 
-                </li>
 
-                <li class="nav-header text-bold">{{ __('Storein/out') }}</li>
+                    <p>{{ __('Auto Loader') }}</p>
 
-                <li class="nav-item">
+                </a>
 
-                    <a href="{{ route('autoload.index') }}"
+            </li>
 
-                        class="nav-link {{ request()->is('autoload/index*') ? 'active' : '' }}">
 
-                        <i class="nav-icon fas fa-spinner"></i>
 
+            <li class="nav-item">
 
+                <a href="{{ route('rawMaterial.index') }}"
+                    class="nav-link {{ request()->is('rawMaterial/index*') ? 'active' : '' }}">
 
-                        <p>{{ __('Auto Loader') }}</p>
+                    <i class="nav-icon fas fa-shopping-basket"></i>
 
-                    </a>
+                    <p>{{ __('Raw Material') }}</p>
 
-                </li>
+                </a>
 
+            </li>
 
 
-                <li class="nav-item">
 
-                    <a href="{{ route('rawMaterial.index') }}"
+            <li class="nav-item">
 
-                        class="nav-link {{ request()->is('rawMaterial/index*') ? 'active' : '' }}">
+                <a href="{{ route('purchaseOrder.index') }}"
+                    class="nav-link {{ request()->is('purchaseOrder.index*') ? 'active' : '' }}">
 
-                        <i class="nav-icon fas fa-shopping-basket"></i>
+                    <i class="nav-icon fas fa-shopping-basket"></i>
 
-                        <p>{{ __('Raw Material') }}</p>
+                    <p>{{ __('Purchase Order') }}</p>
 
-                    </a>
+                </a>
 
-                </li>
+            </li>
 
+            <li class="nav-item">
 
+                <a href="{{ route('storein.index') }}"
+                    class="nav-link {{ request()->is('storein/index*') ? 'active' : '' }}">
 
-                <li class="nav-item">
+                    <i class="nav-icon fas fa-shopping-basket"></i>
 
-                    <a href="{{ route('purchaseOrder.index') }}"
+                    <p>{{ __('Storein') }}</p>
 
-                        class="nav-link {{ request()->is('purchaseOrder.index*') ? 'active' : '' }}">
+                </a>
 
-                        <i class="nav-icon fas fa-shopping-basket"></i>
+            </li>
 
-                        <p>{{ __('Purchase Order') }}</p>
 
-                    </a>
 
-                </li>
 
-                <li class="nav-item">
 
-                    <a href="{{ route('storein.index') }}"
+            <li class="nav-item">
 
-                        class="nav-link {{ request()->is('storein/index*') ? 'active' : '' }}">
+                <a href="{{ route('storeout.index') }}"
+                    class="nav-link {{ request()->is('storeout/index*') ? 'active' : '' }}">
 
-                        <i class="nav-icon fas fa-shopping-basket"></i>
+                    <i class="nav-icon fas fa-shopping-basket"></i>
 
-                        <p>{{ __('Storein') }}</p>
+                    <p>{{ __('Storeout') }}</p>
 
-                    </a>
+                </a>
 
-                </li>
+            </li>
 
 
 
+            <li class="nav-header text-bold">{{ __('Tape') }}</li>
 
+            <li class="nav-item">
 
-                <li class="nav-item">
+                <a href="{{ route('tape.opening') }}"
+                    class="nav-link {{ request()->routeIs('tape.opening') ? 'active' : '' }}">
 
-                    <a href="{{ route('storeout.index') }}"
+                    <i class="nav-icon fas fa-random"></i>
 
-                        class="nav-link {{ request()->is('storeout/index*') ? 'active' : '' }}">
+                    <p>{{ __('Tape Opening') }}</p>
 
-                        <i class="nav-icon fas fa-shopping-basket"></i>
+                </a>
 
-                        <p>{{ __('Storeout') }}</p>
+            </li>
 
-                    </a>
+            <li class="nav-item">
 
-                </li>
+                <a href="{{ route('tape.entry') }}"
+                    class="nav-link {{ request()->is('admin/tape-entry') ? 'active' : '' }}">
 
+                    <i class="nav-icon fas fa-random"></i>
 
+                    <p>{{ __('Tape Entry') }}</p>
 
-                <li class="nav-header text-bold">{{ __('Tape') }}</li>
+                </a>
 
-                <li class="nav-item">
+            </li>
 
-                    <a href="{{ route('tape.opening') }}"
 
-                        class="nav-link {{ request()->routeIs('tape.opening') ? 'active' : '' }}">
 
-                        <i class="nav-icon fas fa-random"></i>
 
-                        <p>{{ __('Tape Opening') }}</p>
 
-                    </a>
+            <!--        cc plant    -->
 
-                </li>
+            <li class="nav-header text-bold">{{ __('CC plant') }}</li>
 
-                <li class="nav-item">
+            <li class="nav-item">
 
-                    <a href="{{ route('tape.entry') }}"
+                <a href="{{ route('cc.plant.entry.index') }}"
+                    class="nav-link {{ request()->routeIs('cc.plant.*') ? 'active' : '' }}">
 
-                        class="nav-link {{ request()->is('admin/tape-entry') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-random"></i>
 
-                        <i class="nav-icon fas fa-random"></i>
+                    <p>{{ __('CC Plant') }}</p>
 
-                        <p>{{ __('Tape Entry') }}</p>
+                </a>
 
-                    </a>
+            </li>
 
-                </li>
 
 
+            <li class="nav-header text-bold">{{ __('Reprocess Wastage') }}</li>
 
+            <li class="nav-item">
 
+                <a href="{{ route('reprocess.wastage.entry.index') }}"
+                    class="nav-link {{ request()->routeIs('reprocess.wastage.*') ? 'active' : '' }}">
 
-                <!--        cc plant    -->
+                    <i class="nav-icon fas fa-random"></i>
 
-                <li class="nav-header text-bold">{{ __('CC plant') }}</li>
+                    <p>{{ __('Reprocess Wastage') }}</p>
 
-                <li class="nav-item">
+                </a>
 
-                    <a href="{{ route('cc.plant.entry.index') }}"
+            </li>
 
-                        class="nav-link {{ request()->routeIs('cc.plant.*') ? 'active' : '' }}">
 
-                        <i class="nav-icon fas fa-random"></i>
 
-                        <p>{{ __('CC Plant') }}</p>
 
-                    </a>
 
-                </li>
+            <!-------------  Bag --------------------------->
 
+            <li class="nav-header text-bold">{{ __('Bags') }}</li>
 
+            <li class="nav-item">
 
-                <li class="nav-header text-bold">{{ __('Reprocess Wastage') }}</li>
+                <a href="{{ route('fabric.transfer.entry.for.bag') }}"
+                    class="nav-link {{ request()->routeIs('fabric.transfer.*') ? 'active' : '' }}">
 
-                <li class="nav-item">
+                    <i class="nav-icon fas fa-chart-area"></i>
 
-                    <a href="{{ route('reprocess.wastage.entry.index') }}"
+                    <p>{{ __('Entry For Fabric Tnasfer For Bag') }}</p>
 
-                        class="nav-link {{ request()->routeIs('reprocess.wastage.*') ? 'active' : '' }}">
+                </a>
 
-                        <i class="nav-icon fas fa-random"></i>
+            </li>
 
-                        <p>{{ __('Reprocess Wastage') }}</p>
 
-                    </a>
 
-                </li>
+            <li class="nav-item">
 
+                <a href="{{ route('prints.and.cuts.index') }}"
+                    class="nav-link {{ request()->routeIs('prints.and.cuts.*') ? 'active' : '' }}">
 
+                    <i class="nav-icon fas fa-chart-area"></i>
 
+                    <p>{{ __('Prints and Cuts(Rolls)') }}</p>
 
+                </a>
 
-                <!-------------  Bag --------------------------->
+            </li>
 
-                <li class="nav-header text-bold">{{ __('Bags') }}</li>
+            <li class="nav-item">
 
-                <li class="nav-item">
+                <a href="{{ route('bagBundelling.index') }}"
+                    class="nav-link {{ request()->routeIs('bagBundelling.index') ? 'active' : '' }}">
 
-                    <a href="{{ route('fabric.transfer.entry.for.bag') }}"
+                    <i class="nav-icon fas fa-chart-area"></i>
 
-                        class="nav-link {{ request()->routeIs('fabric.transfer.*') ? 'active' : '' }}">
+                    <p>{{ __('Bundle Making') }}</p>
 
-                        <i class="nav-icon fas fa-chart-area"></i>
+                </a>
 
-                        <p>{{ __('Entry For Fabric Tnasfer For Bag') }}</p>
+            </li>
 
-                    </a>
 
-                </li>
 
+            <li class="nav-item">
 
+                <a href="{{ route('bagSelling.index') }}"
+                    class="nav-link {{ request()->routeIs('bagSelling.index') ? 'active' : '' }}">
 
-                <li class="nav-item">
+                    <i class="nav-icon fas fa-chart-area"></i>
 
-                    <a href="{{ route('prints.and.cuts.index') }}"
+                    <p>{{ __('Bundle Selling') }}</p>
 
-                        class="nav-link {{ request()->routeIs('prints.and.cuts.*') ? 'active' : '' }}">
+                </a>
 
-                        <i class="nav-icon fas fa-chart-area"></i>
+            </li>
 
-                        <p>{{ __('Prints and Cuts(Rolls)') }}</p>
 
-                    </a>
 
-                </li>
+            <!-------------  Bag --------------------------->
 
-                <li class="nav-item">
+            <li class="nav-header text-bold">{{ __('Purchase Reports') }}</li>
 
-                    <a href="{{ route('bagBundelling.index') }}"
+            <li class="nav-item">
 
-                        class="nav-link {{ request()->routeIs('bagBundelling.index') ? 'active' : '' }}">
+                <a href="{{ route('purchase.report') }}"
+                    class="nav-link {{ request()->is('admin/purchase-report') ? 'active' : '' }}">
 
-                        <i class="nav-icon fas fa-chart-area"></i>
+                    <i class="nav-icon fas fa-chart-area"></i>
 
-                        <p>{{ __('Bundle Making') }}</p>
+                    <p>{{ __('Purchase') }}</p>
 
-                    </a>
+                </a>
 
-                </li>
+            </li>
 
+            <li
+                class="nav-item has-treeview {{ request()->is('admin/processing-report') ? 'menu-open' : '' }} {{ request()->is('admin/finished-report') ? 'menu-open' : '' }} {{ request()->is('admin/transferred-report') ? 'menu-open' : '' }}">
 
+                <a href="#" class="nav-link">
 
-                <li class="nav-item">
+                    <i class="nav-icon fas fa-chart-bar"></i>
 
-                    <a href="{{ route('bagSelling.index') }}"
+                    <p>
 
-                        class="nav-link {{ request()->routeIs('bagSelling.index') ? 'active' : '' }}">
+                        {{ __('Product') }}
 
-                        <i class="nav-icon fas fa-chart-area"></i>
+                        <i class="right fas fa-angle-left"></i>
 
-                        <p>{{ __('Bundle Selling') }}</p>
+                    </p>
 
-                    </a>
+                </a>
 
-                </li>
+                <ul class="nav nav-treeview ">
 
+                    <li class="nav-item">
 
+                        <a href="{{ route('processing.report') }}"
+                            class="nav-link {{ request()->is('admin/processing-report') ? 'active' : '' }}">
 
-                <!-------------  Bag --------------------------->
+                            <i class="nav-icon fas fa-tools"></i>
 
-                <li class="nav-header text-bold">{{ __('Purchase Reports') }}</li>
+                            <p>{{ __('Processing') }}</p>
 
-                <li class="nav-item">
+                        </a>
 
-                    <a href="{{ route('purchase.report') }}"
+                    </li>
 
-                        class="nav-link {{ request()->is('admin/purchase-report') ? 'active' : '' }}">
+                    <li class="nav-item">
 
-                        <i class="nav-icon fas fa-chart-area"></i>
+                        <a href="{{ route('finished.report') }}"
+                            class="nav-link {{ request()->is('admin/finished-report') ? 'active' : '' }}">
 
-                        <p>{{ __('Purchase') }}</p>
+                            <i class="nav-icon fas fa-th-list"></i>
 
-                    </a>
+                            <p>{{ __('Finished') }}</p>
 
-                </li>
+                        </a>
 
-                <li
+                    </li>
 
-                    class="nav-item has-treeview {{ request()->is('admin/processing-report') ? 'menu-open' : '' }} {{ request()->is('admin/finished-report') ? 'menu-open' : '' }} {{ request()->is('admin/transferred-report') ? 'menu-open' : '' }}">
+                    <li class="nav-item">
 
-                    <a href="#" class="nav-link">
+                        <a href="{{ route('transferred.report') }}"
+                            class="nav-link {{ request()->is('admin/transferred-report') ? 'active' : '' }}">
 
-                        <i class="nav-icon fas fa-chart-bar"></i>
+                            <i class="nav-icon fas fa-random"></i>
 
-                        <p>
+                            <p>{{ __('Transferred') }}</p>
 
-                            {{ __('Product') }}
+                        </a>
 
-                            <i class="right fas fa-angle-left"></i>
+                    </li>
 
-                        </p>
+                    <li class="nav-item">
 
-                    </a>
+                        <a href="javascript:void(0)"
+                            class="nav-link {{ request()->is('admin/tape-entry') ? 'active' : '' }}">
 
-                    <ul class="nav nav-treeview ">
+                            <i class="nav-icon fas fa-random"></i>
 
-                        <li class="nav-item">
+                            <p>{{ __('Tape Entry') }}</p>
 
-                            <a href="{{ route('processing.report') }}"
+                        </a>
 
-                                class="nav-link {{ request()->is('admin/processing-report') ? 'active' : '' }}">
+                    </li>
 
-                                <i class="nav-icon fas fa-tools"></i>
 
-                                <p>{{ __('Processing') }}</p>
 
-                            </a>
+                </ul>
 
-                        </li>
+            </li>
 
-                        <li class="nav-item">
+            <li class="nav-header text-bold">{{ __('ACCOUNT') }}</li>
 
-                            <a href="{{ route('finished.report') }}"
+            <li class="nav-item">
 
-                                class="nav-link {{ request()->is('admin/finished-report') ? 'active' : '' }}">
+                <a href="{{ route('admin.setup') }}"
+                    class="nav-link {{ request()->is('admin/setup') ? 'active' : '' }} {{ request()->is('admin/general-settings') ? 'active' : '' }}">
 
-                                <i class="nav-icon fas fa-th-list"></i>
+                    <i class="nav-icon fas fa-cogs"></i>
 
-                                <p>{{ __('Finished') }}</p>
+                    <p>{{ __('Setup') }}</p>
 
-                            </a>
+                </a>
 
-                        </li>
+            </li>
 
-                        <li class="nav-item">
+            <li class="nav-item has-treeview {{ request()->is('admin/profile') ? 'menu-open' : '' }}">
 
-                            <a href="{{ route('transferred.report') }}"
+                <a href="#" class="nav-link">
 
-                                class="nav-link {{ request()->is('admin/transferred-report') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-user"></i>
 
-                                <i class="nav-icon fas fa-random"></i>
+                    <p>
 
-                                <p>{{ __('Transferred') }}</p>
+                        {{ ucfirst(auth()->user()->name) }}
 
-                            </a>
+                        <i class="right fas fa-angle-left"></i>
 
-                        </li>
+                    </p>
 
-                        <li class="nav-item">
+                </a>
 
-                            <a href="javascript:void(0)"
+                <ul class="nav nav-treeview ">
 
-                                class="nav-link {{ request()->is('admin/tape-entry') ? 'active' : '' }}">
+                    <li class="nav-item">
 
-                                <i class="nav-icon fas fa-random"></i>
+                        <a href="{{ route('admin.profile') }}"
+                            class="nav-link {{ request()->is('admin/profile') ? 'active' : '' }}">
 
-                                <p>{{ __('Tape Entry') }}</p>
+                            <i class="nav-icon fas fa-user-circle"></i>
 
-                            </a>
+                            <p>{{ __('Profile') }}</p>
 
-                        </li>
+                        </a>
 
+                    </li>
 
+                    <li class="nav-item">
 
-                    </ul>
+                        <a class="nav-link admin-logout" href="{{ route('logout') }}">
 
-                </li>
+                            <i class="nav-icon fas fa-power-off"></i> {{ __('Logout') }}
 
-                <li class="nav-header text-bold">{{ __('ACCOUNT') }}</li>
+                        </a>
 
-                <li class="nav-item">
+                        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST"
+                            class="no-display logout-form">
 
-                    <a href="{{ route('admin.setup') }}"
+                            @csrf
 
-                        class="nav-link {{ request()->is('admin/setup') ? 'active' : '' }} {{ request()->is('admin/general-settings') ? 'active' : '' }}">
+                        </form>
 
-                        <i class="nav-icon fas fa-cogs"></i>
+                    </li>
 
-                        <p>{{ __('Setup') }}</p>
+                </ul>
 
-                    </a>
-
-                </li>
-
-                <li class="nav-item has-treeview {{ request()->is('admin/profile') ? 'menu-open' : '' }}">
-
-                    <a href="#" class="nav-link">
-
-                        <i class="nav-icon fas fa-user"></i>
-
-                        <p>
-
-                            {{ ucfirst(auth()->user()->name) }}
-
-                            <i class="right fas fa-angle-left"></i>
-
-                        </p>
-
-                    </a>
-
-                    <ul class="nav nav-treeview ">
-
-                        <li class="nav-item">
-
-                            <a href="{{ route('admin.profile') }}"
-
-                                class="nav-link {{ request()->is('admin/profile') ? 'active' : '' }}">
-
-                                <i class="nav-icon fas fa-user-circle"></i>
-
-                                <p>{{ __('Profile') }}</p>
-
-                            </a>
-
-                        </li>
-
-                        <li class="nav-item">
-
-                            <a class="nav-link admin-logout" href="{{ route('logout') }}">
-
-                                <i class="nav-icon fas fa-power-off"></i> {{ __('Logout') }}
-
-                            </a>
-
-                            <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST"
-
-                                class="no-display logout-form">
-
-                                @csrf
-
-                            </form>
-
-                        </li>
-
-                    </ul>
-
-                </li>
+            </li>
 
             </ul>
 
@@ -1518,4 +1570,3 @@
     <!-- /.sidebar -->
 
 </aside>
-
