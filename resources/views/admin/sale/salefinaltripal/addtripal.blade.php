@@ -201,12 +201,22 @@
                     <th>{{ __('N.W') }}</th>
                     <th>{{ __('Meter') }}</th>
                     <th>{{ __('Avg') }}</th>
-                    <th>{{ __('Gram') }}</th>
+                    <th>{{ __('GSM') }}</th>
                     <th>{{ __('Bill') }}</th>
                     <th>{{ __('Action') }}</th>
                 </tr>
             </thead>
             <tbody id="getSaleTripalList"></tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Total Net : {{$total_net}}</td>
+                    <td>Total Gross : {{$total_gross}}</td>
+                    <td>Total Meter : {{$total_meter}}</td>
+                    <td>Total Roll: {{$total_roll}}</td>
+                </tr>
+            </tfoot>
         </table>
         
     </div>
@@ -344,7 +354,9 @@
                      console.log("sending")
                  },
                  success:function(response){
-                    salesTripalTable.ajax.reload();
+                    
+                    $('#getSaleTripalList').DataTable().ajax.reload();
+                    $('#sameFabricsTable').DataTable().ajax.reload();
                  },
                  error:function(error){
                      console.log("error",error);
@@ -406,7 +418,7 @@
                      { data : "net" , name : "net" },
                      { data : "meter" , name : "meter" },
                      { data : "average" , name : "average" },
-                     { data : "gram" , name : "gram" },
+                     { data : "gsm" , name : "gsm" },
                      { data : "bill_no" , name : "bill_no" },
                      { data : "action" , name : "action" },
                  ]
@@ -458,6 +470,7 @@
          let bill_no = $("#bill_no").val()
          let billDate = $("#bill_date").val()
          let salefinal_id = $("#salefinal_id").val()
+         // debugger;
 
        
          $.ajax({
@@ -476,6 +489,7 @@
              },
              success:function(response){
                 $('#getSaleTripalList').DataTable().ajax.reload();
+                $('#sameFabricsTable').DataTable().ajax.reload();
              },
              error:function(error){
                  console.log("error",error);

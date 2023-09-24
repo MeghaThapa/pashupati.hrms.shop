@@ -148,9 +148,9 @@
                       </tr>
                   </thead>
                   <tbody id="same-fabrics">
-                      @foreach($nonwovenlist as $list)
+                      @foreach($nonwovenlist as $key=>$list)
                       <tr>
-                          <td>#</td>
+                          <td>{{$key+1}}</td>
                           <td>{{$list->fabric_name}}</td>
                           <td>{{$list->fabric_roll}}</td>
                           <td>{{$list->fabric_color}}</td>
@@ -161,6 +161,16 @@
                       </tr>
                       @endforeach
                   </tbody>
+                  <tfoot>
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td>Total Net : {{$total_net}}</td>
+                          <td>Total Gross : {{$total_gross}}</td>
+                          <td>Total Meter : {{$total_meter}}</td>
+                          <td>Total Roll: {{$total_roll}}</td>
+                      </tr>
+                  </tfoot>
               </table>
           </div>
         </div>

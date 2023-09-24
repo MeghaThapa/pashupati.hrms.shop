@@ -95,7 +95,7 @@ class NonwovenGodamController extends Controller
                 //this condition is for sale because  sale is done only fromm psi godam
 
                 $godam_id = Godam::where('name','psi')->value('id');
-                $datas = FabricNonWovenReceiveEntryStock::where('godam_id',$godam_id);
+                $datas = FabricNonWovenReceiveEntryStock::where('status_type','active')->where('godam_id',$godam_id);
                 // dd($godam_id);
                 if(!empty($fabric_gsm)){
                   $datas = $datas->where('fabric_gsm', $fabric_gsm);
@@ -114,7 +114,7 @@ class NonwovenGodamController extends Controller
             }else{
             
 
-               $datas = FabricNonWovenReceiveEntryStock::orderBy('receive_date');
+               $datas = FabricNonWovenReceiveEntryStock::where('status_type','active')->orderBy('receive_date');
 
                 if(!empty($fabric_gsm)){
                   $datas = $datas->where('fabric_gsm', $fabric_gsm);
@@ -156,8 +156,13 @@ class NonwovenGodamController extends Controller
         $find_data = NonwovenGodam::find($nonwovengodam_id);
         $stocks = FinalTripalStock::get();
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
+
+        $total_net = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('net');
+        $total_gross = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('gross');
+        $total_length = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('length');
+        $total_roll = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->count();
        
-        return view('admin.godamtransfer.nonwoven.transferFabric',compact('stocks','nonwovengodam_id','find_data','nonwovenfabrics'));
+        return view('admin.godamtransfer.nonwoven.transferFabric',compact('stocks','nonwovengodam_id','find_data','nonwovenfabrics','total_net','total_gross','total_length','total_roll'));
     }
 
     public function transferFabricDetail($fabricgodam_id)
@@ -212,6 +217,9 @@ class NonwovenGodamController extends Controller
                     'nonwovengodam_id' => $request->nonwovengodam_id,
                     'stock_id' => $request->data_id,
                 ]);
+
+             $find_name->status_type = 'inactive';
+             $find_name->update();   
           
 
         return response(['message'=>'Godam Transferred Successfully']);
@@ -248,6 +256,10 @@ class NonwovenGodamController extends Controller
     {
 
         $unit = NonwovenGodamEntry::find($request->data_id);
+
+        $value = FabricNonWovenReceiveEntryStock::find($unit->stock_id);
+        $value->status_type = 'active';
+        $value->update(); 
 
         // delete unit
         $unit->delete();
@@ -320,13 +332,18 @@ class NonwovenGodamController extends Controller
         }
     }
 
-    public  function viewBill($tripalgodam_id){
+    public  function viewBill($nonwovengodam_id){
 
-        $find_data = NonwovenGodam::find($tripalgodam_id);
-        $stocks = NonwovenGodamEntry::where('tripalgodam_id',$tripalgodam_id)->get();
-        $id = $tripalgodam_id;
+        $find_data = NonwovenGodam::find($nonwovengodam_id);
+        $stocks = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->get();
+        $id = $nonwovengodam_id;
+
+        $total_net = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('net');
+        $total_gross = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('gross');
+        $total_length = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->sum('length');
+        $total_roll = NonwovenGodamEntry::where('nonwovengodam_id',$nonwovengodam_id)->count();
           
-        return view('admin.godamtransfer.nonwoven.viewBill',compact('stocks','tripalgodam_id','find_data','id'));
+        return view('admin.godamtransfer.nonwoven.viewbill',compact('stocks','nonwovengodam_id','find_data','id','total_net','total_gross','total_length','total_roll'));
 
     }
 

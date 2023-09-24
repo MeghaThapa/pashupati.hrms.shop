@@ -85,8 +85,10 @@
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
+                <input type="hidden" class="form-control" id="bill_id" name="bill_id" value="{{$find_data->id}}" 
+                    readonly />
                 <input type="text" class="form-control" id="bill_number" name="bill_number" value="{{$find_data->bill_no}}" 
-                    readonly /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
+                    readonly /> 
                     <input type="hidden" name="fabricgodam_id" value="{{$fabricgodam_id}}" id="fabricgodam_id">
                     <input type="hidden" name="fromgodam_id" value="{{$find_data->fromgodam_id}}" id="fromgodam_id">
                     <input type="hidden" name="togodam_id" value="{{$find_data->togodam_id}}" id="togodam_id">
@@ -169,20 +171,26 @@
 
 <div class="row">
     <div class="table-responsive table-custom my-3">
-        <table class="table table-hover table-striped" id="getFabricGodamList">
+        <table class="table table-hover table-striped" id="getFabricGodamListData">
             <thead class="table-info">
                 <tr>
                     <th>{{ __('Sr.No') }}</th>
                     <th>{{ __('Fabric Name') }}</th>
                     <th>{{ __('Roll No') }}</th>
                     <th>{{ __('N.W') }}</th>
-                    <th>{{ __('From Godam') }}</th>
-                    <th>{{ __('To Godam') }}</th>
                     <th>{{ __('Invoice No') }}</th>
-                    <th>{{__('Send')}}</th>
+                    <th>{{__('Action')}}</th>
                 </tr>
             </thead>
-            <tbody id="getFabricGodamList"></tbody>
+            <tbody id="getFabricGodamListData"></tbody>
+            <tfoot>
+                <tr>
+                    <td>Total Net: {{$total_net}}</td>
+                    {{-- <td>Total Gross:</td> --}}
+                    {{-- <td>Total Meter:</td> --}}
+                    <td>Total Roll: {{$total_roll}}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
@@ -208,10 +216,43 @@
 <script>
 
     $(document).ready(function(){
-        /**************************** Ajax Calls **************************/
-        // callunlaminatedfabricajax();
-         // $('#fabricNameId').prop('disabled',true);
+        let salesTripalTable = null;
+        getFabricGodamListData();
         comparelamandunlam();
+
+        function getFabricGodamListData(){
+            if (salesTripalTable !== null) {
+                salesTripalTable.destroy();
+            } 
+            
+             let fabricgodam_id = $('#fabricgodam_id').val();
+
+            salesTripalTable = $("#getFabricGodamListData").DataTable({
+                serverside : true,
+                processing : true,
+                lengthmenu : [
+                        [5,10,25,50,100,250,500,-1],
+                        [5,10,25,50,100,250,500,"All"]
+                    ],
+                ajax : {
+                    url : "{{ route('getFabricGodamTransfer.getList') }}",
+                    method : "get",
+                    data :{
+                        "_token" : $("meta[name='csrf-token']").attr("content"),
+                        'fabricgodam_id' : fabricgodam_id,
+                    }
+                },
+                columns:[
+                    { data : "DT_RowIndex" , name : "DT_RowIndex" },
+                    { data : "name" , name : "name" },
+                    { data : "roll" , name : "roll" },
+                    { data : "net_wt" , name : "net_wt" },
+                    { data : "net_wt" , name : "net_wt" },
+                    // { data : "gross" , name : "gross" },
+                    { data : "action" , name : "action" },
+                ]
+            });
+        }
 
         $("body").on("click","#finalUpdate", function(event){
             // Pace.start();
@@ -258,7 +299,7 @@
 
         function putonlamtbody(response){
             response.godamlist.forEach(element => {
-                let tr = $("<tr></tr>").appendTo("#getFabricGodamList");
+                let tr = $("<tr></tr>").appendTo("#getFabricGodamListsdd");
                 tr.append(`<td>#</td>`);
                 tr.append(`<td>${element.name}</td>`);
                 tr.append(`<td>${element.roll}</td>`);
@@ -272,7 +313,7 @@
             
         }
 
-        $(document).on('click','#deletelist',function(e){
+        $(document).on('click','.deleteGodamEntry',function(e){
             e.preventDefault();
             let id = $(this).attr('data-id');
             deletefromunlamintedtable(id);
@@ -290,7 +331,8 @@
                data_id: data_id,
            },
            success: function(response){
-              location.reload();
+                $('#getFabricGodamListData').DataTable().ajax.reload();
+                $('#sameFabricsTable').DataTable().ajax.reload();
            },
            error: function(event){
                alert("Sorry");
@@ -314,7 +356,8 @@
         bill_date = $('#date_np').val(),
         fromgodam_id = $('#fromgodam_id').val(),
         togodam_id = $('#togodam_id').val(),
-        fabricstock_id = $('#fabricstock_id').val();
+        fabricstock_id = $('#fabricstock_id').val(),
+        bill_id = $('#bill_id').val();
 
         let fabric_name_id = $(this).val();
         fabricTable = $("#sameFabricsTable").DataTable({
@@ -329,7 +372,8 @@
                     data.bill_number = bill_number,
                     data.bill_date = bill_date,
                     data.fromgodam_id = fromgodam_id,
-                    data.togodam_id = togodam_id
+                    data.togodam_id = togodam_id,
+                    data.bill_id = bill_id
                     // data.fabricstock_id = fabricstock_id
                 }
             },
@@ -389,7 +433,7 @@
     function putonlamtbody(response){
         console.log(response);
         response.lam.forEach(element => {
-            let tr = $("<tr></tr>").appendTo("#getFabricGodamList");
+            let tr = $("<tr></tr>").appendTo("#getFabricGodamLists");
             tr.append(`<td>#</td>`);
             tr.append(`<td>${element.name}</td>`);
             tr.append(`<td>${element.roll_no}</td>`);
@@ -425,6 +469,7 @@
                 bill_no = $(this).attr('bill_no'),
                 bill_date = $(this).attr('bill_date'),
                 fabricgodam_id = $('#fabricgodam_id').val(),
+                bill_id = $('#bill_id').val(),
                 token = $('meta[name="csrf-token"]').attr('content');
 
                 // debugger;
@@ -441,9 +486,11 @@
                     bill_no: bill_no,
                     bill_date: bill_date,
                     fabricgodam_id: fabricgodam_id,
+                    bill_id: bill_id,
                   },
                   success: function(response){
-                    location.reload();
+                   $('#getFabricGodamListData').DataTable().ajax.reload();
+                   $('#sameFabricsTable').DataTable().ajax.reload();
                     
 
                   },

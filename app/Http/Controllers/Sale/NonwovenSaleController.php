@@ -126,15 +126,26 @@ class NonwovenSaleController extends Controller
         $find_data = NonwovenSale::find($bill_id);
         
         $nonwovenlist = NonwovenSaleEntry::where('bill_id',$bill_id)->get();
-        return view('admin.sale.nonwovensale.viewbill',compact('find_data','nonwovenlist'));
+
+        $total_net = NonwovenSaleEntry::where('bill_id',$bill_id)->sum('net_weight');
+        $total_gross = NonwovenSaleEntry::where('bill_id',$bill_id)->sum('gross_weight');
+        $total_meter = NonwovenSaleEntry::where('bill_id',$bill_id)->sum('length');
+        $total_roll = NonwovenSaleEntry::where('bill_id',$bill_id)->count();
+
+        return view('admin.sale.nonwovensale.viewbill',compact('find_data','nonwovenlist','total_net','total_gross','total_meter','total_roll'));
     }
 
     public function deleteEntryList(Request $request)
     {
 
         $unit = NonwovenSaleEntry::find($request->data_id);
+        
+        $value = FabricNonWovenReceiveEntryStock::find($unit->stock_id);
+        $value->status_type = 'active';
+        $value->update();
 
         $unit->delete();
+
         return response([
             "message" => "Deleted Successfully" 
         ]);
@@ -145,7 +156,7 @@ class NonwovenSaleController extends Controller
     {
         try{
             $find_name = FabricNonWovenReceiveEntryStock::find($request->data_id);
-            
+
                 $nonwovensale = NonwovenSaleEntry::create([
                     'fabric_name' => $find_name->fabric_name,
                     'fabric_roll' => $find_name->fabric_roll,
@@ -159,6 +170,8 @@ class NonwovenSaleController extends Controller
                     'stock_id' => $request->data_id,
                     'status' => 'sent',
                 ]);
+            $find_name->status_type = 'inactive';
+            $find_name->update();    
 
         return response(['message'=>'sale Transferred Successfully']);
         }

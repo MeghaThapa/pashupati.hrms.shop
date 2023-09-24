@@ -489,6 +489,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get('/fabricSendReceive/entry/create', [FabricSendReceiveController::class,"create"])->name('fabricSendReceive.entry.create');
         Route::get('/fabricSendReceive/entry/ajaxlist', [FabricSendReceiveController::class,"entrieslist"])->name('fabricSendReceive.entry.ajaxlist');
         Route::post('/fabricSendReceive/entry/store', [FabricSendReceiveController::class,"store"])->name('fabricSendReceive.entry.store');
+        Route::get('/fabricSendReceive/entry/{id}', [FabricSendReceiveController::class,"show"])->name('fabricSendReceive.entry.show');
         Route::post('/fabricSendReceive/entry/delete', [FabricSendReceiveController::class,"delete"])->name('fabricSendReceive.entry.delete');
         /************* aile baki xa **************/
 
@@ -643,6 +644,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
 
     Route::post('fabrics/getstock/filterStocks/viewBill',[FabricStockController::class,'viewBill'])->name('fabric-stock.viewBill');
+    Route::get('fabrics/getstock/filterStocks/viewBill/print',[FabricStockController::class,'viewBillPrint'])->name('fabric-stock.print.view.bill');
 
     //fabric opening
     Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
@@ -663,11 +665,13 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
-    Route::get('fabricGodam/test', 'FabricNonwovenController@test')->name('fabricGodam.test');
+    Route::get('fabricGodam/test', 'FabricGodamController@test')->name('fabricGodam.test');
 
     Route::get('fabricGodam/dataTable', 'FabricGodamController@dataTable')->name('fabricGodam.dataTable');
 
     Route::get('fabricGodam/transferFabricGodam/{fabricgodam_id}', 'FabricGodamController@transferFabric')->name('fabricgodams.transferFabric');
+
+    Route::get("fabricGodamTransfer/filterData/List",'FabricGodamController@getFabricGodamTransfer')->name("getFabricGodamTransfer.getList");
 
     Route::get('fabricGodam/viewbill/{fabricgodam_id}', 'FabricGodamController@viewbill')->name('fabricgodams.transferFabricDetail');
 
@@ -681,7 +685,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('fabricGodam/delete/list', 'FabricGodamController@deleteFabricGodamList')->name('fabricgodam.deleteFabricGodamList');
 
-    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getfabricwithsamename')->name("getFilterFabric");
+    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getFilterFabricGodamList')->name("getFilterFabric");
 
 
 
@@ -714,6 +718,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
 
     Route::get('finaltripals/viewBill/{id}', 'Tripal\FinalTripalBillController@viewBill')->name('finaltripal.viewbill');
+
+    Route::get('finaltripals/getFilterFinalStock', 'Tripal\FinalTripalStockController@getFilterList')->name('finaltripal.getFilterList');
 
     Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
     Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');

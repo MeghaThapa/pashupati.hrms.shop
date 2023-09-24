@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Fabric;
+use App\Models\FabricStock;
 use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
 use Maatwebsite\Excel\Facades\Excel;
@@ -26,6 +27,20 @@ class FabricNonWovenController extends Controller
 
     public function create()
     {
+        return view('admin.nonwovenfabric.create');
+    }
+
+    public function test()
+    {
+        // dd('lol');
+        $fabric_opening = Fabric::where('bill_no','opening')->count('net_wt');
+        $fabric_entry = Fabric::where('bill_no','!=','Opening')->count('net_wt');
+
+        $fabric_op_en = $fabric_opening + $fabric_entry;
+        $current_stock = FabricStock::count('net_wt');
+        $current_fabric_entry = $current_stock - $fabric_entry;
+
+        dd($fabric_op_en,$current_stock,$current_fabric_entry);
         return view('admin.nonwovenfabric.create');
     }
 
