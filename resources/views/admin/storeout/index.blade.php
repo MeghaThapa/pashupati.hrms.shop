@@ -21,7 +21,32 @@
         </div>
     </div>
     <!-- /.content-header -->
-
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" class="form-control ndp-nepali-calendar" id="start_date" name="start_date"
+                    value="">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" class="form-control ndp-nepali-calendar" id="end_date" name="end_date"
+                    value="">
+            </div>
+        </div>
+        {{-- <div class="col-sm-3">
+            <label for="godamID">Select Godam</label>
+            <select class="form-control" id="godamID">
+                <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
+                @foreach ($godams as $godam)
+                    <option value="{{ $godam->id }}">{{ $godam->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div> --}}
+    </div>
     <!-- Main content -->
     <div class="content">
         <div class="container-fluid">
@@ -88,7 +113,13 @@
                 style: 'bootstrap4',
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('storeout.storoutYajraDatabales') }}",
+                 ajax: {
+                    url: "{{ route('storeout.storoutYajraDatabales') }}",
+                    data: function(data) {
+                        data.start_date = $('#start_date').val() ?? null;
+                        data.end_date = $('#end_date').val() ?? null;
+                    }
+                },
                 columns: [{
                         data: 'DT_RowIndex'
                     },
@@ -114,7 +145,9 @@
                     },
                 ]
             });
-
+             $('#start_date, #end_date').on('change', function() {
+                table.ajax.reload(); // Redraw the table
+            });
             $('body').on('click', '#dltStoreout', function() {
                 let id = this.getAttribute('data-id');
                 // let id = $(this).attr('data-id').val();

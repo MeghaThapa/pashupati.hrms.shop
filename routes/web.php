@@ -1273,10 +1273,31 @@ Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 
 //Storein route
 // Route::resource('storein',StoreinController::class);
+Route::post('storein/generate-entry-report-view','StoreinController@generateEntryReportView')->name('storein.entry.report.view');
+
 Route::get('storein/getItemsDepartment/{items_of_storein_name}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
 Route::get('storein/getUnitOfItems/{items_of_storein_name}', 'StoreinController@getUnitOfItems')->name('storein.getUnitOfItems');
 
 Route::get('storein/getDepartentAccCat/{category_id}', 'StoreinController@getDepartentAccCat')->name('storein.getDepartentAccCat');
+//storei report megha
+Route::get('storein/entry-report','StoreinController@entryReport')->name('storein.entryReport');
+Route::get('storein/category-report','StoreinController@categoryReport')->name('storein.categoryReport');
+Route::post('storein/itemCategory-report-view','StoreinController@generateCategoryReportView')->name('storein.itemCatgoryReport.view');
+
+
+Route::get('storein/supplier-report','StoreinController@supplierReport')->name('storein.supplierReport');
+Route::post('storein/item-supplier-report','StoreinController@generateSupplierReportView')->name('storein.itemSupplierReport.view');
+
+Route::get('storein/storeinType-report','StoreinController@storeinTypeReport')->name('storein.storeinTypeReport');
+Route::post('storein/item-storeinType-report','StoreinController@generateStoreinTypeReportView')->name('storein.itemStoreinTypeReport.view');
+
+Route::get('storein/srNo-report','StoreinController@srNoReport')->name('storein.srNoReport');
+Route::post('storein/item-srNo-report','StoreinController@generateSrNoReportView')->name('storein.itemSrNoReport.view');
+
+Route::get('storein/item-report','StoreinController@itemReport')->name('storein.itemReport');
+Route::get('storein/getItemSize','StoreinController@getItemSize')->name('item.getSize');
+
+Route::post('storein/get-item-report','StoreinController@generateItemReportView')->name('storein.itemReport.view');
 
 Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
 Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');

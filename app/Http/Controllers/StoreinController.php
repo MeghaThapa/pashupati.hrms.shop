@@ -23,6 +23,8 @@ use App\Models\StoreinItem;
 use App\Models\Tax;
 use App\Models\PurchaseStoreinReport;
 use Carbon\Carbon;
+
+use Carbon\CarbonPeriod;
 use DB;
 use Illuminate\Http\Request;
 use PDF;
@@ -47,6 +49,309 @@ class StoreinController extends Controller
         return view('admin.storein.index', compact('storeinDatas','godams'));
     }
 
+
+    public function categoryReport(){
+         $categories=StoreinCategory::where('status','active')->get(['id','name']);
+          return view('admin.storein.reportPages.categoryReport',compact('categories'));
+    }
+
+    public function generateCategoryReportView(Request $request){
+           if (!$request->start_date || !$request->end_date || !$request->storein_cat_id) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date and department' ]);
+        }
+        $reportData = [];
+        $dates = [];
+        $dates = $this->getEngDateRange($request->start_date, $request->end_date);
+        $firstDate = reset($dates);
+        $lastDate = end($dates);
+        // dd($lastDate);
+        foreach ($dates as $date) {
+           $storeiItems = DB::table('storein_item')
+            ->where('storein_item.storein_category_id',$request->storein_cat_id)
+            ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
+            ->join('suppliers','storein.supplier_id','=', 'suppliers.id')
+            // ->join('storein_categories', 'storein_item.storein_category_id', '=', 'storein_categories.id')
+            ->join('items_of_storeins', 'storein_item.storein_item_id', '=', 'items_of_storeins.id')
+            ->join('sizes', 'storein_item.size_id', '=', 'sizes.id')
+            ->join('units', 'storein_item.unit_id', '=', 'units.id')
+            ->join('storein_departments', 'storein_item.department_id', '=', 'storein_departments.id')
+            ->select(
+                'storein_item.*',
+                'suppliers.name as supplier_name',
+                'storein.sr_no as sr_no',
+                'storein_departments.name as storein_departments_name',
+                'items_of_storeins.name as item_name',
+                'sizes.name as sizes_name',
+                'units.name as units_name',
+                'storein.purchase_date'
+            )
+            ->where('storein.purchase_date', $date);
+
+            $storeiItems = $storeiItems->get();
+            if (!$storeiItems->isEmpty()) {
+                $storeinView = view('admin.storein.reportview.catWiseReport', compact('storeiItems', 'date','firstDate','lastDate'))->render();
+                array_push($reportData, $storeinView);
+            }
+
+        }
+        return response(['status' => true, 'data' => $reportData,'firstDate'=>$firstDate, 'lastDate'=>$lastDate]);
+    }
+    public function supplierReport(){
+         $suppliers=Supplier::where('status','1')->get(['id','name']);
+          return view('admin.storein.reportPages.supplierReport',compact('suppliers'));
+    }
+
+    public function generateSupplierReportView(Request $request){
+        if (!$request->start_date || !$request->end_date || !$request->supplier_id) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date and department' ]);
+        }
+        $reportData = [];
+        $dates = [];
+        $dates = $this->getEngDateRange($request->start_date, $request->end_date);
+        // $firstDate = reset($dates);
+        // $lastDate = end($dates);
+        // dd($lastDate);
+        foreach ($dates as $date) {
+           $storeiItems = DB::table('storein_item')
+            ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
+            ->join('suppliers','storein.supplier_id','=', 'suppliers.id')
+            // ->join('storein_categories', 'storein_item.storein_category_id', '=', 'storein_categories.id')
+            ->join('items_of_storeins', 'storein_item.storein_item_id', '=', 'items_of_storeins.id')
+            ->join('sizes', 'storein_item.size_id', '=', 'sizes.id')
+            ->join('units', 'storein_item.unit_id', '=', 'units.id')
+            ->join('storein_departments', 'storein_item.department_id', '=', 'storein_departments.id')
+
+            ->select(
+                'storein_item.*',
+                'storein.sr_no as sr_no',
+                'items_of_storeins.name as item_name',
+                'sizes.name as sizes_name',
+                'units.name as units_name'
+            )
+            ->where('storein.purchase_date', $date)
+            ->where('storein.supplier_id',$request->supplier_id)
+            ;
+
+            $storeiItems = $storeiItems->get();
+            if (!$storeiItems->isEmpty()) {
+                $storeinView = view('admin.storein.reportview.supplierWiseReort', compact('storeiItems', 'date'))->render();
+                array_push($reportData, $storeinView);
+            }
+
+        }
+        return response(['status' => true, 'data' => $reportData]);
+    }
+
+    public function storeinTypeReport(){
+         $storeinTypes=StoreinType::where('status','active')->get(['id','name']);
+          return view('admin.storein.reportPages.storeinTypeReport',compact('storeinTypes'));
+    }
+
+    public function generateStoreinTypeReportView(Request $request){
+         if (!$request->start_date || !$request->end_date || !$request->storein_type_id) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date and storein type' ]);
+        }
+        $reportData = [];
+        $dates = [];
+        $dates = $this->getEngDateRange($request->start_date, $request->end_date);
+        // $firstDate = reset($dates);
+        // $lastDate = end($dates);
+        // dd($lastDate);
+        foreach ($dates as $date) {
+           $storeiItems = DB::table('storein_item')
+            ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
+            ->join('suppliers','storein.supplier_id','=', 'suppliers.id')
+            // ->join('storein_categories', 'storein_item.storein_category_id', '=', 'storein_categories.id')
+            ->join('items_of_storeins', 'storein_item.storein_item_id', '=', 'items_of_storeins.id')
+            ->join('sizes', 'storein_item.size_id', '=', 'sizes.id')
+            ->join('units', 'storein_item.unit_id', '=', 'units.id')
+            ->join('storein_departments', 'storein_item.department_id', '=', 'storein_departments.id')
+
+            ->select(
+                'storein_item.*',
+                'storein.sr_no as sr_no',
+                'items_of_storeins.name as item_name',
+                'sizes.name as sizes_name',
+                'units.name as units_name'
+            )
+            ->where('storein.purchase_date', $date)
+            ->where('storein.storein_type_id',$request->storein_type_id)
+            ;
+
+            $storeiItems = $storeiItems->get();
+            if (!$storeiItems->isEmpty()) {
+                $storeinView = view('admin.storein.reportview.supplierWiseReort', compact('storeiItems', 'date'))->render();
+                array_push($reportData, $storeinView);
+            }
+
+        }
+        return response(['status' => true, 'data' => $reportData]);
+    }
+
+    public function srNoReport(){
+        $srNos=Storein::get(['sr_no']);
+        return view('admin.storein.reportPages.srNoReport',compact('srNos'));
+    }
+
+    public function generateSrNoReportView(Request $request){
+          if ( !$request->sr_no) {
+            return response(['status' => false, 'message' => 'Please select Sr no' ]);
+            }
+           $storein = Storein::with('storeinItems',
+           'supplier:id,name',
+           'storeinType:id,name',
+           'storeinItems.storeinDepartment:id,name',
+           'storeinItems.itemsOfStorein:id,name',
+           'storeinItems.size:id,name',
+           'storeinItems.unit:id,name')
+           ->where('sr_no',$request->sr_no)
+           ->first();
+           $Extra_charges= json_decode($storein->extra_charges);
+           if (!$storein){return response(['status' => false,'message'=>'No Data Found']);}
+            $storeinView = view('admin.storein.reportview.srNoWiseReport', compact('storein','Extra_charges'))->render();
+            return response(['status' => true,'data'=>$storeinView]);
+    }
+
+    public function itemReport(){
+        $items= ItemsOfStorein::select('name')->distinct('name')->get();
+         return view('admin.storein.reportPages.itemReport',compact('items'));
+
+    }
+
+    public function getItemSize(Request $request){
+        if(!$request->item_name){return null;}
+        $sizes = ItemsOfStorein::with('size:id,name')->where('name',$request->item_name)->get(['size_id']);
+        return response()->json($sizes,200);
+
+    }
+
+    public function generateItemReportView(Request $request){
+           if (!$request->start_date || !$request->end_date || !$request->item_name || !$request->size_id) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date and storein type' ]);
+        }
+        $reportData = [];
+        $dates = [];
+        $dates = $this->getEngDateRange($request->start_date, $request->end_date);
+
+       foreach ($dates as $date) {
+           $storeiItems = DB::table('storein_item')
+            ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
+            ->join('suppliers','storein.supplier_id','=', 'suppliers.id')
+            ->join('items_of_storeins', 'storein_item.storein_item_id', '=', 'items_of_storeins.id')
+            ->join('sizes', 'storein_item.size_id', '=', 'sizes.id')
+            ->join('units', 'storein_item.unit_id', '=', 'units.id')
+            ->join('storein_departments', 'storein_item.department_id', '=', 'storein_departments.id')
+            ->select(
+                'storein_item.*',
+                'storein.sr_no as sr_no',
+                'suppliers.name as supplier_name',
+                'sizes.name as size',
+                'units.name as unit',
+                'storein_departments.name as department_name'
+            )
+            ->where('storein.purchase_date', $date)
+            // ->where('items_of_storeins.name',$request->item_name)
+            // ->where('items_of_storeins.size_id',$request->size_id)
+            ;
+
+            $storeiItems = $storeiItems->get();
+            if (!$storeiItems->isEmpty()) {
+                $storeinView = view('admin.storein.reportview.itemWiseReport', compact('storeiItems', 'date'))->render();
+                array_push($reportData, $storeinView);
+            }
+
+        }
+        return response(['status' => true, 'data' => $reportData]);
+
+    }
+
+    public function entryReport(){
+
+        $departments= StoreinDepartment::where('status','active')->get(['id','name']);
+        // $itemNames= ItemsOfStorein::where('status','active')->get(['id','name']);
+        return view('admin.storein.reportPages.entryReport',compact('departments'));
+    }
+     public function generateEntryReportView(Request $request)
+    {
+        if (!$request->start_date || !$request->end_date || !$request->storein_dept_id) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date and department' ]);
+        }
+        $reportData = [];
+        $dates = [];
+        $dates = $this->getEngDateRange($request->start_date, $request->end_date);
+
+        foreach ($dates as $date) {
+           $storeiItems = DB::table('storein_item')
+            ->where('storein_item.department_id',$request->storein_dept_id)
+            ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
+            ->join('storein_categories', 'storein_item.storein_category_id', '=', 'storein_categories.id')
+            ->join('items_of_storeins', 'storein_item.storein_item_id', '=', 'items_of_storeins.id')
+            ->join('sizes', 'storein_item.size_id', '=', 'sizes.id')
+            ->join('units', 'storein_item.unit_id', '=', 'units.id')
+            ->join('storein_departments', 'storein_item.department_id', '=', 'storein_departments.id')
+            ->select(
+                'storein_item.*',
+                'storein_categories.name as storein_categories_name',
+                'storein_departments.name as storein_departments_name',
+                'items_of_storeins.name as item_name',
+                'sizes.name as sizes_name',
+                'units.name as units_name',
+                'storein.purchase_date'
+            )
+            ->where('storein.purchase_date', $date);
+
+            $storeiItems = $storeiItems->get();
+            if (!$storeiItems->isEmpty()) {
+                $storeinView = view('admin.storein.reportview.WiseReport', compact('storeiItems', 'date'))->render();
+                array_push($reportData, $storeinView);
+            }
+
+        }
+        // return response(['status' => true, 'data' => $reportData]);
+        // Summary Part Code
+
+        $startDate = $dates[0];
+        $endDate = end($dates);
+
+        $summaryStoreIn = DB::table('storein_item')
+        ->where('storein_item.department_id',$request->storein_dept_id)
+        ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
+        ->join('storein_categories', 'storein_item.storein_category_id', '=', 'storein_categories.id')
+        ->join('items_of_storeins', 'storein_item.storein_item_id', '=', 'items_of_storeins.id')
+        ->join('sizes', 'storein_item.size_id', '=', 'sizes.id')
+        ->join('units', 'storein_item.unit_id', '=', 'units.id')
+        ->select(
+            'items_of_storeins.name as item_name',
+            'sizes.name as size_name',
+            'units.name as unit_name',
+            'storein_categories.name as storein_category_name',
+            DB::raw('SUM(storein_item.quantity) as total_quantity'),
+            DB::raw('SUM(storein_item.total_amount) as grand_total'),
+        )
+        ->groupBy('items_of_storeins.name','sizes.name','units.name','storein_categories.name');
+
+        if ($request->start_date && $request->end_date) {
+            $summaryStoreIn = $summaryStoreIn->where('storein.purchase_date', '>=', $request->start_date)
+            ->where('storein.purchase_date', '<=', $request->end_date);
+        }
+
+        $summaryStoreIn = $summaryStoreIn->get();
+        $summaryView = view('admin.storein.reportview.summary', compact('summaryStoreIn', 'startDate', 'endDate'))->render();
+        array_push($reportData, $summaryView);
+         return response(['status' => true, 'data' => $reportData]);
+    }
+      private function getEngDateRange($startDate, $endDate)
+    {
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDate);
+        $endDate   = Carbon::createFromFormat('Y-m-d', $endDate);
+
+        $dateRange = CarbonPeriod::create($startDate, $endDate);
+
+        $dates = array_map(fn ($date) => $date->format('Y-m-d'), iterator_to_array($dateRange));
+
+        return $dates;
+    }
     /**
      * Show the form for creating a new purchase.
      *
@@ -177,17 +482,20 @@ class StoreinController extends Controller
             'storein.status',
             'storein.grand_total',
         )
-        ->orderBy('storein.id', 'DESC')
-        ->get();
+        ->orderBy('storein.id', 'DESC');
+        if ($request->start_date) {
+                $start_date = $request->input('start_date');
+                $end_date =  now()->format('Y-m-d');
+                $storein->whereBetween('purchase_date', [$start_date, $end_date]);
 
+        }
         if ($request->start_date && $request->end_date ) {
-
                 $start_date = $request->input('start_date');
                 $end_date = $request->input('end_date');
                 $storein->whereBetween('purchase_date', [$start_date, $end_date]);
-                // return response()->json(['message' => $request->start_date ]);
 
         }
+       $storein=$storein->get();
         //   if ($request->godam_id) {
         //         $query->where('godam_id', (int)$request->godam_id);
         //     }
@@ -356,23 +664,34 @@ class StoreinController extends Controller
             $grandTotal -= $storein->total_discount;
         }
         $chargeArray = [];
-        if ($request->chargeName && count($request->chargeName) > 0) {
-            for ($i = 0; $i < count($request->chargeName); $i++) {
-                $chargeArr = explode('-', $request->chargeName[$i]);
-                $charge_id = $chargeArr[0];
-                $charge_name = $chargeArr[1];
-                $charge_amount = $request->chargeAmount[$i] ? $request->chargeAmount[$i] : '0';
-                $charge_operator = $request->chargeOperator[$i];
-                $charge_total = $request->chargeTotal[$i] ? $request->chargeTotal[$i] : '0';
+        $chargeAmount = array_values(array_filter($request->chargeAmount, function($value) {
+            return $value !== null;
+        }));
+        $chargeTotal = array_values(array_filter($request->chargeTotal, function($value) {
+            return $value !== null;
+        }));
+        $chargeOperator = array_values(array_filter($request->chargeOperator, function($value) {
+            return $value !== null;
+        }));
 
-                $chargeArray[] = [
-                    'charge_id' => $charge_id,
-                    'charge_name' => $charge_name,
-                    'charge_amount' => $charge_amount,
-                    'charge_operator' => $charge_operator,
-                    'charge_total' => $charge_total
-                ];
-                $grandTotal += $charge_total;
+        if ($request->chargeName && count($request->chargeName) > 0) {
+            for ($i = 0; $i < count($chargeAmount); $i++) {
+                    $chargeArr = explode('-', $request->chargeName[$i]);
+                    $charge_id = $chargeArr[0];
+                    $charge_name = $chargeArr[1];
+
+                    $charge_amount = $chargeAmount[$i] ? $chargeAmount[$i] : '0';
+                    $charge_operator = $chargeOperator[$i];
+                    $charge_total = $chargeTotal[$i] ? $chargeTotal[$i] : '0';
+
+                    $chargeArray[] = [
+                        'charge_id' => $charge_id,
+                        'charge_name' => $charge_name,
+                        'charge_amount' => $charge_amount,
+                        'charge_operator' => $charge_operator,
+                        'charge_total' => $charge_total
+                    ];
+                    $grandTotal += $charge_total;
             }
         }
         $storein->grand_total = $grandTotal;
