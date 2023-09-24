@@ -128,7 +128,13 @@ class SaleFinalTripalController extends Controller
         $fabrics = FinalTripalStock::where('department_id',$godam_id)->get()->unique('name')->values()->all();
         // dd($fabrics);
         $salefinaltripals = SaleFinalTripal::paginate(20);
-        return view('admin.sale.salefinaltripal.addtripal',compact('findtripal','fabrics','salefinaltripals','id'));
+
+        $total_net = SaleFinalTripalEntry::where('salefinal_id',$id)->sum('net');
+        $total_gross = SaleFinalTripalEntry::where('salefinal_id',$id)->sum('gross');
+        $total_meter = SaleFinalTripalEntry::where('salefinal_id',$id)->sum('meter');
+        $total_roll = SaleFinalTripalEntry::where('salefinal_id',$id)->count();
+        // dd($total_net);
+        return view('admin.sale.salefinaltripal.addtripal',compact('findtripal','fabrics','salefinaltripals','id','total_net','total_gross','total_meter','total_roll'));
     }
 
     public function viewTripal($id)
@@ -161,7 +167,7 @@ class SaleFinalTripalController extends Controller
             $godam_id = Godam::where('name','psi')->value('id');
             $fabric_name_id = $request->fabric_name_id;
             $fabric_name = FinalTripalStock::where("id",$fabric_name_id)->value("name");
-            $fabrics = FinalTripalStock::where('department_id',$godam_id)->where("name",$fabric_name);
+            $fabrics = FinalTripalStock::where('status_type','active')->where('department_id',$godam_id)->where("name",$fabric_name);
             // dd($fabrics->count());
 
             return DataTables::of($fabrics)
@@ -201,24 +207,17 @@ class SaleFinalTripalController extends Controller
                     ->make(true);
 
         }
-        // if($request->ajax()){
-        //     dd($request);
-        //     $salefinal_id = $request->salefinal_id;
-
-        //     $fabrics = SaleFinalTripalEntry::where('salefinal_id',$salefinal_id)->get();
-
-        //     return response([
-        //         "datalist" => $fabrics,
-        //     ]);
-
-
-        // }
+     
     }
 
     public function deleteEntryList(Request $request)
     {
 
         $unit = SaleFinalTripalEntry::find($request->data_id);
+        $find_name = FinalTripalStock::find($unit->stock_id);
+
+        $find_name->status_type = 'active';
+        $find_name->update(); 
 
         // delete unit
         $unit->delete();
@@ -252,6 +251,9 @@ class SaleFinalTripalController extends Controller
                     'stock_id' => $request->data_id,
                     'status' => 'sent',
                 ]);
+
+            $find_name->status_type = 'inactive';
+            $find_name->update();    
 
         return response(['message'=>'sale Transferred Successfully']);
         }

@@ -152,9 +152,9 @@
                 </tr>
 
                 <tbody>
-                    @foreach($stocks as $tripal)
+                    @foreach($stocks as $key =>$tripal)
                     <tr>
-                        <td>#</td>
+                        <td>{{$key+1}}</td>
                         <td>{{$tripal->name}}</td>
                         <td>{{$tripal->roll}}</td>
                         <td>{{$tripal->gross}}</td>
@@ -165,6 +165,16 @@
                     </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>Total Net: {{$total_net}}</td>
+                        <td>Total Gross: {{$total_gross}}</td>
+                        <td>Total Meter: {{$total_meter}}</td>
+                        <td>Total Roll: {{$total_roll}}</td>
+                    </tr>
+                </tfoot>
              
              
               </table>

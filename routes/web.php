@@ -671,6 +671,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('fabricGodam/transferFabricGodam/{fabricgodam_id}', 'FabricGodamController@transferFabric')->name('fabricgodams.transferFabric');
 
+    Route::get("fabricGodamTransfer/filterData/List",'FabricGodamController@getFabricGodamTransfer')->name("getFabricGodamTransfer.getList");
+
     Route::get('fabricGodam/viewbill/{fabricgodam_id}', 'FabricGodamController@viewbill')->name('fabricgodams.transferFabricDetail');
 
     Route::get('fabricGodam/fabricStockList', 'FabricGodamController@getFabricStockList')->name('godamfabrics.getFabricStockList');

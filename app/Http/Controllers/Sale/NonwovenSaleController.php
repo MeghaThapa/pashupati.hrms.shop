@@ -126,7 +126,13 @@ class NonwovenSaleController extends Controller
         $find_data = NonwovenSale::find($bill_id);
         
         $nonwovenlist = NonwovenSaleEntry::where('bill_id',$bill_id)->get();
-        return view('admin.sale.nonwovensale.viewbill',compact('find_data','nonwovenlist'));
+
+        $total_net = NonwovenSaleEntry::where('bill_id',$bill_id)->sum('net_weight');
+        $total_gross = NonwovenSaleEntry::where('bill_id',$bill_id)->sum('gross_weight');
+        $total_meter = NonwovenSaleEntry::where('bill_id',$bill_id)->sum('length');
+        $total_roll = NonwovenSaleEntry::where('bill_id',$bill_id)->count();
+
+        return view('admin.sale.nonwovensale.viewbill',compact('find_data','nonwovenlist','total_net','total_gross','total_meter','total_roll'));
     }
 
     public function deleteEntryList(Request $request)

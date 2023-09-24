@@ -207,6 +207,16 @@
                 </tr>
             </thead>
             <tbody id="getSaleTripalList"></tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Total Net : {{$total_net}}</td>
+                    <td>Total Gross : {{$total_gross}}</td>
+                    <td>Total Meter : {{$total_meter}}</td>
+                    <td>Total Roll: {{$total_roll}}</td>
+                </tr>
+            </tfoot>
         </table>
         
     </div>
@@ -344,7 +354,9 @@
                      console.log("sending")
                  },
                  success:function(response){
-                    salesTripalTable.ajax.reload();
+                    
+                    $('#getSaleTripalList').DataTable().ajax.reload();
+                    $('#sameFabricsTable').DataTable().ajax.reload();
                  },
                  error:function(error){
                      console.log("error",error);
@@ -458,7 +470,7 @@
          let bill_no = $("#bill_no").val()
          let billDate = $("#bill_date").val()
          let salefinal_id = $("#salefinal_id").val()
-         debugger;
+         // debugger;
 
        
          $.ajax({
@@ -477,6 +489,7 @@
              },
              success:function(response){
                 $('#getSaleTripalList').DataTable().ajax.reload();
+                $('#sameFabricsTable').DataTable().ajax.reload();
              },
              error:function(error){
                  console.log("error",error);
