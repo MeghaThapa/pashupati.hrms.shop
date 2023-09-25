@@ -337,6 +337,7 @@ class FinalTripalController extends Controller
                "date_en" => $request['bill_date'],
                "date_np" => $request['bill_date'],
                "bill_id" => $bill_id,
+               "status_type" => 'active',
 
                "status" => "sent"
            ]);

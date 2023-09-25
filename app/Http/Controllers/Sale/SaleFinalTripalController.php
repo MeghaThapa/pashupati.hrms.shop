@@ -167,6 +167,7 @@ class SaleFinalTripalController extends Controller
             $godam_id = Godam::where('name','psi')->value('id');
             $fabric_name_id = $request->fabric_name_id;
             $fabric_name = FinalTripalStock::where("id",$fabric_name_id)->value("name");
+            // dd($fabric_name_id,$fabric_name);
             $fabrics = FinalTripalStock::where('status_type','active')->where('department_id',$godam_id)->where("name",$fabric_name);
             // dd($fabrics->count());
 
