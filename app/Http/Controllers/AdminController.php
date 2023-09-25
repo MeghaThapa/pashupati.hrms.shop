@@ -172,7 +172,8 @@ class AdminController extends Controller
                 'currencyPosition' => GeneralSetting::where('key', 'currency_position')->firstOrFail()->value,
                 'timezone' => GeneralSetting::where('key', 'timezone')->firstOrFail()->value,
                 'codePefix' => GeneralSetting::where('key', 'purchase_code_prefix')->firstOrFail()->value,
-
+                //megha
+                'bagBundelNo' => GeneralSetting::where('key', 'bag_bundle_no')->firstOrFail()->value,
 
                 'processingCodePefix' => GeneralSetting::where('key', 'processing_code_prefix')->firstOrFail()->value,
 
@@ -191,15 +192,15 @@ class AdminController extends Controller
                 'favicon' => GeneralSetting::where('key', 'favicon')->firstOrFail()->value,
                 'copyright' => GeneralSetting::where('key', 'copyright')->firstOrFail()->value,
             ];
+
         $settings = (object) $settings;
+        // return $settings;
         return view('admin.setup.general', compact('settings'));
     }
 
     // update general settings
     public function updateGeneralSettings(Request $request)
     {
-
-
         $validator = $request->validate([
             'companyName' => 'required|string|max:30',
             'compnayTagline' => 'required|string|max:255|min:3',
@@ -211,6 +212,7 @@ class AdminController extends Controller
             'currencyPosition' => 'required|string',
             'timezone' => 'nullable|string',
             'purchaseCodePrefix' => 'required|string|max:20',
+            'bag_bundel_no' => 'required|string|max:20',
             'processingCodePrefix' => 'required|string|max:20',
             'finishedCodePrefix' => 'required|string|max:20',
             'transferredCodePefix' => 'required|string|max:20',
@@ -295,6 +297,8 @@ class AdminController extends Controller
         GeneralSetting::where('key', 'purchase_code_prefix')->firstOrFail()->update(['value' => $request->purchaseCodePrefix]);
         GeneralSetting::where('key', 'processing_code_prefix')->firstOrFail()->update(['value' => $request->processingCodePrefix]);
         GeneralSetting::where('key', 'finished_code_prefix')->firstOrFail()->update(['value' => $request->finishedCodePrefix]);
+
+         GeneralSetting::where('key', 'bag_bundle_no')->firstOrFail()->update(['value' => $request->bag_bundel_no]);
 
         GeneralSetting::where('key', 'transferred_code_prefix')->firstOrFail()->update(['value' => $request->transferredCodePefix]);
 
