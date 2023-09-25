@@ -2050,6 +2050,7 @@
 
 
             let data = parseInt($("#sendforlamination").data("title"));
+            console.log(data);
 
             let gram1 = (count1 / data).toFixed(3);
 

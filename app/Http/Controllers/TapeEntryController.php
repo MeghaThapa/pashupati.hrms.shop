@@ -17,6 +17,7 @@ use App\Models\AutoLoadItemStock;
 use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\TapeEntry;
+use App\Models\TapeEntryOpening;
 use Yajra\DataTables\DataTables;
 
 class TapeEntryController extends Controller
@@ -34,17 +35,40 @@ class TapeEntryController extends Controller
             "to_godam" => "required",
             "receipt_number" => "required"
         ]);
-        
-        TapeEntryStockModel::create([
-            "toGodam_id" => $request->to_godam,
-            "tape_type" => "Tape1",
-            "tape_qty_in_kg" => $request->tape_quantity,
-            "total_in_kg" => $request->tape_quantity,
-            'loading'=> "0",
-            'running' => '0',
-            'bypass_wast' => "0",
-            "cause" => "opening"
+        // dd($request);
+
+        $opening = TapeEntryOpening::create([
+            "godam_id" => $request->to_godam,
+            "qty" => $request->tape_quantity,
+            "date" => $request->opening_date,
         ]);
+
+        // dd($request->to_godam);
+
+        $stock = TapeEntryStockModel::where('toGodam_id', $request->to_godam)->count();
+
+        $getStock = TapeEntryStockModel::where('toGodam_id', $request->to_godam)
+          ->first();
+          // dd($getStock);
+        
+
+        if ($stock == 1) {
+            $getStock->tape_qty_in_kg += $request->tape_quantity;
+            $getStock->save();
+        } else {
+           TapeEntryStockModel::create([
+               "toGodam_id" => $request->to_godam,
+               "tape_type" => "tape1",
+               "tape_qty_in_kg" => $request->tape_quantity,
+               "total_in_kg" => $request->tape_quantity,
+               'loading'=> "0",
+               'running' => '0',
+               'bypass_wast' => "0",
+               "cause" => "opening"
+           ]);
+        }
+        
+       
         return  back()->with([
             "message" => "Tape Opening added successfully"
         ]);

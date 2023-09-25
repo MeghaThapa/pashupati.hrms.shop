@@ -247,7 +247,7 @@
                     { data : "name" , name : "name" },
                     { data : "roll" , name : "roll" },
                     { data : "net_wt" , name : "net_wt" },
-                    { data : "net_wt" , name : "net_wt" },
+                    { data : "bill_no" , name : "bill_no" },
                     // { data : "gross" , name : "gross" },
                     { data : "action" , name : "action" },
                 ]

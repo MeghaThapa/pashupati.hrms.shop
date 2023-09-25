@@ -95,10 +95,10 @@
                 <input type="text" id="bill_date" value="{{ $fabricsaleentry->bill_date }}" class="form-control calculator" readonly>
 
             </div>
-            <div class="col-md-2 form-group">
+            <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('PartyName ') }}
                 </label>
-                <input type="text" value="{{ $fabricsaleentry->partyname_id }}" class="form-control calculator" readonly>
+                <input type="text" value="{{ $fabricsaleentry->getParty->name }}" class="form-control calculator" readonly>
 
             </div>
             <div class="col-md-2 form-group">

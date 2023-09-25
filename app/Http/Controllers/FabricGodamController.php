@@ -26,17 +26,63 @@ class FabricGodamController extends Controller
 
     public function test(){
         // dd('ll');
-        $data = FabricGodamList::get();
+        $data = FabricStock::where('gram_wt','0')->get();
+        // dd($data);
         // dd($data->take(5));
         // dd($data->take(5));
         foreach ($data as $value)
             {
-                // dd($value);
-                $fabric = FabricGodamList::where('bill_no',$value->bill_no)->where('bill_date',$value->bill_date)->where('roll',$value->roll)->value('bill_id');
-                // dd($fabric);
+
+                // $value = '19.75"T';
+
+                // if (is_numeric($value)) {
+                //     dd('heyyyyy');
+                // } else {
+                //     dd('no numeri');
+                //     // $value is not numeric
+                // }
+
+                $input = '19.75"T (2.50-Gram) White Cement(2.50-Gram)';
+                $parts = explode(' ', $input);
+                $firstString = $parts[0];
+                $secondString = $parts[1];
+                $thirdString = $parts[2];
+
+                if (is_int($firstString)){
+                    dd('lol');
+                    $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+                }
+
+                // dd($input,$firstString,$secondString,$thirdString);
+                if (is_int($firstString)){
+                    dd('lol');
+                    $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+                }
+                else if(is_int($secondString)){
+                    dd('ll');
+                    $find_name = filter_var($secondString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+                }
+                else{
+                    dd('ppppp');
+                    $find_name = filter_var($thirdString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                }
+                // dd($input,$parts,$firstString);
+
+                
+
+                $data = $find_name;
+                dd($find_name);
+
+                $average = $value->average_wt;
+                dd($average , $data);
+
+                $gram_wt = ($average) / $data;
 
              
-                $sa = FabricGodamTransfer::where('bill_no',$value->bill_no)->where('bill_date',$value->bill_date)->where('roll',$value->roll)->update(['bill_id' => $fabric]);
+                $sa = FabricStock::where('gram_wt','0')->update(['gram_wt' => $gram_wt]);
 
                 // dd($value,$group);
             }
@@ -121,10 +167,14 @@ class FabricGodamController extends Controller
             $bill_id = $request->fabricgodam_id;
             
             $fabrics = FabricGodamList::where("fabricgodam_id",$bill_id)->get();
+            $find_bill = FabricGodam::find($bill_id);
             
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
+                    ->addColumn("bill_no",function($find_bill){
+                        return $find_bill->bill_no;
+                    })
                    
                     ->addColumn("action",function($row){
                         return "
@@ -132,7 +182,7 @@ class FabricGodamController extends Controller
                                  data-id='{$row->id}' 
                                  href='{$row->id}'>Delete</a>";
                     })
-                    ->rawColumns(["action"])
+                    ->rawColumns(["bill_no","action"])
                     ->make(true);
 
         }
