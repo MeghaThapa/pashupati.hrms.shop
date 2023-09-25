@@ -689,6 +689,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getFilterFabricGodamList')->name("getFilterFabric");
 
     Route::resource('delivery-order',DeliveryOrderController::class);
+    Route::get('delivery-order-datewise-filter',[DeliveryOrderController::class,'filterView'])->name('delivery.order.datewise.filter');
+    Route::post('delivery-order-datewise-generate-view',[DeliveryOrderController::class,'generateView'])->name('delivery.order.datewise.generate.view');
+    Route::get('delivery-order-approved',[DeliveryOrderController::class,'approvedDeliveryOrder'])->name('delivery-order.approved');
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [

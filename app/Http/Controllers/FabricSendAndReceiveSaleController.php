@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeliveryOrder;
 use App\Models\Supplier;
 use App\Models\FabricSale;
 use App\Models\FabricStock;
@@ -164,22 +165,36 @@ class FabricSendAndReceiveSaleController extends Controller
             'lory_number' => "required",
             'dp_number' => [
                 'required',
-                new ValidDpNumber,
+                new ValidDpNumber($this->request['partyname']),
             ],
             'gp_number' => "required"
         ]);
-        $fabric = FabricSaleEntry::create([
-            'bill_no' => $this->request['bill_number'],
-            'bill_date' => $this->request['bill_date'],
-            'partyname_id' => $this->request['partyname'],
-            'bill_for' => $this->request['bill_for'],
-            'lorry_no' => $this->request['lory_number'],
-            'do_no' => $this->request['dp_number'],
-            'gp_no' => $this->request['gp_number'],
-            'remarks' => $this->request['remarks'],
-        ]);
+        try{
+            DB::beginTransaction();
 
-        return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
+            $fabric = FabricSaleEntry::create([
+                'bill_no' => $this->request['bill_number'],
+                'bill_date' => $this->request['bill_date'],
+                'partyname_id' => $this->request['partyname'],
+                'bill_for' => $this->request['bill_for'],
+                'lorry_no' => $this->request['lory_number'],
+                'do_no' => $this->request['dp_number'],
+                'gp_no' => $this->request['gp_number'],
+                'remarks' => $this->request['remarks'],
+            ]);
+
+            $deliveryOrder = DeliveryOrder::where('do_no',$this->request['dp_number'])->firstOrFail();
+            $deliveryOrder->status = "Approved & Delivered";
+            $deliveryOrder->save();
+
+            DB::commit();
+            return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
+        }catch(\Exception $e){
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
+
     }
 
     public function create($entry_id)
