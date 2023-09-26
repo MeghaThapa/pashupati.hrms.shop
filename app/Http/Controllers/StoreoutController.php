@@ -473,8 +473,10 @@ public function getStockQtyRate(Request $request){
     }
     public function getStoreOutItemData($storeout_id)
     {
-        $storeout_items = StoreOutItem::with(['placement:id,name', 'size:id,name','unit:id,name','itemsOfStorein', 'department:id,name'])->where('storeout_id', $storeout_id)->get();
-            // return $storeout_items;
+        $storeout_items = StoreOutItem::with(['placement:id,name', 'size:id,name','unit:id,name','itemsOfStorein'])
+        ->where('storeout_id', $storeout_id)
+        ->orderBy('created_at', 'DESC')
+        ->get();
         return response()->json([
             'storeOutItem' =>  $storeout_items
         ]);

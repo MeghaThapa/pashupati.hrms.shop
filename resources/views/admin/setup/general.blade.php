@@ -37,7 +37,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">{{ __('General Settings') }}</h3>
-                <form action="{{ route('sqlDownload.importSql') }}" method="POST"  enctype="multipart/form-data">
+                <form action="{{ route('sqlDownload.importSql') }}" method="POST" enctype="multipart/form-data">
                     <div>
                         @csrf
                         <input type="file" name="sql_file">
@@ -112,11 +112,23 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 form-group">
+                            <div class="col-md-6 form-group">
                                 <label for="address" class="col-form-label">{{ __('Address') }}<span
                                         class="required-field">*</span></label>
                                 <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address"
                                     placeholder="{{ __('Address') }}" required>{{ $settings->address }}</textarea>
+                                @error('address')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label for="bagBundelNo" class="col-form-label">{{ __('Bag Bundel No') }}<span
+                                        class="required-field">*</span></label>
+                                <input type="text" class="form-control @error('bagBundleNo') is-invalid @enderror"
+                                    id="bagBundelNo" value="{{ $settings->bagBundelNo}}" name="bag_bundel_no"
+                                    placeholder="{{ __('Bundel No') }}" required>
                                 @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

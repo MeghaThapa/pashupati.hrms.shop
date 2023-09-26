@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BagBundelItem;
 use App\Models\BagBundelEntry;
+use App\Models\GeneralSetting;
 use App\Libraries\Nepali_Calendar;
 use Carbon\Carbon;
 use App\Models\PrintingAndCuttingBagStock;
@@ -80,7 +81,25 @@ class BagBundelItemController extends Controller
     }
 
     //for bundel number
-    public function generateBagBundelNumber()
+
+     public function generateBagBundelNumber(){
+         $setting =GeneralSetting::where('key', 'bag_bundle_no')->get('value')->first();
+        $bagBundelitem=BagBundelItem::latest()->first();
+        if($bagBundelitem){
+            $bundelNo = $bagBundelitem->bundel_no;
+            list($part1, $part2) = explode('-', $bundelNo);
+            $newPart2 = str_pad((int)$part2 + 1, strlen($part2), '0', STR_PAD_LEFT);
+            $newBundelNo = $part1 . '-' . $newPart2;
+            return $newBundelNo;
+        }
+
+        else{
+            $prefixValue = $setting->value; // Get the original value
+            $newBundelNo = $prefixValue . '01';
+            return $newBundelNo;
+        }
+     }
+    public function generateBagBundelNumberOld()
     {
         $nepaliDate = getTodayNepaliDate();
         // Extract the year, month, and day from the Nepali date
