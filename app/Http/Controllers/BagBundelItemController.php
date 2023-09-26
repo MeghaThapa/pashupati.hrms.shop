@@ -140,7 +140,7 @@ class BagBundelItemController extends Controller
                 'quantity_in_kg' => 'required',
                 'quantity_Pcs' => 'required',
                 'avg_weight' => 'required',
-                'bundel_no' => 'required'
+                'bundel_no' => 'required|unique:bag_bundel_items,bundel_no'
             ]);
             $bagBundelItem = new BagBundelItem();
             $bagBundelItem->bag_bundel_entry_id = $request->bag_bundel_entry_id;

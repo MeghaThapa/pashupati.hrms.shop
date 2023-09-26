@@ -377,8 +377,6 @@
             }
         }
 
-
-
         function getBagBrand(group_id) {
             $.ajax({
 
@@ -410,17 +408,7 @@
             selectElement.trigger('change.select2');
 
         }
-
-        // function abc() {
-        //     try {
-        //         input data of totalBags
-        //         input data of bundel size
-        //         const bundles = calculateBundles(totalBags, bundleSize);
-        //         console.log(`Bundles: ${bundles}`);
-        //     } catch (error) {
-        //         console.error(`Error: ${error.message}`);
-        //     }
-        // }
+        
         function setErrorMsg(errorMessage) {
             let errorContainer = document.getElementById('error_msg');
             errorContainer.hidden = false;
