@@ -1001,8 +1001,10 @@
                     through: through,
                 },
                 success: function(response) {
-
-                    setIntoTable(response.storeOutItem);
+                    getStoreOutItems();
+                    //console.log('i am here');
+                    totalAmountCalculation();
+                    // setIntoTable(response.storeOutItem);
                     $('#items').focus();
 
                     if (response.stock.quantity <= 0) {
@@ -1034,7 +1036,7 @@
             var html = "";
 
             html = "<tr  id=editRow-" + res.id + "><td>" + sn +
-                "</td><td class='rowItemName'>" + res.items_of_storein.name + ' / ' + res.department.name +
+                "</td><td class='rowItemName'>" + res.items_of_storein.name +
                 "</td><td class='rowsize_id'>" + res.size.name +
                 "</td><td class='rowQuantity'>" + res.quantity +
                 "</td><td class='rowUnitName'>" + res.unit.name +
@@ -1305,19 +1307,12 @@
                 success: function(response) {
                     setSuccessMessage(response.message);
                     $('#placementCreateModel').modal('hide');
-                    // placementName.value = "";
-                    // department_id.value = "";
-                    // status = "";
-
                     setOptionInSelect(
                         'placementSelect',
                         response.placement.id,
                         response.placement.name);
-
                     $('#departments').val(response.placement.department_id).trigger(
                         'change.select2');
-
-
                 },
                 error: function(xhr, status, error) {
                     let errorContainer = document.getElementById('form-error');
