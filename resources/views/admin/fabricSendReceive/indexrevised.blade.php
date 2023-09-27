@@ -164,6 +164,9 @@
                     <input type="text" class="form-control" id="billnumber" value="{{ $data->bill_number }}"
                         name="bill_number" disabled required />
 
+                        <input type="hidden" class="form-control" id="bill_id" value="{{ $id }}"
+                            name="bill_id" disabled required />
+
                 </div>
 
 
@@ -669,7 +672,8 @@
 
                             <label for="">Available</label>
 
-                            <input type="text" id="available_dana" disabled>
+                            <input type="text" id="avilableStock" disabled>
+                            {{-- <input type="text" id="available_dana" disabled> --}}
 
                         </div>
 
@@ -697,7 +701,15 @@
 
                             </thead>
 
-                            <tbody id="dana-consumption-tbody">
+                            <tbody id="dana-consumption-tbodys">
+                                @foreach($consumptions as $key=> $consumption)
+                                <tr>
+                                    <td>{{$key+1}}</td>
+                                    <td>{{$consumption->dananame->name}}</td>
+                                    <td>{{$consumption->consumption_quantity}}</td>
+                                    <td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="{{$consumption->id}}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>
+                                </tr>
+                                @endforeach
 
                             </tbody>
 
@@ -1877,6 +1889,7 @@
                 },
 
                 success: function(response) {
+                    window.reload();
 
                     if (response.response == '200') {
 
@@ -1958,7 +1971,8 @@
 
                     "plantname": $("#plantName").val(),
 
-                    "shift": $("#shiftName").val()
+                    "shift": $("#shiftName").val(),
+                    "bill_id": $("#bill_id").val(),
 
                 },
 
@@ -2050,7 +2064,7 @@
 
 
             let data = parseInt($("#sendforlamination").data("title"));
-            console.log(data);
+            console.log(data,'lol');
 
             let gram1 = (count1 / data).toFixed(3);
 
@@ -2380,6 +2394,34 @@
 
         });
 
+        $('#danaNameId').on('select2:select', function(e) {
+          
+            // let autoloader_id = e.params.data.id;
+            let autoloader_id = $("#danaNameId option:selected").attr("autoloaderid");
+            $('#avilableStock').empty();
+            getStockQuantity(autoloader_id);
+        });
+
+        function getStockQuantity(autoloader_id) {
+            $.ajax({
+                url: "{{ route('fabricsendrecive.getStockQuantity') }}",
+                method: 'post',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    autoloader_id: autoloader_id,
+                },
+                success: function(response) {
+                    console.log(response.data);
+                    $("#avilableStock").val(response.data.quantity);
+                    // document.getElementById('avilableStock').value = response.quantity;
+                  
+                },
+                error: function(xhr, status, error) {
+                    setErrorMsg(xhr.responseJSON.message);
+                }
+            });
+        }
+
 
 
         $(document).on("click", "#add_dana_consumption", function(e) {
@@ -2430,6 +2472,7 @@
                     $("#dana-consumption-tbody").empty()
 
                     $("#totl_dana").val(response.total_consumption)
+                    window.location.reload();
 
                     response.consumptions.forEach((data, index) => {
 
@@ -2485,6 +2528,7 @@
                 },
 
                 success: function(response) {
+                    window.location.reload();
 
                     console.log(response)
 

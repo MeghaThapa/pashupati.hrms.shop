@@ -32,6 +32,7 @@ class FabricImport implements ToCollection, WithHeadingRow, WithCalculatedFormul
 
     public function collection(Collection $rows)
     {
+        // dd($rows);
 
         $bill_no = "FI" . "-" . getNepaliDate(date('Y-m-d')) . "-" . strtotime(date(("H:i:s")));
 
@@ -166,7 +167,8 @@ class FabricImport implements ToCollection, WithHeadingRow, WithCalculatedFormul
                         'godam_id' => $this->godam_id,
                         'date_np' => $this->date_np,
                         'bill_no' => $bill_no,
-                        'fabric_id' => $fabric->id
+                        'fabric_id' => $fabric->id,
+                        'status_type' => 'active',
                     ]);
                 }
             }
