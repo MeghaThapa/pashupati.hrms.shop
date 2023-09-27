@@ -101,11 +101,12 @@ class DoubleTripalController extends Controller
     public  function viewBill($bill_id){
 
         $find_data = DoubleTripalBill::find($bill_id);
+        // dd($find_data);
         $unlam_datas = SingleSideunlaminatedFabric::where('bill_id',$bill_id)->get();
-        $stocks = DoubleSideLaminatedFabricStock::where('bill_id',$bill_id)->get();
+        $stocks = DoubleSideLaminatedFabric::where('bill_id',$bill_id)->get();
         // dd($stocks);
           
-        return view('admin.doubletripal.viewBill',compact('unlam_datas','stocks','bill_id','find_data'));
+        return view('admin.doubletripal.viewbill',compact('unlam_datas','stocks','bill_id','find_data'));
 
     }
 

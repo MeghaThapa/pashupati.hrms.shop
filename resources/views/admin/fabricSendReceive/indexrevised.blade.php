@@ -1023,6 +1023,7 @@
 
                     <form id='sendtolaminationform' action='{{ route('fabricSendReceive.store.laminated.revised') }}'
                         method="post">
+                        <input type="hidden" name="data-number" id="data-number">
 
                         @csrf
 
@@ -2031,6 +2032,29 @@
 
                 $("#standard_wt").val(standard_weight_gram)
 
+                var titles = $(this).attr('data-title'),
+                    ids = $(this).attr('data-id'),
+                    token = $('meta[name="csrf-token"]').attr('content');
+
+
+                    $.ajax({
+                      type:"POST",
+                      dataType:"JSON",
+                      url:"{{route('getFilterFabricSendRecieveListName')}}",
+                      data:{
+                        _token: token,
+                        titles: titles,
+                        ids: ids,
+                      },
+                      success: function(response){
+                        $('#data-number').val(response.name);
+
+                      },
+                      error: function(event){
+                        alert("Sorry");
+                      }
+                    });
+
             });
 
         });
@@ -2051,11 +2075,13 @@
 
             let meter1 = $("#meter").val();
 
+            let dataName = $("#data-number").val();
+
             let a = parseFloat(net_wt_1)
 
             let b = parseFloat(meter1)
 
-            console.log(net_wt_1, meter1)
+            // console.log(net_wt_1, meter1)
 
             let count1 = parseFloat((a / b) * 1000).toFixed(3)
 
@@ -2066,7 +2092,8 @@
             let data = parseInt($("#sendforlamination").data("title"));
             console.log(data,'lol');
 
-            let gram1 = (count1 / data).toFixed(3);
+            // let gram1 = (count1 / data).toFixed(3);
+            let gram1 = (count1 / dataName).toFixed(3);
 
             $("#laminated_gram").val(gram1)
 
@@ -2079,6 +2106,7 @@
             let net_wt_1 = $("#laminated_net_weight_2").val()
 
             let meter1 = $("#meter2").val();
+            let dataName = $("#data-number").val();
 
             let a = parseFloat(net_wt_1)
 
@@ -2092,7 +2120,8 @@
 
             let data = parseInt($("#sendforlamination").data("title"));
 
-            let gram1 = (count1 / data).toFixed(3);
+            // let gram1 = (count1 / data).toFixed(3);
+            let gram1 = (count1 / dataName).toFixed(3);
 
             $("#laminated_gram_2").val(gram1)
 
@@ -2105,6 +2134,7 @@
             let net_wt_3 = $("#laminated_net_weight_3").val()
 
             let meter3 = $("#meter3").val();
+            let dataName = $("#data-number").val();
 
             let a = parseFloat(net_wt_3)
 
@@ -2118,7 +2148,8 @@
 
             let data = parseInt($("#sendforlamination").data("title"));
 
-            let gram3 = (count3 / data).toFixed(3);
+            // let gram3 = (count3 / data).toFixed(3);
+            let gram3 = (count3 / dataName).toFixed(3);
 
             $("#laminated_gram_3").val(gram3)
 

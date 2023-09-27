@@ -71,7 +71,7 @@ class FinalTripalBillController extends Controller
 
         $find_data = FinalTripalBill::find($id);
         $tripal_entries = TripalEntry::where('bill_id',$id)->get();
-        $stocks = FinalTripalStock::where('bill_id',$id)->get();
+        $stocks = FinalTripal::where('bill_id',$id)->get();
         // dd($stocks);
           
         return view('admin.finaltripal.viewBill',compact('tripal_entries','stocks','find_data'));
