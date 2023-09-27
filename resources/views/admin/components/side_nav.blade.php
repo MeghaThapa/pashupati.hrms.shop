@@ -466,6 +466,22 @@
                         </li>
 
                         <li class="nav-item">
+                            <a href="{{ route('sauda-item.index') }}"
+                                class="nav-link {{ request()->routeIs('sauda-item.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>{{ __('Sauda Items') }}</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('dispatch-sauda-item.index') }}"
+                                class="nav-link {{ request()->routeIs('dispatch-sauda-item.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>{{ __('Dispatch Sauda Items') }}</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
 
                             <a href="{{ route('fabric.sale.entry.index') }}"
                                 class="nav-link {{ request()->routeIs('fabric.sale.*') ? 'active' : '' }}">
