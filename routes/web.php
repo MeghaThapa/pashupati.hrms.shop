@@ -1488,6 +1488,8 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
 
     Route::post("tripal/getDanaQuantity",'Tripal\TripalController@getStockQuantity')->name('tripalDana.getStockQuantity');
 
+    Route::post("fabricsendrecive/getStockQuantity",[FabricSendReceiveController::class,"getStockQuantity"])->name('fabricsendrecive.getStockQuantity');
+
 
 
 

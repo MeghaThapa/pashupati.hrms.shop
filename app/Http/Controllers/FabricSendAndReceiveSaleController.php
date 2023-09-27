@@ -9,6 +9,7 @@ use App\Rules\ValidDpNumber;
 use Illuminate\Http\Request;
 use App\Models\FabricSaleEntry;
 use App\Models\FabricSaleItems;
+use App\Models\Godam;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Exceptions\Exception;
@@ -41,7 +42,8 @@ class FabricSendAndReceiveSaleController extends Controller
             ->leftJoin('fabric_sale_items', 'fabric_sale_entry.id', '=', 'fabric_sale_items.sale_entry_id')
             ->leftJoin('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
             ->leftJoin('suppliers', 'fabric_sale_entry.partyname_id', '=', 'suppliers.id')
-            ->groupBy('fabric_sale_entry.bill_no', 'fabric_sale_entry.bill_date', 'suppliers.name', 'fabric_sale_entry.id', 'fabric_sale_entry.status');
+            ->groupBy('fabric_sale_entry.bill_no', 'fabric_sale_entry.bill_date', 'suppliers.name', 'fabric_sale_entry.id', 'fabric_sale_entry.status')
+            ->orderBy('fabric_sale_entry.id','DESC');
         if ($this->request->ajax()) {
             return DataTables::of($fabricSalesEntries)
                 ->addIndexColumn()
@@ -201,8 +203,9 @@ class FabricSendAndReceiveSaleController extends Controller
     {
         if ($this->request->ajax()) {
             $fabric_id = $this->request->fabric_name_id;
+            $godam_id = Godam::where('name','psi')->value('id');
             $name = FabricStock::where("id", $fabric_id)->value('name');
-            return DataTables::of(FabricStock::where("name", $name)->get())
+            return DataTables::of(FabricStock::where('godam_id',$godam_id)->where("name", $name)->get())
                 ->addIndexColumn()
                 ->addColumn("action", function ($row) {
                     return "<a href='javascript:void(0)' class='btn btn-primary send-to-lower' data-id='{$row->id}'>Send </a>'";
