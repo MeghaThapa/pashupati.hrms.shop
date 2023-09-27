@@ -55,9 +55,11 @@ use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
 use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\DispatchSaudaItemToPartyController;
 use App\Http\Controllers\FabricController;
 use App\Http\Controllers\RawMaterialReportController;
 use App\Http\Controllers\ReprocessWasteController;
+use App\Http\Controllers\SaudaItemController;
 use Symfony\Component\Routing\RouteCollection;
 
 // brandBag.store
@@ -692,6 +694,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('delivery-order-datewise-filter',[DeliveryOrderController::class,'filterView'])->name('delivery.order.datewise.filter');
     Route::post('delivery-order-datewise-generate-view',[DeliveryOrderController::class,'generateView'])->name('delivery.order.datewise.generate.view');
     Route::get('delivery-order-approved',[DeliveryOrderController::class,'approvedDeliveryOrder'])->name('delivery-order.approved');
+
+    Route::resource('sauda-item',SaudaItemController::class);
+    Route::get('sauda-item-datewise-filter',[SaudaItemController::class,'filterView'])->name('sauda.item.datewise.filter');
+    Route::post('sauda-item-datewise-generate-view',[SaudaItemController::class,'generateView'])->name('sauda.item.datewise.generate.view');
+
+    Route::get('sauda-item-entry-datewise-filter',[SaudaItemController::class,'entryFilterView'])->name('sauda.entry.datewise.filter');
+    Route::post('sauda-item-entry-datewise-generate-view',[SaudaItemController::class,'generateEntryView'])->name('sauda.entry.datewise.generate.view');
+
+    Route::resource('dispatch-sauda-item',DispatchSaudaItemToPartyController::class);
+    Route::get('dispatch-item-datewise-filter',[DispatchSaudaItemToPartyController::class,'filterView'])->name('dispatch.item.datewise.filter');
+    Route::post('dispatch-item-datewise-generate-view',[DispatchSaudaItemToPartyController::class,'generateView'])->name('dispatch.item.datewise.generate.view');
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [

@@ -288,7 +288,7 @@ class FabricTransferEntryForBagController extends Controller
         $reportData = [];
         $nepaliDates = [];
         $nepaliDates = $this->getDateRangeNepali($request->start_date, $request->end_date);
-        // dd($nepaliDates);
+
         foreach ($nepaliDates as $nepaliDate) {
 
             $fabrics = DB::table('bag_fabric_receive_item_sent')

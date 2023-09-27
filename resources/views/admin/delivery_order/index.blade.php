@@ -526,7 +526,7 @@
 
             // Function to enable/disable fields based on the selected option's text
             function toggleFields() {
-                var selectedOptionText = deliveryOrderForItemSelect.find('option:selected').text();
+                var selectedOptionText = deliveryOrderForItemSelect.find('option:selected').text().trim();
 
                 // Reset the fields
                 qtyInMtInput.prop('required', false).val('');
@@ -542,6 +542,8 @@
                 } else if (selectedOptionText === 'PP Bags (Unlam)' || selectedOptionText === 'PP Bags (Lam)') {
                     bundelPcsInput.prop('required', true).removeAttr('disabled');
                     qtyInMtInput.attr('disabled', true).val('');
+                }else{
+                    console.log('nothing matched');
                 }
             }
 
