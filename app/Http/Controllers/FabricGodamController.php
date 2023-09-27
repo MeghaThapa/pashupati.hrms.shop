@@ -26,7 +26,7 @@ class FabricGodamController extends Controller
 
     public function test(){
         // dd('ll');
-        $data = Fabric::where('name', 'like', '%' . 'PP Woven' . '%')->get();
+        $data = FabricStock::where('name', 'like', '%' . 'PP Woven' . '%')->get();
         // dd($data->count());
         // dd($data->take(5));
         foreach ($data as $value)
@@ -50,7 +50,7 @@ class FabricGodamController extends Controller
                 // dd($input,$parts,$firstString);
 
 
-                $sa = Fabric::where('name', 'like', '%' . 'PP Woven' . '%')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('gross_wt',$value->gross_wt)->where('average_wt',$value->average_wt)->update(['name' => $size]);
+                $sa = FabricStock::where('name', 'like', '%' . 'PP Woven' . '%')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('gross_wt',$value->gross_wt)->where('average_wt',$value->average_wt)->update(['name' => $size]);
 
              
             }
@@ -299,7 +299,9 @@ class FabricGodamController extends Controller
                     'godam_id' => $list->togodam_id,
                     'date_np' => $find_name->date_np,
                     'bill_no' => $find_name->bill_no,
-                    'fabric_id' => $find_name->fabric_id
+                    'fabric_id' => $find_name->fabric_id,
+                    'status_type' => 'active',
+
                 ]);
 
                 if($fabricstock){
