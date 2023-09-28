@@ -5252,8 +5252,13 @@ a.badge-secondary:focus, a.badge-secondary.focus {
 }
 
 .badge-success {
-  color: #fff;
-  background-color: #28a745;
+    color: #137505;
+    background-color: #63f16b38;
+}
+
+.badge-delivered {
+    color: #ffffff;
+    background-color: #26812b;
 }
 
 a.badge-success:hover, a.badge-success:focus {
@@ -58439,11 +58444,6 @@ a.badge-secondary.focus {
   box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
 }
 
-.badge-success {
-  color: #fff;
-  background-color: #22c55e;
-}
-
 a.badge-success:hover,
 a.badge-success:focus {
   color: #fff;
@@ -70217,11 +70217,6 @@ a {
   color: #fff;
   background-color: #6366f1;
   border-color: #6366f1;
-}
-
-.badge-success {
-  color: #6366f1;
-  background-color: #6366f138;
 }
 
 .action-dropdown-toggle {

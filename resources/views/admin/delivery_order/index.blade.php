@@ -9,8 +9,16 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
     <style>
-        .update_status{
+        .update_status {
             cursor: pointer;
+        }
+
+        .invalid {
+            border-color: red;
+        }
+
+        .valid {
+            border-color: green;
         }
     </style>
 @endsection
@@ -76,8 +84,8 @@
                                     <label for="supplier_id">Select Supplier</label>
                                     <select class="form-control select2" name="supplier_id">
                                         <option selected disabled>Select Supplier</option>
-                                        @foreach($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}"> {{ $supplier->name }} </option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}"> {{ $supplier->name }} </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -85,14 +93,14 @@
                                 <!-- Overdue Amount -->
                                 <div class="form-group">
                                     <label for="overdue_amount">Overdue Amount:</label>
-                                    <input type="number" step="0.01" id="overdue_amount" name="overdue_amount" required
-                                        class="form-control">
+                                    <input type="text" id="overdue_amount" name="overdue_amount" required
+                                        class="form-control decimal_number">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="base_rate_per_kg">Base Rate per KG:</label>
-                                    <input type="number" step="0.01" id="base_rate_per_kg" name="base_rate_per_kg" required
-                                        class="form-control">
+                                    <input type="text" id="base_rate_per_kg" name="base_rate_per_kg" required
+                                        class="form-control decimal_number">
                                 </div>
                             </div>
 
@@ -100,37 +108,39 @@
                                 <!-- Total Due -->
                                 <div class="form-group">
                                     <label for="total_due">Total Due:</label>
-                                    <input type="number" step="0.01" id="total_due" name="total_due" required
-                                        class="form-control">
+                                    <input type="text" id="total_due" name="total_due" required
+                                        class="form-control decimal_number">
                                 </div>
 
                                 <!-- Party Limit -->
                                 <div class="form-group">
                                     <label for="party_limit">Party Limit:</label>
-                                    <input type="number" step="0.01" id="party_limit" name="party_limit" required
-                                        class="form-control">
+                                    <input type="text" id="party_limit" name="party_limit" required
+                                        class="form-control decimal_number">
                                 </div>
 
                                 <!-- Delivery Order For Item ID -->
                                 <div class="form-group">
                                     <label for="delivery_order_for_item_id">Delivery Order For Item ID:</label>
-                                    <select id="delivery_order_for_item_id" class="form-control select2" name="delivery_order_for_item_id">
+                                    <select id="delivery_order_for_item_id" class="form-control select2"
+                                        name="delivery_order_for_item_id">
                                         <option selected disabled>Select For Item</option>
-                                        @foreach($deliveryOrderForItems as $deliveryOrderForItem)
-                                            <option value="{{ $deliveryOrderForItem->id }}">{{ $deliveryOrderForItem->name }}</option>
+                                        @foreach ($deliveryOrderForItems as $deliveryOrderForItem)
+                                            <option value="{{ $deliveryOrderForItem->id }}">
+                                                {{ $deliveryOrderForItem->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="qty_in_mt">Quantity in MT:</label>
-                                    <input type="number" step="0.01" id="qty_in_mt" name="qty_in_mt"
-                                        class="form-control">
+                                    <input type="text" id="qty_in_mt" name="qty_in_mt"
+                                        class="form-control decimal_number">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="bundel_pcs">Bundle Pieces:</label>
-                                    <input type="text" id="bundel_pcs" name="bundel_pcs" class="form-control">
+                                    <input type="number" id="bundel_pcs" name="bundel_pcs" class="form-control">
                                 </div>
 
                             </div>
@@ -139,13 +149,13 @@
                         <!-- Collection -->
                         <div class="form-group">
                             <label for="collection">Collection:</label>
-                            <textarea id="collection" name="collection" rows="4" required class="form-control"></textarea>
+                            <textarea id="collection" name="collection" rows="4" class="form-control"></textarea>
                         </div>
 
                         <!-- Pending Sauda -->
                         <div class="form-group">
                             <label for="pending_sauda">Pending Sauda:</label>
-                            <textarea id="pending_sauda" name="pending_sauda" rows="4" required class="form-control"></textarea>
+                            <textarea id="pending_sauda" name="pending_sauda" rows="4" class="form-control"></textarea>
                         </div>
 
                         <!-- Submit Button -->
@@ -159,8 +169,15 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h4>Delivery Order Entries</h4>
-
+                    <div class="row" style="width: 100%;">
+                        <div class="col-sm-4">
+                            <h4>Delivery Order Entries</h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <a class="btn btn-success" href="{{ route('delivery.order.datewise.filter') }}"> Datewise
+                                Delivery Order Report</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body table-responsive">
                     <table class="table table-bordered table-hover table-striped" id="myTable">
@@ -310,10 +327,59 @@
                 ]
             });
 
-            $(document).on('click','.update_status',function(){
+            $(document).on('click', '.cancel_item', function() {
 
                 Swal.fire({
-                    title: 'Do you want to change the approve status to Approved ?',
+                    title: 'Do you want to change the status to Cancelled ?',
+                    showDenyButton: true,
+                    confirmButtonText: 'Yes',
+                    denyButtonText: `No`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        let url = $(this).data('url');
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                    .attr('content')
+                            },
+                            url: url,
+                            type: "PATCH",
+                            data: {
+                                "status": "Cancelled",
+                            },
+                            beforeSend: function() {
+                                console.log('ajax fired');
+                            },
+                            success: function(data) {
+                                if (data.status == true) {
+                                    table.ajax.reload();
+                                    swal.fire("Updated!",
+                                        "Status Updated Successfully!",
+                                        "success");
+                                } else {
+                                    swal.fire("Failed!",
+                                        "Status Update failed!",
+                                        "error");
+                                }
+                            },
+                            error: function(xhr) {
+                                swal.fire("Failed!",
+                                    "Status Update failed!",
+                                    "error");
+                            }
+                        });
+                    } else if (result.isDenied) {
+                        Swal.fire('Cancelled approval', '', 'info')
+                    }
+                })
+
+            });
+
+            $(document).on('click', '.update_status', function() {
+
+                Swal.fire({
+                    title: 'Do you want to change the status to Approved ?',
                     showDenyButton: true,
                     confirmButtonText: 'Yes',
                     denyButtonText: `No`,
@@ -435,40 +501,57 @@
                 });
             });
         })
-    </script>
 
-<script>
-    $(document).ready(function () {
-        // Select the necessary elements
-        var deliveryOrderForItemSelect = $('#delivery_order_for_item_id');
-        var qtyInMtInput = $('#qty_in_mt');
-        var bundelPcsInput = $('#bundel_pcs');
-
-        // Function to enable/disable fields based on the selected option's text
-        function toggleFields() {
-            var selectedOptionText = deliveryOrderForItemSelect.find('option:selected').text();
-
-            // Reset the fields
-            qtyInMtInput.prop('required', false).val('');
-            bundelPcsInput.prop('required', false).val('');
-
-            // Enable/disable based on the selected option's text
-            if (selectedOptionText === 'PP Woven' || selectedOptionText === 'PP Non Woven' || selectedOptionText === 'PP/HDPE Tripal' ||
-                selectedOptionText === 'RP Granuels' || selectedOptionText === 'PP/CC/Other Granuels' || selectedOptionText === 'Wastage') {
-                qtyInMtInput.prop('required', true).removeAttr('disabled');
-                bundelPcsInput.attr('disabled', true).val('');
-            } else if (selectedOptionText === 'PP Bags (Unlam)' || selectedOptionText === 'PP Bags (Lam)') {
-                bundelPcsInput.prop('required', true).removeAttr('disabled');
-                qtyInMtInput.attr('disabled', true).val('');
-            }
+        function isValidDecimal(input) {
+            const decimalPattern = /^\d+(\.\d+)?$/;
+            return decimalPattern.test(input);
         }
 
-        // Initial state
-        toggleFields();
+        $(document).on('keyup', '.decimal_number', function() {
+            const inputValue = $(this).val();
+            if (isValidDecimal(inputValue)) {
+                $(this).removeClass('invalid').addClass('valid');
+            } else {
+                $(this).removeClass('valid').addClass('invalid');
+            }
+        });
+    </script>
 
-        // Listen for changes in the select field
-        deliveryOrderForItemSelect.on('change', toggleFields);
-    });
-</script>
+    <script>
+        $(document).ready(function() {
+            // Select the necessary elements
+            var deliveryOrderForItemSelect = $('#delivery_order_for_item_id');
+            var qtyInMtInput = $('#qty_in_mt');
+            var bundelPcsInput = $('#bundel_pcs');
 
+            // Function to enable/disable fields based on the selected option's text
+            function toggleFields() {
+                var selectedOptionText = deliveryOrderForItemSelect.find('option:selected').text().trim();
+
+                // Reset the fields
+                qtyInMtInput.prop('required', false).val('');
+                bundelPcsInput.prop('required', false).val('');
+
+                // Enable/disable based on the selected option's text
+                if (selectedOptionText === 'PP Woven' || selectedOptionText === 'PP Non Woven' ||
+                    selectedOptionText === 'PP/HDPE Tripal' ||
+                    selectedOptionText === 'RP Granuels' || selectedOptionText === 'PP/CC/Other Granuels' ||
+                    selectedOptionText === 'Wastage') {
+                    qtyInMtInput.prop('required', true).removeAttr('disabled');
+                    bundelPcsInput.attr('disabled', true).val('');
+                } else if (selectedOptionText === 'PP Bags (Unlam)' || selectedOptionText === 'PP Bags (Lam)') {
+                    bundelPcsInput.prop('required', true).removeAttr('disabled');
+                    qtyInMtInput.attr('disabled', true).val('');
+                }else{
+                    console.log('nothing matched');
+                }
+            }
+
+            // Initial state
+            toggleFields();
+
+            // Listen for changes in the select field
+            deliveryOrderForItemSelect.on('change', toggleFields);
+        });
+    </script>
 @endsection

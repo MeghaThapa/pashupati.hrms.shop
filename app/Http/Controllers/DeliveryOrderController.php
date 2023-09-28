@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DeliveryOrderForItem;
 use App\Http\Requests\DeliveryOrder\DeliveryOrderStoreRequest;
 use App\Http\Requests\DeliveryOrder\DeliveryOrderUpdateRequest;
+use App\Models\FabricSaleEntry;
 
 class DeliveryOrderController extends Controller
 {
@@ -38,19 +39,27 @@ class DeliveryOrderController extends Controller
                 })
                 ->editColumn('status',function($row){
                     if($row->status == "Pending")
-                        return '<span class="badge badge-primary update_status" data-url="'.route("delivery-order.update",$row->id).'" >'.$row->status.'</span>';
+                        if(auth()->user()->hasRole('Admin'))
+                            return '<span class="badge badge-primary update_status" data-url="'.route("delivery-order.update",$row->id).'" >'.$row->status.'</span>';
+                        else
+                            return '<span class="badge badge-primary" data-url="'.route("delivery-order.update",$row->id).'" >'.$row->status.'</span>';
                     elseif($row->status == "Approved")
-                        return '<span class="badge badge-success update_status" data-url="'.route("delivery-order.update",$row->id).'">'.$row->status.'</span>';
+                        return '<span class="badge badge-success">'.$row->status.'</span>';
+                    elseif($row->status == "Approved & Delivered")
+                        return '<span class="badge badge-delivered">'.$row->status.'</span>';
+                    else
+                        return '<span class="badge badge-danger">'.$row->status.'</span>';
                 })
                 ->addColumn("action", function ($row) {
                     if ($row->status == "Pending") {
+                        $url = route("delivery-order.update",$row->id);
                         return "<div class='btn-group'>
-                                        <button class='btn btn-primary edit_item' data-id='{$row->id}'><i class='fa fa-plus' aria-hidden='true'></i></button>
-                                        <button class='btn btn-danger delete_item' data-id='{$row->id}'><i class='fa fa-trash' aria-hidden='true'></i></button>
+                                        <button class='btn btn-danger cancel_item' data-url='".$url."' >Cancel DO</button>
                                     </div>";
-                    } else {
+                    } else if($row->status == "Approved & Delivered") {
+                        $url = route('delivery-order.show',$row->id);
                         return "<div class='btn-group'>
-                                        <button class='btn btn-secondary view-cc' data-id='{$row->id}'><i class='fa fa-eye' aria-hidden='true'></i></button>
+                                        <a href='".$url."' class='btn btn-success'><i class='fa fa-eye' aria-hidden='true'></i></a>
                                     </div>";
                     }
                 })
@@ -64,6 +73,49 @@ class DeliveryOrderController extends Controller
         return view('admin.delivery_order.index',compact('nextId','suppliers','deliveryOrderForItems'));
     }
 
+    public function filterView()
+    {
+        return view('admin.delivery_order.datewisefilter');
+    }
+
+    public function generateView(Request $request)
+    {
+        $deliveryOrders = DeliveryOrder::with('supplier','deliveryOrderForItem');
+        if($request->start_date && $request->end_date){
+            $deliveryOrders = $deliveryOrders->where('do_date','>=',$request->start_date)->where('do_date','<=',$request->end_date);
+        }
+        if($request->status){
+            $deliveryOrders = $deliveryOrders->where('status',$request->status);
+        }
+        $deliveryOrders = $deliveryOrders->get();
+
+        $deliveryOrders = $deliveryOrders->mapToGroups(function ($item, $key) {
+            return [
+                $item->do_date => [
+                    'do_no' => $item->do_no,
+                    'do_date' => $item->do_date,
+                    'supplier_name' => $item->supplier->name,
+                    'do_for' => $item->deliveryOrderForItem->name,
+                    'qty_in_mt' => $item->qty_in_mt,
+                    'bundel_pcs' => $item->bundel_pcs,
+                    'base_rate_per_kg' => $item->base_rate_per_kg,
+                    'overdue_amount' => $item->overdue_amount,
+                    'total_due' => $item->total_due,
+                ]
+            ];
+        });
+
+        $deliveryOrdersView = view('admin.delivery_order.ssr.filterview',compact('deliveryOrders'))->render();
+        return response(['status'=>true,'data'=>$deliveryOrdersView]);
+    }
+
+    public function approvedDeliveryOrder()
+    {
+        $deliveryOrders = DeliveryOrder::with('supplier','deliveryOrderForItem')->whereStatus('Approved')->get();
+        $deliveryOrdersView = view('admin.delivery_order.ssr.approvedlist',compact('deliveryOrders'))->render();
+        return response(['status'=>true,'data'=>$deliveryOrdersView]);
+    }
+
     public function store(DeliveryOrderStoreRequest $request)
     {
         $data = $request->validated();
@@ -74,7 +126,9 @@ class DeliveryOrderController extends Controller
 
     public function show(DeliveryOrder $deliveryOrder)
     {
-        return view('admin.delivery_order.show',compact('deliveryOrder'));
+        $deliveryOrder->load('supplier','deliveryOrderForItem');
+        $fabricSaleEntries = FabricSaleEntry::where('do_no',$deliveryOrder->do_no)->get();
+        return view('admin.delivery_order.show',compact('deliveryOrder','fabricSaleEntries'));
     }
 
     public function edit(DeliveryOrder $deliveryOrder)
@@ -84,6 +138,9 @@ class DeliveryOrderController extends Controller
 
     public function update(DeliveryOrderUpdateRequest $request, DeliveryOrder $deliveryOrder)
     {
+        if(!auth()->user()->hasRole('Admin')){
+            return response(['status'=>false,'message'=>'Status Approval Failed']);
+        }
         $deliveryOrder->update($request->validated());
         return response(['status'=>true,'message'=>'Status updated successfully']);
     }

@@ -12,9 +12,11 @@ class ValidDpNumber implements Rule
      *
      * @return void
      */
-    public function __construct()
+    protected $partyname;
+
+    public function __construct($partyname)
     {
-        //
+        $this->partyname = $partyname;
     }
 
     /**
@@ -28,6 +30,7 @@ class ValidDpNumber implements Rule
     {
         return DeliveryOrder::where('do_no', $value)
             ->where('status', 'Approved')
+            ->where('supplier_id', $this->partyname)
             ->exists();
     }
 
@@ -38,6 +41,6 @@ class ValidDpNumber implements Rule
      */
     public function message()
     {
-        return 'The selected dp_number is invalid or not approved.';
+        return 'The selected DO Number is invalid or not approved for the specified supplier.';
     }
 }

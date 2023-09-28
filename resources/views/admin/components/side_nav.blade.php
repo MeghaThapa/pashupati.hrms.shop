@@ -454,6 +454,35 @@
 
                         <li class="nav-item">
 
+                            <a href="{{ route('delivery-order.index') }}"
+                                class="nav-link {{ request()->routeIs('delivery-order.*') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-tags"></i>
+
+                                <p>{{ __('Delivery Orders') }}</p>
+
+                            </a>
+
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('sauda-item.index') }}"
+                                class="nav-link {{ request()->routeIs('sauda-item.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>{{ __('Sauda Items') }}</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('dispatch-sauda-item.index') }}"
+                                class="nav-link {{ request()->routeIs('dispatch-sauda-item.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>{{ __('Dispatch Sauda Items') }}</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+
                             <a href="{{ route('fabric.sale.entry.index') }}"
                                 class="nav-link {{ request()->routeIs('fabric.sale.*') ? 'active' : '' }}">
 
@@ -785,7 +814,6 @@
                 </li>
 
 
-
                 <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
 
                 <li class="nav-item">
@@ -827,8 +855,6 @@
 
                 </li>
 
-
-
                 <li class="nav-item">
 
                     <a href="{{ route('purchaseInventory.index') }}"
@@ -841,8 +867,6 @@
                     </a>
 
                 </li>
-
-
 
                 <li class="nav-header text-bold">{{ __('TRIPAL') }}</li>
 
@@ -859,10 +883,6 @@
 
                 </li>
 
-
-
-
-
                 <li class="nav-item">
 
                     <a href="{{ route('doubletripal.index') }}"
@@ -875,8 +895,6 @@
                     </a>
 
                 </li>
-
-
 
                 <li class="nav-item">
 
@@ -921,9 +939,6 @@
                     </a>
 
                 </li>
-
-
-
 
 
                 <li class="nav-item">
@@ -1012,22 +1027,14 @@
                                 <p>Fabric transfer to Bag Report</p>
                             </a>
                         </li>
-                        <<<<<<< HEAD=======<li class="nav-item">
+                        <li class="nav-item">
                             <a href="{{ route('fabric.sale.report') }}"
                                 class="nav-link {{ request()->is('admin/fabric/sale/report*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-tags"></i>
                                 <p>Fabric Sale Report</p>
                             </a>
-                </li>
-                >>>>>>> d307f3b472c45b06ea1270110ed23fa145d8bd8a
+                        </li>
             </ul>
-
-
-            {{-- Pasted Code End --}}
-
-
-
-
 
             <li class="nav-item">
 

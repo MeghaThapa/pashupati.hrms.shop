@@ -65,8 +65,8 @@ class DeliveryOrderStoreRequest extends FormRequest
                 },
             ],
             'base_rate_per_kg' => 'required|numeric',
-            'collection' => 'required|string',
-            'pending_sauda' => 'required|string',
+            'collection' => 'nullable|string',
+            'pending_sauda' => 'nullable|string',
         ];
     }
 }
