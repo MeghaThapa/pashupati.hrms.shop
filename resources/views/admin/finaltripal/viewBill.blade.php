@@ -105,11 +105,14 @@
               </address>
             </div>
             <div class="col-sm-12 col-lg-6  text-right">
+                <strong> Plantname : {{$find_data->getPlantname->name}}</strong>
+                <br>
           
               <br>
             </div>
             <div class="row col-lg-12" >
                 <div class="col-sm-6 col-lg-6  text-left">
+                    <strong> Planttype : {{$find_data->getPlanttype->name}}</strong>
                     
                   
                   <br>
@@ -122,7 +125,7 @@
             <div class="row">
 
                 <div class="col-sm-12 text-right ml-2">
-                  {{-- <b>Date: {{$findtripal->bill_date}}</b><br> --}}
+                  {{-- <b>Shift: {{$find_data->getShift->name}}</b><br> --}}
                   <br>
                 </div>
                 
@@ -148,9 +151,9 @@
                 </tr>
 
                 <tbody>
-                    @foreach($tripal_entries as $tripal)
+                    @foreach($tripal_entries as $key=>$tripal)
                     <tr>
-                        <td>#</td>
+                        <td>{{$key+1}}</td>
                         <td>{{$tripal->name}}</td>
                         <td>{{$tripal->roll_no}}</td>
                         <td>{{$tripal->gross_wt}}</td>
@@ -189,16 +192,16 @@
                 </tr>
 
                 <tbody>
-                    @foreach($stocks as $tripal)
+                    @foreach($stocks as $key=>$tripal)
                     <tr>
-                        <td>#</td>
+                        <td>{{$key+1}}</td>
                         <td>{{$tripal->name}}</td>
                         <td>{{$tripal->roll_no}}</td>
                         <td>{{$tripal->gross_wt}}</td>
                         <td>{{$tripal->net_wt}}</td>
                         <td>{{$tripal->meter}}</td>
                         <td>{{$tripal->average_wt}}</td>
-                        <td>{{$tripal->gsm}}</td>
+                        <td>{{$tripal->gram}}</td>
                     </tr>
                     @endforeach
                 </tbody>

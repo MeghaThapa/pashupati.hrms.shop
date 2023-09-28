@@ -11,6 +11,7 @@ use App\Models\ProcessingStep;
 use App\Models\FinalTripalStock;
 use App\Models\ProcessingSubcat;
 use App\Models\TripalEntry;
+use App\Models\FinalTripal;
 use Illuminate\Support\Facades\DB;
 
 class FinalTripalBillController extends Controller
