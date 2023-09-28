@@ -317,6 +317,8 @@
                     console.log(response)
                     getSalesData()
                     getsums()
+                    salesTable.ajax.reload();
+                    sameFabricTable.ajax.reload();
                 },
                 error:function(error){
                     console.log("error",error);
@@ -371,6 +373,7 @@
                     console.log(response);
                     if(response.status ==  "200"){
                         salesTable.ajax.reload();
+                        sameFabricTable.ajax.reload();
                         getsums()
                     }else{
                         alert("something went wrong check console")

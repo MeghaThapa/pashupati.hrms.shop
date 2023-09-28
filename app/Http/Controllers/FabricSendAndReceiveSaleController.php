@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\FabricSaleEntry;
 use App\Models\FabricSaleItems;
 use App\Models\Godam;
+use App\Models\Fabric;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Exceptions\Exception;
@@ -220,7 +221,7 @@ class FabricSendAndReceiveSaleController extends Controller
             $fabric_id = $this->request->fabric_name_id;
             $godam_id = Godam::where('name','psi')->value('id');
             $name = FabricStock::where("id", $fabric_id)->value('name');
-            return DataTables::of(FabricStock::where('godam_id',$godam_id)->where("name", $name)->get())
+            return DataTables::of(FabricStock::where('status_type','active')->where('godam_id',$godam_id)->where("name", $name)->get())
                 ->addIndexColumn()
                 ->addColumn("action", function ($row) {
                     return "<a href='javascript:void(0)' class='btn btn-primary send-to-lower' data-id='{$row->id}'>Send </a>'";
@@ -231,13 +232,18 @@ class FabricSendAndReceiveSaleController extends Controller
     }
     public function storeSale()
     {
+        // dd('lol');
         if ($this->request->ajax()) {
             // return $this->request->all();
             $fabric = FabricStock::where("id", $this->request->fabric_id)->first();
+            // dd($fabric);
             FabricSale::create([
                 "sale_entry_id" => $this->request->entry_id,
                 "fabric_id" => $fabric->fabric_id
             ]);
+
+            $fabric->status_type = 'inactive';
+            $fabric->update();
         }
     }
 
@@ -296,7 +302,17 @@ class FabricSendAndReceiveSaleController extends Controller
     {
         if ($this->request->ajax()) {
             try {
+                // dd($this->request);
                 $fabric_sale = FabricSale::findorfail($this->request->id);
+                // dd($fabric_sale);
+                // $fabric = Fabric::find($this->request->fabric_id);
+                $fabric_stock = FabricStock::where('fabric_id',$fabric_sale->fabric_id)->value('id');
+                // dd($fabric_stock);
+                $final_data = FabricStock::find($fabric_stock);
+                // dd($final_data);
+                $final_data->status_type = 'active';
+                $final_data->update();
+
                 $fabric_sale->delete();
                 return response([
                     "message" =>  "Deletion Completes",

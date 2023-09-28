@@ -1659,4 +1659,21 @@ class FabricSendReceiveController extends Controller
             return Fabric::where("roll_no", $request->roll_no)->first();
         }
     }
+
+    public function getFsrFilterDataName(Request $request){
+        // dd($request);
+        
+        
+        $input = $request->titles;
+        $parts = explode(' ', $input);
+        $firstString = $parts[0];   
+                
+        $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        
+        return response([
+            'name' => $find_name,
+        ]);
+
+
+    }
 }

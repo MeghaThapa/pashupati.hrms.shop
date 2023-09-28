@@ -1506,6 +1506,8 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
 
     Route::post("fabricsendrecive/getStockQuantity",[FabricSendReceiveController::class,"getStockQuantity"])->name('fabricsendrecive.getStockQuantity');
 
+    Route::post("getfilter/fabricsendrecive/fabric/list",'FabricSendReceiveController@getFsrFilterDataName')->name("getFilterFabricSendRecieveListName");
+
 
 
 

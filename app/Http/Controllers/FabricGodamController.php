@@ -26,7 +26,7 @@ class FabricGodamController extends Controller
 
     public function test(){
         // dd('ll');
-        $data = FabricStock::where('name', 'like', '%' . 'PP Woven' . '%')->get();
+        $data = Fabric::where('name', 'like', '%' . 'PP Woven' . '%')->get();
         // dd($data->count());
         // dd($data->take(5));
         foreach ($data as $value)
@@ -50,7 +50,7 @@ class FabricGodamController extends Controller
                 // dd($input,$parts,$firstString);
 
 
-                $sa = FabricStock::where('name', 'like', '%' . 'PP Woven' . '%')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('gross_wt',$value->gross_wt)->where('average_wt',$value->average_wt)->update(['name' => $size]);
+                $sa = Fabric::where('name', 'like', '%' . 'PP Woven' . '%')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('gross_wt',$value->gross_wt)->where('average_wt',$value->average_wt)->update(['name' => $size]);
 
              
             }
