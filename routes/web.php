@@ -1290,8 +1290,17 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('singletripal-report-view', 'Tripal\Report\SingleTripalReportController@generateSingleTripalView')->name('singletripalreport.view');
 
-    // Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
-    // Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view')
+    // doubletripal report
+    Route::get('doubletripal-report', 'Tripal\Report\DoubleTripalReportController@doubletripalReport')->name('doubletripal.report');
+
+    Route::post('doubletripal-report-view', 'Tripal\Report\DoubleTripalReportController@generateDoubleTripalView')->name('doubletripalreport.view');
+
+    // finaltripal report
+    Route::get('finaltripal-report', 'Tripal\Report\FinalTripalReportController@finaltripalReport')->name('finaltripal.report');
+
+    Route::post('finaltripal-report-view', 'Tripal\Report\FinalTripalReportController@generateDoubleTripalView')->name('finaltripalreport.view');
+
+   
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');

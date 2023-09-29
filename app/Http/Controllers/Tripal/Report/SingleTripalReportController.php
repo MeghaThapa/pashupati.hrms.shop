@@ -42,51 +42,52 @@ class SingleTripalReportController extends Controller
 
         foreach ($nepaliDates as $nepaliDate) {
 
-            // $fabricGodams = Singlesidelaminatedfabric::where('bill_date', $nepaliDate);
+            $fabricGodams = Unlaminatedfabrictripal::where('bill_date', $nepaliDate);
 
-            // if ($request->godam_id) {
-            //     $fabricGodams = $fabricGodams->where('department_id', $request->godam_id);
-            // }
-            $fabricGodams = Unlaminatedfabrictripal::with('fabric')->get()->take(5);
-            dd($fabricGodams);
+            if ($request->godam_id) {
+                $fabricGodams = $fabricGodams->where('department_id', $request->godam_id);
+            }
+            $fabricGodams = $fabricGodams->get();
 
             if (!$fabricGodams->isEmpty()) {
-                // dd('lol');
-                // dd($fabricGodams);
                 $fabricView = view('admin.report.singletripalreport.singletripal_transfer_datewise', compact('fabricGodams', 'nepaliDate'))->render();
                 array_push($reportData, $fabricView);
             }
         }
 
-        // dd('stop');
+       
 
         // Summary Part Code
 
-        // $nepaliStartDate = $nepaliDates[0];
-        // $nepaliEndDate = end($nepaliDates);
+        $nepaliStartDate = $nepaliDates[0];
+        $nepaliEndDate = end($nepaliDates);
 
-        // $summaryFabrics = FabricGodamList::select(
-        //     'fabric_godam_lists.name',
-        //     DB::raw('COUNT(fabric_godam_lists.name) as roll_count'),
-        //     DB::raw('SUM(fabrics.gross_wt) as gross_wt'),
-        //     DB::raw('SUM(fabrics.net_wt) as net_wt'),
-        //     DB::raw('SUM(fabrics.meter) as meter')
-        // )
-        //     ->join('fabrics', 'fabric_godam_lists.fabric_id', '=', 'fabrics.id')
-        //     ->groupBy('fabric_godam_lists.name');
+        // dd($nepaliStartDate,$nepaliEndDate);
 
-        // if ($request->start_date && $request->end_date) {
-        //     $summaryFabrics = $summaryFabrics->where('fabric_godam_lists.bill_date', '>=', $request->start_date)->where('fabric_godam_lists.bill_date', '<=', $request->end_date);
-        // }
+        $summaryFabrics = Unlaminatedfabrictripal::select(
+            'fabrics.name',
+            DB::raw('COUNT(fabrics.name) as roll_count'),
+            DB::raw('SUM(fabrics.gross_wt) as gross_wt'),
+            DB::raw('SUM(fabrics.net_wt) as net_wt'),
+            DB::raw('SUM(fabrics.meter) as meter')
+        )
+            ->join('fabrics', 'unlaminatedfabrictripals.fabric_id', '=', 'fabrics.id')
+            ->groupBy('fabrics.name');
+            // dd($summaryFabrics->get());
 
-        // if ($request->godam_id) {
-        //     $summaryFabrics = $summaryFabrics->where('fabric_godam_lists.fromgodam_id', $request->godam_id);
-        // }
+        if ($request->start_date && $request->end_date) {
+            $summaryFabrics = $summaryFabrics->where('unlaminatedfabrictripals.bill_date', '>=', $request->start_date)->where('unlaminatedfabrictripals.bill_date', '<=', $request->end_date);
+        }
 
-        // $summaryFabrics = $summaryFabrics->get();
-        // $summaryView = view('admin.fabric.reportview.fabricsummary', compact('summaryFabrics', 'nepaliStartDate', 'nepaliEndDate'))->render();
-        // array_push($reportData, $summaryView);
-        // return response(['status' => true, 'data' => $reportData]);
+        if ($request->godam_id) {
+            $summaryFabrics = $summaryFabrics->where('unlaminatedfabrictripals.department_id', $request->godam_id);
+        }
+
+        $summaryFabrics = $summaryFabrics->get();
+        $summaryView = view('admin.report.singletripalreport.summary', compact('summaryFabrics', 'nepaliStartDate', 'nepaliEndDate'))->render();
+        array_push($reportData, $summaryView);
+
+        return response(['status' => true, 'data' => $reportData]);
     }
 
     private function getDateRangeNepali($npStartDate, $npEndDate)

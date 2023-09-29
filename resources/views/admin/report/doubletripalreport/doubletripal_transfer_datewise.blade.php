@@ -23,17 +23,17 @@
         @foreach($fabricGodams as $data)
         <tr>
             <td>{{ $i }}</td>
-            <td>{{ $data->fabric->name }}</td>
-            <td>{{ $data->fabric->roll_no }}</td>
-            <td>{{ $data->fabric->gross_wt }}</td>
-            <td>{{ $data->fabric->net_wt }}</td>
-            <td>{{ $data->fabric->meter }}</td> 
+            <td>{{ $data->name }}</td>
+            <td>{{ $data->roll_no }}</td>
+            <td>{{ $data->gross_wt }}</td>
+            <td>{{ $data->net_wt }}</td>
+            <td>{{ $data->meter }}</td> 
         </tr>
         @php 
         $i++;
-        $total_gross_wt = $total_gross_wt + $data->fabric->gross_wt; 
-        $total_net_wt = $total_net_wt + $data->fabric->net_wt; 
-        $total_meter = $total_meter + $data->fabric->meter; 
+        $total_gross_wt = $total_gross_wt + $data->gross_wt; 
+        $total_net_wt = $total_net_wt + $data->net_wt; 
+        $total_meter = $total_meter + $data->meter; 
         @endphp
         @endforeach
     </tbody>
