@@ -1288,7 +1288,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // singletripal report
     Route::get('singletripal-report', 'Tripal\Report\SingleTripalReportController@singletripalReport')->name('singletripal.report');
 
-    Route::post('singletripal-report', 'Tripal\Report\SingleTripalReportController@generateSingleTripalView')->name('singletripalreport.view');
+    Route::post('singletripal-report-view', 'Tripal\Report\SingleTripalReportController@generateSingleTripalView')->name('singletripalreport.view');
 
     // Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
     // Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view')
