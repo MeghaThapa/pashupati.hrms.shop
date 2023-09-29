@@ -1034,6 +1034,14 @@
                                 <p>Fabric Sale Report</p>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('singletripal.report') }}"
+                                class="nav-link {{ request()->is('admin/singletripal-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Single Tripal Report</p>
+                            </a>
+                        </li> 
             </ul>
 
             <li class="nav-item">

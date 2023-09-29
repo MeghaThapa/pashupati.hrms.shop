@@ -10,6 +10,10 @@ use App\Models\FabricStock;
 use App\Models\FabricGroup;
 use App\Models\FabricGodamList;
 use App\Models\Fabric;
+use App\Models\TapeEntryOpening;
+use App\Models\TapeEntryItemModel;
+use App\Models\FabricDetail;
+use App\Models\FinalTripal;
 use DB;
 use Throwable;
 use App\Helpers\AppHelper;
@@ -24,13 +28,39 @@ class FabricGodamController extends Controller
         return view('admin.fabric.fabricgodam.index');
     }
 
+    public function tests(){
+        // dd('ll');
+        // $finalt
+        $tape_opening = TapeEntryOpening::where('godam_id',3)->sum('qty');
+        $tape_entry = TapeEntryItemModel::where('toGodam_id',3)->sum('tape_qty_in_kg');
+        $fabric_wastage = FabricDetail::where('godam_id',3)->sum('total_wastage');
+        $fabric_net = FabricDetail::where('godam_id',3)->sum('total_netweight');
+        // $fabric_entry = $fabric_wastage + $fabric_net;
+
+        $final = $tape_opening + $tape_entry - $fabric_wastage - $fabric_net;
+
+        dd($tape_opening,$tape_entry,$fabric_wastage,$fabric_net,$final);
+       
+     
+
+
+    }
+
+
+
     public function test(){
         // dd('ll');
-        $data = Fabric::where('name', 'like', '%' . 'PP Woven' . '%')->get();
+        $data = FinalTripal::get();
         // dd($data->count());
         // dd($data->take(5));
         foreach ($data as $value)
             {
+                // dd($value);
+                // let data = tripal_decimalname / 39.37;
+                // let datas = data.toFixed(2);
+
+                // let gsm = (average) / datas;
+                // let finalgsm = gsm.toFixed(2);
 
                 $input = $value->name;
                 $parts = explode(' ', $input);
@@ -42,15 +72,20 @@ class FabricGodamController extends Controller
                 $size = $value_string .' '. $input;
                 // dd($size);
 
-                $find_name = filter_var($thirdString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                 // dd($find_name);
+                $values = $find_name / 39.37;
+                // dd($value->average_wt);
+                $gsms = ($value->average_wt) / $values;
+                $gsm = round($gsms, 3);
+                // dd($gsms,$gsm);
 
              
                
                 // dd($input,$parts,$firstString);
 
 
-                $sa = Fabric::where('name', 'like', '%' . 'PP Woven' . '%')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('gross_wt',$value->gross_wt)->where('average_wt',$value->average_wt)->update(['name' => $size]);
+                $sa = FinalTripal::where('status','sent')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('average_wt',$value->average_wt)->update(['gram' => $gsm]);
 
              
             }
