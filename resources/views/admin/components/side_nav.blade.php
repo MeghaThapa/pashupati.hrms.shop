@@ -1041,6 +1041,20 @@
                                 <i class="nav-icon fas fa-tags"></i>
                                 <p>Single Tripal Report</p>
                             </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('doubletripal.report') }}"
+                                class="nav-link {{ request()->is('admin/doubletripal-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Double Tripal Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('finaltripal.report') }}"
+                                class="nav-link {{ request()->is('admin/finaltripal-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>Final Tripal Report</p>
+                            </a>
                         </li> 
             </ul>
 
