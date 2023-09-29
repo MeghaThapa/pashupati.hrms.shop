@@ -27,7 +27,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <h3>Fabric Sale Report</h3>
+                    <h3>Storein Report</h3>
                 </div>
                 <div class="row container">
                     <div class="col-sm-3">

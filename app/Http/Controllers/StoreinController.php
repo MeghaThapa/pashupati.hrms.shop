@@ -108,9 +108,6 @@ class StoreinController extends Controller
         $reportData = [];
         $dates = [];
         $dates = $this->getEngDateRange($request->start_date, $request->end_date);
-        // $firstDate = reset($dates);
-        // $lastDate = end($dates);
-        // dd($lastDate);
         foreach ($dates as $date) {
            $storeiItems = DB::table('storein_item')
             ->join('storein', 'storein_item.storein_id', '=', 'storein.id')
@@ -265,8 +262,7 @@ class StoreinController extends Controller
 
     }
 
-    public function entryReport(){
-
+    public function receiptNoWise(){
         $departments= StoreinDepartment::where('status','active')->get(['id','name']);
         // $itemNames= ItemsOfStorein::where('status','active')->get(['id','name']);
         return view('admin.storein.reportPages.entryReport',compact('departments'));
@@ -989,15 +985,7 @@ class StoreinController extends Controller
     //get size of storeinitem
     public function getSizeOfItems($items_of_storein_id){
       $sizeOfItems = ItemsOfStorein::with('size')->find($items_of_storein_id);
-   // ->get(['size.size_id', 'size.name']);
-        // foreach($sizeOfItems as $sizeOfItem){
-        //     $size=Size::find($sizeOfItem)->get(['id','name']);
-        // }
-       // $size=Size::find('$sizeOfItem')->get(['id','name']);
         return $sizeOfItems;
-        //  return response()->json([
-        //         'size' => $sizeOfItem,
-        //     ]);
     }
 
     // getItems department name

@@ -1327,6 +1327,8 @@ Route::get('storein/getItemSize','StoreinController@getItemSize')->name('item.ge
 
 Route::post('storein/get-item-report','StoreinController@generateItemReportView')->name('storein.itemReport.view');
 
+
+
 Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
 Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');
 Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('storein.storeinIndex');
@@ -1445,6 +1447,28 @@ Route::get('storeout/getStoreOutItemData/{storeout_id}', [StoreoutController::cl
 Route::get('storeout/getEditItemData/{storeoutItem_id}', [StoreoutController::class, 'getEditItemData'])->name('storeout.getEditItemData');
 Route::post('storeout/updateStoreOutItems', [StoreoutController::class, 'updateStoreOutItems'])->name('storeout.updateStoreOutItems');
 Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::class, 'saveEntireStoreOut'])->name('storeout.saveEntireStoreOut');
+
+Route::get('storeout/invoiceView/{storeout_id}', [StoreoutController::class, 'invoiceView'])->name('storeout.invoiceView');
+// mgha
+Route::get('storeout/receiptReport', [StoreoutController::class, 'receiptReport'])->name('storeout.receiptReport');
+Route::get('storeout/getReceiptNo', [StoreoutController::class, 'getReceiptNo'])->name('storeout.getReceiptNo');
+Route::post('storeout/generateReceiptReportView', [StoreoutController::class, 'generateReceiptReportView'])->name('storeout.receiptReport.view');
+
+Route::get('storeout/dateItemReport', [StoreoutController::class, 'dateItemReport'])->name('storeout.dateItemReport');
+Route::post('storeout/generateDateItemReportView', [StoreoutController::class, 'generateDateItemReportView'])->name('storeout.generateDateItemReport.view');
+
+
+// plcement wise
+Route::get('storeout/placement-report','StoreoutController@placementReport')->name('storeout.placementReport');
+Route::post('storeout/generatePlacement-report','StoreoutController@generatePlacementReport')->name('storeout.generatePlacementReport.view');
+
+//dateDepartPlacement
+Route::get('storeout/dateDepartPlacement-report','StoreoutController@dateDepartPlacementReport')->name('storeout.dateDepartPlacementReport');
+Route::get('storeout/getPlacement', [StoreoutController::class, 'getPlacement'])->name('storeout.getPlacement');
+Route::post('storeout/generatedateDepartPlacement-report','StoreoutController@generatedateDepartPlacementReport')->name('storeout.generatedateDepartPlacementReport.view');
+
+
+
 //get item acc cat
 //recent by m
 Route::get('storeout/getStoreinItemAccCat', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');

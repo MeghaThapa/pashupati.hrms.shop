@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('item_of_storein_id')->index();
             $table->foreign('item_of_storein_id')->references('id')->on('items_of_storeins');
 
-            $table->unsignedBigInteger('storeinDepartment_id')->index();
-            $table->foreign('storeinDepartment_id')->references('id')->on('storein_departments');
+            $table->unsignedBigInteger('storeoutDepartment_id')->index();
+            $table->foreign('storeoutDepartment_id')->references('id')->on('storeout_departments');
 
             $table->unsignedBigInteger('placement_id')->index();
             $table->foreign('placement_id')->references('id')->on('placements');

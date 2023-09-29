@@ -1001,12 +1001,10 @@
                     through: through,
                 },
                 success: function(response) {
-                    getStoreOutItems();
-                    //console.log('i am here');
+                    // getStoreOutItems();
                     totalAmountCalculation();
-                    // setIntoTable(response.storeOutItem);
+                    setIntoTable(response.storeOutItem);
                     $('#items').focus();
-
                     if (response.stock.quantity <= 0) {
                         let itemSelect = $('#items').find('option[value="' + response.stock.item_id +
                             '"]');
@@ -1032,7 +1030,7 @@
         let sn = 1;
         //set Values to storein Items table
         function setIntoTable(res) {
-            console.log(res);
+            console.log('response:', res);
             var html = "";
 
             html = "<tr  id=editRow-" + res.id + "><td>" + sn +

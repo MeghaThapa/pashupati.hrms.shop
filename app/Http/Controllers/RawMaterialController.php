@@ -386,14 +386,17 @@ class RawMaterialController extends Controller
             'bill_no' => $requestStoreinTypeName === 'local' ? 'required' : '',
             'pp_no' => $requestStoreinTypeName === 'import' ? 'required' : '',
         ]);
-
+        if($request->from_godam_id && $request->to_godam_id && $request->challan_no){
          $previousEntries = RawMaterial::where('to_godam_id', $request->to_godam_id)
             ->where('from_godam_id', $request->from_godam_id)
             ->where('challan_no', $request->challan_no)
-            ->count();
-        if ($previousEntries > 0) {
+            ->get();
+            // return $previousEntries;
+        if (!$previousEntries->isEmpty()) {
                  return back()->withErrors('There are previous entered the same challan no from and to godam.');
             }
+        }
+
        //return $requestStoreinTypeName;
         if (strtolower($requestStoreinTypeName) === 'godam' && $request->to_godam_id === $request->from_godam_id) {
             return back()->withErrors('From Godam and To Godam cannot be similar');

@@ -366,7 +366,8 @@ class FabricSendAndReceiveSaleController extends Controller
     {
         $fabricSalesEntries = FabricSaleEntry::with('getParty', 'fabricSaleItems.fabric')
             ->where('bill_date', '>=', $request->start_date)
-            ->where('bill_date', '<=', $request->end_date)->where('bill_for', $request->bill_for)
+            ->where('bill_date', '<=', $request->end_date)
+            ->where('bill_for', $request->bill_for)
             ->orderBy('bill_date', 'ASC')
             ->get();
 
