@@ -469,8 +469,8 @@
                      { data : "fabric_gsm" , name : "fabric_gsm" },
                      { data : "fabric_color" , name : "fabric_color" },
                      { data : "length" , name : "length" },
-                     { data : "net_weight" , name : "net_weight" },
                      { data : "gross_weight" , name : "gross_weight" },
+                     { data : "net_weight" , name : "net_weight" },
                      { data : "action" , name : "action" },
                  ]
              });

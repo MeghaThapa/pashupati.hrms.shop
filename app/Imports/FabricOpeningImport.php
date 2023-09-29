@@ -95,6 +95,7 @@ class FabricOpeningImport implements ToCollection,WithHeadingRow,WithCalculatedF
                      'bill_no' => $bill_no,
                      'fabric_id' => $fabric->id,
                       'date_np' => $this->date_np,
+                      'status_type' => 'active',
                      "is_laminated" => $this->type == "lam" ? "true" :  "false"  
                  ]);
             }

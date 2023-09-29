@@ -20,4 +20,9 @@ class FabricSale extends Model
    public function getsaleentry(){
     return $this->belongsTo(FabricSaleEntry::class,"sale_entry_id","id");
    }
+
+   public function getParty()
+   {
+       return $this->belongsTo('App\Models\Supplier','partyname_id');
+   }
 }

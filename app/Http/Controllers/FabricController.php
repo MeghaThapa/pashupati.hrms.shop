@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Godam;
 use App\Models\Shift;
 use App\Models\Fabric;
@@ -20,14 +21,14 @@ use App\Models\FabricSaleItems;
 use Yajra\DataTables\DataTables;
 use App\Services\NepaliConverter;
 use Illuminate\Support\Facades\DB;
+use App\Models\FabricGodamTransfer;
 use App\Models\TapeEntryStockModel;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\BagFabricReceiveItemSent;
-use App\Models\FabricGodamTransfer;
-use App\Models\FabricSendAndReceiveLaminatedSent;
-use App\Models\Singlesidelaminatedfabric;
 use App\Models\Unlaminatedfabrictripal;
+use App\Models\BagFabricReceiveItemSent;
+use App\Models\Singlesidelaminatedfabric;
+use App\Models\FabricSendAndReceiveLaminatedSent;
 
 class FabricController extends Controller
 {
@@ -38,7 +39,82 @@ class FabricController extends Controller
         $this->neDate = $neDate;
     }
 
-    public function fixData()
+    public function fixData(){
+        $data = [
+            '21048-O', '21152-O', '20122-O', '20121-O', '20123-O', '20433-O', '15332-O', '15331-O',
+            '21059-O', '20875-O', '21169-O', '21130-O', '15914-O', '21053-O', '21167-O',
+            '3458-O', '20003-O', '20884-O', '21081-O', '20767-O', '20919-O', '20925-O', '21154-O',
+            '21176-O', '21132-O', '15226-O', '14895-O', '15300-O', '15824-O', '20761-O',
+            '37502-O', '37655-O', '01-21146', '13296-O', '12062-O', '16765-O', '20972-O', '20914-O'
+        ];
+
+
+        $fabric_stocks = FabricStock::whereIn('roll_no',$data)->get();
+        foreach ($fabric_stocks as $fabric_stock) {
+            $fabric_stock->delete();
+        }
+        echo $fabric_stocks->count();
+        die();
+    }
+
+    public function fixDataSpaceBlanks()
+    {
+        $fabrics = FabricStock::where('name', 'LIKE', '%(Lam)%')->get();
+
+        foreach ($fabrics as $fabric) {
+            $fabric->name = str_replace(' (Lam)', '(Lam)', $fabric->name);
+            $fabric->save();
+        }
+
+        $html = '<table>';
+        $html .= '<thead>';
+        // Add your table header rows here
+        $html .= '</thead>';
+        $html .= '<tbody>';
+
+        // Loop through your data and generate table rows
+        foreach ($fabrics as $fabric) {
+            $html .= '<tr>';
+            $html .= '<td>' . $fabric->name . '</td>'; // Replace with actual column names
+            // Add more columns here as needed
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+        echo $html;
+
+    }
+
+    public function fixLamCentertoEndData(){
+        $fabrics = FabricStock::where('name', 'REGEXP', '\\(Lam\\)\\(.*\\)')->get();
+        foreach ($fabrics as $fabric) {
+            $fabric->name = str_replace('(Lam)', '', $fabric->name) . ' (Lam)';
+            $fabric->save();
+        }
+        $html = '<table>';
+        $html .= '<thead>';
+        // Add your table header rows here
+        $html .= '</thead>';
+        $html .= '<tbody>';
+
+        // Loop through your data and generate table rows
+        foreach ($fabrics as $fabric) {
+            $html .= '<tr>';
+            $html .= '<td>' . $fabric->name . '</td>'; // Replace with actual column names
+            // Add more columns here as needed
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+        echo $html;
+
+    }
+
+    public function fixDataMergedunlamSentfabric()
     {
         $unlaminatedFabrics = FabricStock::where('godam_id', 1)->where('is_laminated', 'false')->pluck('roll_no')->toArray();
 
@@ -75,7 +151,7 @@ class FabricController extends Controller
         dd($result);
     }
 
-    public function fixDataold2()
+    public function fixDataoldfix()
     {
         $soldFabricIds = FabricSaleItems::pluck('fabric_id')->toArray();
 
@@ -83,6 +159,84 @@ class FabricController extends Controller
 
         $updatedItems = array_map(function ($soldFabricRolls) {
             // Check if the last character of the item is 'A', 'B', 'C', or 'D'
+            if (in_array(substr($soldFabricRolls, -3), ['A-O', 'B-O', 'C-O', 'D-O'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -3);
+            }
+
+            if (in_array(substr($soldFabricRolls, -2), ['-A', '-B', '-C', '-D'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -2);
+            }
+
+            if (in_array(substr($soldFabricRolls, -1), ['A', 'B', 'C', 'D'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -1);
+            }
+
+            // If neither condition is met, return the original item
+            return $soldFabricRolls;
+        }, $soldFabricRolls);
+
+
+        $fabricStockData = FabricStock::pluck('roll_no')->toArray();
+        $updatedFabrics = array_map(function ($fabricStockData) {
+
+            if (in_array(substr($fabricStockData, -3), ['A-O', 'B-O', 'C-O', 'D-O'])) {
+                // Remove the last character and return the updated item
+                return substr($fabricStockData, 0, -3);
+            }
+
+            if (in_array(substr($fabricStockData, -2), ['-O', '-O', '-O', '-O'])) {
+                // Remove the last character and return the updated item
+                return substr($fabricStockData, 0, -2);
+            }
+
+            if (strpos($fabricStockData, '01-') === 0) {
+                // Remove '01-' from the beginning and store the result
+                $fabricStockData = substr($fabricStockData, 3);
+            }
+
+            // If neither condition is met, return the original item
+            return $fabricStockData;
+        }, $fabricStockData);
+
+        $result1 = array_intersect($updatedFabrics, $updatedItems);
+
+        $godamTransferLists = FabricGodamList::where('fromgodam_id',2)->where('togodam_id',1)->pluck('roll')->toArray();
+
+        $updatedGodamList = array_map(function ($godamTransferLists ){
+
+            if (in_array(substr($godamTransferLists, -2), ['-O', '-O', '-O', '-O'])) {
+                return substr($godamTransferLists, 0, -2);
+            }else {
+                return $godamTransferLists;
+            }
+
+        },$godamTransferLists);
+
+        $resultFinal = array_intersect($updatedGodamList, $result1);
+
+        $resultFinalValues = array_values($resultFinal);
+        foreach($resultFinalValues as $key => $value){
+            echo $value .",";
+        }
+        die();
+    }
+
+    public function fixDataOld2()
+    {
+        $soldFabricIds = FabricSaleItems::pluck('fabric_id')->toArray();
+
+        $soldFabricRolls = Fabric::whereIn('id', $soldFabricIds)->pluck('roll_no')->toArray();
+
+        $updatedItems = array_map(function ($soldFabricRolls) {
+            // Check if the last character of the item is 'A', 'B', 'C', or 'D'
+            if (in_array(substr($soldFabricRolls, -2), ['A-O', 'B-O', 'C-O', 'D-O'])) {
+                // Remove the last character and return the updated item
+                return substr($soldFabricRolls, 0, -2);
+            }
+
             if (in_array(substr($soldFabricRolls, -2), ['-A', '-B', '-C', '-D'])) {
                 // Remove the last character and return the updated item
                 return substr($soldFabricRolls, 0, -2);

@@ -303,7 +303,15 @@ class FabricSendReceiveController extends Controller
 
         $uniqueFabrics = $getAllfabrics->unique('name')->values()->all();
 
-        return view('admin.fabricSendReceive.indexrevised', compact("data", "dana", "uniqueFabrics"));
+        $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $id)->with("dananame");
+
+        $consumptions = $query->get();
+        // dd($consumptions);
+
+        $total_consumption = $query->sum("consumption_quantity");
+
+
+        return view('admin.fabricSendReceive.indexrevised', compact("data", "dana", "uniqueFabrics",'id','consumptions','total_consumption'));
     }
 
 
@@ -465,6 +473,7 @@ class FabricSendReceiveController extends Controller
             $roll_number = $request->roll_no;
 
             $fsr_entry_id = $request->fsr_entry_id;
+            
 
 
 
@@ -994,6 +1003,10 @@ class FabricSendReceiveController extends Controller
     {
 
         if ($request->ajax()) {
+            // dd('ll');
+            // dd($request);
+            $find_data = FabricSendAndReceiveEntry::find($request->bill_id);
+            // dd($find_data);
 
             $godamId = $request->godam_id;
 
@@ -1002,18 +1015,22 @@ class FabricSendReceiveController extends Controller
             $planttype = $request->planttype;
 
             $shift = $request->shift;
+            // dd($request);
+            // $data = AutoLoadItemStock::get();
+            // dd($data);
 
-            $data = AutoLoadItemStock::where("from_godam_id", $godamId)
+            $data = AutoLoadItemStock::where("from_godam_id", $find_data->godam_id)
 
-                ->where("plant_name_id", $plantName)
+                ->where("plant_name_id", $find_data->plantname_id)
 
-                ->where("plant_type_id", $planttype)
+                ->where("plant_type_id", $find_data->planttype_id)
 
-                ->where("shift_id", $shift)
+                ->where("shift_id", $find_data->shift_id)
 
                 ->with("fromGodam", "danaName")
 
                 ->get();
+            // dd($data->count());
 
             return response([
 
@@ -1023,59 +1040,119 @@ class FabricSendReceiveController extends Controller
         }
     }
 
+    public function getStockQuantity(Request $request){
+         $stockQty=AutoLoadItemStock::
+            select('quantity')
+            ->where('id',$request->autoloader_id)
+            ->first();
+            // dd($stockQty);
+            return response([
+
+                "data" => $stockQty
+
+            ]);
+    }
+
 
 
     public function addDanaConsumptionTablerevised(Request $request)
     { //latest
 
-        if ($request->ajax()) {
+       try{
+           DB::beginTransaction();
+           if ($request->ajax()) {
 
-            $dana_group_id  = DanaName::where("id", $request->dana_name_id)->value("dana_group_id");
+              
+
+               $autoloaderStock = AutoLoadItemStock::find($request->autoloader_id);
+               // dd($autoloaderStock);
+               // dd($request);
+
+              
+               // dd($request);
+               // dd($request->quantity,$autoloaderStock->quantity);
+               $fsrDanaConsumption=FabricSendAndReceiveDanaConsumption::where('fsr_entry_id', $request->fsr_entry_id)
+               ->where('autoloader_id',$request->autoloader_id)
+               ->first();
+               // dd($fsrDanaConsumption);
+
+                   if($fsrDanaConsumption != null){
+                    // dd('lloo');
+                      $fsrDanaConsumption->consumption_quantity= $fsrDanaConsumption->consumption_quantity+$request->consumption;
+                      $fsrDanaConsumption->save();
+                   }else{
+                    // dd('ll');
+                       $find_autoloader = AutoLoadItemStock::find($request->autoloader_id);
+
+                       $dana_group_id  = DanaName::where("id", $request->dana_name_id)->value("dana_group_id");
+                       // dd($find_autoloader);
+
+                       $daata = FabricSendAndReceiveDanaConsumption::create([
+
+                           "fsr_entry_id" => $request->fsr_entry_id,
+
+                           "dana_name_id" => $request->dana_name_id,
+
+                           "dana_group_id" => $dana_group_id,
+
+                           "consumption_quantity" => $request->consumption,
+
+                           "autoloader_id" => $request->autoloader_id,
+
+                           "from_godam_id" => $find_autoloader->from_godam_id,
+                           "plant_type_id" => $find_autoloader->plant_type_id,
+                           "plant_name_id" => $find_autoloader->plant_name_id,
+                           "shift_id" => $find_autoloader->shift_id,
 
 
+                       ]);
+                       // dd($daata);
+                     
+                     
+               }
 
-            FabricSendAndReceiveDanaConsumption::create([
+               $autoloaderStock->quantity -=$request->consumption;
+               if($autoloaderStock->quantity <=0){
+                   $autoloaderStock->delete();
+               }else{
+                   $autoloaderStock->save();
+               }
 
-                "fsr_entry_id" => $request->fsr_entry_id,
-
-                "dana_name_id" => $request->dana_name_id,
-
-                "dana_group_id" => $dana_group_id,
-
-                "consumption_quantity" => $request->consumption,
-
-                "autoloader_id" => $request->autoloader_id
-
-            ]);
-
-
-
-            $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $request->fsr_entry_id)->with("dananame");
-
-            $consumptions = $query->get();
-
-            $total_consumption = $query->sum("consumption_quantity");
-
-            // $initial = 0;
-
-            // foreach($consumptions as $data){
-
-            //     $initial += $data->consumption_quantity;
-
-            // }
+               
 
 
+               // $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $request->fsr_entry_id)->with("dananame");
 
-            return response([
+               // $consumptions = $query->get();
+               // // dd($consumptions);
 
-                // "dana" => $request->dana,
+               // $total_consumption = $query->sum("consumption_quantity");
 
-                "consumptions" => $consumptions,
 
-                "total_consumption" => $total_consumption
+               // return response([
 
-            ]);
-        }
+               //     "consumptions" => $consumptions,
+
+               //     "total_consumption" => $total_consumption
+
+               // ]);
+           }
+           
+
+           DB::commit();
+       }catch(Exception $e){
+        dd($e);
+           // DB::rollBack();
+           return response([
+               "message" => "Something went wrong!{$e->getMessage()}" 
+           ]);
+       }
+
+     
+
+     
+
+      
     }
 
 
@@ -1100,13 +1177,65 @@ class FabricSendReceiveController extends Controller
         ]);
     }
 
+    public function removedDanaConsumptionTablerevised(Request $request){
+        // dd('lol');
+
+        try{
+
+           DB::beginTransaction();
+           // dd($request);
+
+           $find_data = FabricSendAndReceiveDanaConsumption::find($request->id);
+           // dd($find_data);
+
+           $autoloaderStock = AutoLoadItemStock::where('id',$find_data->autoloader_id)
+           ->value('id');
+
+           $find_autoloader = AutoLoadItemStock::find($autoloaderStock);
+           // dd($find_autoloader);
+
+           if($find_autoloader != null){
+            // dd('lol');
+
+               $find_autoloader->quantity= $find_autoloader->quantity + $find_data->consumption_quantity;
+               $find_autoloader->update();
+               $find_data->delete();
+
+           }else{
+            // dd('hey',$find_data);
+
+               $autoloaderStock = new AutoLoadItemStock();
+               $autoloaderStock->from_godam_id = $find_data->from_godam_id;
+               $autoloaderStock->plant_type_id = $find_data->plant_type_id;
+               $autoloaderStock->plant_name_id = $find_data->plant_name_id;
+               $autoloaderStock->shift_id = $find_data->shift_id;
+               $autoloaderStock->dana_name_id = $find_data->dana_name_id;
+               $autoloaderStock->dana_group_id = $find_data->dana_group_id;
+               $autoloaderStock->quantity = $find_data->consumption_quantity;
+               $autoloaderStock->save();
+               $find_data->delete();
+           }
+    
+           DB::commit();
+            return back();
+
+        }
+        catch(Exception $e){
+            DB::rollback();
+            dd($e);
+            return "exception".$e->getMessage();
+        }
+
+
+    }
 
 
 
 
 
+// bhabhish code
 
-    public function removedDanaConsumptionTablerevised(Request $request)
+    public function removedDanaConsumptionTablereviseds(Request $request)
     { //latest
 
         if ($request->ajax()) {
@@ -1164,67 +1293,67 @@ class FabricSendReceiveController extends Controller
 
                 DB::beginTransaction();
 
-                $tempconsumptionfsr = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $fsr_entry_id)->get();
+                // $tempconsumptionfsr = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $fsr_entry_id)->get();
 
-                foreach ($tempconsumptionfsr as $data) {
+                // foreach ($tempconsumptionfsr as $data) {
 
-                    // $stock = AutoLoadItemStock::where('dana_name_id',$data->dana_name_id)
+                //     // $stock = AutoLoadItemStock::where('dana_name_id',$data->dana_name_id)
 
-                    //         ->where("from_godam_id",$godam)
+                //     //         ->where("from_godam_id",$godam)
 
-                    //         ->first();
-
-
-
-                    $stock = AutoLoadItemStock::where('id', $data->autoloader_id)
-
-                        ->first();
+                //     //         ->first();
 
 
 
-                    $autoloaderDanaData['dana_name_id'] = $stock->dana_name_id;
+                //     $stock = AutoLoadItemStock::where('id', $data->autoloader_id)
 
-                    $autoloaderDanaData["id"] = $stock->id;
-
-                    $autoloaderDanaData['dana_group_id'] = $stock->dana_group_id;
-
-                    $autoloaderDanaData['consumption_quantity'] = $data->consumption_quantity;
-
-                    $autoloaderDanaData['total_consumption'] = $consumption;
+                //         ->first();
 
 
 
-                    $presentQuantity = $stock->quantity;
+                //     $autoloaderDanaData['dana_name_id'] = $stock->dana_name_id;
+
+                //     $autoloaderDanaData["id"] = $stock->id;
+
+                //     $autoloaderDanaData['dana_group_id'] = $stock->dana_group_id;
+
+                //     $autoloaderDanaData['consumption_quantity'] = $data->consumption_quantity;
+
+                //     $autoloaderDanaData['total_consumption'] = $consumption;
 
 
 
-                    $deduction = $presentQuantity - $autoloaderDanaData['consumption_quantity'];
+                //     $presentQuantity = $stock->quantity;
 
 
 
-                    if ($deduction == 0) {
+                //     $deduction = $presentQuantity - $autoloaderDanaData['consumption_quantity'];
 
-                        $stock->delete();
-                    } elseif ($deduction < 0) {
 
-                        DB::rollBack();
 
-                        return response([
+                //     if ($deduction == 0) {
 
-                            "message" => "amount exceeded for dana consumption",
+                //         $stock->delete();
+                //     } elseif ($deduction < 0) {
 
-                            "status" => "403"
+                //         DB::rollBack();
 
-                        ]);
-                    } else {
+                //         return response([
 
-                        $stock->update([
+                //             "message" => "amount exceeded for dana consumption",
 
-                            "quantity" => $deduction
+                //             "status" => "403"
 
-                        ]);
-                    }
-                }
+                //         ]);
+                //     } else {
+
+                //         $stock->update([
+
+                //             "quantity" => $deduction
+
+                //         ]);
+                //     }
+                // }
 
 
 
@@ -1294,6 +1423,7 @@ class FabricSendReceiveController extends Controller
                         'fabricgroup_id' => $data->fbgrp_id,
 
                         'status' => "1",
+                        'status_type' => "active",
 
                         "average_wt" => $data->average_wt,
 
@@ -1373,38 +1503,38 @@ class FabricSendReceiveController extends Controller
 
 
 
-                foreach ($tempconsumptionfsr as $data) {
+                // foreach ($tempconsumptionfsr as $data) {
 
-                    $fsrconsumption = FabricSendAndReceiveDanaConsumptionList::where("dana_name", $data->dana_name_id)
+                //     $fsrconsumption = FabricSendAndReceiveDanaConsumptionList::where("dana_name", $data->dana_name_id)
 
-                        ->where("dana_group", $data->dana_group_id)
+                //         ->where("dana_group", $data->dana_group_id)
 
-                        ->where("consumption_quantity", $data->consumption_quantity)
+                //         ->where("consumption_quantity", $data->consumption_quantity)
 
-                        ->first();
+                //         ->first();
 
-                    if (is_null($fsrconsumption)) {
+                //     if (is_null($fsrconsumption)) {
 
-                        $consumption =  new FabricSendAndReceiveDanaConsumptionList;
+                //         $consumption =  new FabricSendAndReceiveDanaConsumptionList;
 
-                        $consumption->consumption_quantity = $data->consumption_quantity;
-                    } else {
+                //         $consumption->consumption_quantity = $data->consumption_quantity;
+                //     } else {
 
-                        $consumption = $fsrconsumption;
+                //         $consumption = $fsrconsumption;
 
-                        $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $data->consumption_quantity;
-                    }
+                //         $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $data->consumption_quantity;
+                //     }
 
-                    $consumption->fsr_entry =  $fsr_entry_id;
+                //     $consumption->fsr_entry =  $fsr_entry_id;
 
-                    $consumption->dana_name =  $data->dana_name_id;
+                //     $consumption->dana_name =  $data->dana_name_id;
 
-                    $consumption->dana_group =  $data->dana_group_id;
+                //     $consumption->dana_group =  $data->dana_group_id;
 
-                    $consumption->godam_id =  FabricSendAndReceiveEntry::where("id", $fsr_entry_id)->value("godam_id");
+                //     $consumption->godam_id =  FabricSendAndReceiveEntry::where("id", $fsr_entry_id)->value("godam_id");
 
-                    $consumption->save();
-                }
+                //     $consumption->save();
+                // }
 
 
 
@@ -1528,5 +1658,22 @@ class FabricSendReceiveController extends Controller
 
             return Fabric::where("roll_no", $request->roll_no)->first();
         }
+    }
+
+    public function getFsrFilterDataName(Request $request){
+        // dd($request);
+        
+        
+        $input = $request->titles;
+        $parts = explode(' ', $input);
+        $firstString = $parts[0];   
+                
+        $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        
+        return response([
+            'name' => $find_name,
+        ]);
+
+
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeliveryOrder;
 use App\Models\Supplier;
 use App\Models\FabricSale;
 use App\Models\FabricStock;
+use App\Rules\ValidDpNumber;
 use Illuminate\Http\Request;
 use App\Models\FabricSaleEntry;
 use App\Models\FabricSaleItems;
+use App\Models\Godam;
+use App\Models\Fabric;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Exceptions\Exception;
@@ -40,7 +44,8 @@ class FabricSendAndReceiveSaleController extends Controller
             ->leftJoin('fabric_sale_items', 'fabric_sale_entry.id', '=', 'fabric_sale_items.sale_entry_id')
             ->leftJoin('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
             ->leftJoin('suppliers', 'fabric_sale_entry.partyname_id', '=', 'suppliers.id')
-            ->groupBy('fabric_sale_entry.bill_no', 'fabric_sale_entry.bill_date', 'suppliers.name', 'fabric_sale_entry.id', 'fabric_sale_entry.status');
+            ->groupBy('fabric_sale_entry.bill_no', 'fabric_sale_entry.bill_date', 'suppliers.name', 'fabric_sale_entry.id', 'fabric_sale_entry.status')
+            ->orderBy('fabric_sale_entry.id','DESC');
         if ($this->request->ajax()) {
             return DataTables::of($fabricSalesEntries)
                 ->addIndexColumn()
@@ -161,21 +166,38 @@ class FabricSendAndReceiveSaleController extends Controller
             'partyname' => "required",
             'bill_for' => "required",
             'lory_number' => "required",
-            'dp_number' => "required",
+            'dp_number' => [
+                'required',
+                new ValidDpNumber($this->request['partyname']),
+            ],
             'gp_number' => "required"
         ]);
-        $fabric = FabricSaleEntry::create([
-            'bill_no' => $this->request['bill_number'],
-            'bill_date' => $this->request['bill_date'],
-            'partyname_id' => $this->request['partyname'],
-            'bill_for' => $this->request['bill_for'],
-            'lorry_no' => $this->request['lory_number'],
-            'do_no' => $this->request['dp_number'],
-            'gp_no' => $this->request['gp_number'],
-            'remarks' => $this->request['remarks'],
-        ]);
+        try{
+            DB::beginTransaction();
 
-        return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
+            $fabric = FabricSaleEntry::create([
+                'bill_no' => $this->request['bill_number'],
+                'bill_date' => $this->request['bill_date'],
+                'partyname_id' => $this->request['partyname'],
+                'bill_for' => $this->request['bill_for'],
+                'lorry_no' => $this->request['lory_number'],
+                'do_no' => $this->request['dp_number'],
+                'gp_no' => $this->request['gp_number'],
+                'remarks' => $this->request['remarks'],
+            ]);
+
+            $deliveryOrder = DeliveryOrder::where('do_no',$this->request['dp_number'])->firstOrFail();
+            $deliveryOrder->status = "Approved & Delivered";
+            $deliveryOrder->save();
+
+            DB::commit();
+            return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
+        }catch(\Exception $e){
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
+
     }
 
     public function create($entry_id)
@@ -197,8 +219,9 @@ class FabricSendAndReceiveSaleController extends Controller
     {
         if ($this->request->ajax()) {
             $fabric_id = $this->request->fabric_name_id;
+            $godam_id = Godam::where('name','psi')->value('id');
             $name = FabricStock::where("id", $fabric_id)->value('name');
-            return DataTables::of(FabricStock::where("name", $name)->get())
+            return DataTables::of(FabricStock::where('status_type','active')->where('godam_id',$godam_id)->where("name", $name)->get())
                 ->addIndexColumn()
                 ->addColumn("action", function ($row) {
                     return "<a href='javascript:void(0)' class='btn btn-primary send-to-lower' data-id='{$row->id}'>Send </a>'";
@@ -209,13 +232,18 @@ class FabricSendAndReceiveSaleController extends Controller
     }
     public function storeSale()
     {
+        // dd('lol');
         if ($this->request->ajax()) {
             // return $this->request->all();
             $fabric = FabricStock::where("id", $this->request->fabric_id)->first();
+            // dd($fabric);
             FabricSale::create([
                 "sale_entry_id" => $this->request->entry_id,
                 "fabric_id" => $fabric->fabric_id
             ]);
+
+            $fabric->status_type = 'inactive';
+            $fabric->update();
         }
     }
 
@@ -274,7 +302,17 @@ class FabricSendAndReceiveSaleController extends Controller
     {
         if ($this->request->ajax()) {
             try {
+                // dd($this->request);
                 $fabric_sale = FabricSale::findorfail($this->request->id);
+                // dd($fabric_sale);
+                // $fabric = Fabric::find($this->request->fabric_id);
+                $fabric_stock = FabricStock::where('fabric_id',$fabric_sale->fabric_id)->value('id');
+                // dd($fabric_stock);
+                $final_data = FabricStock::find($fabric_stock);
+                // dd($final_data);
+                $final_data->status_type = 'active';
+                $final_data->update();
+
                 $fabric_sale->delete();
                 return response([
                     "message" =>  "Deletion Completes",

@@ -10,6 +10,10 @@ use App\Models\FabricStock;
 use App\Models\FabricGroup;
 use App\Models\FabricGodamList;
 use App\Models\Fabric;
+use App\Models\TapeEntryOpening;
+use App\Models\TapeEntryItemModel;
+use App\Models\FabricDetail;
+use App\Models\FinalTripal;
 use DB;
 use Throwable;
 use App\Helpers\AppHelper;
@@ -24,21 +28,66 @@ class FabricGodamController extends Controller
         return view('admin.fabric.fabricgodam.index');
     }
 
+    public function tests(){
+        // dd('ll');
+        // $finalt
+        $tape_opening = TapeEntryOpening::where('godam_id',3)->sum('qty');
+        $tape_entry = TapeEntryItemModel::where('toGodam_id',3)->sum('tape_qty_in_kg');
+        $fabric_wastage = FabricDetail::where('godam_id',3)->sum('total_wastage');
+        $fabric_net = FabricDetail::where('godam_id',3)->sum('total_netweight');
+        // $fabric_entry = $fabric_wastage + $fabric_net;
+
+        $final = $tape_opening + $tape_entry - $fabric_wastage - $fabric_net;
+
+        dd($tape_opening,$tape_entry,$fabric_wastage,$fabric_net,$final);
+       
+     
+
+
+    }
+
+
+
     public function test(){
         // dd('ll');
-        $data = FabricGodamList::get();
-        // dd($data->take(5));
+        $data = FinalTripal::get();
+        // dd($data->count());
         // dd($data->take(5));
         foreach ($data as $value)
             {
                 // dd($value);
-                $fabric = FabricGodamList::where('bill_no',$value->bill_no)->where('bill_date',$value->bill_date)->where('roll',$value->roll)->value('bill_id');
-                // dd($fabric);
+                // let data = tripal_decimalname / 39.37;
+                // let datas = data.toFixed(2);
+
+                // let gsm = (average) / datas;
+                // let finalgsm = gsm.toFixed(2);
+
+                $input = $value->name;
+                $parts = explode(' ', $input);
+                $firstString = $parts[0];
+                $secondString = $parts[1];
+                $thirdString = $parts[2];
+
+                $value_string = $parts[2];
+                $size = $value_string .' '. $input;
+                // dd($size);
+
+                $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                // dd($find_name);
+                $values = $find_name / 39.37;
+                // dd($value->average_wt);
+                $gsms = ($value->average_wt) / $values;
+                $gsm = round($gsms, 3);
+                // dd($gsms,$gsm);
 
              
-                $sa = FabricGodamTransfer::where('bill_no',$value->bill_no)->where('bill_date',$value->bill_date)->where('roll',$value->roll)->update(['bill_id' => $fabric]);
+               
+                // dd($input,$parts,$firstString);
 
-                // dd($value,$group);
+
+                $sa = FinalTripal::where('status','sent')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('average_wt',$value->average_wt)->update(['gram' => $gsm]);
+
+             
             }
 
 
@@ -120,11 +169,15 @@ class FabricGodamController extends Controller
         if($request->ajax()){
             $bill_id = $request->fabricgodam_id;
             
-            $fabrics = FabricGodamList::where("fabricgodam_id",$bill_id)->get();
+            $fabrics = FabricGodamList::where("fabricgodam_id",$bill_id)->where('status','sent')->get();
+            $find_bill = FabricGodam::find($bill_id);
             
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
+                    ->addColumn("bill_no",function($find_bill){
+                        return $find_bill->bill_no;
+                    })
                    
                     ->addColumn("action",function($row){
                         return "
@@ -132,7 +185,7 @@ class FabricGodamController extends Controller
                                  data-id='{$row->id}' 
                                  href='{$row->id}'>Delete</a>";
                     })
-                    ->rawColumns(["action"])
+                    ->rawColumns(["bill_no","action"])
                     ->make(true);
 
         }
@@ -281,7 +334,9 @@ class FabricGodamController extends Controller
                     'godam_id' => $list->togodam_id,
                     'date_np' => $find_name->date_np,
                     'bill_no' => $find_name->bill_no,
-                    'fabric_id' => $find_name->fabric_id
+                    'fabric_id' => $find_name->fabric_id,
+                    'status_type' => 'active',
+
                 ]);
 
                 if($fabricstock){

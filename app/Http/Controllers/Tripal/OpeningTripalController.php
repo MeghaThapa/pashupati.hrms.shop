@@ -230,6 +230,7 @@ class OpeningTripalController extends Controller
             "date_np" => $request['bill_date'],
 
             "status" => 'completed',
+            "status_type" => 'active',
         ]);
 
         return back();

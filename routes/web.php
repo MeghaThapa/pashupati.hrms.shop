@@ -54,9 +54,12 @@ use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagBundelEntryController;
 use App\Http\Controllers\BagSellingItemController;
+use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\DispatchSaudaItemToPartyController;
 use App\Http\Controllers\FabricController;
 use App\Http\Controllers\RawMaterialReportController;
 use App\Http\Controllers\ReprocessWasteController;
+use App\Http\Controllers\SaudaItemController;
 use Symfony\Component\Routing\RouteCollection;
 
 // brandBag.store
@@ -687,8 +690,21 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post("fabric/godamTransfer/getList",'FabricGodamController@getFilterFabricGodamList')->name("getFilterFabric");
 
+    Route::resource('delivery-order',DeliveryOrderController::class);
+    Route::get('delivery-order-datewise-filter',[DeliveryOrderController::class,'filterView'])->name('delivery.order.datewise.filter');
+    Route::post('delivery-order-datewise-generate-view',[DeliveryOrderController::class,'generateView'])->name('delivery.order.datewise.generate.view');
+    Route::get('delivery-order-approved',[DeliveryOrderController::class,'approvedDeliveryOrder'])->name('delivery-order.approved');
 
+    Route::resource('sauda-item',SaudaItemController::class);
+    Route::get('sauda-item-datewise-filter',[SaudaItemController::class,'filterView'])->name('sauda.item.datewise.filter');
+    Route::post('sauda-item-datewise-generate-view',[SaudaItemController::class,'generateView'])->name('sauda.item.datewise.generate.view');
 
+    Route::get('sauda-item-entry-datewise-filter',[SaudaItemController::class,'entryFilterView'])->name('sauda.entry.datewise.filter');
+    Route::post('sauda-item-entry-datewise-generate-view',[SaudaItemController::class,'generateEntryView'])->name('sauda.entry.datewise.generate.view');
+
+    Route::resource('dispatch-sauda-item',DispatchSaudaItemToPartyController::class);
+    Route::get('dispatch-item-datewise-filter',[DispatchSaudaItemToPartyController::class,'filterView'])->name('dispatch.item.datewise.filter');
+    Route::post('dispatch-item-datewise-generate-view',[DispatchSaudaItemToPartyController::class,'generateView'])->name('dispatch.item.datewise.generate.view');
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [
@@ -714,8 +730,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
      Route::get('doubletripals/edit/{id}', 'Tripal\DoubleTripalBillController@edit')->name('adddoubletripal.edit');
     Route::post('doubletripals/update/{id}', 'Tripal\DoubleTripalBillController@update')->name('doubletripalbill.update');
 
-     Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
+    Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
     Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
+
+    Route::get('finaltripal/deleteTripalEntry', 'Tripal\FinalTripalController@deleteTripalEntry')->name('finaltripal.deleteTripalEntryLists');
+
+
 
     Route::get('finaltripals/viewBill/{id}', 'Tripal\FinalTripalBillController@viewBill')->name('finaltripal.viewbill');
 
@@ -1265,6 +1285,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('transferred-report', 'ProductReport@transferredReport')->name('transferred.report');
     Route::post('transferred-report', 'ProductReport@filterTransferredReport')->name('transferred.report.filter');
 
+    // singletripal report
+    Route::get('singletripal-report', 'Tripal\Report\SingleTripalReportController@singletripalReport')->name('singletripal.report');
+
+    Route::post('singletripal-report-view', 'Tripal\Report\SingleTripalReportController@generateSingleTripalView')->name('singletripalreport.view');
+
+    // Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
+    // Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view')
+
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
 });
@@ -1511,6 +1539,10 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
     Route::post("printsAndCuts/getStockQuantity",[PrintedAndCuttedRollsController::class,"getStockQuantity"])->name('printsAndCuts.getStockQuantity');
 
     Route::post("tripal/getDanaQuantity",'Tripal\TripalController@getStockQuantity')->name('tripalDana.getStockQuantity');
+
+    Route::post("fabricsendrecive/getStockQuantity",[FabricSendReceiveController::class,"getStockQuantity"])->name('fabricsendrecive.getStockQuantity');
+
+    Route::post("getfilter/fabricsendrecive/fabric/list",'FabricSendReceiveController@getFsrFilterDataName')->name("getFilterFabricSendRecieveListName");
 
 
 

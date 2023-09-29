@@ -258,6 +258,7 @@ class FinalTripalGodamController extends Controller
                           "finaltripalname_id" => $list->finaltripal_id,
                           "date_en" => $list->bill_date,
                           "date_np" => $list->bill_date,
+                          "status_type" => 'active',
 
                           "status" => "sent"
                       ]);
