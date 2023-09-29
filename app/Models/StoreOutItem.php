@@ -19,9 +19,10 @@ class StoreOutItem extends Model
     {
         return $this->belongsTo('App\Models\ItemsOfStorein', 'item_of_storein_id', "id");
     }
+
     public function department()
     {
-        return $this->belongsTo('App\Models\StoreinDepartment', 'storeinDepartment_id', "id");
+        return $this->belongsTo('App\Models\StoreoutDepartment', 'storeoutDepartment_id', "id");
     }
     public function size()
     {

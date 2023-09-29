@@ -107,7 +107,7 @@
                     $billDateTotalMeter += (float) $fabricSaleItem->fabric->meter;
                 @endphp
 
-            @endif
+            @endforeach
 
             <!-- Display individual fabric item -->
             <tr>
@@ -156,3 +156,4 @@
 @endforeach
 
 <br /><br />
+

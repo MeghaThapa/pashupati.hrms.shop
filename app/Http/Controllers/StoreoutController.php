@@ -17,6 +17,7 @@ use App\Models\StoreinDepartment;
 use App\Models\StoreoutDepartment;
 use App\Models\IssuedStoreinReport;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -32,7 +33,6 @@ class StoreoutController extends Controller
      */
     public function index(Request $request)
     {
-
         $storeOutDatas = Storeout::all();
         // return $storeOutDatas;
         return view('admin.storeout.index', compact('storeOutDatas'));
@@ -102,6 +102,244 @@ class StoreoutController extends Controller
         ->rawColumns(['action', 'status'])
         ->make(true);
 }
+
+public function invoiceView($storeout_id){
+    $storeout = Storeout::with(['storeoutItems','godam:id,name', 'storeoutItems.itemsOfStorein'])->find($storeout_id);
+
+    return view('admin.storeout.viewStoreout', compact('storeout'));
+}
+
+ public function receiptReport(){
+        $godams= Godam::where('status','active')->get(['id','name']);
+        return view('admin.storeout.reportPages.receiptReport',compact('godams'));
+    }
+
+public function getReceiptNo(Request $request){
+    $receiptNos=StoreOut::where('godam_id',$request->godam_id)->get('receipt_no');
+    return $receiptNos;
+}
+
+public function generateReceiptReportView(Request $request){
+    // return $request;
+  if (!$request->godam_id || !$request->receipt_no) {
+            return response(['status' => false, 'message' => 'Please select godam and receipt no' ]);
+        }
+     $storeout = Storeout::with('storeoutItems',
+           'godam:id,name',
+           'storeoutItems.itemsOfStorein:id,name',
+           'storeoutItems.size:id,name',
+           'storeoutItems.unit:id,name',
+           'storeoutItems.placement:id,name',
+
+          )
+           ->where('godam_id',$request->godam_id)
+           ->where('receipt_no',$request->receipt_no)
+           ->first();
+        //    $Extra_charges= json_decode($storein->extra_charges);
+           if (!$storeout){return response(['status' => false,'message'=>'No Data Found']);}
+            $storeoutView = view('admin.storeout.reportview.receiptWiseReport', compact('storeout'))->render();
+            return response(['status' => true,'data'=>$storeoutView]);
+}
+
+public function dateItemReport(){
+        $godams= Godam::where('status','active')->get(['id','name']);
+        $departments= StoreoutDepartment::where('status','active')->get(['id','name']);
+        return view('admin.storeout.reportPages.dateItemReport',compact(['godams','departments']));
+}
+
+  public function generateDateItemReportView(Request $request){
+        //  return $request;
+         if (!$request->start_date || !$request->end_date || !$request->godam_id) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date and godam and department' ]);
+        }
+        $reportData = [];
+        $dates = [];
+        $dates = $this->getEngDateRange($request->start_date,$request->end_date);
+        if( $request->department_id){
+              $reportData = self::itemAccGodamDateDepartment($dates,$request);
+    }
+        else{
+            return response(['status' => false, 'message' => 'Please select department' ]);
+
+            // $reportData = self::itemAccGodamDate($dates,$request);
+        }
+
+        return response(['status' => true, 'data' => $reportData]);
+  }
+
+//   private function itemAccGodamDate($dates,$request){
+
+//         $storeouts= Storeout::with('storeoutItems','godam:id,name', 'storeoutItems.department:id,name','storeoutItems.itemsOfStorein','storeoutItems.size','storeoutItems.unit','storeoutItems.placement')
+//         ->where('receipt_date', '>=', $request->start_date)
+//         ->where('receipt_date', '<=', $request->end_date)
+//         ->where('godam_id',$request->godam_id)
+//         ->orderBy('receipt_date', 'ASC')
+//         ->get();
+
+//         $dataAccDepartments =
+
+
+
+//     return view('admin.storeout.reportview.dateGodamWiseItemReport', compact('storeouts', 'dates'))->render();
+
+//   }
+
+  public function itemAccGodamDateDepartment ($dates,$request){
+     $reportData = [];
+    foreach ($dates as $date) {
+        $storeoutItems = DB::table('store_out_items')
+        ->join('storeout','store_out_items.storeout_id','=','storeout.id')
+        ->join('storeout_departments','store_out_items.storeoutDepartment_id','=','storeout_departments.id')
+        ->join('godam', 'storeout.godam_id', '=', 'godam.id')
+        ->join('items_of_storeins', 'store_out_items.item_of_storein_id', '=', 'items_of_storeins.id')
+        ->join('placements', 'store_out_items.placement_id', '=', 'placements.id')
+        ->join('sizes', 'store_out_items.size_id', '=', 'sizes.id')
+        ->join('units', 'store_out_items.unit_id', '=', 'units.id')
+        ->select('store_out_items.*',
+        'placements.name as placement_name',
+        'storeout.receipt_no as receipt_no',
+        'godam.name as godam_name',
+        'items_of_storeins.name as item_name',
+        'sizes.name as size_name',
+        'storeout_departments.name as store_out_departments_name',
+        'units.name as units_name'
+        )
+        ->where('storeout.receipt_date', $date)
+        ->where('storeout.godam_id',$request->godam_id)
+        ->where('store_out_items.storeoutDepartment_id',$request->department_id)
+        ;
+        $storeoutItems = $storeoutItems->get();
+
+        if (!$storeoutItems->isEmpty()) {
+            $storeoutView = view('admin.storeout.reportview.dateWiseItemReport', compact('storeoutItems', 'date'))->render();
+            array_push($reportData, $storeoutView);
+        }
+
+    }
+    return $reportData;
+  }
+
+    public function placementReport(){
+        //  $placement =DB::table('storeout')
+        // ->join('store_out_items','store_out_items.storeout_id','=','storeout.id')
+        // ->join('placements', 'store_out_items.placement_id', '=', 'placements.id')
+        // ->where('storeout.receipt_date', '>=', '2023-07-14')
+        // ->where('storeout.receipt_date', '<=', '2023-09-29')
+        // ->where('storeout.godam_id','1')
+        // ->select(
+        //     'placements.id',
+        //     'placements.name',
+        //     DB::raw('SUM(store_out_items.total) as total')
+        // )
+        // ->groupBy('placements.id','placements.name')
+        // ->get();
+
+
+        $godams= Godam::where('status','active')->get(['id','name']);
+        return view('admin.storeout.reportPages.placementReport',compact(['godams']));
+    }
+    public function generatePlacementReport(Request $request){
+        $placements=DB::table('storeout')
+        ->join('store_out_items','store_out_items.storeout_id','=','storeout.id')
+        ->join('placements', 'store_out_items.placement_id', '=', 'placements.id')
+        ->where('storeout.receipt_date', '>=', $request->start_date)
+        ->where('storeout.receipt_date', '<=', $request->end_date)
+        ->where('storeout.godam_id',$request->godam_id)
+        ->select(
+            'placements.id',
+            'placements.name',
+            DB::raw('SUM(store_out_items.total) as total')
+        )
+        ->groupBy('placements.id','placements.name')
+        ->get();
+         return response(['status' => true, 'data' => view('admin.storeout.reportview.placementWiseReport', compact('placements'))->render()]);
+  }
+
+    public function dateDepartPlacementReport(){
+
+    //       $storeoutItems = DB::table('store_out_items')
+    //         ->join('storeout','store_out_items.storeout_id','=','storeout.id')
+    //         ->join('storeout_departments','store_out_items.storeoutDepartment_id','=','storeout_departments.id')
+    //         ->join('godam', 'storeout.godam_id', '=', 'godam.id')
+    //         ->join('items_of_storeins', 'store_out_items.item_of_storein_id', '=', 'items_of_storeins.id')
+    //         ->join('placements','store_out_items.placement_id', '=', 'placements.id')
+    //         ->join('sizes', 'store_out_items.size_id', '=', 'sizes.id')
+    //         ->join('units', 'store_out_items.unit_id', '=', 'units.id')
+    //         ->select('store_out_items.*',
+    //         'placements.name as placement_name',
+    //         'storeout.receipt_no as receipt_no',
+    //         'godam.name as godam_name',
+    //         'items_of_storeins.name as item_name',
+    //         'sizes.name as size_name',
+    //         'storeout_departments.name as store_out_departments_name',
+    //         'units.name as units_name'
+    // )->get();
+    // return $storeoutItems;
+
+
+            $godams= Godam::where('status','active')->get(['id','name']);
+            $departments= StoreoutDepartment::where('status','active')->get(['id','name']);
+            return view('admin.storeout.reportPages.dateDepartPlacementReport',compact(['godams','departments']));
+    }
+    public function getPlacement(Request $request){
+        $placements=Placement::where('storeout_dpt_id',$request->department_id)
+        ->where('godam_id',$request->godam_id)
+        ->get(['id','name']);
+        return $placements;
+    }
+    public function generatedateDepartPlacementReport(Request $request){
+         if (!$request->start_date || !$request->end_date || !$request->godam_id || !$request->department_id || !$request->placement_id) {
+            return response(['status' => false, 'message' => 'Please select Start date and End Date and department' ]);
+        }
+        $reportData = [];
+        $dates = [];
+        $dates = $this->getEngDateRange($request->start_date, $request->end_date);
+        foreach ($dates as $date) {
+             $storeoutItems = DB::table('store_out_items')
+            ->join('storeout','store_out_items.storeout_id','=','storeout.id')
+            ->join('storeout_departments','store_out_items.storeoutDepartment_id','=','storeout_departments.id')
+            ->join('godam', 'storeout.godam_id', '=', 'godam.id')
+            ->join('items_of_storeins', 'store_out_items.item_of_storein_id', '=', 'items_of_storeins.id')
+            ->join('placements','store_out_items.placement_id', '=', 'placements.id')
+            ->join('sizes', 'store_out_items.size_id', '=', 'sizes.id')
+            ->join('units', 'store_out_items.unit_id', '=', 'units.id')
+            ->select('store_out_items.*',
+            'placements.name as placement_name',
+            'storeout.receipt_no as receipt_no',
+            'godam.name as godam_name',
+            'items_of_storeins.name as item_name',
+            'sizes.name as size_name',
+            'storeout_departments.name as store_out_departments_name',
+            'units.name as units_name'
+            )
+            ->where('storeout.receipt_date', $date)
+            ->where('storeout.godam_id',$request->godam_id)
+            ->where('store_out_items.storeoutDepartment_id',$request->department_id)
+            ->where('store_out_items.placement_id',$request->placement_id)
+            ;
+
+            $storeoutItems = $storeoutItems->get();
+            if (!$storeoutItems->isEmpty()) {
+                $storeoutView = view('admin.storeout.reportview.dateDepartPlacementWiseReport', compact('storeoutItems', 'date'))->render();
+                array_push($reportData, $storeoutView);
+            }
+
+        }
+        return response(['status' => true, 'data' => $reportData]);
+    }
+    private function getEngDateRange($startDate, $endDate)
+    {
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDate);
+        $endDate   = Carbon::createFromFormat('Y-m-d', $endDate);
+
+        $dateRange = CarbonPeriod::create($startDate, $endDate);
+
+        $dates = array_map(fn ($date) => $date->format('Y-m-d'), iterator_to_array($dateRange));
+
+        return $dates;
+    }
+
 private function generateRunningAction($row)
 {
     return '
@@ -119,7 +357,7 @@ private function generateRunningAction($row)
 private function generateNonRunningAction($row)
 {
     return '
-    <a class="" href="#" >
+    <a class="" href="' . route('storeout.invoiceView', ["storeout_id" => $row->id]) . '" >
         <button class="btn btn-info">
             <i class="fas fa-file-invoice"></i>
         </button>
@@ -128,7 +366,7 @@ private function generateNonRunningAction($row)
 }
 
 
-    public function deleteStoreout($storeout_id){
+public function deleteStoreout($storeout_id){
     try{
          DB::beginTransaction();
             $storeout= Storeout::find($storeout_id);
@@ -138,14 +376,14 @@ private function generateNonRunningAction($row)
 
                 foreach($storeoutItems as $storeOutItem){
                     $stock= Stock::where('item_id', $storeOutItem->item_of_storein_id)
-                    ->where('department_id', $storeOutItem->storeinDepartment_id)
+                    ->where('department_id', $storeOutItem->storeoutDepartment_id)
                     ->where('size',$storeOutItem->size_id)
                     ->where('unit',$storeOutItem->unit_id)
                     ->first();
                     $cat_id=ItemsOfStorein::find($storeOutItem->item_of_storein_id)->category_id;
                     if(!$stock){
                         $stock=new Stock();
-                        $stock->department_id = $storeOutItem->storeinDepartment_id;
+                        $stock->department_id = $storeOutItem->storeoutDepartment_id;
                         $stock->category_id= $cat_id;
                         $stock->item_id =$storeOutItem->item_of_storein_id;
                         $stock->size= $storeOutItem->size;
@@ -177,14 +415,14 @@ private function generateNonRunningAction($row)
         $storeOutItem =StoreOutItem::find($storeout_item_id);
 
         $stock =Stock::where('item_id', $storeOutItem->item_of_storein_id)
-        ->where('department_id', $storeOutItem->storeinDepartment_id)
+        ->where('department_id', $storeOutItem->storeoutDepartment_id)
         ->where('unit',$storeOutItem->unit_id )
         ->where('size',$storeOutItem->size_id )
         ->first();
 
         if(!$stock){
             $stock= new Stock();
-            $stock->department_id =  $storeOutItem->storeinDepartment_id;
+            $stock->department_id =  $storeOutItem->storeoutDepartment_id;
             $stock->category_id = $storeOutItem->itemsOfStorein->category_id;
             $stock->item_id = $storeOutItem->item_of_storein_id;
             $stock->quantity= $storeOutItem->quantity;
@@ -393,6 +631,7 @@ public function getStockQtyRate(Request $request){
 
     public function saveStoreoutItems(Request $request)
     {
+        // return $request;
         $request->validate([
             'category_id'=> 'required',
             'storeout_id' => 'required',
@@ -404,6 +643,7 @@ public function getStockQtyRate(Request $request){
             'placement_id' => 'required',
             'through' => 'required',
         ]);
+
         try {
             DB::beginTransaction();
              $itemId = DB::table('items_of_storeins')
@@ -422,7 +662,7 @@ public function getStockQtyRate(Request $request){
             $storeOutItem = new StoreOutItem();
             $storeOutItem->item_of_storein_id = $stock->item_id;
             $storeOutItem->storeout_id = $request->storeout_id;
-            $storeOutItem->storeinDepartment_id = $request->department_id;
+            $storeOutItem->storeoutDepartment_id = $request->department_id;
             $storeOutItem->placement_id = $request->placement_id;
             $storeOutItem->unit_id = $request->unit;
             $storeOutItem->size_id = $request->size;
@@ -530,14 +770,14 @@ public function getStockQtyRate(Request $request){
 
             ]);
             $storeOutItem =  Stock::where('item_id', $storeOutItem->item_of_storein_id)
-            ->where('department_id', $storeOutItem->storeinDepartment_id)
+            ->where('department_id', $storeOutItem->storeoutDepartment_id)
             ->where('size',$storeOutItem->size)
             ->first();
             // old storeout quantity
             $oldStoreOutQuantity = $storeOutItem->quantity;
             $storeOutItem->item_of_storein_id = $request->item_id;
             $storeOutItem->quantity = $request->quantity;
-            $storeOutItem->storeinDepartment_id = $request->department_id;
+            $storeOutItem->storeoutDepartment_id = $request->department_id;
             $storeOutItem->placement_id = $request->placement_id;
             $storeOutItem->through = $request->through;
             $storeOutItem->total = $storeOutItem->quantity * $storeOutItem->rate;
