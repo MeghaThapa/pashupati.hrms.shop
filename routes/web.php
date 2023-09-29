@@ -730,8 +730,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
      Route::get('doubletripals/edit/{id}', 'Tripal\DoubleTripalBillController@edit')->name('adddoubletripal.edit');
     Route::post('doubletripals/update/{id}', 'Tripal\DoubleTripalBillController@update')->name('doubletripalbill.update');
 
-     Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
+    Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
     Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
+
+    Route::get('finaltripal/deleteTripalEntry', 'Tripal\FinalTripalController@deleteTripalEntry')->name('finaltripal.deleteTripalEntryLists');
+
+
 
     Route::get('finaltripals/viewBill/{id}', 'Tripal\FinalTripalBillController@viewBill')->name('finaltripal.viewbill');
 
@@ -1280,6 +1284,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     // transferred report
     Route::get('transferred-report', 'ProductReport@transferredReport')->name('transferred.report');
     Route::post('transferred-report', 'ProductReport@filterTransferredReport')->name('transferred.report.filter');
+
+    // singletripal report
+    Route::get('singletripal-report', 'Tripal\Report\SingleTripalReportController@singletripalReport')->name('singletripal.report');
+
+    Route::post('singletripal-report', 'Tripal\Report\SingleTripalReportController@generateSingleTripalView')->name('singletripalreport.view');
+
+    // Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
+    // Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view')
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');

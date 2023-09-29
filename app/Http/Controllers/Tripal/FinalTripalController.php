@@ -223,7 +223,7 @@ class FinalTripalController extends Controller
         if($request->ajax()){
           
             $tripalentry = TripalEntry::where('bill_id',$request->bill_id)->where("status",'sent')->get();
-            $finaltripal = FinalTripalStock::where('bill_id',$request->bill_id)->where("status",'sent')->get();
+            $finaltripal = FinalTripal::where('bill_id',$request->bill_id)->where("status",'sent')->get();
 
             $unlam = DoubleSidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->get();
             $ul_mtr_total=0;
@@ -232,10 +232,10 @@ class FinalTripalController extends Controller
             $unlamnet_wt = TripalEntry::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
             $unlamnet_meter = TripalEntry::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
             
-            $lam = FinalTripalStock::where('bill_id',$request->bill_id)->where('status','sent')->get();
+            $lam = FinalTripal::where('bill_id',$request->bill_id)->where('status','sent')->get();
 
-            $lam_mtr_total = FinalTripalStock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
-            $lam_net_wt_total = FinalTripalStock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
+            $lam_mtr_total = FinalTripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
+            $lam_net_wt_total = FinalTripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
             
             return response([
                 'tripalentry'=>$tripalentry,
@@ -289,24 +289,21 @@ class FinalTripalController extends Controller
 
            $todayEnglishDate = Carbon::now()->format('Y-n-j');
 
+           //gsm is gram
+
            $finaltripal = FinalTripal::create([
                "name" => $findtripalname,
                "slug" => $findtripalname,
                "bill_number" => $request['bill_no'],
                'bill_date' => $request['bill_date'],
-               // "planttype_id" => $find_bill->planttype_id,
-               // "plantname_id" => $find_bill->plantname_id,
-               // "doublefabric_id" => $find_bill->doublefabric_id,
-               // "fabric_id" => $find_bill->fabric_id,
                "department_id" => $find_bill->department_id,
                "finaltripalname_id" => $request->tripal,
-               "gram" =>  $find_bill->gram,
                "loom_no" => $find_bill->loom_no,
                "roll_no" => $request['roll'],
                'gross_wt' => $request['gross_weight'],
                "meter" => $request['meter'],
                "average_wt" => $request['average'],
-               "gsm" => $request['gsm'],
+               "gram" => $request['gsm'],
                'net_wt' => $request['net_wt'],
                "date_en" => $request['bill_date'],
                "date_np" => $request['bill_date'],
@@ -319,10 +316,6 @@ class FinalTripalController extends Controller
                "slug" => $findtripalname,
                "bill_number" => $request['bill_no'],
                'bill_date' => $request['bill_date'],
-               // "planttype_id" => $find_bill->planttype_id,
-               // "plantname_id" => $find_bill->plantname_id,
-               // "doublefabric_id" => $find_bill->doublefabric_id,
-               // "fabric_id" => $find_bill->fabric_id,
                "department_id" => $find_bill->department_id,
                "finaltripalname_id" => $request->tripal,
                "gram" =>  $find_bill->gram,
@@ -360,8 +353,7 @@ class FinalTripalController extends Controller
     public function getWastageStore(Request $request){
 
         if($request->ajax()){
-            // dd($request);
-            // dd('kk');
+       
             $consumption = $request->consumption;
             $danaNameID = $request->danaNameID;
             $fabric_waste = $request->fabric_waste;
@@ -372,8 +364,6 @@ class FinalTripalController extends Controller
             $lamFabricTempToDelete = [];
             $department = [];
 
-            // dd($department);
-            // dd($request->bill_id);
 
             try{
                 DB::beginTransaction();
@@ -441,5 +431,36 @@ class FinalTripalController extends Controller
                 ]);
             }
         }
+    }
+
+    public function deleteTripalEntry(Request $request)
+    {
+
+
+
+        try{
+            DB::beginTransaction();
+
+             $unit = FinalTripal::find($request->id);
+             $daata = FinalTripalStock::where('finaltripal_id',$request->id)->value('id');
+             $find_value = FinalTripalStock::find($daata);
+             
+             $find_value->delete();
+
+             $unit->delete();
+         
+
+            DB::commit();
+            return response(200);
+
+        }catch(Exception $e){
+            dd($e);
+            DB::rollBack();
+            return response([
+                "exception" => $e->getMessage(),
+            ]);
+        }
+
+
     }
 }

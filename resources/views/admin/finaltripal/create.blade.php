@@ -409,10 +409,11 @@
                             <th>{{ __('Meter') }}</th>
                             <th>{{ __('Avg') }}</th>
                             <th>{{ __('Gsm') }}</th>
+                            <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
 
-                    <tbody id="compareunlamtbody">
+                    <tbody id="finaltripal">
                     </tbody>
                   
 
@@ -1417,6 +1418,35 @@
         $("#compareunlamtbody").empty();
     }
 
+    $(document).ready(function(){
+        $(document).on('click',"#deletetripalentry",function(e){
+            e.preventDefault();
+
+            var id = $(this).attr('data-id'),
+                token = $('meta[name="csrf-token"]').attr('content');
+
+
+                $.ajax({
+                  type:"GET",
+                  dataType:"JSON",
+                  url:"{{route('finaltripal.deleteTripalEntryLists')}}",
+                  data:{
+                    _token: token,
+                    id: id,
+                  },
+                  success: function(response){
+                    window.location.reload();
+                    // $('#tripal_decimalname').val(response.name);
+
+                  },
+                  error: function(event){
+                    alert("Sorry");
+                  }
+                });
+            
+        });
+    });
+
     function putonlamtbody(response){
         console.log(response);
         // response.lam.forEach(element => {
@@ -1440,6 +1470,7 @@
             tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
             tr.append(`<td>${element.average_wt}</td>`);
+         
             
         });
 
@@ -1452,7 +1483,8 @@
             tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
             tr.append(`<td>${element.average_wt}</td>`);
-            tr.append(`<td>${element.gsm}</td>`);
+            tr.append(`<td>${element.gram}</td>`);
+            tr.append(`<td><div class="btn-group"><a id="deletetripalentry"  href="${element.id}" data-id="${element.id}" class="btn btn-info">Delete</a></div></td>`);
         });
 
         weightdiffs(response);
