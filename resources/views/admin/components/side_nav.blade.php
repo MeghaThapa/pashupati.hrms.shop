@@ -185,6 +185,7 @@
 
 
 
+
                 <li class="nav-item has-treeview {{ request()->is('home/main-entry/*') ? 'menu-open' : '' }}">
 
                     <a href="#" class="nav-link {{ request()->is('home/main-entry/*') ? 'active' : '' }}">
@@ -746,7 +747,6 @@
 
 
                     </ul>
-
                 </li>
                 <li class="nav-item has-treeview {{ request()->is('home/main-entry/*') ? 'menu-open' : '' }}">
 
@@ -823,6 +823,7 @@
             </ul>
 
             </li>
+
             <li class="nav-item">
 
                 <a href="{{ route('closingStoreinReport.index') }}"
@@ -838,9 +839,10 @@
 
             <li class="nav-item">
 
+                <a href="{{ route('expCategories.index') }}"
+                    class="nav-link {{ request()->is('admin/expense-categories*') ? 'active' : '' }}">
 
-                <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
-
+                    <i class="nav-icon fas fa-list-alt"></i>
 
                     <p>{{ __('Categories') }}</p>
 
@@ -881,10 +883,11 @@
 
                     <i class="nav-icon fas fa-wallet"></i>
 
+                    <p>{{ __('Expenses') }}</p>
 
-                <li class="nav-item">
+                </a>
 
-
+            </li>
 
 
             <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
@@ -894,9 +897,11 @@
                 <a href="{{ route('purchases.index') }}"
                     class="nav-link {{ request()->is('admin/purchases*') ? 'active' : '' }}">
 
+                    <i class="nav-icon fas fa-shopping-basket"></i>
 
-                <li class="nav-header text-bold">{{ __('TRIPAL') }}</li>
+                    <p>{{ __('Purchases') }}</p>
 
+                </a>
 
             </li>
 
@@ -911,27 +916,33 @@
 
                 </a>
 
-
-                <li class="nav-item">
-
-
-                </a>
-
             </li>
-
-
 
             <li class="nav-item">
 
+                <a href="{{ route('purchaseDamage.index') }}"
+                    class="nav-link {{ request()->is('admin/damage-purchases*') ? 'active' : '' }}">
 
-                <li class="nav-item">
+                    <i class="nav-icon fas fa-trash-alt"></i>
 
+                    <p>{{ __('Damage Purchases') }}</p>
 
                 </a>
 
             </li>
 
+            <li class="nav-item">
 
+                <a href="{{ route('purchaseInventory.index') }}"
+                    class="nav-link {{ request()->is('admin/purchase-inventory*') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-boxes"></i>
+
+                    <p>{{ __('Purchase Inventory') }}</p>
+
+                </a>
+
+            </li>
 
             <li class="nav-header text-bold">{{ __('TRIPAL') }}</li>
 
@@ -948,10 +959,6 @@
 
             </li>
 
-
-
-
-
             <li class="nav-item">
 
                 <a href="{{ route('doubletripal.index') }}"
@@ -965,8 +972,6 @@
 
             </li>
 
-
-
             <li class="nav-item">
 
                 <a href="{{ route('finaltripal.index') }}"
@@ -978,7 +983,20 @@
 
                 </a>
 
-                <li class="nav-item">
+            </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
             <li class="nav-header text-bold">{{ __('Fabric') }}</li>
 
 
@@ -999,16 +1017,12 @@
             </li>
 
 
-
-
-
             <li class="nav-item">
 
                 <a href="{{ route('fabrics.index') }}"
                     class="nav-link {{ request()->is('admin/fabrics*') ? 'active' : '' }}">
 
                     <i class="nav-icon fas fa-tags"></i>
-
 
                     <p>Fabric</p>
 
@@ -1089,36 +1103,13 @@
                             <p>Fabric transfer to Bag Report</p>
                         </a>
                     </li>
-                    <<<<<<< HEAD=======<li class="nav-item">
+                    <li class="nav-item">
                         <a href="{{ route('fabric.sale.report') }}"
                             class="nav-link {{ request()->is('admin/fabric/sale/report*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-tags"></i>
                             <p>Fabric Sale Report</p>
                         </a>
-            </li>
-            >>>>>>> d307f3b472c45b06ea1270110ed23fa145d8bd8a
-            </ul>
-
-
-            {{-- Pasted Code End --}}
-
-
-
-
-                        <li class="nav-item">
-                            <a href="{{ route('fabricbag.entry.report') }}"
-                                class="nav-link {{ request()->is('admin/fabricbag/entry-report*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-tags"></i>
-                                <p>Fabric transfer to Bag Report</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('fabric.sale.report') }}"
-                                class="nav-link {{ request()->is('admin/fabric/sale/report*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-tags"></i>
-                                <p>Fabric Sale Report</p>
-                            </a>
-                        </li>
+                    </li>
 
 
                         <li class="nav-item">
@@ -1301,6 +1292,7 @@
                 </a>
 
             </li>
+
 
             <li class="nav-header text-bold">{{ __('Storein/out') }}</li>
 
