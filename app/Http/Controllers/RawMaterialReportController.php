@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DanaName;
+use App\Models\Godam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -11,42 +12,59 @@ use App\Models\RawMaterialDanaDateWiseReport;
 class RawMaterialReportController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        DB::table('raw_material_dana_date_wise_reports')->truncate();
+        if ($request->ajax()) {
 
-        $reports = DB::table('raw_material_dana_date_wise_reports')
-            ->join('dana_names', 'raw_material_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
-            ->select('dana_names.name as dana_name', 'raw_material_dana_date_wise_reports.date', 'opening_amount', 'import', 'local', 'from_godam', 'tape', 'lam', 'nw_plant', 'sales', 'to_godam', 'closing')
-            ->orderBy('dana_name', 'asc')
-            ->orderBy('date', 'asc')
-            ->get();
+            DB::table('raw_material_dana_date_wise_reports')->truncate();
 
-        $formattedReports = [];
+            $this->oldIndex();
 
-        foreach ($reports as $report) {
-            $danaName = $report->dana_name;
-            $date = $report->date;
-
-            if (!isset($formattedReports[$danaName])) {
-                $formattedReports[$danaName] = [];
+            $reports = DB::table('raw_material_dana_date_wise_reports')
+                ->join('dana_names', 'raw_material_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
+                ->select('dana_names.name as dana_name', 'raw_material_dana_date_wise_reports.date', 'opening_amount', 'import', 'local', 'from_godam', 'tape', 'lam', 'nw_plant', 'sales', 'to_godam', 'closing')
+                ->orderBy('dana_name', 'asc')
+                ->orderBy('date', 'asc');
+            if($request->start_date && $request->end_date)
+            {
+                $reports = $reports->where('raw_material_dana_date_wise_reports.date','>=',$request->start_date)
+                                    ->where('raw_material_dana_date_wise_reports.date','<=',$request->end_date);
             }
 
-            $formattedReports[$danaName][$date] = [
-                'opening_amount' => $report->opening_amount,
-                'import' => $report->import,
-                'local' => $report->local,
-                'from_godam' => $report->from_godam,
-                'tape' => $report->tape,
-                'lam' => $report->lam,
-                'nw_plant' => $report->nw_plant,
-                'sales' => $report->sales,
-                'to_godam' => $report->to_godam,
-                'closing' => $report->closing,
-            ];
-        }
+            if($request->godam_id){
+                $reports = $reports->where('godam_id',$request->godam_id);
+            }
+            $reports = $reports->get();
 
-        return view('admin.rawMaterial.psireport', compact('formattedReports'));
+            $formattedReports = [];
+
+            foreach ($reports as $report) {
+                $danaName = $report->dana_name;
+                $date = $report->date;
+
+                if (!isset($formattedReports[$danaName])) {
+                    $formattedReports[$danaName] = [];
+                }
+
+                $formattedReports[$danaName][$date] = [
+                    'opening_amount' => $report->opening_amount,
+                    'import' => $report->import,
+                    'local' => $report->local,
+                    'from_godam' => $report->from_godam,
+                    'tape' => $report->tape,
+                    'lam' => $report->lam,
+                    'nw_plant' => $report->nw_plant,
+                    'sales' => $report->sales,
+                    'to_godam' => $report->to_godam,
+                    'closing' => $report->closing,
+                ];
+            }
+
+            $view = view('admin.rawMaterial.ssr.psireportview', compact('formattedReports'))->render();
+            return response(['status'=>true,'data'=>$view]);
+        }
+        $godams = Godam::all();
+        return view('admin.rawMaterial.psireport',compact('godams'));
     }
 
     public function oldIndex()
@@ -64,9 +82,9 @@ class RawMaterialReportController extends Controller
         $mergedArray = $this->getMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $salesArray);
 
 
-        $status = $this->calculateAndSave($mergedArray,$godam_id);
+        $status = $this->calculateAndSave($mergedArray, $godam_id);
 
-        dd($status);
+        return $status;
 
         return view('admin.rawMaterial.report', compact('mergedArray'));
     }
