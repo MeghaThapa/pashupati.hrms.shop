@@ -1301,6 +1301,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('finaltripal-report-view', 'Tripal\Report\FinalTripalReportController@generateDoubleTripalView')->name('finaltripalreport.view');
 
+    // finaltripalrewinding report
+    Route::get('finaltripalrewinding-report', 'Tripal\Report\FinalTripalRewindingController@finaltripalrewindingReport')->name('finaltripalrewinding.report');
+
+    Route::post('finaltripalrewinding-report-view', 'Tripal\Report\FinalTripalRewindingController@generateFinalTripalView')->name('finaltripalrewinding.view');
+
    
 
     // lang change
