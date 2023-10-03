@@ -82,7 +82,7 @@
                             $('#reportContent').html(data.data);
 
                         } else {
-                            swal.fire("Failed!", "Hotel Addition failed!", "error");
+                            swal.fire("Failed!", data.message, "error");
                         }
                     },
                     error: function(xhr) {

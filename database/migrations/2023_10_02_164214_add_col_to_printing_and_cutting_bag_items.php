@@ -14,8 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::table('printing_and_cutting_bag_items', function (Blueprint $table) {
-            $table->unsignedBigInteger("bFRIStock_id")->nullable();
-            $table-> foreign("bFRIStock_id")->references("id")->on('bag_fabric_receive_item_sent_stock')->onDelete('cascade');
+            $table->unsignedBigInteger("bag_fabric_receive_item_sent_stock_id")->nullable();
+
+            // Define a custom name for the foreign key constraint
+            $table->foreign("bag_fabric_receive_item_sent_stock_id", "custom_fk_name")
+                ->references("id")->on('bag_fabric_receive_item_sent_stock')
+                ->onDelete('cascade');
         });
     }
 
@@ -27,7 +31,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('printing_and_cutting_bag_items', function (Blueprint $table) {
-             $table->dropColumn('bFRIStock_id');
+            $table->dropColumn('bag_fabric_receive_item_sent_stock_id');
         });
     }
 };

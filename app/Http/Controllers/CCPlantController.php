@@ -11,24 +11,28 @@ use App\Models\RawMaterial;
 use App\Models\CCPlantEntry;
 use App\Models\CCPlantItems;
 use Illuminate\Http\Request;
+use App\Models\CcPlantWastage;
 use App\Models\ProcessingStep;
 use App\Models\CCPlantItemsTemp;
 use App\Models\ProcessingSubcat;
 use App\Models\RawMaterialStock;
 use Yajra\DataTables\DataTables;
+use App\Services\NepaliConverter;
 use Illuminate\Support\Facades\DB;
 use App\Models\CCPlantDanaCreation;
 use App\Models\CCPlantDanaCreationTemp;
-use App\Models\CcPlantWastage;
 use Yajra\DataTables\Exceptions\Exception;
 
 class CCPlantController extends Controller
 {
     protected $request;
     protected $entry_id;
-    public function __construct(Request $request)
+    protected $neDate;
+
+    public function __construct(Request $request,NepaliConverter $neDate)
     {
         $this->request = $request;
+        $this->neDate = $neDate;
     }
 
     /************************ Entry ******************************/
@@ -46,6 +50,29 @@ class CCPlantController extends Controller
             "receipt_number" => $receipt_number,
             "godams" => $godams
         ]);
+    }
+
+    private function fixDate()
+    {
+        $ccPlantEntries = CCPlantEntry::all();
+        foreach($ccPlantEntries as $ccPlantEntry){
+            $ccPlantEntry->date = $this->getEngDate($ccPlantEntry->date_np);
+            $ccPlantEntry->save();
+        }
+    }
+
+    private function getEngDate($npDate)
+    {
+        $explodedStartDate = explode('-', $npDate);
+        $date = $this->neDate->nep_to_eng($explodedStartDate[0], $explodedStartDate[1], $explodedStartDate[2]);
+
+        if ($date['month'] < 10) {
+            $month = '0' . $date['month'];
+        } else {
+            $month = $date['month'];
+        }
+
+        return $date['year'] . '-' . $month . '-' . $date['date'];
     }
 
     public function entryindexajax(Request $request)
@@ -93,6 +120,7 @@ class CCPlantController extends Controller
 
         CCPlantEntry::create([
             "godam_id" => $this->request->godam_id,
+            'date'    => $this->getEngDate($this->request->date_np),
             "date_np" => $this->request->date_np,
             "receipt_number" => $this->request->receipt_number,
             "remarks" => $this->request->remarks
@@ -425,7 +453,7 @@ class CCPlantController extends Controller
                 $dana->delete();
             }
 
-            // While consuming dana there was decrease in raw material stock but for reversing we need to increment raw material stock  
+            // While consuming dana there was decrease in raw material stock but for reversing we need to increment raw material stock
             $ccPlantTemps = CCPlantItemsTemp::where('cc_plant_entry_id', $ccPlantEntry->id)->get();
             foreach ($ccPlantTemps as $tempItem) {
                 RawMaterialStock::where('godam_id', $ccPlantEntry->godam_id)
@@ -434,7 +462,7 @@ class CCPlantController extends Controller
                 $tempItem->delete();
             }
 
-            // There was increment of wastage stock but now we need to decrement it 
+            // There was increment of wastage stock but now we need to decrement it
             $ccPlantWastages = CcPlantWastage::where('ccplantentry_id', $ccPlantEntry->id)->get();
             foreach ($ccPlantWastages as $ccWastage) {
                 WasteStock::where('godam_id', $ccPlantEntry->godam_id)->where('waste_id', $ccWastage->wastage_id)->decrement('quantity_in_kg', $ccWastage->quantity);

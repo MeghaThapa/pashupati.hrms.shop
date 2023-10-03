@@ -60,7 +60,8 @@ class FabricTransferEntryForBagController extends Controller
             "receipt_date_np" => $request->date_np
         ]);
         Session::flash('success', 'Creation successful');
-        return back();
+
+        return redirect()->route('fabric.transfer.entry.for.bag');
         // ->with(["message" => "Creation successful"]);
     }
     /***********  For Receipts end ************/

@@ -7,7 +7,6 @@
 <style>
     .col-form-label {
         font-size: 12px !important;
-
     }
 
     .dynamic-btn {
@@ -85,10 +84,10 @@
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
-                <input type="hidden" class="form-control" id="bill_id" name="bill_id" value="{{$find_data->id}}" 
+                <input type="hidden" class="form-control" id="bill_id" name="bill_id" value="{{$find_data->id}}"
                     readonly />
-                <input type="text" class="form-control" id="bill_number" name="bill_number" value="{{$find_data->bill_no}}" 
-                    readonly /> 
+                <input type="text" class="form-control" id="bill_number" name="bill_number" value="{{$find_data->bill_no}}"
+                    readonly />
                     <input type="hidden" name="fabricgodam_id" value="{{$fabricgodam_id}}" id="fabricgodam_id">
                     <input type="hidden" name="fromgodam_id" value="{{$find_data->fromgodam_id}}" id="fromgodam_id">
                     <input type="hidden" name="togodam_id" value="{{$find_data->togodam_id}}" id="togodam_id">
@@ -106,24 +105,24 @@
                 </span>
                 @enderror
             </div>
-            
+
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Remarks') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="remarks" name="remarks"
-                    value="{{$find_data->remarks}}" readonly/> 
+                    value="{{$find_data->remarks}}" readonly/>
             </div>
             <div class="col-md-3 form-group">
                 <label for="fromgodam">{{ __('From Godam') }}<span class="required-field">*</span></label>
                 <input type="text" class="form-control" id="remarks" name="remarks"
-                    value="{{$find_data->getFromGodam->name}}" readonly/> 
-              
+                    value="{{$find_data->getFromGodam->name}}" readonly/>
+
             </div>
             <div class="col-md-3 form-group">
                 <label for="togodam">{{ __('To Godam') }}<span class="required-field">*</span></label>
-                
+
                 <input type="text" class="form-control" id="remarks" name="remarks"
-                    value="{{$find_data->getToGodam->name}}" readonly/> 
+                    value="{{$find_data->getToGodam->name}}" readonly/>
             </div>
 
             <div class="col-md-3 form-group">
@@ -141,11 +140,8 @@
                 @enderror
             </div>
 
-            
-             
-
         </div>
-        
+
     </form>
 </div>
 <div class="row">
@@ -199,7 +195,7 @@
     {{-- <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly> --}}
 
     <button type="submit" class="btn btn-info" id="finalUpdate">Update</button>
-   
+
 </div>
 
 
@@ -223,8 +219,8 @@
         function getFabricGodamListData(){
             if (salesTripalTable !== null) {
                 salesTripalTable.destroy();
-            } 
-            
+            }
+
              let fabricgodam_id = $('#fabricgodam_id').val();
 
             salesTripalTable = $("#getFabricGodamListData").DataTable({
@@ -259,7 +255,7 @@
             // debugger;
             var fabricgodam_id = $('#fabricgodam_id').val(),
             token = $('meta[name="csrf-token"]').attr('content');
-              
+
             $.ajax({
               type:"POST",
               dataType:"JSON",
@@ -270,7 +266,7 @@
             },
             success: function(response){
                 location.href = "{{route('fabricgodams.index')}}";
-              
+
             },
             error: function(event){
                 alert("Sorry");
@@ -310,7 +306,7 @@
                 tr.append(`<td><div class="btn-group"><a id="deletelist" href="${element.id}" data-id="${element.id}" class="btn btn-danger">Delete</a></div></td>`);
             });
 
-            
+
         }
 
         $(document).on('click','.deleteGodamEntry',function(e){
@@ -339,7 +335,7 @@
            }
            });
 
-         
+
         }
 
 
@@ -414,7 +410,7 @@
             },
             success:function(response){
                 addfabric(response);
-            
+
             },
             error:function(error){
                 console.log(error);
@@ -455,9 +451,9 @@
             tr.append(`<td>${element.average}</td>`);
             tr.append(`<td>${element.gram}</td>`);
         });
-        
+
     }
-    
+
 
     $(document).ready(function(){
         $(document).on('click',".sendforlamination",function(e){
@@ -491,7 +487,7 @@
                   success: function(response){
                    $('#getFabricGodamListData').DataTable().ajax.reload();
                    $('#sameFabricsTable').DataTable().ajax.reload();
-                    
+
 
                   },
                   error: function(event){
@@ -499,7 +495,7 @@
                   }
                 });
 
-         
+
         });
     });
 
