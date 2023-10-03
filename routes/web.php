@@ -261,7 +261,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
     Route::post('rawMaterialStock/filterStocks',[RawMaterialStockController::class,'filterStocks'])->name('rawmaterial.filterStocks');
 
-    Route::get('rawMaterial/report',[RawMaterialReportController::class,'index'])->name('rawmaterial.report');
+    Route::get('raw-material-dana-date-wise/report',[RawMaterialReportController::class,'index'])->name('rawmaterial.dana.datewise.report');
+    Route::post('raw-material-dana-date-wise/report',[RawMaterialReportController::class,'index'])->name('rawmaterial.dana.datewise.report.generate');
     Route::get('rawMaterial/report/fix',[RawMaterialReportController::class,'oldIndex'])->name('rawmaterial.report.fix');
 
     Route::post('rawMaterial/report/ajax-filter',[RawMaterialReportController::class,'ajaxFilter'])->name('rawmaterial.ajax.report');
@@ -730,7 +731,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
      Route::get('doubletripals/edit/{id}', 'Tripal\DoubleTripalBillController@edit')->name('adddoubletripal.edit');
     Route::post('doubletripals/update/{id}', 'Tripal\DoubleTripalBillController@update')->name('doubletripalbill.update');
 
-    Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
+     Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
     Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
 
     Route::get('finaltripal/deleteTripalEntry', 'Tripal\FinalTripalController@deleteTripalEntry')->name('finaltripal.deleteTripalEntryLists');
@@ -1299,6 +1300,12 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('finaltripal-report', 'Tripal\Report\FinalTripalReportController@finaltripalReport')->name('finaltripal.report');
 
     Route::post('finaltripal-report-view', 'Tripal\Report\FinalTripalReportController@generateDoubleTripalView')->name('finaltripalreport.view');
+
+
+    // finaltripalrewinding report
+    Route::get('finaltripalrewinding-report', 'Tripal\Report\FinalTripalRewindingController@finaltripalrewindingReport')->name('finaltripalrewinding.report');
+
+    Route::post('finaltripalrewinding-report-view', 'Tripal\Report\FinalTripalRewindingController@generateFinalTripalView')->name('finaltripalrewinding.view');
 
 
 

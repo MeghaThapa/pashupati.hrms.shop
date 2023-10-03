@@ -1132,6 +1132,14 @@
                                 <i class="nav-icon fas fa-tags"></i>
                                 <p>Final Tripal Report</p>
                             </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('finaltripalrewinding.report') }}"
+                                class="nav-link {{ request()->is('admin/finaltripalrewinding-report*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tags"></i>
+                                <p>FinalTripal Rewinding Report</p>
+                            </a>
                         </li> 
             </ul>
 

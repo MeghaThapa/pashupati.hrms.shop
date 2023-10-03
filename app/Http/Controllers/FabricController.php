@@ -40,21 +40,21 @@ class FabricController extends Controller
     }
 
     public function fixData(){
-        $data = [
-            '21048-O', '21152-O', '20122-O', '20121-O', '20123-O', '20433-O', '15332-O', '15331-O',
-            '21059-O', '20875-O', '21169-O', '21130-O', '15914-O', '21053-O', '21167-O',
-            '3458-O', '20003-O', '20884-O', '21081-O', '20767-O', '20919-O', '20925-O', '21154-O',
-            '21176-O', '21132-O', '15226-O', '14895-O', '15300-O', '15824-O', '20761-O',
-            '37502-O', '37655-O', '01-21146', '13296-O', '12062-O', '16765-O', '20972-O', '20914-O'
-        ];
+
+        $fabricGodamLists = FabricGodamList::whereNull('fabric_id')->get();
 
 
-        $fabric_stocks = FabricStock::whereIn('roll_no',$data)->get();
-        foreach ($fabric_stocks as $fabric_stock) {
-            $fabric_stock->delete();
+        foreach($fabricGodamLists as $godamItem){
+
+            $fabric = Fabric::where('name',$godamItem->name)->where('roll_no',$godamItem->roll)->first();
+            if($fabric){
+                $godamItem->fabric_id = $fabric->id;
+                $godamItem->save();
+            }
         }
-        echo $fabric_stocks->count();
-        die();
+
+        dd($fabricGodamLists->count());
+
     }
 
     public function fixDataSpaceBlanks()
@@ -839,10 +839,10 @@ class FabricController extends Controller
             'fabric_godam_lists.name',
             DB::raw('COUNT(fabric_godam_lists.name) as roll_count'),
             DB::raw('SUM(fabrics.gross_wt) as gross_wt'),
-            DB::raw('SUM(fabrics.net_wt) as net_wt'),
+            DB::raw('SUM(fabric_godam_lists.net_wt) as net_wt'),
             DB::raw('SUM(fabrics.meter) as meter')
         )
-            ->join('fabrics', 'fabric_godam_lists.fabric_id', '=', 'fabrics.id')
+            ->leftJoin('fabrics', 'fabric_godam_lists.fabric_id', '=', 'fabrics.id')
             ->groupBy('fabric_godam_lists.name');
 
         if ($request->start_date && $request->end_date) {
