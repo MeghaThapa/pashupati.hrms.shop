@@ -31,6 +31,16 @@
                     <button class='go-back btn btn-primary float-right'>Go Back</button>
                 </div>
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form method="post" action="{{ route('fabric.transfer.entry.for.bag.store') }}">
                         @csrf
                         <div class="row">

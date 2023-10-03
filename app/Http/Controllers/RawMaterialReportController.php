@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DanaName;
 use App\Models\Godam;
+use App\Models\DanaName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\RawMaterialBswDanaDateWiseReport;
 use Illuminate\Support\Facades\Log;
 use App\Models\RawMaterialDanaDateWiseReport;
+use App\Models\RawMaterialNewPsiDanaDateWiseReport;
 
 class RawMaterialReportController extends Controller
 {
@@ -16,62 +18,151 @@ class RawMaterialReportController extends Controller
     {
         if ($request->ajax()) {
 
-            DB::table('raw_material_dana_date_wise_reports')->truncate();
+            if (!$request->start_date || !$request->end_date || !$request->godam_id)
+                return response(['status' => false, 'message' => 'Please fill all filters']);
 
-            $this->oldIndex();
+            if ($request->godam_id == 1) {
+                DB::table('raw_material_dana_date_wise_reports')->where('godam_id', 1)->truncate();
+                $this->generatePsiGodamReport(1);
 
-            $reports = DB::table('raw_material_dana_date_wise_reports')
-                ->join('dana_names', 'raw_material_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
-                ->select('dana_names.name as dana_name', 'raw_material_dana_date_wise_reports.date', 'opening_amount', 'import', 'local', 'from_godam', 'tape', 'lam', 'nw_plant', 'sales', 'to_godam', 'closing')
-                ->orderBy('dana_name', 'asc')
-                ->orderBy('date', 'asc');
-            if($request->start_date && $request->end_date)
-            {
-                $reports = $reports->where('raw_material_dana_date_wise_reports.date','>=',$request->start_date)
-                                    ->where('raw_material_dana_date_wise_reports.date','<=',$request->end_date);
-            }
-
-            if($request->godam_id){
-                $reports = $reports->where('godam_id',$request->godam_id);
-            }
-            $reports = $reports->get();
-
-            $formattedReports = [];
-
-            foreach ($reports as $report) {
-                $danaName = $report->dana_name;
-                $date = $report->date;
-
-                if (!isset($formattedReports[$danaName])) {
-                    $formattedReports[$danaName] = [];
+                $reports = DB::table('raw_material_dana_date_wise_reports')
+                    ->join('dana_names', 'raw_material_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
+                    ->select('dana_names.name as dana_name', 'raw_material_dana_date_wise_reports.date', 'opening_amount', 'import', 'local', 'from_godam', 'tape', 'lam', 'nw_plant', 'sales', 'to_godam', 'closing')
+                    ->orderBy('dana_name', 'asc')
+                    ->orderBy('date', 'asc');
+                if ($request->start_date && $request->end_date) {
+                    $reports = $reports->where('raw_material_dana_date_wise_reports.date', '>=', $request->start_date)
+                        ->where('raw_material_dana_date_wise_reports.date', '<=', $request->end_date);
                 }
 
-                $formattedReports[$danaName][$date] = [
-                    'opening_amount' => $report->opening_amount,
-                    'import' => $report->import,
-                    'local' => $report->local,
-                    'from_godam' => $report->from_godam,
-                    'tape' => $report->tape,
-                    'lam' => $report->lam,
-                    'nw_plant' => $report->nw_plant,
-                    'sales' => $report->sales,
-                    'to_godam' => $report->to_godam,
-                    'closing' => $report->closing,
-                ];
+                $reports = $reports->get();
+
+                $formattedReports = [];
+
+                foreach ($reports as $report) {
+                    $danaName = $report->dana_name;
+                    $date = $report->date;
+
+                    if (!isset($formattedReports[$danaName])) {
+                        $formattedReports[$danaName] = [];
+                    }
+
+                    $formattedReports[$danaName][$date] = [
+                        'opening_amount' => $report->opening_amount,
+                        'import' => $report->import,
+                        'local' => $report->local,
+                        'from_godam' => $report->from_godam,
+                        'tape' => $report->tape,
+                        'lam' => $report->lam,
+                        'nw_plant' => $report->nw_plant,
+                        'sales' => $report->sales,
+                        'to_godam' => $report->to_godam,
+                        'closing' => $report->closing,
+                    ];
+                }
+
+                $view = view('admin.rawMaterial.ssr.psireportview', compact('formattedReports'))->render();
+            } elseif ($request->godam_id == 2) {
+                DB::table('raw_material_new_psi_dana_date_wise_reports')->where('godam_id', 2)->truncate();
+                $this->generateNewPsiGodamReport(2);
+
+                $reports = DB::table('raw_material_new_psi_dana_date_wise_reports')
+                    ->join('dana_names', 'raw_material_new_psi_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
+                    ->select('dana_names.name as dana_name', 'raw_material_new_psi_dana_date_wise_reports.date', 'opening_amount', 'import', 'local', 'from_godam', 'tape', 'lam','cc_plant_quantity', 'to_godam','to_godam_quantity', 'closing')
+                    ->orderBy('dana_name', 'asc')
+                    ->orderBy('date', 'asc');
+                if ($request->start_date && $request->end_date) {
+                    $reports = $reports->where('raw_material_new_psi_dana_date_wise_reports.date', '>=', $request->start_date)
+                        ->where('raw_material_new_psi_dana_date_wise_reports.date', '<=', $request->end_date);
+                }
+
+                if ($request->godam_id) {
+                    $reports = $reports->where('godam_id', $request->godam_id);
+                }
+
+                $reports = $reports->get();
+
+                $formattedReports = [];
+
+                foreach ($reports as $report) {
+                    $danaName = $report->dana_name;
+                    $date = $report->date;
+
+                    if (!isset($formattedReports[$danaName])) {
+                        $formattedReports[$danaName] = [];
+                    }
+
+                    $formattedReports[$danaName][$date] = [
+                        'opening_amount' => $report->opening_amount,
+                        'import' => $report->import,
+                        'local' => $report->local,
+                        'from_godam' => $report->from_godam,
+                        'tape' => $report->tape,
+                        'lam' => $report->lam,
+                        'cc_plant_quantity' => $report->cc_plant_quantity,
+                        'to_godam' => $report->to_godam,
+                        'to_godam_quantity' => $report->to_godam_quantity,
+                        'closing' => $report->closing,
+                    ];
+                }
+
+                $view = view('admin.rawMaterial.ssr.newpsireportview', compact('formattedReports'))->render();
+
+            } else {
+                DB::table('raw_material_bsw_dana_date_wise_reports')->where('godam_id', 3)->truncate();
+                $this->generateBswGodamReport(3);
+
+                $reports = DB::table('raw_material_bsw_dana_date_wise_reports')
+                    ->join('dana_names', 'raw_material_bsw_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
+                    ->select('dana_names.name as dana_name', 'raw_material_bsw_dana_date_wise_reports.date', 'opening_amount', 'import', 'local', 'from_godam', 'tape', 'lam', 'to_godam','to_godam_quantity', 'closing')
+                    ->orderBy('dana_name', 'asc')
+                    ->orderBy('date', 'asc');
+                if ($request->start_date && $request->end_date) {
+                    $reports = $reports->where('raw_material_bsw_dana_date_wise_reports.date', '>=', $request->start_date)
+                        ->where('raw_material_bsw_dana_date_wise_reports.date', '<=', $request->end_date);
+                }
+
+                if ($request->godam_id) {
+                    $reports = $reports->where('godam_id', $request->godam_id);
+                }
+
+                $reports = $reports->get();
+
+                $formattedReports = [];
+
+                foreach ($reports as $report) {
+                    $danaName = $report->dana_name;
+                    $date = $report->date;
+
+                    if (!isset($formattedReports[$danaName])) {
+                        $formattedReports[$danaName] = [];
+                    }
+
+                    $formattedReports[$danaName][$date] = [
+                        'opening_amount' => $report->opening_amount,
+                        'import' => $report->import,
+                        'local' => $report->local,
+                        'from_godam' => $report->from_godam,
+                        'tape' => $report->tape,
+                        'lam' => $report->lam,
+                        'to_godam' => $report->to_godam,
+                        'to_godam_quantity' => $report->to_godam_quantity,
+                        'closing' => $report->closing,
+                    ];
+                }
+
+                $view = view('admin.rawMaterial.ssr.bswreportview', compact('formattedReports'))->render();
             }
 
-            $view = view('admin.rawMaterial.ssr.psireportview', compact('formattedReports'))->render();
-            return response(['status'=>true,'data'=>$view]);
+            return response(['status' => true, 'data' => $view]);
         }
         $godams = Godam::all();
-        return view('admin.rawMaterial.psireport',compact('godams'));
+        return view('admin.rawMaterial.psireport', compact('godams'));
     }
 
-    public function oldIndex()
+    private function generatePsiGodamReport($godam_id)
     {
-        $godam_id = 1;
-
-        $rawMaterialArray = $this->getRawMaterialArray();
+        $rawMaterialArray = $this->getRawMaterialArray($godam_id);
 
         $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
 
@@ -81,17 +172,61 @@ class RawMaterialReportController extends Controller
 
         $mergedArray = $this->getMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $salesArray);
 
-
         $status = $this->calculateAndSave($mergedArray, $godam_id);
 
         return $status;
+    }
 
-        return view('admin.rawMaterial.report', compact('mergedArray'));
+    private function generateNewPsiGodamReport($godam_id)
+    {
+        $rawMaterialArray = $this->getRawMaterialArray($godam_id);
+
+        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
+
+        $autoLoadItemsArray = $this->getAutoLoadItemsArray();
+
+        $ccPlantArray = $this->getCcPlantArray($godam_id);
+
+        $mergedArray = $this->getNewPsiMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $ccPlantArray);
+
+        $status = $this->calculateAndSaveNewPsiGodam($mergedArray, $godam_id);
+        return $status;
+    }
+
+    private function generateBswGodamReport($godam_id)
+    {
+        $rawMaterialArray = $this->getRawMaterialArray($godam_id);
+
+        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
+
+        $autoLoadItemsArray = $this->getAutoLoadItemsArray();
+
+        $mergedArray = $this->getBswMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray);
+
+        $status = $this->calculateAndSaveBswGodam($mergedArray, $godam_id);
+        return $status;
+    }
+
+    private function getMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $salesArray)
+    {
+        $mergedData = $this->mergeArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $salesArray);
+        return $mergedData;
+    }
+
+    private function getNewPsiMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $ccPlantArray)
+    {
+        $mergedData = $this->mergeNewPsiArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $ccPlantArray);
+        return $mergedData;
+    }
+
+    private function getBswMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray)
+    {
+        $mergedData = $this->mergeBswArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray);
+        return $mergedData;
     }
 
     private function calculateAndSave($mergedArray, $godam_id)
     {
-
         try {
 
             DB::beginTransaction();
@@ -165,6 +300,165 @@ class RawMaterialReportController extends Controller
         }
     }
 
+    private function calculateAndSaveNewPsiGodam($mergedArray, $godam_id)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $previousDanaName = null;
+            $openingQuantity = 0;
+            $previousClosingAmount = 0;
+
+            foreach ($mergedArray as $danaName => $dates) {
+                if ($danaName !== $previousDanaName) {
+                    // If a new dana_name is encountered, reset the opening quantity to 0
+                    $openingQuantity = 0;
+                }
+
+                foreach ($dates as $date => $dateData) {
+
+                    // Create a new instance of RawMaterialDanaDateWiseReport
+                    $rawMaterialDanaDateWiseReport = new RawMaterialNewPsiDanaDateWiseReport();
+
+                    if(isset($dateData['import_from']) && $dateData['import_from'] == "godam" && $dateData['from_godam_id'] == 2 ){
+                        $rawMaterialDanaDateWiseReport->to_godam = $dateData['to_godam_id'];
+                        $rawMaterialDanaDateWiseReport->to_godam_quantity = $dateData['total_quantity'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->to_godam = 0;
+                        $rawMaterialDanaDateWiseReport->to_godam_quantity = 0;
+                    }
+
+                    if(isset($dateData['import_from']) && $dateData['import_from']=="godam" && $dateData['to_godam_id'] = 2 ){
+                        $rawMaterialDanaDateWiseReport->from_godam = $dateData['total_quantity'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->from_godam = 0;
+                    }
+
+                    // Set the dana_name_id
+                    $dana = DanaName::where('name', $danaName)->firstOrFail();
+                    if ($dana) {
+                        $rawMaterialDanaDateWiseReport->dana_name_id = $dana->id;
+                    }
+
+                    // Set godam_id (assuming $godam_id is available)
+                    $rawMaterialDanaDateWiseReport->godam_id = $godam_id;
+
+                    $rawMaterialDanaDateWiseReport->date = $date;
+
+                    // Calculate and set the values for other fields
+                    $openingAmount = $dateData['opening_quantity'] ?? $openingQuantity + $previousClosingAmount;
+                    $rawMaterialDanaDateWiseReport->opening_amount = $openingAmount;
+
+                    $import = isset($dateData['import_from']) && $dateData['import_from'] == 'import' ? $dateData['total_quantity'] : 0;
+                    $rawMaterialDanaDateWiseReport->import = $import;
+
+                    // logic for local
+                    $local = isset($dateData['import_from']) && $dateData['import_from'] == 'local' ? $dateData['total_quantity'] : 0;
+                    $rawMaterialDanaDateWiseReport->local = $local;
+
+                    $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
+                    $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
+                    $rawMaterialDanaDateWiseReport->cc_plant_quantity = $dateData['cc_plant_quantity'] ?? 0;
+
+                    $closing = $rawMaterialDanaDateWiseReport->opening_amount + $rawMaterialDanaDateWiseReport->import + $rawMaterialDanaDateWiseReport->local + $rawMaterialDanaDateWiseReport->from_godam - $rawMaterialDanaDateWiseReport->tape - $rawMaterialDanaDateWiseReport->lam  - $rawMaterialDanaDateWiseReport->cc_plant_quantity - $rawMaterialDanaDateWiseReport->to_godam_quantity;
+                    $rawMaterialDanaDateWiseReport->closing = $closing;
+
+                    // Save the record
+                    $rawMaterialDanaDateWiseReport->save();
+
+                    $previousClosingAmount = $closing;
+                }
+                $previousDanaName = $danaName;
+            }
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage().' '. $e->getLine());
+        }
+    }
+
+    private function calculateAndSaveBswGodam($mergedArray, $godam_id)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $previousDanaName = null;
+            $openingQuantity = 0;
+            $previousClosingAmount = 0;
+
+            foreach ($mergedArray as $danaName => $dates) {
+                if ($danaName !== $previousDanaName) {
+                    // If a new dana_name is encountered, reset the opening quantity to 0
+                    $openingQuantity = 0;
+                }
+
+                foreach ($dates as $date => $dateData) {
+
+                    // Create a new instance of RawMaterialDanaDateWiseReport
+                    $rawMaterialDanaDateWiseReport = new RawMaterialBswDanaDateWiseReport();
+
+                    if(isset($dateData['import_from']) && $dateData['import_from'] == "godam" && $dateData['from_godam_id'] == 3 ){
+                        $rawMaterialDanaDateWiseReport->to_godam = $dateData['to_godam_id'];
+                        $rawMaterialDanaDateWiseReport->to_godam_quantity = $dateData['total_quantity'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->to_godam = 0;
+                        $rawMaterialDanaDateWiseReport->to_godam_quantity = 0;
+                    }
+
+                    if(isset($dateData['import_from']) && $dateData['import_from']=="godam" && $dateData['to_godam_id'] = 3 ){
+                        $rawMaterialDanaDateWiseReport->from_godam = $dateData['total_quantity'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->from_godam = 0;
+                    }
+
+                    // Set the dana_name_id
+                    $dana = DanaName::where('name', $danaName)->firstOrFail();
+                    if ($dana) {
+                        $rawMaterialDanaDateWiseReport->dana_name_id = $dana->id;
+                    }
+
+                    // Set godam_id (assuming $godam_id is available)
+                    $rawMaterialDanaDateWiseReport->godam_id = $godam_id;
+
+                    $rawMaterialDanaDateWiseReport->date = $date;
+
+                    // Calculate and set the values for other fields
+                    $openingAmount = $dateData['opening_quantity'] ?? $openingQuantity + $previousClosingAmount;
+                    $rawMaterialDanaDateWiseReport->opening_amount = $openingAmount;
+
+                    $import = isset($dateData['import_from']) && $dateData['import_from'] == 'import' ? $dateData['total_quantity'] : 0;
+                    $rawMaterialDanaDateWiseReport->import = $import;
+
+                    // logic for local
+                    $local = isset($dateData['import_from']) && $dateData['import_from'] == 'local' ? $dateData['total_quantity'] : 0;
+                    $rawMaterialDanaDateWiseReport->local = $local;
+
+                    $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
+                    $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
+
+                    $closing = $rawMaterialDanaDateWiseReport->opening_amount + $rawMaterialDanaDateWiseReport->import + $rawMaterialDanaDateWiseReport->local + $rawMaterialDanaDateWiseReport->from_godam - $rawMaterialDanaDateWiseReport->tape - $rawMaterialDanaDateWiseReport->lam - $rawMaterialDanaDateWiseReport->to_godam_quantity;
+                    $rawMaterialDanaDateWiseReport->closing = $closing;
+
+                    // Save the record
+                    $rawMaterialDanaDateWiseReport->save();
+
+                    $previousClosingAmount = $closing;
+                }
+                $previousDanaName = $danaName;
+            }
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage().' '. $e->getLine());
+        }
+    }
+
     private function mergeArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $salesArray)
     {
         $mergedArray = [];
@@ -224,6 +518,110 @@ class RawMaterialReportController extends Controller
         return $mergedArray;
     }
 
+    private function mergeNewPsiArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $ccPlantArray)
+    {
+        $mergedArray = [];
+
+        // Merge $rawMaterialArray into $mergedArray
+        foreach ($rawMaterialArray as $danaName => $rawMaterialData) {
+            if (!isset($mergedArray[$danaName])) {
+                $mergedArray[$danaName] = [];
+            }
+            foreach ($rawMaterialData as $date => $dateInfo) {
+                if (!isset($mergedArray[$danaName][$date])) {
+                    $mergedArray[$danaName][$date] = [];
+                }
+                // Preserve "total_quantity" and "import_from" from $rawMaterialArray
+                $mergedArray[$danaName][$date]['total_quantity'] = $dateInfo['total_quantity'];
+                $mergedArray[$danaName][$date]['import_from'] = $dateInfo['import_from'];
+                $mergedArray[$danaName][$date]['from_godam_id'] = $dateInfo['from_godam_id'];
+                $mergedArray[$danaName][$date]['to_godam_id'] = $dateInfo['to_godam_id'];
+            }
+        }
+
+        // Merge $rawMaterialOpeningsArray into $mergedArray
+        foreach ($rawMaterialOpeningsArray as $danaName => $openingData) {
+            if (!isset($mergedArray[$danaName])) {
+                $mergedArray[$danaName] = [];
+            }
+            foreach ($openingData as $openingDate => $openingInfo) {
+                if (!isset($mergedArray[$danaName][$openingDate])) {
+                    $mergedArray[$danaName][$openingDate] = [];
+                }
+                // Preserve "opening_quantity" from $rawMaterialOpeningsArray
+                $mergedArray[$danaName][$openingDate]['opening_quantity'] = $openingInfo['opening_quantity'];
+            }
+        }
+
+        // Merge $autoLoadItemsArray into $mergedArray
+        $mergedArray = $this->recursiveMerge($mergedArray, $autoLoadItemsArray);
+
+        // Merge $salesArray into $mergedArray
+        foreach ($ccPlantArray as $danaName => $ccPlantData) {
+            foreach ($ccPlantData as $billDate => $salesInfo) {
+                if (!isset($mergedArray[$danaName])) {
+                    $mergedArray[$danaName] = [];
+                }
+                if (!isset($mergedArray[$danaName][$billDate])) {
+                    $mergedArray[$danaName][$billDate] = [];
+                }
+                // Add the sales_quantity from $salesArray into $mergedArray
+                $mergedArray[$danaName][$billDate]['cc_plant_quantity'] = $salesInfo['cc_plant_quantity'];
+            }
+        }
+
+        foreach ($mergedArray as &$danaData) {
+            ksort($danaData);
+        }
+
+        return $mergedArray;
+    }
+
+    private function mergeBswArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray)
+    {
+        $mergedArray = [];
+
+        // Merge $rawMaterialArray into $mergedArray
+        foreach ($rawMaterialArray as $danaName => $rawMaterialData) {
+            if (!isset($mergedArray[$danaName])) {
+                $mergedArray[$danaName] = [];
+            }
+            foreach ($rawMaterialData as $date => $dateInfo) {
+                if (!isset($mergedArray[$danaName][$date])) {
+                    $mergedArray[$danaName][$date] = [];
+                }
+                // Preserve "total_quantity" and "import_from" from $rawMaterialArray
+                $mergedArray[$danaName][$date]['total_quantity'] = $dateInfo['total_quantity'];
+                $mergedArray[$danaName][$date]['import_from'] = $dateInfo['import_from'];
+                $mergedArray[$danaName][$date]['from_godam_id'] = $dateInfo['from_godam_id'];
+                $mergedArray[$danaName][$date]['to_godam_id'] = $dateInfo['to_godam_id'];
+            }
+        }
+
+        // Merge $rawMaterialOpeningsArray into $mergedArray
+        foreach ($rawMaterialOpeningsArray as $danaName => $openingData) {
+            if (!isset($mergedArray[$danaName])) {
+                $mergedArray[$danaName] = [];
+            }
+            foreach ($openingData as $openingDate => $openingInfo) {
+                if (!isset($mergedArray[$danaName][$openingDate])) {
+                    $mergedArray[$danaName][$openingDate] = [];
+                }
+                // Preserve "opening_quantity" from $rawMaterialOpeningsArray
+                $mergedArray[$danaName][$openingDate]['opening_quantity'] = $openingInfo['opening_quantity'];
+            }
+        }
+
+        // Merge $autoLoadItemsArray into $mergedArray
+        $mergedArray = $this->recursiveMerge($mergedArray, $autoLoadItemsArray);
+
+        foreach ($mergedArray as &$danaData) {
+            ksort($danaData);
+        }
+
+        return $mergedArray;
+    }
+
     private function recursiveMerge($array1, $array2)
     {
         foreach ($array2 as $key => $value) {
@@ -236,17 +634,12 @@ class RawMaterialReportController extends Controller
         return $array1;
     }
 
-    private function getMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $salesArray)
-    {
-        $mergedData = $this->mergeArrays($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray, $salesArray);
-        return $mergedData;
-    }
 
-    private function getRawMaterialArray()
-    {
 
+    private function getRawMaterialArray($godam_id)
+    {
         $rawMaterialsResults = DB::table('raw_materials')
-            ->join('raw_material_items', 'raw_materials.id', '=', 'raw_material_items.raw_material_id')
+            ->leftJoin('raw_material_items', 'raw_materials.id', '=', 'raw_material_items.raw_material_id')
             ->join('storein_types', 'raw_materials.storein_type_id', '=', 'storein_types.id')
             ->join('dana_names', 'raw_material_items.dana_name_id', '=', 'dana_names.id')
             ->select(
@@ -257,8 +650,8 @@ class RawMaterialReportController extends Controller
                 DB::raw('SUM(raw_material_items.quantity) as total_quantity'),
                 'storein_types.name as import_from'
             )
-            ->where('raw_materials.to_godam_id', 1)
-            ->orWhere('raw_materials.from_godam_id', 1)
+            ->where('raw_materials.to_godam_id', $godam_id)
+            ->orWhere('raw_materials.from_godam_id', $godam_id)
             ->groupBy('dana_name', 'raw_materials.date', 'import_from', 'from_godam_id', 'to_godam_id')
             ->orderBy('dana_name', 'asc')
             ->orderBy('raw_materials.date', 'asc')
@@ -403,5 +796,42 @@ class RawMaterialReportController extends Controller
             ];
         }
         return $salesArray;
+    }
+
+    private function getCcPlantArray($godam_id)
+    {
+        $ccPlantDanaCreations = DB::table('cc_plant_dana_creation')
+            ->join('dana_names', 'cc_plant_dana_creation.dana_name_id', '=', 'dana_names.id')
+            ->join('ccplantentry', 'cc_plant_dana_creation.cc_plant_entry_id', '=', 'ccplantentry.id')
+            ->select(
+                'cc_plant_dana_creation.id',
+                'cc_plant_dana_creation.dana_name_id',
+                'cc_plant_dana_creation.dana_group_id',
+                'cc_plant_dana_creation.cc_plant_entry_id',
+                'cc_plant_dana_creation.quantity',
+                'cc_plant_dana_creation.plant_type_id',
+                'cc_plant_dana_creation.plant_name_id',
+                'dana_names.name as dana_name',
+                'ccplantentry.godam_id',
+                'ccplantentry.date',
+                'ccplantentry.receipt_number',
+                'ccplantentry.remarks',
+                'ccplantentry.status'
+            )
+            ->where('ccplantentry.godam_id',$godam_id)
+            ->get();
+
+        $formattedData = [];
+
+        foreach ($ccPlantDanaCreations as $record) {
+            $danaName = $record->dana_name;
+            $date = $record->date;
+            $quantity = $record->quantity;
+
+            // Build the desired format
+            $formattedData[$danaName][$date]['cc_plant_quantity'] = $quantity;
+        }
+
+        return $formattedData;
     }
 }

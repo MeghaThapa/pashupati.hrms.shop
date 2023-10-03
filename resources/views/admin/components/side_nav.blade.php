@@ -889,6 +889,19 @@
 
             </li>
 
+            <li class="nav-item">
+
+                <a href="{{ route('rawmaterial.dana.datewise.report') }}"
+                    class="nav-link {{ request()->routeIs('rawmaterial.dana.datewise.report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Raw Material Dana wise Report</p>
+
+                </a>
+
+            </li>
+
 
             <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
 
@@ -1140,7 +1153,7 @@
                                 <i class="nav-icon fas fa-tags"></i>
                                 <p>FinalTripal Rewinding Report</p>
                             </a>
-                        </li> 
+                        </li>
             </ul>
 
             <li class="nav-item">

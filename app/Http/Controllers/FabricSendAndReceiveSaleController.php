@@ -25,7 +25,6 @@ class FabricSendAndReceiveSaleController extends Controller
     }
     public function index()
     {
-
         $fabrics = FabricStock::get()->unique('name')->values()->all();
         $partyname = Supplier::where('status', 1)->get();
         return view('admin.sale.fabricsale.index', compact('fabrics', 'partyname'));
@@ -196,8 +195,6 @@ class FabricSendAndReceiveSaleController extends Controller
             DB::rollBack();
             dd($e->getMessage());
         }
-
-
     }
 
     public function create($entry_id)
