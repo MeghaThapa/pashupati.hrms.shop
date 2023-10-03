@@ -29,6 +29,7 @@ use App\Models\Unlaminatedfabrictripal;
 use App\Models\BagFabricReceiveItemSent;
 use App\Models\Singlesidelaminatedfabric;
 use App\Models\FabricSendAndReceiveLaminatedSent;
+use App\Models\SingleSideunlaminatedFabric;
 
 class FabricController extends Controller
 {
@@ -39,21 +40,166 @@ class FabricController extends Controller
         $this->neDate = $neDate;
     }
 
-    public function fixData(){
+    public function fixData()
+    {
+        $fabrics = Fabric::where('godam_id', 2)->orderBy('roll_no', 'ASC')->get();
 
-        $fabricGodamLists = FabricGodamList::whereNull('fabric_id')->get();
+        // Create a temporary associative array to check for unique roll_no values
+        $filteredArray = [];
 
+        // Create a temporary associative array to check for unique roll_no values
+        $tempRollNos = [];
 
-        foreach($fabricGodamLists as $godamItem){
+        foreach ($fabrics as $fabric) {
+            $rollNo = $fabric->roll_no;
+            $name = $fabric->name;
 
-            $fabric = Fabric::where('name',$godamItem->name)->where('roll_no',$godamItem->roll)->first();
-            if($fabric){
-                $godamItem->fabric_id = $fabric->id;
-                $godamItem->save();
+            // Check if the roll_no exists in the temporary array
+            if (!isset($tempRollNos[$rollNo])) {
+                // If not, add it with the current name as the first entry
+                $tempRollNos[$rollNo] = [$name];
+            } else {
+                // If yes, check if the name is different from existing names
+                if (!in_array($name, $tempRollNos[$rollNo])) {
+                    // Add the name to the existing roll_no entry
+                    $tempRollNos[$rollNo][] = $name;
+
+                    // Create and push entries in the filtered array
+                    foreach ($tempRollNos[$rollNo] as $uniqueName) {
+                        $filteredArray[] = [
+                            'roll_no' => $rollNo,
+                            'name' => $uniqueName,
+                        ];
+                    }
+                }
             }
         }
 
-        dd($fabricGodamLists->count());
+        $notInStock = [];
+
+        foreach ($filteredArray as $item) {
+            $rollNo = $item['roll_no'];
+            $name = $item['name'];
+
+            // Check if a corresponding record exists in fabric_stock
+            $recordExists = FabricStock::where('roll_no', $rollNo)
+                ->where('name', $name)
+                ->exists();
+
+            // If it doesn't exist, add it to the result array
+            if (!$recordExists) {
+                $notInStock[] = [
+                    'roll_no' => $rollNo,
+                    'name' => $name,
+                ];
+            }
+        }
+
+        $notInGodamTransfer = [];
+
+        foreach ($notInStock as $item) {
+            $rollNo = $item['roll_no'];
+            $name = $item['name'];
+
+            // Check if a corresponding record exists in FabricGodamList
+            $fabricGodamListExists = FabricGodamList::where('name', $name)
+                ->where('roll', $rollNo)
+                ->first();
+
+            // If it doesn't exist in FabricGodamList, add it to the result array
+            if (!$fabricGodamListExists) {
+                $notInGodamTransfer[] = [
+                    'roll_no' => $rollNo,
+                    'name' => $name,
+                ];
+            }
+        }
+
+        $notInUnLamFabTripal = [];
+
+        foreach ($notInGodamTransfer as $item) {
+            $rollNo = $item['roll_no'];
+            $name = $item['name'];
+
+            $fabric = Fabric::where('roll_no',$rollNo)->where('name',$name)->first();
+            $unLamTripalExists = Unlaminatedfabrictripal::where('roll_no', $rollNo)
+                ->where('fabric_id', $fabric->id)
+                ->first();
+
+            // If it doesn't exist in SingleSideunlaminatedFabric, add it to the result array
+            if (!$unLamTripalExists) {
+                $notInUnLamFabTripal[] = [
+                    'roll_no' => $rollNo,
+                    'name' => $name,
+                ];
+            }
+        }
+
+        // $filteredData = [];
+
+        // foreach ($notInSingleSide as $item) {
+        //     $name = $item['name'];
+
+        //     if (strpos($name, '55"') === 0 || strpos($name, '48"') === 0 || strpos($name, '46"') === 0 || strpos($name, '60"') === 0) {
+        //         $filteredData[] = $item;
+        //     }
+        // }
+
+        // foreach ($filteredData as $item) {
+        //     $rollNo = $item['roll_no'];
+        //     $name = $item['name'];
+
+        //     // Search for the Fabric record
+        //     $fabric = Fabric::where('roll_no', $rollNo)
+        //         ->where('name', $name)
+        //         ->first();
+        //     if ($fabric) {
+        //         $fabricStock = new FabricStock();
+        //         $fabricStock->name = $fabric->name;
+        //         $fabricStock->status = "active";
+        //         $fabricStock->slug = $fabric->slug;
+        //         $fabricStock->fabricgroup_id = $fabric->fabricgroup_id;
+        //         $fabricStock->godam_id = $fabric->godam_id;
+        //         $fabricStock->average_wt = $fabric->average_wt;
+        //         $fabricStock->gram_wt = $fabric->gram_wt;
+        //         $fabricStock->gross_wt = $fabric->gross_wt;
+        //         $fabricStock->net_wt = $fabric->net_wt;
+        //         $fabricStock->meter = $fabric->meter;
+        //         $fabricStock->roll_no = $fabric->roll_no;
+        //         $fabricStock->loom_no = $fabric->loom_no;
+        //         $fabricStock->bill_no = $fabric->bill_no;
+        //         $fabricStock->status = $fabric->status;
+        //         $fabricStock->is_laminated = $fabric->is_laminated;
+        //         $fabricStock->fabric_id = $fabric->id;
+        //         $fabricStock->date_np = $fabric->date_np;
+        //         $fabricStock->save();
+        //     }
+        // }
+
+
+        $table = '<table>';
+        $table .= '<thead><tr><th>Roll No</th><th>Name</th><th>Net Wt</th><th>Gross Wt</th><th>Meter</th></tr></thead>';
+        $table .= '<tbody>';
+
+        foreach ($notInUnLamFabTripal as $item) {
+            $fabric = Fabric::where('roll_no',$item['roll_no'])->where('name',$item['name'])->first();
+            $table .= '<tr>';
+            $table .= '<td>' . $item['roll_no'] . '</td>';
+            $table .= '<td>' . $item['name'] . '</td>';
+            $table .= '<td>' . $fabric->net_wt . '</td>';
+            $table .= '<td>' . $fabric->gross_wt . '</td>';
+            $table .= '<td>' . $fabric->meter . '</td>';
+            $table .= '</tr>';
+        }
+
+        // Close the table
+        $table .= '</tbody>';
+        $table .= '</table>';
+
+        // Echo the HTML table
+        echo $table;
+
+        die();
 
     }
 
@@ -84,10 +230,10 @@ class FabricController extends Controller
         $html .= '</table>';
 
         echo $html;
-
     }
 
-    public function fixLamCentertoEndData(){
+    public function fixLamCentertoEndData()
+    {
         $fabrics = FabricStock::where('name', 'REGEXP', '\\(Lam\\)\\(.*\\)')->get();
         foreach ($fabrics as $fabric) {
             $fabric->name = str_replace('(Lam)', '', $fabric->name) . ' (Lam)';
@@ -111,7 +257,6 @@ class FabricController extends Controller
         $html .= '</table>';
 
         echo $html;
-
     }
 
     public function fixDataMergedunlamSentfabric()
@@ -203,23 +348,22 @@ class FabricController extends Controller
 
         $result1 = array_intersect($updatedFabrics, $updatedItems);
 
-        $godamTransferLists = FabricGodamList::where('fromgodam_id',2)->where('togodam_id',1)->pluck('roll')->toArray();
+        $godamTransferLists = FabricGodamList::where('fromgodam_id', 2)->where('togodam_id', 1)->pluck('roll')->toArray();
 
-        $updatedGodamList = array_map(function ($godamTransferLists ){
+        $updatedGodamList = array_map(function ($godamTransferLists) {
 
             if (in_array(substr($godamTransferLists, -2), ['-O', '-O', '-O', '-O'])) {
                 return substr($godamTransferLists, 0, -2);
-            }else {
+            } else {
                 return $godamTransferLists;
             }
-
-        },$godamTransferLists);
+        }, $godamTransferLists);
 
         $resultFinal = array_intersect($updatedGodamList, $result1);
 
         $resultFinalValues = array_values($resultFinal);
-        foreach($resultFinalValues as $key => $value){
-            echo $value .",";
+        foreach ($resultFinalValues as $key => $value) {
+            echo $value . ",";
         }
         die();
     }

@@ -57,8 +57,6 @@ class SaudaItemController extends Controller
                 })
                 ->rawColumns(['action','status'])
                 ->make(true);
-
-
         }
 
         $suppliers = Supplier::select('name','id')->get();
@@ -243,6 +241,7 @@ class SaudaItemController extends Controller
         $data['fabric_name'] = json_encode($request->fabric_name);
         $data['order_qty'] = $data['qty'];
         SaudaItem::create($data);
+
         return redirect()->back()->with('message','Sauda Item Added Successfully');
     }
 
