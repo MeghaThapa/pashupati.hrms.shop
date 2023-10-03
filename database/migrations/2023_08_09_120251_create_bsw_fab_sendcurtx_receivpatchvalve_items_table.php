@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('bsw_fab_sendcurtx_receivpatchvalve_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("entry_id");
-            $table->foreign("entry_id")->references("id")->on("bsw_fab_sendcurtx_receivpatchvalve_entries")->onDelete("cascade");
+            $table->foreign("entry_id")->references("id")->on("bsw_fab_sendcurtx_receivpatchvalve_entries");
             $table->unsignedBigInteger("fabric_id")->index()->nullable();
             $table->foreign("fabric_id")->references("id")->on("fabrics")->onDelete("cascade");
 

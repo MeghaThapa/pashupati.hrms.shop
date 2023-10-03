@@ -12,9 +12,25 @@ use Yajra\DataTables\Facades\DataTables;
 class BswFabSendcurtxReceivpatchvalveEntryController extends Controller
 {
     public function index(){
-
+         $this->fixData();
         return view('admin.bsw.patch_valve.index');
     }
+
+
+    // private function fixData(){
+    //    $items = PrintingAndCuttingBagItem::all();
+    //    foreach($items as $item){
+    //         $fabric=Fabric::where('meter', $item->meter)
+    //         ->where('roll_no',$item->roll_no)
+    //         ->first();
+    //         if($fabric){
+    //          $item->fabric_id =$fabric->id;
+    //          $item->save();
+    //          }else{
+    //             dd($item);
+    //          }
+    //    }
+    // }
 
     public function yajraDatatables(){
          $bswCurtexToPatchValveEntryDatas=BswFabSendcurtxReceivpatchvalveEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name'])
@@ -81,6 +97,7 @@ class BswFabSendcurtxReceivpatchvalveEntryController extends Controller
             'shift_id'=>'required',
             'godam_id'=>'required',
         ]);
+        //validation
         $bswFabSendcurtxReceivpatchvalveEntry = new BswFabSendcurtxReceivpatchvalveEntry();
         $bswFabSendcurtxReceivpatchvalveEntry->receipt_no = $request->receipt_no;
         $bswFabSendcurtxReceivpatchvalveEntry->date = $request->date_np;

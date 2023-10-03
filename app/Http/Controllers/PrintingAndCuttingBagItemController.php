@@ -8,8 +8,9 @@ use App\Models\BagFabricReceiveItemSentStock;
 use App\Models\PrintedAndCuttedRollsEntry;
 use Illuminate\Http\Request;
 use App\Models\WasteStock;
+use Exception;
 use Expection;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class PrintingAndCuttingBagItemController extends Controller
 {
@@ -63,6 +64,15 @@ class PrintingAndCuttingBagItemController extends Controller
         "waste_type_id"=>'required',
        ]);
 
+
+       $stockData = BagFabricReceiveItemSentStock::
+       where('roll_no',$request->roll_no)
+       ->where('average', $request->average)
+       ->where('gross_wt',$request->gross_weight)
+       ->where('net_wt',$request->net_weight)
+       ->where('meter',$request->meter)
+       ->first();
+    //    dd($stockData);
        DB::beginTransaction();
        $printingAndCuttingBagItem = new PrintingAndCuttingBagItem();
        $printingAndCuttingBagItem->printAndCutEntry_id= $request->printAndCutEntry_id;
@@ -82,8 +92,15 @@ class PrintingAndCuttingBagItemController extends Controller
        $printingAndCuttingBagItem->godam_id= $request->godam_id;
        $printingAndCuttingBagItem->wastage_id= $request->waste_type_id;
 
+       $printingAndCuttingBagItem->bFRIStock_id=$stockData->id;
        $printingAndCuttingBagItem->save();
        //find wastage stock and add up or create new waste stock if no stock exists
+
+       //transfer the stock to Print And Cutting
+        $stockData->status ='Print And Cutting';
+        $stockData->save();
+
+
        $wastageStock=WasteStock::where('godam_id',$request->godam_id)
        ->where('waste_id',$request->waste_type_id)
        ->first();
@@ -106,6 +123,10 @@ class PrintingAndCuttingBagItemController extends Controller
         }
         catch(Exception $e){
             DB::rollback();;
+            return response()->json([
+            'message' => 'error',
+
+        ]);
         }
     }
 
@@ -127,16 +148,29 @@ class PrintingAndCuttingBagItemController extends Controller
         //
     }
     public function itemDelete($printingAndCuttingBagItem_id){
+         try{
+         DB::beginTransaction();
          $printingAndCuttingBagItem = PrintingAndCuttingBagItem::find($printingAndCuttingBagItem_id);
          $wasteStock =WasteStock::where('godam_id',$printingAndCuttingBagItem->godam_id )
          ->where('waste_id',$printingAndCuttingBagItem->wastage_id)
          ->first();
-         $wasteStock->quantity_in_kg=$wasteStock->quantity_in_kg-$printingAndCuttingBagItem->wastage;
+
+         $wasteStock->quantity_in_kg=$wasteStock->quantity_in_kg+$printingAndCuttingBagItem->wastage;
+
          if($wasteStock->quantity_in_kg<=0){
                 $wasteStock->delete();
          }
-         $printingAndCuttingBagItem ->delete();
+        $wasteStock->save();
 
+        $printingAndCuttingBagItem ->delete();
+
+        $bagFabricReceiveItemSentStock = BagFabricReceiveItemSentStock::find( $printingAndCuttingBagItem->bFRIStock_id);
+        $bagFabricReceiveItemSentStock->status = 'Stock';
+        $bagFabricReceiveItemSentStock->save();
+        DB::commit();
+        }catch(Expection $ex){
+            DB::rollback();
+        }
     }
 
     public function updateStock(Request $request){

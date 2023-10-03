@@ -1300,7 +1300,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('finaltripal-report-view', 'Tripal\Report\FinalTripalReportController@generateDoubleTripalView')->name('finaltripalreport.view');
 
-   
+
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
@@ -1532,6 +1532,7 @@ Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name
         //prints and cuts starts
         //entry
     Route::get("prints/and/cuts/index",[PrintedAndCuttedRollsController::class,"index"])->name('prints.and.cuts.index');
+    Route::get("prints/and/cuts/view/{id}",[PrintedAndCuttedRollsController::class,"view"])->name('prints.and.cuts.view');
 //megha
     Route::get("printCuts/datafixes",[PrintedAndCuttedRollsController::class,"datafixes"])->name('printCuts.datafixes');
 

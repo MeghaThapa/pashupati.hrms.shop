@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CommonStockOfThreeStock extends Model
 {
     use HasFactory;
-    protected $table ='common_stock_of_three_stock';
+    protected $table ='common_stock_of_three_stocks';
 
     public function curtexToPatchValFabric()
     {

@@ -23,3 +23,6 @@ class PrintingAndCuttingBagItem extends Model
         return $this->belongsTo('App\Models\Fabric', 'fabric_id', "id");
     }
 }
+
+
+
