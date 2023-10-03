@@ -92,7 +92,7 @@ class PrintingAndCuttingBagItemController extends Controller
        $printingAndCuttingBagItem->godam_id= $request->godam_id;
        $printingAndCuttingBagItem->wastage_id= $request->waste_type_id;
 
-       $printingAndCuttingBagItem->bFRIStock_id=$stockData->id;
+       $printingAndCuttingBagItem->bag_fabric_receive_item_sent_stock_id=$stockData->id;
        $printingAndCuttingBagItem->save();
        //find wastage stock and add up or create new waste stock if no stock exists
 
@@ -164,7 +164,7 @@ class PrintingAndCuttingBagItemController extends Controller
 
         $printingAndCuttingBagItem ->delete();
 
-        $bagFabricReceiveItemSentStock = BagFabricReceiveItemSentStock::find( $printingAndCuttingBagItem->bFRIStock_id);
+        $bagFabricReceiveItemSentStock = BagFabricReceiveItemSentStock::find( $printingAndCuttingBagItem->bag_fabric_receive_item_sent_stock_id);
         $bagFabricReceiveItemSentStock->status = 'Stock';
         $bagFabricReceiveItemSentStock->save();
         DB::commit();
@@ -179,7 +179,7 @@ class PrintingAndCuttingBagItemController extends Controller
             $printingAndCuttingEntryItems= PrintingAndCuttingBagItem::where('printAndCutEntry_id',$request->printAndCutEntry_id)->get();
             foreach ($printingAndCuttingEntryItems as $item) {
                 //deleting from BagFabricReceiveItemSentStock
-                $bag_fabric_receive_item_sent_stock=BagFabricReceiveItemSentStock::where('roll_no',$item->roll_no)->first();
+                $bag_fabric_receive_item_sent_stock=BagFabricReceiveItemSentStock::where('bag_fabric_receive_item_sent_stock_id ',$item->bag_fabric_receive_item_sent_stock_id )->first();
                 if ($bag_fabric_receive_item_sent_stock){
                     $bag_fabric_receive_item_sent_stock->delete();
                 }

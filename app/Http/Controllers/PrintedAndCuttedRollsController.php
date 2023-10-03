@@ -61,8 +61,8 @@ class PrintedAndCuttedRollsController extends Controller
     }
     public function index()
     {
+        
         $data = PrintedAndCuttedRollsEntry::orderBy('created_at', 'desc')->get();
-
         return view("admin.bag.printsandcuts.index", compact("data"));
     }
 
