@@ -61,8 +61,16 @@ class PrintedAndCuttedRollsController extends Controller
     }
     public function index()
     {
-        $data = PrintedAndCuttedRollsEntry::all();
+        $data = PrintedAndCuttedRollsEntry::orderBy('created_at', 'desc')->get();
+
         return view("admin.bag.printsandcuts.index", compact("data"));
+    }
+
+    public function view($id){
+         $printedAndCuttedRollsEntryData = PrintedAndCuttedRollsEntry::with(['printingAndCuttingBagItems','printingAndCuttingBagItems.fabric:id,name','printingAndCuttingBagItems.brandBag:id,name'])
+         ->find($id);
+        //   return  $printedAndCuttedRollsEntryData->printingAndCuttingBagItems[10];
+         return view("admin.bag.printsandcuts.view", compact("printedAndCuttedRollsEntryData"));
     }
 
     public function createEntry()
@@ -93,9 +101,6 @@ class PrintedAndCuttedRollsController extends Controller
             "date_np" => "required"
 
         ]);
-
-
-
         PrintedAndCuttedRollsEntry::create([
 
             "receipt_number" => $request->receipt_number,
@@ -105,9 +110,6 @@ class PrintedAndCuttedRollsController extends Controller
             "date_np" => $request->date_np
 
         ]);
-
-
-
         return $this->index();
     }
 
@@ -119,7 +121,6 @@ class PrintedAndCuttedRollsController extends Controller
         $data = PrintedAndCuttedRollsEntry::where('id', $id)->first();
 
         // return $data;
-
         $fabrics = DB::table('bag_fabric_receive_item_sent_stock as stock')
 
             ->join('fabrics', 'fabrics.id', '=', 'stock.fabric_id')
@@ -166,17 +167,22 @@ class PrintedAndCuttedRollsController extends Controller
 
     public function getFabric(Request $request)
     {
-
-        return  BagFabricReceiveItemSentStock::where('roll_no', $request->roll_no)
-
+        $fabric =  BagFabricReceiveItemSentStock::where('roll_no', $request->roll_no)
+            ->where('status','Stock')
             ->with(['fabric' => function ($query) {
 
                 $query->select('id', 'name');
             }])
-
             ->select('fabric_id as fabric_id', 'net_wt', 'gross_wt', 'average','meter')
-
             ->first();
+             if (!$fabric) {
+                return response()->json([
+                                'error'=>'roll no not in stock or have already been used'
+                            ],404);
+            }else{
+                 return  $fabric;
+            }
+
     }
 
     public function getDanaGroup(Request $request)
@@ -211,15 +217,10 @@ class PrintedAndCuttedRollsController extends Controller
 
             $query->select('id', 'name');
         }])
-
             ->select('dana_name_id')
-
             //->where('dana_group_id',$request->dana_group_id)
-
             ->where('from_godam_id', $request->godam_id)
-
             ->distinct()
-
             ->get();
 
         return $danaNames;

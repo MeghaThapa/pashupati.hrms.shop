@@ -12,4 +12,10 @@ class PrintedAndCuttedRollsEntry extends Model
     protected $fillable = [
         "receipt_number" ,"date", "date_np" , "status"
     ];
+
+    public function printingAndCuttingBagItems()
+    {
+        return $this->hasMany(PrintingAndCuttingBagItem::class, "printAndCutEntry_id", "id");
+    }
+
 }

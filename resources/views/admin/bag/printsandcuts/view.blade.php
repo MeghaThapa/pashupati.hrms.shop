@@ -10,7 +10,7 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('View Store In') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('Prints and cuts ') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -18,9 +18,9 @@
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('storein.index') }}">{{ __('Storein') }}</a>
+                        <a href="{{ route('prints.and.cuts.index') }}">{{ __('Prints and cuts') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('View Store In') }}</li>
+                    <li class="breadcrumb-item active">{{ __('View Prints and Cuts Details') }}</li>
                 </ol>
             </div>
         </div>
@@ -33,7 +33,7 @@
             <div class="row">
                 <div class="card col-md-12">
                     <div class="card-header">
-                        <h3 class="card-title">{{ __('BAG ITEMS RECEIPT') }}:</h3>
+                        <h3 class="card-title">{{ __('PRINTS AND CUTS RECEIPT') }}:</h3>
                         <img class="lg-logo" src="{{ asset('img/9549253661679541318.png') }}" alt=""
                             style="height:30px;">
                     </div>
@@ -47,28 +47,28 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="font-weight-bold">
-                                    <p><strong>{{ __('SR. No.') }}:</strong> {{ $storein->sr_no }} </p>
+                                    <p><strong>{{ __('SR. No.') }}:</strong>
+                                        {{ $printedAndCuttedRollsEntryData->receipt_number }} </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="font-weight-bold">
-                                    <p><strong>{{ __('PP. No.') }}:</strong>{{ $storein->pp_no }} </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="font-weight-bold">
-                                    <p><strong>{{ __('Bill. No.') }}:</strong> {{ $storein->bill_no }}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="row p-3">
                             <div class="col-sm-12">
                                 <div class="store_name">
-                                    <p><strong>{{ __('Company') }}:</strong> {{ $storein->supplier->company_name }} </p>
+                                    <p><strong>{{ __('Date') }}:</strong> {{ $printedAndCuttedRollsEntryData->date }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="row p-3">
+                        {{-- <div class="row p-3">
                             <div class="col-sm-6">
                                 <div class="store_name">
                                     <p><strong>{{ __('Supplier Name') }}:</strong> {{ $storein->supplier->name }}</p>
@@ -93,7 +93,7 @@
                                     <p><strong>{{ __('Date') }}:</strong> {{ $storein->purchase_date }}</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="card-body p-0">
                         <div class="row">
@@ -109,30 +109,49 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>S.N</th>
-                                                                <th>{{ __('Particulars') }}</th>
-                                                                <th>{{ __('Qty') }}</th>
-                                                                <th>{{ __('Rate') }}</th>
-                                                                <th>{{ __('Amount') }}</th>
-                                                                {{-- <th>{{ __('Total') }}</th> --}}
-
+                                                                <th>{{ __('Fabric') }}</th>
+                                                                <th>{{ __('Roll No') }}</th>
+                                                                <th>{{ __('Net Weight') }}</th>
+                                                                <th>{{ __('Cut Length') }}</th>
+                                                                <th>{{ __('brand bag') }}</th>
+                                                                <th>{{ __('request bag') }}</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             @php
                                                                 $i = 1;
+                                                                $totalBag = 0;
                                                             @endphp
-                                                            @foreach ($storein->storeinItems as $items)
+                                                            @foreach ($printedAndCuttedRollsEntryData->printingAndCuttingBagItems as $items)
                                                                 <tr>
                                                                     <td>{{ $i++ }}</td>
-                                                                    <td>{{ $items->itemsOfStorein->name }}</td>
-                                                                    <td>{{ $items->quantity }}</td>
-                                                                    <td>{{ $items->price }}</td>
-                                                                    <td>{{ $items->price * $items->quantity }}</td>
-                                                                    {{-- <td>{{ $items->total_amount }}</td> --}}
+                                                                    <td>{{ $items->fabric->name }}</td>
+                                                                    <td>{{ $items->roll_no }}</td>
+                                                                    <td>{{ $items->net_weight }}</td>
+                                                                    <td>{{ $items->cut_length }}</td>
+                                                                    @if ($items && $items->brandBag)
+                                                                        <td>{{ $items->brandBag->name }}</td>
+                                                                    @else
+                                                                        <td>null</td>
+                                                                    @endif
+                                                                    <td>{{ number_format($items->req_bag, 2) }}</td>
                                                                 </tr>
+                                                                @php
+                                                                    $totalBag += $items->req_bag;
+                                                                @endphp
                                                             @endforeach
                                                         </tbody>
-                                                        <tbody>
+                                                        <tfoot>
+                                                            <tr style="font-weight:bold;">
+                                                                <td>
+                                                                    Total:
+                                                                </td>
+                                                                <td>
+                                                                    {{ $totalBag }}
+                                                                </td>
+                                                            </tr>
+                                                        </tfoot>
+                                                        {{-- <tbody>
                                                             <tr>
                                                                 <td colspan="4" class="text-right">Sub Total</td>
                                                                 <td colspan="2">
@@ -165,7 +184,7 @@
                                                                     {{ $storein->grand_total ? $storein->grand_total : '0' }}
                                                                 </td>
                                                             </tr>
-                                                        </tbody>
+                                                        </tbody> --}}
                                                     </table>
                                                 </div>
                                             </td>
@@ -184,14 +203,6 @@
                     </div>
                 </div>
             </div>
-            {{-- Return for this purchase --}}
-
-
-            {{-- Damage for this purchase --}}
-
-
-            {{-- Processing products under this purchase --}}
-
         </div>
     </div>
     <!-- /.content -->

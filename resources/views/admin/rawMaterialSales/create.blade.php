@@ -207,8 +207,7 @@
             }
             $('#danaGroup').on('select2:select', function(e) {
                 let danaGroup_id = e.target.value;
-                // let godam_id = JSON.parse(`{!! json_encode($rawMaterial->from_godam_id) !!}`);
-                // let fromStockBool = JSON.parse(`{!! json_encode($fromRawMaterialStock) !!}`);
+
                 getDanaName(danaGroup_id);
             });
 

@@ -65,8 +65,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
     </style>
 @endsection
 @section('content')
@@ -673,7 +673,7 @@
 
             $('#godamId').on('select2:select', function(e) {
                 let godam_id = e.params.data.id;
-                $('#danaGroupId').empty();
+                $('#danaNameId').empty();
                 getDanaName(godam_id);
             });
 
@@ -690,7 +690,7 @@
                 // console.log('df');
                 let godam_id = document.getElementById('godamId').value;
                 let dana_name_id = e.params.data.id;
-                $('#avilableStock').empty();
+                // $('#avilableStock').empty();
                 getStockQuantity(godam_id, dana_name_id);
             });
             // printsAndCuts.getStockQuantity
@@ -729,6 +729,7 @@
 
                     },
                     success: function(response) {
+
                         $('#danaNameId').prepend(
                             "<option value='' disabled selected>Select required</option>"
                         );
@@ -753,9 +754,9 @@
                         godam_id: godam_id,
                     },
                     success: function(response) {
-                        $('#danaGroupId').prepend(
-                            "<option value='' disabled selected>Select required data</option>"
-                        );
+                        // $('#danaGroupId').prepend(
+                        //     "<option value='' disabled selected>Select required data</option>"
+                        // );
                         response.danaGroups.forEach(function(item) {
                             setOptionInSelect('danaGroupId', item.dana_group.id,
                                 item.dana_group
@@ -818,6 +819,7 @@
                         roll_no: roll_no,
                     },
                     success: function(response) {
+                        console.log(response.error);
                         setOptionInSelect('fabricId', response.fabric.id, response.fabric
                             .name);
                         $('#netWeight').val(response.net_wt);
@@ -826,7 +828,10 @@
                         $('#meter').val(response.meter);
                     },
                     error: function(xhr, status, error) {
-                        setErrorMsg(xhr.responseJSON.message);
+
+                        if (xhr.status === 404) {
+                            alert("Error: " + xhr.responseJSON.error);
+                        }
                     }
                 });
             }
@@ -974,7 +979,7 @@
                             waste_type_id: waste_type_id.value
                         },
                         success: function(response) {
-                            // console.log('new response', response);
+                            console.log('megha mm', response);
                             // console.log('test res megha', response.printingAndCuttingBagItem)
                             setSuccessMessage(response.message);
                             setIntoTable(response.printingAndCuttingBagItem);
@@ -1081,6 +1086,7 @@
                                         "_token": "{{ csrf_token() }}",
                                     },
                                     success: function(response) {
+                                        console.log('mgh delete', response);
                                         removeAllTableRows(
                                             'printsAndCutsItem');
                                         //   checkRowInTable();
@@ -1198,24 +1204,32 @@
                 $(element_id).html(selectOptions);
             }
 
+            // function setOptionInSelect(elementId, optionId, optionText) {
+            //     let selectElement = $('#' + elementId);
+
+            //     selectElement.empty();
+            //     // create a new option element
+            //     let newOption = $('<option>');
+
+            //     // set the value and text of the new option element
+            //     newOption.val(optionId).text(optionText);
+
+            //     // append the new option element to the select element
+            //     selectElement.append(newOption);
+
+            //     newOption.prop('selected', true);
+
+            //     // refresh the select2 element to update the UI
+            //     selectElement.trigger('change.select2');
+            //     // $('#' + elementId).val(optionId).trigger('change.select2');
+            // }
             function setOptionInSelect(elementId, optionId, optionText) {
                 let selectElement = $('#' + elementId);
-
-                selectElement.empty();
-                // create a new option element
                 let newOption = $('<option>');
-
-                // set the value and text of the new option element
                 newOption.val(optionId).text(optionText);
-
-                // append the new option element to the select element
                 selectElement.append(newOption);
-
-                newOption.prop('selected', true);
-
-                // refresh the select2 element to update the UI
                 selectElement.trigger('change.select2');
-                // $('#' + elementId).val(optionId).trigger('change.select2');
+
             }
 
             function setErrorMsg(errorMessage) {
