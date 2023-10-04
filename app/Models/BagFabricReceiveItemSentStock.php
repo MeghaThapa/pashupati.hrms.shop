@@ -11,7 +11,7 @@ class BagFabricReceiveItemSentStock extends Model
     use HasFactory,SoftDeletes;
     protected $table = "bag_fabric_receive_item_sent_stock";
     protected $fillable = [
-        "fabric_bag_entry_id","fabric_id","gram","gross_wt","net_wt","meter","roll_no","loom_no","average"
+        "fabric_bag_entry_id","fabric_id","gram","gross_wt","net_wt","meter","roll_no","loom_no","average",'status'
     ];
     public function fabric(){
         return $this->belongsTo(Fabric::class,"fabric_id");
