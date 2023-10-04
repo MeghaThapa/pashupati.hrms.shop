@@ -9,6 +9,7 @@ use App\Models\BagBundelStock;
 use Illuminate\Http\Request;
 use DB;
 use Exception;
+
 class BagBundelEntryController extends Controller
 {
     /**
@@ -18,19 +19,20 @@ class BagBundelEntryController extends Controller
      */
     public function index()
     {
-        $bagBundelEntries=BagBundelEntry::with(['group','bagBrand'])->get(['id','nepali_date','receipt_no','receipt_date','total_bundle_quantity','status']);
-       //return $bagBundelEntries;
-        return view('admin.bag.bagBundelling.index',compact('bagBundelEntries'));
+        $bagBundelEntries = BagBundelEntry::with(['group', 'bagBrand'])->get(['id', 'nepali_date', 'receipt_no', 'receipt_date', 'total_bundle_quantity', 'status']);
+        //return $bagBundelEntries;
+        return view('admin.bag.bagBundelling.index', compact('bagBundelEntries'));
     }
 
-    public function edit($bagBundelEntry_id){
-        $bagBundelEntryData=BagBundelEntry::where('id',$bagBundelEntry_id)->get(['id','receipt_no','receipt_date','nepali_date'])->first();
-         $groups = PrintingAndCuttingBagStock::with(['group' => function ($query) {
+    public function edit($bagBundelEntry_id)
+    {
+        $bagBundelEntryData = BagBundelEntry::where('id', $bagBundelEntry_id)->get(['id', 'receipt_no', 'receipt_date', 'nepali_date'])->first();
+        $groups = PrintingAndCuttingBagStock::with(['group' => function ($query) {
             $query->select('id', 'name');
         }])
-        ->distinct('group_id')
-        ->get(['group_id']);
-          return view('admin.bag.bagBundelling.create',compact('bagBundelEntryData','groups'));
+            ->distinct('group_id')
+            ->get(['group_id']);
+        return view('admin.bag.bagBundelling.create', compact('bagBundelEntryData', 'groups'));
     }
 
     /**
@@ -38,68 +40,77 @@ class BagBundelEntryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function createBagBundleEntry(){
+    public function createBagBundleEntry()
+    {
 
-        $receipt_no=self::getLatestReceiptNo();
+        $receipt_no = self::getLatestReceiptNo();
         $nepaliDate = getNepaliDate(date('Y-m-d'));
         $date = date('Y-m-d');
-        $bagBundelEntryData=null;
-        return view('admin.bag.bagBundelling.create',compact('nepaliDate','date','receipt_no','bagBundelEntryData'));
+        $bagBundelEntryData = null;
+        return view('admin.bag.bagBundelling.create', compact('nepaliDate', 'date', 'receipt_no', 'bagBundelEntryData'));
     }
-    public function getLatestReceiptNo(){
+    public function getLatestReceiptNo()
+    {
         $id = BagBundelEntry::latest()->value('id');
         return "BB" . "-" . getNepaliDate(date('Y-m-d')) . "-" . $id + 1;
     }
-    public function update(Request $request,$bagBundleEntryId){
-     $bagBundelEntry=BagBundelEntry::find($bagBundleEntryId);
+    public function update(Request $request, $bagBundleEntryId)
+    {
+        $bagBundelEntry = BagBundelEntry::find($bagBundleEntryId);
         $request->validate([
-        'receipt_no'=>'required',
-        'receipt_date'=>'required',
-        'nepali_date'=>'required'
-    ]);
-    $bagBundelEntry->receipt_date = $request->receipt_date;
-    $bagBundelEntry->nepali_date = $request->nepali_date;
-    $bagBundelEntry->save();
-        return redirect()->route('bagBundelItem.index',['bagBundelEntryId'=>$bagBundelEntry->id]);
-
-    }
-
-
-    public function getBrandBag(Request $request){
-        $brandBags = PrintingAndCuttingBagStock::with(['bagBrand:id,name'])
-        ->where('group_id',$request->group_id)
-        ->distinct('bag_brand_id')
-        ->get(['bag_brand_id']);
-        return response()->json([
-            'brandBags'=>$brandBags
+            'receipt_no' => 'required',
+            'receipt_date' => 'required',
+            'nepali_date' => 'required'
         ]);
-    }
-
-    public function saveEntireBagBundelling(Request $request){
-        try{
-        DB::beginTransaction();
-        $bagBundelEntry=BagBundelEntry::find($request->bagBundellingEntry_id);
-        $bagBundelEntry->status='completed';
+        $bagBundelEntry->receipt_date = $request->receipt_date;
+        $bagBundelEntry->nepali_date = $request->nepali_date;
         $bagBundelEntry->save();
+        return redirect()->route('bagBundelItem.index', ['bagBundelEntryId' => $bagBundelEntry->id]);
+    }
 
-        $bagBundelItems = BagBundelItem::where('bag_bundel_entry_id',$bagBundelEntry->id)->get();
-        foreach($bagBundelItems as $item){
-             $bagBundelStock=new BagBundelStock();
-             $bagBundelStock->group_id=$item->group_id;
-             $bagBundelStock->bag_brand_id=$item->bag_brand_id;
-             $bagBundelStock->bundle_no = $item->bundel_no;
-             $bagBundelStock->qty_pcs = $item->qty_pcs;
-             $bagBundelStock->qty_in_kg = $item->qty_in_kg;
-             $bagBundelStock->average_weight = $item->average_weight;
-             $bagBundelStock->save();
-        }
-        DB::commit();
+
+    public function getBrandBag(Request $request)
+    {
+        $brandBags = PrintingAndCuttingBagStock::with(['bagBrand:id,name'])
+            ->where('group_id', $request->group_id)
+            ->distinct('bag_brand_id')
+            ->get(['bag_brand_id']);
         return response()->json([
-            'message'=>'Bag Bundelling completed successfully'
+            'brandBags' => $brandBags
         ]);
-        }catch(Exception $ex){}
-            DB::rollback();
-       // return redirect()->route('prints.and.cuts.index');
+    }
+
+    public function saveEntireBagBundelling(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $bagBundelEntry = BagBundelEntry::find($request->bagBundellingEntry_id);
+            $bagBundelEntry->status = 'completed';
+            $bagBundelEntry->save();
+
+            $bagBundelItems = BagBundelItem::where('bag_bundel_entry_id', $bagBundelEntry->id)->get();
+            foreach ($bagBundelItems as $item) {
+                //change status to completed
+                $item->status = 'completed';
+                $item->save();
+                
+                $bagBundelStock = new BagBundelStock();
+                $bagBundelStock->group_id = $item->group_id;
+                $bagBundelStock->bag_brand_id = $item->bag_brand_id;
+                $bagBundelStock->bundle_no = $item->bundel_no;
+                $bagBundelStock->qty_pcs = $item->qty_pcs;
+                $bagBundelStock->qty_in_kg = $item->qty_in_kg;
+                $bagBundelStock->average_weight = $item->average_weight;
+                $bagBundelStock->save();
+            }
+            DB::commit();
+            return response()->json([
+                'message' => 'Bag Bundelling completed successfully'
+            ]);
+        } catch (Exception $ex) {
+        }
+        DB::rollback();
+        // return redirect()->route('prints.and.cuts.index');
     }
 
     public function calculateBundles($totalBags, $bundleSize)
@@ -113,19 +124,20 @@ class BagBundelEntryController extends Controller
         return $bundles;
     }
 
-  public function store(Request $request){
-    $request->validate([
-        'receipt_no'=>'required',
-        'receipt_date'=>'required',
-        'nepali_date'=>'required'
-    ]);
-    $bagBundelEntry = new BagBundelEntry();
-    $bagBundelEntry->receipt_no = $request->receipt_no;
-    $bagBundelEntry->receipt_date = $request->receipt_date;
-    $bagBundelEntry->nepali_date = $request->nepali_date;
-    $bagBundelEntry->save();
-    return redirect()->route('bagBundelItem.index',['bagBundelEntryId'=>$bagBundelEntry->id]);
-}
+    public function store(Request $request)
+    {
+        $request->validate([
+            'receipt_no' => 'required',
+            'receipt_date' => 'required',
+            'nepali_date' => 'required'
+        ]);
+        $bagBundelEntry = new BagBundelEntry();
+        $bagBundelEntry->receipt_no = $request->receipt_no;
+        $bagBundelEntry->receipt_date = $request->receipt_date;
+        $bagBundelEntry->nepali_date = $request->nepali_date;
+        $bagBundelEntry->save();
+        return redirect()->route('bagBundelItem.index', ['bagBundelEntryId' => $bagBundelEntry->id]);
+    }
 
     // public function store(Request $request){
     //     try{

@@ -82,23 +82,22 @@ class BagBundelItemController extends Controller
 
     //for bundel number
 
-     public function generateBagBundelNumber(){
-         $setting =GeneralSetting::where('key', 'bag_bundle_no')->get('value')->first();
-        $bagBundelitem=BagBundelItem::latest()->first();
-        if($bagBundelitem){
+    public function generateBagBundelNumber()
+    {
+        $setting = GeneralSetting::where('key', 'bag_bundle_no')->get('value')->first();
+        $bagBundelitem = BagBundelItem::latest()->first();
+        if ($bagBundelitem) {
             $bundelNo = $bagBundelitem->bundel_no;
             list($part1, $part2) = explode('-', $bundelNo);
             $newPart2 = str_pad((int)$part2 + 1, strlen($part2), '0', STR_PAD_LEFT);
             $newBundelNo = $part1 . '-' . $newPart2;
             return $newBundelNo;
-        }
-
-        else{
+        } else {
             $prefixValue = $setting->value; // Get the original value
             $newBundelNo = $prefixValue . '01';
             return $newBundelNo;
         }
-     }
+    }
     public function generateBagBundelNumberOld()
     {
         $nepaliDate = getTodayNepaliDate();
@@ -149,6 +148,7 @@ class BagBundelItemController extends Controller
             $bagBundelItem->qty_in_kg = $request->quantity_in_kg;
             $bagBundelItem->qty_pcs = $request->quantity_Pcs;
             $bagBundelItem->average_weight = $request->avg_weight;
+            $bagBundelItem->status = 'sent';
             $bagBundelItem->bundel_no = $request->bundel_no;
             $bagBundelItem->save();
             $bagBundelItem->load(['group:id,name', 'bagBrand:id,name'])->first();
