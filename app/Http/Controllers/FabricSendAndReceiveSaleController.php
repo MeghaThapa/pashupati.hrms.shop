@@ -44,7 +44,7 @@ class FabricSendAndReceiveSaleController extends Controller
             ->leftJoin('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
             ->leftJoin('suppliers', 'fabric_sale_entry.partyname_id', '=', 'suppliers.id')
             ->groupBy('fabric_sale_entry.bill_no', 'fabric_sale_entry.bill_date', 'suppliers.name', 'fabric_sale_entry.id', 'fabric_sale_entry.status')
-            ->orderBy('fabric_sale_entry.id','DESC');
+            ->orderBy('fabric_sale_entry.id', 'DESC');
         if ($this->request->ajax()) {
             return DataTables::of($fabricSalesEntries)
                 ->addIndexColumn()
@@ -55,20 +55,17 @@ class FabricSendAndReceiveSaleController extends Controller
                     return $row->total_net_wt;
                 })
                 ->addColumn("action", function ($row) {
+                    $action =  '<a class="btn btn-sm btn-primary" href="'.route('fabric.sale.entry.edit',$row->fabric_sale_id).'">Edit</a>';
                     if ($row->status == "pending") {
-                        return "
+                        $action =  "
                                     <div class='btn-group'>
                                         <a href='javascripy:void(0)' data-id={$row->fabric_sale_id} class='btn btn-primary create-sale'><i class='fa fa-plus' aria-hidden='true'></i></a>
                                     </div>
                                 ";
                     } else {
-                        return '<a href="' . route('fabric.sale.viewBill', ['bill_id' => $row->fabric_sale_id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
-                        // return "
-                        //     <div class='btn-group'>
-                        //         <a href='javascripy:void(0)' data-id={$row->id} class='btn btn-secondary view-sale'><i class='fa fa-eye' aria-hidden='true'></i></a>
-                        //     </div>
-                        // ";
+                            $action .= '<a href="' . route('fabric.sale.viewBill', ['bill_id' => $row->fabric_sale_id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
                     }
+                    return $action;
                 })
                 ->rawColumns(["action"])
                 ->make(true);
@@ -171,7 +168,7 @@ class FabricSendAndReceiveSaleController extends Controller
             ],
             'gp_number' => "required"
         ]);
-        try{
+        try {
             DB::beginTransaction();
 
             $fabric = FabricSaleEntry::create([
@@ -185,13 +182,13 @@ class FabricSendAndReceiveSaleController extends Controller
                 'remarks' => $this->request['remarks'],
             ]);
 
-            $deliveryOrder = DeliveryOrder::where('do_no',$this->request['dp_number'])->firstOrFail();
+            $deliveryOrder = DeliveryOrder::where('do_no', $this->request['dp_number'])->firstOrFail();
             $deliveryOrder->status = "Approved & Delivered";
             $deliveryOrder->save();
 
             DB::commit();
             return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
         }
@@ -212,13 +209,71 @@ class FabricSendAndReceiveSaleController extends Controller
         }
     }
 
+    public function edit($entry_id)
+    {
+        try {
+            $fabricsaleentry = FabricSaleEntry::where("id", $entry_id)->firstorFail();
+            $fabrics = FabricStock::with("fabric")->get()->unique('name');
+            $soldFabricsIds = FabricSaleItems::where('sale_entry_id', $entry_id)->pluck('fabric_id')->toArray();
+            $soldFabrics = Fabric::whereIn('id', $soldFabricsIds)->get();
+            return view("admin.sale.fabricsale.edit")->with([
+                "fabricsaleentry" => $fabricsaleentry,
+                "fabrics" => $fabrics,
+                "entry_id" => $entry_id,
+                "soldFabrics" => $soldFabrics
+            ]);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+
+    public function restoreStock(Request $request)
+    {
+
+        try {
+            DB::beginTransaction();
+
+            $fabric_id = $request->fabric_id;
+            $entry_id = $request->entry_id;
+
+            $fabricSoldItem = FabricSaleItems::where('fabric_id', $fabric_id)->where('sale_entry_id', $entry_id)->firstOrFail();
+            $fabric = Fabric::where('id', $fabric_id)->firstOrFail();
+            $fabricStock = new FabricStock();
+            $fabricStock->fabric_id = $fabric_id;
+            $fabricStock->name = $fabric->name;
+            $fabricStock->status_type = 'active';
+            $fabricStock->meter = $fabric->meter;
+            $fabricStock->slug = $fabric->slug;
+            $fabricStock->fabricgroup_id = $fabric->fabricgroup_id;
+            $fabricStock->godam_id = $fabric->godam_id;
+            $fabricStock->average_wt = $fabric->average_wt;
+            $fabricStock->gram_wt = $fabric->gram_wt;
+            $fabricStock->gross_wt = $fabric->gross_wt;
+            $fabricStock->net_wt = $fabric->net_wt;
+            $fabricStock->roll_no = $fabric->roll_no;
+            $fabricStock->loom_no = $fabric->loom_no;
+            $fabricStock->bill_no = $fabric->bill_no;
+            $fabricStock->status = $fabric->status;
+            $fabricStock->is_laminated = $fabric->is_laminated;
+            $fabricStock->date_np = $fabric->date_np;
+            $fabricStock->save();
+
+            $fabricSoldItem->delete();
+            DB::commit();
+            return response(['status'=>true,'message'=>'Restored Successfully','fabric_id'=>$fabric_id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+    }
+
     public function getidenticalfabricdetails()
     {
         if ($this->request->ajax()) {
             $fabric_id = $this->request->fabric_name_id;
-            $godam_id = Godam::where('name','psi')->value('id');
+            $godam_id = Godam::where('name', 'psi')->value('id');
             $name = FabricStock::where("id", $fabric_id)->value('name');
-            return DataTables::of(FabricStock::where('status_type','active')->where('godam_id',$godam_id)->where("name", $name)->get())
+            return DataTables::of(FabricStock::where('status_type', 'active')->where('godam_id', $godam_id)->where("name", $name)->get())
                 ->addIndexColumn()
                 ->addColumn("action", function ($row) {
                     return "<a href='javascript:void(0)' class='btn btn-primary send-to-lower' data-id='{$row->id}'>Send </a>'";
@@ -303,7 +358,7 @@ class FabricSendAndReceiveSaleController extends Controller
                 $fabric_sale = FabricSale::findorfail($this->request->id);
                 // dd($fabric_sale);
                 // $fabric = Fabric::find($this->request->fabric_id);
-                $fabric_stock = FabricStock::where('fabric_id',$fabric_sale->fabric_id)->value('id');
+                $fabric_stock = FabricStock::where('fabric_id', $fabric_sale->fabric_id)->value('id');
                 // dd($fabric_stock);
                 $final_data = FabricStock::find($fabric_stock);
                 // dd($final_data);
@@ -324,6 +379,37 @@ class FabricSendAndReceiveSaleController extends Controller
     }
 
     public function submit()
+    {
+        if ($this->request->ajax()) {
+            try {
+                DB::beginTransaction();
+                foreach (FabricSale::where("sale_entry_id", $this->request->id)->get() as $data) {
+                    $sale_fabric_id = $data->fabric_id;
+
+                    FabricSaleItems::create([
+                        "fabric_id" => $data->fabric_id,
+                        "sale_entry_id" => $data->sale_entry_id
+                    ]);
+
+                    FabricStock::where("fabric_id", $sale_fabric_id)->delete();
+                }
+
+                FabricSale::where("sale_entry_id", $this->request->id)->delete();
+                FabricSaleEntry::where("id", $this->request->id)->update([
+                    "status" => "completed"
+                ]);
+                DB::commit();
+                return response([
+                    "status" => 200,
+                    "message" => "saved successfully"
+                ]);
+            } catch (Exception $e) {
+                DB::rollBack();
+            }
+        }
+    }
+
+    public function finalUpdate()
     {
         if ($this->request->ajax()) {
             try {
