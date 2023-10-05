@@ -84,18 +84,18 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('tempfix',[FabricController::class,'fixData']);
+Route::get('tempfix', [FabricController::class, 'fixData']);
 
-Route::get('artisandone',function(){
+Route::get('artisandone', function () {
     // singlesidelaminated
-   // return bcrypt('matinsoftech');
+    // return bcrypt('matinsoftech');
     //$2y$10$sGQ5cB84msZ71W88Nf1Ji.nnPT2oF9ZQUZThLFRS7GFuNQG1sCddi
     // \Artisan::call("make:controller AutoloadItemsController");
     // \Artisan::call("make:model AutoloadItems");
     // \Artisan::call('make:migration create_autoload_items_stock_table');
 
     // \Artisan::call('migrate --path=/database/migrations/2023_08_15_160938_add_status_to_fabric_sale_entry_table.php');
-      return "done";
+    return "done";
 });
 
 // admin auth routes
@@ -147,9 +147,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::delete('/shift/delete/{id}', 'ShiftController@delete')->name('shift.delete');
 
     //prpocessing categories
-    Route::get('processing/categories',[ProcessingCategoryAndSubsController::class,"categoryindex"])->name('processing.categories'); //index for p-cat
-    Route::get('processing/categories/create',[ProcessingCategoryAndSubsController::class,"categorycreate"])->name('processing.categories.create');
-    Route::post('processing/categories/store',[ProcessingCategoryAndSubsController::class,"categorystore"])->name('processing.categories.store');
+    Route::get('processing/categories', [ProcessingCategoryAndSubsController::class, "categoryindex"])->name('processing.categories'); //index for p-cat
+    Route::get('processing/categories/create', [ProcessingCategoryAndSubsController::class, "categorycreate"])->name('processing.categories.create');
+    Route::post('processing/categories/store', [ProcessingCategoryAndSubsController::class, "categorystore"])->name('processing.categories.store');
 
     //Tax Route
     Route::resource('tax', 'TaxController', [
@@ -165,7 +165,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('tax/{slug}/delete', 'TaxController@destroy')->name('tax.delete');
 
     //StoreinDepartment Route
-     Route::post('storeinDepartment/store', 'StoreinDepartmentController@store')->name('storeinDepartment.store');
+    Route::post('storeinDepartment/store', 'StoreinDepartmentController@store')->name('storeinDepartment.store');
 
     //Department Route
 
@@ -254,30 +254,30 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/createRawMaterialItems/{rawMaterial_id}', 'RawMaterialController@createRawMaterialItems')->name('rawMaterial.createRawMaterialItems');
     Route::get('rawMaterial/dataTable', 'RawMaterialController@dataTable')->name('rawMaterial.dataTable');
     //Rawmaterial stock
-    Route::get('rawMaterial/stock/index',[RawMaterialStockController::class,'index'])->name('rawMaterialStock.index');
-    Route::get('rawMaterial/stock/danaGroupFilter',[RawMaterialStockController::class,'danaGroupFilter'])->name('rawMaterialStock.danaGroupFilter');
-    Route::get('rawMaterial/stock/danaNameFilter',[RawMaterialStockController::class,'danaNameFilter'])->name('rawMaterialStock.danaNameFilter');
-    Route::get('rawMaterialStock/filterAccDanaName/{danaName_id}',[RawMaterialStockController::class,'filterAccDanaName'])->name('rawMaterialStock.filterAccDanaName');
-    Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}',[RawMaterialStockController::class,'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
-    Route::post('rawMaterialStock/filterStocks',[RawMaterialStockController::class,'filterStocks'])->name('rawmaterial.filterStocks');
+    Route::get('rawMaterial/stock/index', [RawMaterialStockController::class, 'index'])->name('rawMaterialStock.index');
+    Route::get('rawMaterial/stock/danaGroupFilter', [RawMaterialStockController::class, 'danaGroupFilter'])->name('rawMaterialStock.danaGroupFilter');
+    Route::get('rawMaterial/stock/danaNameFilter', [RawMaterialStockController::class, 'danaNameFilter'])->name('rawMaterialStock.danaNameFilter');
+    Route::get('rawMaterialStock/filterAccDanaName/{danaName_id}', [RawMaterialStockController::class, 'filterAccDanaName'])->name('rawMaterialStock.filterAccDanaName');
+    Route::get('rawMaterialStock/filterAccDanaGroup/{danaGroup_id}', [RawMaterialStockController::class, 'filterAccDanaGroup'])->name('rawMaterialStock.filterAccDanaGroup');
+    Route::post('rawMaterialStock/filterStocks', [RawMaterialStockController::class, 'filterStocks'])->name('rawmaterial.filterStocks');
 
-    Route::get('raw-material-dana-date-wise/report',[RawMaterialReportController::class,'index'])->name('rawmaterial.dana.datewise.report');
-    Route::post('raw-material-dana-date-wise/report',[RawMaterialReportController::class,'index'])->name('rawmaterial.dana.datewise.report.generate');
-    Route::get('rawMaterial/report/fix',[RawMaterialReportController::class,'oldIndex'])->name('rawmaterial.report.fix');
+    Route::get('raw-material-dana-date-wise/report', [RawMaterialReportController::class, 'index'])->name('rawmaterial.dana.datewise.report');
+    Route::post('raw-material-dana-date-wise/report', [RawMaterialReportController::class, 'index'])->name('rawmaterial.dana.datewise.report.generate');
+    Route::get('rawMaterial/report/fix', [RawMaterialReportController::class, 'oldIndex'])->name('rawmaterial.report.fix');
 
-    Route::post('rawMaterial/report/ajax-filter',[RawMaterialReportController::class,'ajaxFilter'])->name('rawmaterial.ajax.report');
+    Route::post('rawMaterial/report/ajax-filter', [RawMaterialReportController::class, 'ajaxFilter'])->name('rawmaterial.ajax.report');
 
     //Godam
-    Route::get('godam/index',[GodamController::class,'index'])->name('godam.index');
-    Route::get('godam/create',[GodamController::class,'create'])->name('godam.create');
-    Route::post('godam/store',[GodamController::class,'store'])->name('godam.store');
-    Route::get('godam/edit/{godam_id}',[GodamController::class,'edit'])->name('godam.edit');
-    Route::post('godam/update/{godam_id}',[GodamController::class,'update'])->name('godam.update');
-    Route::get('godam/delete/{godam_id}',[GodamController::class,'delete'])->name('godam.delete');
+    Route::get('godam/index', [GodamController::class, 'index'])->name('godam.index');
+    Route::get('godam/create', [GodamController::class, 'create'])->name('godam.create');
+    Route::post('godam/store', [GodamController::class, 'store'])->name('godam.store');
+    Route::get('godam/edit/{godam_id}', [GodamController::class, 'edit'])->name('godam.edit');
+    Route::post('godam/update/{godam_id}', [GodamController::class, 'update'])->name('godam.update');
+    Route::get('godam/delete/{godam_id}', [GodamController::class, 'delete'])->name('godam.delete');
 
 
     //RawMaterial Items
-     Route::post('rawMaterialItem/store', 'RawMaterialItemController@store')->name('rawMaterialItem.store');
+    Route::post('rawMaterialItem/store', 'RawMaterialItemController@store')->name('rawMaterialItem.store');
     Route::get('rawMaterialItem/getRawMaterialItemsData/{rawMaterial_id}', 'RawMaterialItemController@getRawMaterialItemsData')->name('rawMaterialItem.getRawMaterialItemsData');
     Route::get('rawMaterialItem/getEditRawMaterialItemData/{rawMaterialItem_id}', 'RawMaterialItemController@getEditRawMaterialItemData')->name('rawMaterialItem.getEditRawMaterialItemData');
     Route::post('rawMaterialItem/update', 'RawMaterialItemController@update')->name('rawMaterialItem.update');
@@ -318,38 +318,38 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('processing-steps/{slug}/staus', 'ProcessingStepController@changeStatus')->name('processing-steps.status');
     Route::get('processing-steps/{slug}/delete', 'ProcessingStepController@destroy')->name('processing-steps.delete');
 
-     //Autoloader
-    Route::get('autoload/index',[AutoloadController::class,'index'])->name('autoload.index');
-    Route::get('autoload/create',[AutoloadController::class,'create'])->name('autoload.create');
-    Route::get('autoload/getReceiptNo',[AutoloadController::class,'getReceiptNo'])->name('autoLoad.getReceiptNo');
-    Route::get('autoload/createAutoloadItem/{autoload_id}',[AutoloadController::class,'createAutoloadItem'])->name('autoLoad.createAutoloadItem');
-    Route::post('autoload/store',[AutoloadController::class,'store'])->name('autoLoad.store');
-    Route::get('autoload/getPlantTypePlantName/{plantType_id}',[AutoloadController::class,'getPlantTypePlantName'])->name('autoload.getPlantTypePlantName');
-    Route::get('autoload/getDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getDanaGroupDanaName'])->name('autoload.getDanaGroupDanaName');
-    Route::get('autoload/getPlantTypeAccGodam/{godam_id}',[AutoloadController::class,'getPlantTypeAccGodam'])->name('autoload.getPlantTypeAccGodam');
+    //Autoloader
+    Route::get('autoload/index', [AutoloadController::class, 'index'])->name('autoload.index');
+    Route::get('autoload/create', [AutoloadController::class, 'create'])->name('autoload.create');
+    Route::get('autoload/getReceiptNo', [AutoloadController::class, 'getReceiptNo'])->name('autoLoad.getReceiptNo');
+    Route::get('autoload/createAutoloadItem/{autoload_id}', [AutoloadController::class, 'createAutoloadItem'])->name('autoLoad.createAutoloadItem');
+    Route::post('autoload/store', [AutoloadController::class, 'store'])->name('autoLoad.store');
+    Route::get('autoload/getPlantTypePlantName/{plantType_id}', [AutoloadController::class, 'getPlantTypePlantName'])->name('autoload.getPlantTypePlantName');
+    Route::get('autoload/getDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}', [AutoloadController::class, 'getDanaGroupDanaName'])->name('autoload.getDanaGroupDanaName');
+    Route::get('autoload/getPlantTypeAccGodam/{godam_id}', [AutoloadController::class, 'getPlantTypeAccGodam'])->name('autoload.getPlantTypeAccGodam');
 
-    Route::get('autoload/saveEntireAutoload/{autoload_id}',[AutoloadController::class,'saveEntireAutoload'])->name('autoLoad.saveEntireAutoload');
-
-
-    Route::get('autoload/getEditDanaGroupAccToGodam/{department_id}',[AutoloadController::class,'getEditDanaGroupAccToGodam'])->name('autoLoad.getEditDanaGroupAccToGodam');
-    Route::get('autoload/getEditDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}',[AutoloadController::class,'getEditDanaGroupDanaName'])->name('autoLoad.getEditDanaGroupDanaName');
-    Route::get('autoload/dataTable',[AutoloadController::class,'dataTable'])->name('autoLoad.dataTable');
-    Route::get('autoload/getEditItemData/{autoLoad_id}',[AutoloadController::class,'getEditItemData'])->name('autoLoad.getEditItemData');
-    Route::post('autoload/update',[AutoloadController::class,'update'])->name('autoload.update');
-    Route::delete('autoload/delete/{autoload_id}',[AutoloadController::class,'delete'])->name('autoload.delete');
+    Route::get('autoload/saveEntireAutoload/{autoload_id}', [AutoloadController::class, 'saveEntireAutoload'])->name('autoLoad.saveEntireAutoload');
 
 
-
-     //AutoloadItemF
-    Route::post('autoloadItem/store',[AutoloadItemsController::class,'store'])->name('autoloadItem.store');
-    Route::get('autoloadItem/getAutoloadItemsData/{autoload_id}',[AutoloadItemsController::class,'getAutoloadItemsData'])->name('autoloadItem.getAutoloadItemsData');
-    Route::get('autoloadItem/getEditAutoloadItemData/{autoloadItem_id}',[AutoloadItemsController::class,'getEditAutoloadItemData'])->name('autoLoadItem.getEditAutoloadItemData');
-    Route::post('autoloadItem/update',[AutoloadItemsController::class,'update'])->name('autoloadItem.update');
-    Route::delete('autoloadItem/delete/{autoloadItem_id}',[AutoloadItemsController::class,'delete'])->name('autoLoadItem.delete');
+    Route::get('autoload/getEditDanaGroupAccToGodam/{department_id}', [AutoloadController::class, 'getEditDanaGroupAccToGodam'])->name('autoLoad.getEditDanaGroupAccToGodam');
+    Route::get('autoload/getEditDanaGroupDanaName/{danaGroup_id}/{fromGodam_id}', [AutoloadController::class, 'getEditDanaGroupDanaName'])->name('autoLoad.getEditDanaGroupDanaName');
+    Route::get('autoload/dataTable', [AutoloadController::class, 'dataTable'])->name('autoLoad.dataTable');
+    Route::get('autoload/getEditItemData/{autoLoad_id}', [AutoloadController::class, 'getEditItemData'])->name('autoLoad.getEditItemData');
+    Route::post('autoload/update', [AutoloadController::class, 'update'])->name('autoload.update');
+    Route::delete('autoload/delete/{autoload_id}', [AutoloadController::class, 'delete'])->name('autoload.delete');
 
 
 
-    Route::get('autoloadItem/getDanaGroupAccToGodam/{godam_id}',[AutoloadController::class,'getDanaGroupAccToGodam'])->name('autoload.getDanaGroupAccToGodam');
+    //AutoloadItemF
+    Route::post('autoloadItem/store', [AutoloadItemsController::class, 'store'])->name('autoloadItem.store');
+    Route::get('autoloadItem/getAutoloadItemsData/{autoload_id}', [AutoloadItemsController::class, 'getAutoloadItemsData'])->name('autoloadItem.getAutoloadItemsData');
+    Route::get('autoloadItem/getEditAutoloadItemData/{autoloadItem_id}', [AutoloadItemsController::class, 'getEditAutoloadItemData'])->name('autoLoadItem.getEditAutoloadItemData');
+    Route::post('autoloadItem/update', [AutoloadItemsController::class, 'update'])->name('autoloadItem.update');
+    Route::delete('autoloadItem/delete/{autoloadItem_id}', [AutoloadItemsController::class, 'delete'])->name('autoLoadItem.delete');
+
+
+
+    Route::get('autoloadItem/getDanaGroupAccToGodam/{godam_id}', [AutoloadController::class, 'getDanaGroupAccToGodam'])->name('autoload.getDanaGroupAccToGodam');
 
 
 
@@ -362,7 +362,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             'store' => 'processing-subcat.store',
         ]
     ]);
-   Route::get('processing-subcat/edit/{processingSubCatId}','ProcessingSubcatController@edit')->name('processing-subcat.edit');
+    Route::get('processing-subcat/edit/{processingSubCatId}', 'ProcessingSubcatController@edit')->name('processing-subcat.edit');
     Route::get('processing-subcat/{slug}/staus', 'ProcessingSubcatController@changeStatus')->name('processing-subcat.status');
     Route::get('processing-subcat/{slug}/delete', 'ProcessingSubcatController@destroy')->name('processing-subcat.delete');
     Route::get('processing-subcat/getProcessingStepsAccDept/{godam_id}', 'ProcessingSubcatController@getProcessingStepsAccDept')->name('processing-subcat.getProcessingStepsAccDept');
@@ -459,7 +459,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('suppliers/{id}/status', 'SupplierController@changeStatus')->name('suppliers.status');
     Route::get('suppliers/{id}/delete', 'SupplierController@destroy')->name('suppliers.delete');
     //Storein Category Routes
-     Route::post('/storeinCategory/store', 'StoreinCategoryController@store')->name('storeinCategory.store');
+    Route::post('/storeinCategory/store', 'StoreinCategoryController@store')->name('storeinCategory.store');
     // categories route
     Route::get('/categories/pdf', 'CategoryController@createPDF')->name('categories.pdf');
     Route::resource('categories', 'CategoryController', [
@@ -489,123 +489,123 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('sub-categories/{id}/delete', 'SubCategoryController@destroy')->name('subCategories.delete');
 
     //fabric send receive contoller  //fabric send and receive
-        /************* aile baki xa **************/
-        Route::get('/fabricSendReceive/entry/create', [FabricSendReceiveController::class,"create"])->name('fabricSendReceive.entry.create');
-        Route::get('/fabricSendReceive/entry/ajaxlist', [FabricSendReceiveController::class,"entrieslist"])->name('fabricSendReceive.entry.ajaxlist');
-        Route::post('/fabricSendReceive/entry/store', [FabricSendReceiveController::class,"store"])->name('fabricSendReceive.entry.store');
-        Route::get('/fabricSendReceive/entry/{id}', [FabricSendReceiveController::class,"show"])->name('fabricSendReceive.entry.show');
-        Route::post('/fabricSendReceive/entry/delete', [FabricSendReceiveController::class,"delete"])->name('fabricSendReceive.entry.delete');
-        /************* aile baki xa **************/
+    /************* aile baki xa **************/
+    Route::get('/fabricSendReceive/entry/create', [FabricSendReceiveController::class, "create"])->name('fabricSendReceive.entry.create');
+    Route::get('/fabricSendReceive/entry/ajaxlist', [FabricSendReceiveController::class, "entrieslist"])->name('fabricSendReceive.entry.ajaxlist');
+    Route::post('/fabricSendReceive/entry/store', [FabricSendReceiveController::class, "store"])->name('fabricSendReceive.entry.store');
+    Route::get('/fabricSendReceive/entry/{id}', [FabricSendReceiveController::class, "show"])->name('fabricSendReceive.entry.show');
+    Route::post('/fabricSendReceive/entry/delete', [FabricSendReceiveController::class, "delete"])->name('fabricSendReceive.entry.delete');
+    /************* aile baki xa **************/
 
-        Route::get('fabricSendReceive/index/{id}', [FabricSendReceiveController::class,"indexrevised"])->name('fabricSendReceive.index.revised');//latest
+    Route::get('fabricSendReceive/index/{id}', [FabricSendReceiveController::class, "indexrevised"])->name('fabricSendReceive.index.revised'); //latest
 
-        Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
-        Route::get('/fabricSendReceive/ajax/get/plantname/{id}', 'FabricSendReceiveController@getplantname')->name('fabricSendReceive.get.plantname');
-        Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
-        Route::get('fabric/send/unlaminated/delete/{id}/revised',[FabricSendReceiveController::class,'sendunlaminateddeleterevised'])->name('fabricSendReceive.send.unlaminated.delete.revised');//latest
-        Route::post("fabric/send/unlaminated/store/revised2",[FabricSendReceiveController::class,'sendunlaminatedrevised2'])->name("fabricSendReceive.send.unlaminated.revised2"); //latest
+    Route::get('/fabricSendReceive/ajax/get/planttype/{id}', 'FabricSendReceiveController@getplanttype')->name('fabricSendReceive.get.planttype');
+    Route::get('/fabricSendReceive/ajax/get/plantname/{id}', 'FabricSendReceiveController@getplantname')->name('fabricSendReceive.get.plantname');
+    Route::get('/fabricSendReceive/ajax/get/fabrics', 'FabricSendReceiveController@getfabrics')->name('fabricSendReceive.get.fabrics');
+    Route::get('fabric/send/unlaminated/delete/{id}/revised', [FabricSendReceiveController::class, 'sendunlaminateddeleterevised'])->name('fabricSendReceive.send.unlaminated.delete.revised'); //latest
+    Route::post("fabric/send/unlaminated/store/revised2", [FabricSendReceiveController::class, 'sendunlaminatedrevised2'])->name("fabricSendReceive.send.unlaminated.revised2"); //latest
 
-        //getting unlaminated into form
+    //getting unlaminated into form
 
-        Route::get('fabric/get/unlaminated/{fsr_entry_id}',[FabricSendReceiveController::class,'getunlaminatedrevised'])->name('fabricSendReceive.get.unlaminated.revised');//latest
-        Route::post('fabric/store/laminated/revised',[FabricSendReceiveController::class,'storelaminatedrevised'])->name('fabricSendReceive.store.laminated.revised');//latest
-        Route::post("get/fabric/same/name",[FabricSendReceiveController::class,'getfabricwithsamename'])->name("get.fabric.same.name.fsr");
-        Route::post('get/autoloader/godam/id/into/fsr',[FabricSendReceiveController::class,'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
-        Route::get('discard',[FabricSendReceiveController::class,'discard'])->name('discard');
+    Route::get('fabric/get/unlaminated/{fsr_entry_id}', [FabricSendReceiveController::class, 'getunlaminatedrevised'])->name('fabricSendReceive.get.unlaminated.revised'); //latest
+    Route::post('fabric/store/laminated/revised', [FabricSendReceiveController::class, 'storelaminatedrevised'])->name('fabricSendReceive.store.laminated.revised'); //latest
+    Route::post("get/fabric/same/name", [FabricSendReceiveController::class, 'getfabricwithsamename'])->name("get.fabric.same.name.fsr");
+    Route::post('get/autoloader/godam/id/into/fsr', [FabricSendReceiveController::class, 'getStuffOfAutoloader'])->name('get.autoloader.godam.id.into.fsr');
+    Route::get('discard', [FabricSendReceiveController::class, 'discard'])->name('discard');
 
-        Route::get('fabricSendReceive/compare/lamandunlam/revised/{entry_id}',[FabricSendReceiveController::class,'comparelamandunlamrevised'])->name('fabricSendReceive.compare.lamandunlam.revised');//lastest
-        Route::post('fabricSendReceive/lam/delete',[FabricSendReceiveController::class,'deleteLam'])->name('fabric.send.receive.lam.destroy');
-        Route::post('fabricSendReceive/unlam/delete',[FabricSendReceiveController::class,'deleteUnLam'])->name('fabric.send.receive.unlam.destroy');
+    Route::get('fabricSendReceive/compare/lamandunlam/revised/{entry_id}', [FabricSendReceiveController::class, 'comparelamandunlamrevised'])->name('fabricSendReceive.compare.lamandunlam.revised'); //lastest
+    Route::post('fabricSendReceive/lam/delete', [FabricSendReceiveController::class, 'deleteLam'])->name('fabric.send.receive.lam.destroy');
+    Route::post('fabricSendReceive/unlam/delete', [FabricSendReceiveController::class, 'deleteUnLam'])->name('fabric.send.receive.unlam.destroy');
 
 
-        Route::post('subtract/dana/from/autoloader',[FabricSendReceiveController::class,'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
-        Route::post('final/submit/fsr/revised',[FabricSendReceiveController::class,'finalsubmitfsrrevised'])->name("final.submit.fsr.revised");//latest
-        Route::post("add/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"addDanaConsumptionTablerevised"])->name("add.dana.consumption.fsr.revised");//latest
-        Route::post("get/dana/consumption/fsr/revised",[FabricSendReceiveController::class,"getDanaConsumptionTablerevised"])->name("get.dana.consumption.fsr.revised");//latest
-        Route::post("delete/dana/consumption/revised",[FabricSendReceiveController::class,"removedDanaConsumptionTablerevised"])->name("delete.dana.consumption.revised");//lastest
+    Route::post('subtract/dana/from/autoloader', [FabricSendReceiveController::class, 'subtractdanafromautoloder'])->name("subtract.dana.from.autoloder");
+    Route::post('final/submit/fsr/revised', [FabricSendReceiveController::class, 'finalsubmitfsrrevised'])->name("final.submit.fsr.revised"); //latest
+    Route::post("add/dana/consumption/fsr/revised", [FabricSendReceiveController::class, "addDanaConsumptionTablerevised"])->name("add.dana.consumption.fsr.revised"); //latest
+    Route::post("get/dana/consumption/fsr/revised", [FabricSendReceiveController::class, "getDanaConsumptionTablerevised"])->name("get.dana.consumption.fsr.revised"); //latest
+    Route::post("delete/dana/consumption/revised", [FabricSendReceiveController::class, "removedDanaConsumptionTablerevised"])->name("delete.dana.consumption.revised"); //lastest
 
-        Route::post("get/fabric/details/fsr",[FabricSendReceiveController::class,"getFabricDetailsAccRollNo"])->name('get/fabric/details/fsr');
-        Route::get("createPrintedRollssent/details/all",[FabricSendReceiveController::class,"getallSentData"])->name('get.lam.sent.details.all');
-        Route::get("edit.laminated.fabric/ajax",[FabricSendReceiveController::class,"getDatajax"])->name("edit.laminated.fabric.ajax");
-        Route::post("update/lam/sent",[FabricSendReceiveController::class,"updateLamSentFSr"])->name("update.lam.sent.fsr");
+    Route::post("get/fabric/details/fsr", [FabricSendReceiveController::class, "getFabricDetailsAccRollNo"])->name('get/fabric/details/fsr');
+    Route::get("createPrintedRollssent/details/all", [FabricSendReceiveController::class, "getallSentData"])->name('get.lam.sent.details.all');
+    Route::get("edit.laminated.fabric/ajax", [FabricSendReceiveController::class, "getDatajax"])->name("edit.laminated.fabric.ajax");
+    Route::post("update/lam/sent", [FabricSendReceiveController::class, "updateLamSentFSr"])->name("update.lam.sent.fsr");
     //fabric send receive contoller End
 
     //fabric send and receive /fabric sale
-    Route::prefix("fabric/sale/")->name("fabric.sale.")->controller(FabricSendAndReceiveSaleController::class)->group(function(){
-        Route::get("entry/index","index")->name("entry.index");
-        Route::get("entry/index/ajax","indexajax")->name("entry.index.ajax");
-        Route::post("entry/store","store")->name('entry.store');
+    Route::prefix("fabric/sale/")->name("fabric.sale.")->controller(FabricSendAndReceiveSaleController::class)->group(function () {
+        Route::get("entry/index", "index")->name("entry.index");
+        Route::get("entry/index/ajax", "indexajax")->name("entry.index.ajax");
+        Route::post("entry/store", "store")->name('entry.store');
 
-        Route::get("create/{entry_id}","create")->name("create");
-        Route::post("store","storeSale")->name("store");
-        Route::get("get/list","getSales")->name("get.list");
+        Route::get("create/{entry_id}", "create")->name("create");
+        Route::post("store", "storeSale")->name("store");
+        Route::get("get/list", "getSales")->name("get.list");
 
-        Route::post("delete","delete")->name('delete');
-        Route::post("final/submit","submit")->name("submit");
+        Route::post("delete", "delete")->name('delete');
+        Route::post("final/submit", "submit")->name("submit");
 
-        Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
-        Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");
-        Route::get("print-view-bill/{bill_id}","printViewBill")->name("print.view.bill");
+        Route::any("index/ajax/sums", "indexsumsajax")->name("index.ajax.sums");
+        Route::get("viewbill/{bill_id}", "viewBill")->name("viewBill");
+        Route::get("print-view-bill/{bill_id}", "printViewBill")->name("print.view.bill");
 
-        Route::get('report','report')->name('report');
-        Route::post('report-view','generateReportView')->name('report.view');
+        Route::get('report', 'report')->name('report');
+        Route::post('report-view', 'generateReportView')->name('report.view');
     });
-    Route::post("get/identical/fabric/details",[FabricSendAndReceiveSaleController::class,"getidenticalfabricdetails"])->name("get.identical.fabric.details");
+    Route::post("get/identical/fabric/details", [FabricSendAndReceiveSaleController::class, "getidenticalfabricdetails"])->name("get.identical.fabric.details");
     //fabric send and receive /fabric sale ends
 
     //cc plant
-    Route::prefix("cc/plant/")->name("cc.plant.")->controller(CCPlantController::class)->group(function(){
-        Route::get("entry/index","entryindex")->name("entry.index");
-        Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
-        Route::post("entry/store","entrystore")->name("entry.store");
-        Route::post("entry/destroy","entryDestroy")->name("entry.destroy");
-        Route::get("dananame-from-stock/{godam_id}","danaNameFromStock")->name("get.dananame.ajax");
+    Route::prefix("cc/plant/")->name("cc.plant.")->controller(CCPlantController::class)->group(function () {
+        Route::get("entry/index", "entryindex")->name("entry.index");
+        Route::get("entry/index/ajax", "entryindexajax")->name("entry.index.ajax");
+        Route::post("entry/store", "entrystore")->name("entry.store");
+        Route::post("entry/destroy", "entryDestroy")->name("entry.destroy");
+        Route::get("dananame-from-stock/{godam_id}", "danaNameFromStock")->name("get.dananame.ajax");
         //dana creation
-        Route::post("dana/creation/temp","danacreation")->name("dana.creation.temp");
-        Route::get("created/dana/{entry_id}","createdDana")->name("created.dana");
-        Route::get("create/{entry_id}","create")->name("create");
-        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");
-        Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
+        Route::post("dana/creation/temp", "danacreation")->name("dana.creation.temp");
+        Route::get("created/dana/{entry_id}", "createdDana")->name("created.dana");
+        Route::get("create/{entry_id}", "create")->name("create");
+        Route::get("get/planttype/ajax", "getPlantType")->name("get.planttype.ajax");
+        Route::get("get/plantname/ajax/{planttype_id}", "getPlantName")->name("get.plantname.ajax");
 
         //dana consumption
-        Route::post("danagroup-godam-dana","danaFromDanaGroupGodam")->name("danagroup.godam.dana");
-        Route::post("add-dana","addDana")->name("add.dana");
-        Route::post("stock-dana-entry","updateDana")->name("dana.stock.entry");
-        Route::post("remove-dana","removeDana")->name("remove.dana");
-        Route::post("recycle-dana-remove","removeRecycleDana")->name("remove.recycle.dana");
-        Route::get("cc/raw/materials","getccrawmaterials")->name('get.cc.raw.materials');
-        Route::get("cc/get/sum/{entry_id}","getsumquantity")->name('get.sum');
+        Route::post("danagroup-godam-dana", "danaFromDanaGroupGodam")->name("danagroup.godam.dana");
+        Route::post("add-dana", "addDana")->name("add.dana");
+        Route::post("stock-dana-entry", "updateDana")->name("dana.stock.entry");
+        Route::post("remove-dana", "removeDana")->name("remove.dana");
+        Route::post("recycle-dana-remove", "removeRecycleDana")->name("remove.recycle.dana");
+        Route::get("cc/raw/materials", "getccrawmaterials")->name('get.cc.raw.materials');
+        Route::get("cc/get/sum/{entry_id}", "getsumquantity")->name('get.sum');
 
-        Route::post("stock-wastage-entry","updateWastageStock")->name("wastage.entry");
-        Route::get("created/wastage/{entry_id}","createdWastage")->name("created.wastage");
-        Route::post("recycle-wastage-remove","removeRecycleWastage")->name("remove.recycle.wastage");
-        Route::post("final/submit","finalsubmit")->name("final.submit");
+        Route::post("stock-wastage-entry", "updateWastageStock")->name("wastage.entry");
+        Route::get("created/wastage/{entry_id}", "createdWastage")->name("created.wastage");
+        Route::post("recycle-wastage-remove", "removeRecycleWastage")->name("remove.recycle.wastage");
+        Route::post("final/submit", "finalsubmit")->name("final.submit");
     });
 
-    Route::prefix("reprocess/wastage/")->name("reprocess.wastage.")->controller(ReprocessWasteController::class)->group(function(){
-        Route::get("entry/index","entryindex")->name("entry.index");
-        Route::get("entry/index/ajax","entryindexajax")->name("entry.index.ajax");
-        Route::post("entry/store","entrystore")->name("entry.store");
-        Route::post("entry/destroy","entryDestroy")->name("entry.destroy");
+    Route::prefix("reprocess/wastage/")->name("reprocess.wastage.")->controller(ReprocessWasteController::class)->group(function () {
+        Route::get("entry/index", "entryindex")->name("entry.index");
+        Route::get("entry/index/ajax", "entryindexajax")->name("entry.index.ajax");
+        Route::post("entry/store", "entrystore")->name("entry.store");
+        Route::post("entry/destroy", "entryDestroy")->name("entry.destroy");
 
-        Route::get("create/{entry_id}","create")->name("create");
-        Route::get("get/planttype/ajax","getPlantType")->name("get.planttype.ajax");
-        Route::get("get/plantname/ajax/{planttype_id}","getPlantName")->name("get.plantname.ajax");
+        Route::get("create/{entry_id}", "create")->name("create");
+        Route::get("get/planttype/ajax", "getPlantType")->name("get.planttype.ajax");
+        Route::get("get/plantname/ajax/{planttype_id}", "getPlantName")->name("get.plantname.ajax");
 
-        Route::post("add-waste","addWaste")->name("add.waste");
-        Route::post("restore-wastage","restoreWastage")->name("restore.wastage");
-        Route::post("stock/entry","wastageStockEntry")->name('stock.entry');
+        Route::post("add-waste", "addWaste")->name("add.waste");
+        Route::post("restore-wastage", "restoreWastage")->name("restore.wastage");
+        Route::post("stock/entry", "wastageStockEntry")->name('stock.entry');
 
-        Route::post("stock-dana-entry","updateDana")->name("dana.stock.entry");
-        Route::get("created/dana/{entry_id}","createdDana")->name("created.dana");
-        Route::post("recycle-dana-remove","removeRecycleDana")->name("remove.recycle.dana");
+        Route::post("stock-dana-entry", "updateDana")->name("dana.stock.entry");
+        Route::get("created/dana/{entry_id}", "createdDana")->name("created.dana");
+        Route::post("recycle-dana-remove", "removeRecycleDana")->name("remove.recycle.dana");
 
-        Route::get("raw/materials","getWasteRawmaterials")->name('get.raw.materials');
-        Route::get("created/wastage/{entry_id}","createdWastage")->name("created.wastage");
-        Route::get("get/sum/{entry_id}","getsumquantity")->name('get.sum');
-        Route::post("recycle-wastage-remove","removeRecycleWastage")->name("remove.recycle.wastage");
+        Route::get("raw/materials", "getWasteRawmaterials")->name('get.raw.materials');
+        Route::get("created/wastage/{entry_id}", "createdWastage")->name("created.wastage");
+        Route::get("get/sum/{entry_id}", "getsumquantity")->name('get.sum');
+        Route::post("recycle-wastage-remove", "removeRecycleWastage")->name("remove.recycle.wastage");
 
-        Route::post("final/submit","finalsubmit")->name("final.submit");
+        Route::post("final/submit", "finalsubmit")->name("final.submit");
     });
 
     // fabric_group route
@@ -621,41 +621,41 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         ]
     ]);
 
-    Route::get('fabric/entry-report','FabricController@fabricEntryReport')->name('fabric.entry.report');
-    Route::post('fabric/generate-entry-report-view','FabricController@generateEntryReportView')->name('fabric.entry.report.view');
-    Route::get('fabric/entry-report-table','FabricController@entryReportTable')->name('fabric.entry.report.table');
+    Route::get('fabric/entry-report', 'FabricController@fabricEntryReport')->name('fabric.entry.report');
+    Route::post('fabric/generate-entry-report-view', 'FabricController@generateEntryReportView')->name('fabric.entry.report.view');
+    Route::get('fabric/entry-report-table', 'FabricController@entryReportTable')->name('fabric.entry.report.table');
 
-    Route::get('fabric/godam-transfer-report','FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
-    Route::post('fabric/generate-godam-transfer-report-view','FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view');
+    Route::get('fabric/godam-transfer-report', 'FabricController@godamTransferReport')->name('fabric.godam.transfer.report');
+    Route::post('fabric/generate-godam-transfer-report-view', 'FabricController@generateGodamTransferView')->name('fabric.godam.transfer.report.view');
 
-    Route::get('fabricbag/entry-report','FabricTransferEntryForBagController@fabricEntryReport')->name('fabricbag.entry.report');
-    Route::post('fabricbag/generate-entry-report-view','FabricTransferEntryForBagController@generateEntryReportView')->name('fabricbag.entry.report.view');
-    Route::get('fabricbag/entry-report-table','FabricTransferEntryForBagController@entryReportTable')->name('fabricbag.entry.report.table');
+    Route::get('fabricbag/entry-report', 'FabricTransferEntryForBagController@fabricEntryReport')->name('fabricbag.entry.report');
+    Route::post('fabricbag/generate-entry-report-view', 'FabricTransferEntryForBagController@generateEntryReportView')->name('fabricbag.entry.report.view');
+    Route::get('fabricbag/entry-report-table', 'FabricTransferEntryForBagController@entryReportTable')->name('fabricbag.entry.report.table');
 
-    Route::get('fabric/laminated-report','FabricController@laminatedReport')->name('fabric.laminated.report');
-    Route::post('fabric/generate-laminated-report-view','FabricController@generateLaminatedFabricView')->name('fabric.laminated.report.view');
+    Route::get('fabric/laminated-report', 'FabricController@laminatedReport')->name('fabric.laminated.report');
+    Route::post('fabric/generate-laminated-report-view', 'FabricController@generateLaminatedFabricView')->name('fabric.laminated.report.view');
 
-    Route::get('fabric/unlaminated-report','FabricController@unLaminatedReport')->name('fabric.unlaminated.report');
-    Route::post('fabric/generate-unlaminated-report-view','FabricController@generateUnLaminatedFabricView')->name('fabric.unlaminated.report.view');
+    Route::get('fabric/unlaminated-report', 'FabricController@unLaminatedReport')->name('fabric.unlaminated.report');
+    Route::post('fabric/generate-unlaminated-report-view', 'FabricController@generateUnLaminatedFabricView')->name('fabric.unlaminated.report.view');
 
     Route::get('fabrics/{id}/status', 'FabricController@changeStatus')->name('fabrics.status');
     Route::get('fabrics/{id}/delete', 'FabricController@destroy')->name('fabrics.delete');
 
     Route::get('/fabrics/pdf', 'FabricController@createPDF')->name('fabrics.detailStore');
 
-    Route::post('fabric/detail','FabricController@fabricDetail')->name("fabricDetail");
+    Route::post('fabric/detail', 'FabricController@fabricDetail')->name("fabricDetail");
 
-    Route::get('fabrics/getstock/filterStocks',[FabricStockController::class,'filterStock'])->name('fabric-stock.filterStock');
+    Route::get('fabrics/getstock/filterStocks', [FabricStockController::class, 'filterStock'])->name('fabric-stock.filterStock');
 
-    Route::post('fabrics/getstock/filterStocks/viewBill',[FabricStockController::class,'viewBill'])->name('fabric-stock.viewBill');
-    Route::get('fabrics/getstock/filterStocks/viewBill/print',[FabricStockController::class,'viewBillPrint'])->name('fabric-stock.print.view.bill');
+    Route::post('fabrics/getstock/filterStocks/viewBill', [FabricStockController::class, 'viewBill'])->name('fabric-stock.viewBill');
+    Route::get('fabrics/getstock/filterStocks/viewBill/print', [FabricStockController::class, 'viewBillPrint'])->name('fabric-stock.print.view.bill');
 
     //fabric opening
-    Route::get("fabric/opening",[FabricStockController::class,"openingCreate"])->name("fabric.opening");
-    Route::post("fabric/opening/store",[FabricStockController::class,"openingStore"])->name("fabric.opening.store");
+    Route::get("fabric/opening", [FabricStockController::class, "openingCreate"])->name("fabric.opening");
+    Route::post("fabric/opening/store", [FabricStockController::class, "openingStore"])->name("fabric.opening.store");
 
     //fabric stock
-    Route::get('fabrics/getstock/index',[FabricStockController::class,'index'])->name('fabric-stock.index');
+    Route::get('fabrics/getstock/index', [FabricStockController::class, 'index'])->name('fabric-stock.index');
 
     //fabricgodam
 
@@ -675,37 +675,37 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('fabricGodam/transferFabricGodam/{fabricgodam_id}', 'FabricGodamController@transferFabric')->name('fabricgodams.transferFabric');
 
-    Route::get("fabricGodamTransfer/filterData/List",'FabricGodamController@getFabricGodamTransfer')->name("getFabricGodamTransfer.getList");
+    Route::get("fabricGodamTransfer/filterData/List", 'FabricGodamController@getFabricGodamTransfer')->name("getFabricGodamTransfer.getList");
 
     Route::get('fabricGodam/viewbill/{fabricgodam_id}', 'FabricGodamController@viewbill')->name('fabricgodams.transferFabricDetail');
 
     Route::get('fabricGodam/fabricStockList', 'FabricGodamController@getFabricStockList')->name('godamfabrics.getFabricStockList');
 
-    Route::post('fabric/godamTransfer/store','FabricGodamController@getFabricGodamStore')->name("getFabricGodamStore");
+    Route::post('fabric/godamTransfer/store', 'FabricGodamController@getFabricGodamStore')->name("getFabricGodamStore");
 
     Route::get('fabricGodam/fabricStockList', 'FabricGodamController@getFabricGodamList')->name('fabricgodam.getFabricGodamList');
 
-    Route::post("fabric/godamTransfer/getFinalListStore",'FabricGodamController@getFabricGodamFinalStore')->name("getFabricGodamFinalStore");
+    Route::post("fabric/godamTransfer/getFinalListStore", 'FabricGodamController@getFabricGodamFinalStore')->name("getFabricGodamFinalStore");
 
     Route::get('fabricGodam/delete/list', 'FabricGodamController@deleteFabricGodamList')->name('fabricgodam.deleteFabricGodamList');
 
-    Route::post("fabric/godamTransfer/getList",'FabricGodamController@getFilterFabricGodamList')->name("getFilterFabric");
+    Route::post("fabric/godamTransfer/getList", 'FabricGodamController@getFilterFabricGodamList')->name("getFilterFabric");
 
-    Route::resource('delivery-order',DeliveryOrderController::class);
-    Route::get('delivery-order-datewise-filter',[DeliveryOrderController::class,'filterView'])->name('delivery.order.datewise.filter');
-    Route::post('delivery-order-datewise-generate-view',[DeliveryOrderController::class,'generateView'])->name('delivery.order.datewise.generate.view');
-    Route::get('delivery-order-approved',[DeliveryOrderController::class,'approvedDeliveryOrder'])->name('delivery-order.approved');
+    Route::resource('delivery-order', DeliveryOrderController::class);
+    Route::get('delivery-order-datewise-filter', [DeliveryOrderController::class, 'filterView'])->name('delivery.order.datewise.filter');
+    Route::post('delivery-order-datewise-generate-view', [DeliveryOrderController::class, 'generateView'])->name('delivery.order.datewise.generate.view');
+    Route::get('delivery-order-approved', [DeliveryOrderController::class, 'approvedDeliveryOrder'])->name('delivery-order.approved');
 
-    Route::resource('sauda-item',SaudaItemController::class);
-    Route::get('sauda-item-datewise-filter',[SaudaItemController::class,'filterView'])->name('sauda.item.datewise.filter');
-    Route::post('sauda-item-datewise-generate-view',[SaudaItemController::class,'generateView'])->name('sauda.item.datewise.generate.view');
+    Route::resource('sauda-item', SaudaItemController::class);
+    Route::get('sauda-item-datewise-filter', [SaudaItemController::class, 'filterView'])->name('sauda.item.datewise.filter');
+    Route::post('sauda-item-datewise-generate-view', [SaudaItemController::class, 'generateView'])->name('sauda.item.datewise.generate.view');
 
-    Route::get('sauda-item-entry-datewise-filter',[SaudaItemController::class,'entryFilterView'])->name('sauda.entry.datewise.filter');
-    Route::post('sauda-item-entry-datewise-generate-view',[SaudaItemController::class,'generateEntryView'])->name('sauda.entry.datewise.generate.view');
+    Route::get('sauda-item-entry-datewise-filter', [SaudaItemController::class, 'entryFilterView'])->name('sauda.entry.datewise.filter');
+    Route::post('sauda-item-entry-datewise-generate-view', [SaudaItemController::class, 'generateEntryView'])->name('sauda.entry.datewise.generate.view');
 
-    Route::resource('dispatch-sauda-item',DispatchSaudaItemToPartyController::class);
-    Route::get('dispatch-item-datewise-filter',[DispatchSaudaItemToPartyController::class,'filterView'])->name('dispatch.item.datewise.filter');
-    Route::post('dispatch-item-datewise-generate-view',[DispatchSaudaItemToPartyController::class,'generateView'])->name('dispatch.item.datewise.generate.view');
+    Route::resource('dispatch-sauda-item', DispatchSaudaItemToPartyController::class);
+    Route::get('dispatch-item-datewise-filter', [DispatchSaudaItemToPartyController::class, 'filterView'])->name('dispatch.item.datewise.filter');
+    Route::post('dispatch-item-datewise-generate-view', [DispatchSaudaItemToPartyController::class, 'generateView'])->name('dispatch.item.datewise.generate.view');
 
     //tripal
     Route::resource('tripal', 'Tripal\TripalController', [
@@ -728,10 +728,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('singletripals/edit/{id}', 'Tripal\SingleTripalBillController@edit')->name('addsingletripal.edit');
     Route::post('singletripals/update/{id}', 'Tripal\SingleTripalBillController@update')->name('singletripalbill.update');
 
-     Route::get('doubletripals/edit/{id}', 'Tripal\DoubleTripalBillController@edit')->name('adddoubletripal.edit');
+    Route::get('doubletripals/edit/{id}', 'Tripal\DoubleTripalBillController@edit')->name('adddoubletripal.edit');
     Route::post('doubletripals/update/{id}', 'Tripal\DoubleTripalBillController@update')->name('doubletripalbill.update');
 
-     Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
+    Route::get('finaltripals/edit/{id}', 'Tripal\FinalTripalBillController@edit')->name('addfinaltripal.edit');
     Route::post('finaltripals/update/{id}', 'Tripal\FinalTripalBillController@update')->name('finaltripalbill.update');
 
     Route::get('finaltripal/deleteTripalEntry', 'Tripal\FinalTripalController@deleteTripalEntry')->name('finaltripal.deleteTripalEntryLists');
@@ -757,49 +757,49 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('tripal/store', 'Tripal\TripalController@store')->name('tripal.store');
 
-    Route::get('tripal/getUnlamSingleLam/List','Tripal\TripalController@getUnlamSingleLam')->name('tripal.getUnlamSingleLam');
+    Route::get('tripal/getUnlamSingleLam/List', 'Tripal\TripalController@getUnlamSingleLam')->name('tripal.getUnlamSingleLam');
 
-    Route::post('tripal/wastage/submit','Tripal\TripalController@getWastageStore')->name("tripal.wastage.submit");
+    Route::post('tripal/wastage/submit', 'Tripal\TripalController@getWastageStore')->name("tripal.wastage.submit");
 
-    Route::post("single/tripal/DanaConsumption/store",'Tripal\SingleTripalDanaConsumptionController@store')->name('singleTripalDanaConsumption.store');
+    Route::post("single/tripal/DanaConsumption/store", 'Tripal\SingleTripalDanaConsumptionController@store')->name('singleTripalDanaConsumption.store');
 
-    Route::get("delete/singleDanaConsumption/{id}",'Tripal\SingleTripalDanaConsumptionController@delSingleDanaConsumption')->name("singleDanaConsumption.delete");
-    Route::get("delete/doubleDanaConsumption/{id}",'Tripal\DoubleTripalDanaConsumptionController@delDoubleDanaConsumption')->name("doubleDanaConsumption.delete");
-    Route::get("delete/finalDanaConsumption/{id}",'Tripal\FinalTripalDanaConsumptionController@delFinalDanaConsumption')->name("finalDanaConsumption.delete");
+    Route::get("delete/singleDanaConsumption/{id}", 'Tripal\SingleTripalDanaConsumptionController@delSingleDanaConsumption')->name("singleDanaConsumption.delete");
+    Route::get("delete/doubleDanaConsumption/{id}", 'Tripal\DoubleTripalDanaConsumptionController@delDoubleDanaConsumption')->name("doubleDanaConsumption.delete");
+    Route::get("delete/finalDanaConsumption/{id}", 'Tripal\FinalTripalDanaConsumptionController@delFinalDanaConsumption')->name("finalDanaConsumption.delete");
 
-    Route::post("singletripal/DanaConsumption/getPrintsAndCutsDanaConsumption",'Tripal\SingleTripalDanaConsumptionController@getSingleTripalDanaConsumption')->name('singleTripal.getSingleTripalDanaConsumption');
+    Route::post("singletripal/DanaConsumption/getPrintsAndCutsDanaConsumption", 'Tripal\SingleTripalDanaConsumptionController@getSingleTripalDanaConsumption')->name('singleTripal.getSingleTripalDanaConsumption');
 
     //doubletripal dana consumption
-    Route::post("double/tripal/DanaConsumption/store",'Tripal\DoubleTripalDanaConsumptionController@store')->name('doubleTripalDanaConsumption.store');
+    Route::post("double/tripal/DanaConsumption/store", 'Tripal\DoubleTripalDanaConsumptionController@store')->name('doubleTripalDanaConsumption.store');
 
-    Route::post("doubletripal/DanaConsumption",'Tripal\DoubleTripalDanaConsumptionController@getDoubleTripalDanaConsumption')->name('doubleTripal.getDoubleTripalDanaConsumption');
+    Route::post("doubletripal/DanaConsumption", 'Tripal\DoubleTripalDanaConsumptionController@getDoubleTripalDanaConsumption')->name('doubleTripal.getDoubleTripalDanaConsumption');
 
     //finaltripal dana consumption
-    Route::post("final/tripal/DanaConsumption/store",'Tripal\FinalTripalDanaConsumptionController@store')->name('finalTripalDanaConsumption.store');
+    Route::post("final/tripal/DanaConsumption/store", 'Tripal\FinalTripalDanaConsumptionController@store')->name('finalTripalDanaConsumption.store');
 
-    Route::post("finaltripal/DanaConsumption",'Tripal\FinalTripalDanaConsumptionController@getFinalTripalDanaConsumption')->name('finalTripal.getFinalTripalDanaConsumption');
+    Route::post("finaltripal/DanaConsumption", 'Tripal\FinalTripalDanaConsumptionController@getFinalTripalDanaConsumption')->name('finalTripal.getFinalTripalDanaConsumption');
 
 
     //singletripal stock
-    Route::get('single-tripal/getstock/index',[SingleTripalStockController::class,'index'])->name('singletripal-stock.index');
+    Route::get('single-tripal/getstock/index', [SingleTripalStockController::class, 'index'])->name('singletripal-stock.index');
 
     //doubletripal stock
-    Route::get('double-tripal/getstock/index',[DoubleTripalStockController::class,'index'])->name('doubletripal-stock.index');
+    Route::get('double-tripal/getstock/index', [DoubleTripalStockController::class, 'index'])->name('doubletripal-stock.index');
 
     //finaltripal stock
-    Route::get('final-tripal/getstock/index',[FinalTripalStockController::class,'index'])->name('finaltripal-stock.index');
+    Route::get('final-tripal/getstock/index', [FinalTripalStockController::class, 'index'])->name('finaltripal-stock.index');
 
-    Route::post("getfilter/tripal/list",[FinalTripalController::class,"getfilter"])->name("getFilterTripalList");
+    Route::post("getfilter/tripal/list", [FinalTripalController::class, "getfilter"])->name("getFilterTripalList");
 
     //filtersingletripallist get size name
 
-    Route::post("getfilter/singletripal/list",[TripalController::class,"getSingleFilterData"])->name("getFilterSingleTripalList");
+    Route::post("getfilter/singletripal/list", [TripalController::class, "getSingleFilterData"])->name("getFilterSingleTripalList");
 
-    Route::post("getfilter/doubletripal/list",'Tripal\DoubleTripalController@getDoubleFilterData')->name("getFilterDoubleTripalList");
+    Route::post("getfilter/doubletripal/list", 'Tripal\DoubleTripalController@getDoubleFilterData')->name("getFilterDoubleTripalList");
 
-    Route::post("getfilter/tripal/fabric/list",[TripalController::class,"getSingleFabricFilterData"])->name("getFilterFabricTripalList");
+    Route::post("getfilter/tripal/fabric/list", [TripalController::class, "getSingleFabricFilterData"])->name("getFilterFabricTripalList");
 
-    Route::post("getfilter/doubletripal/fabric/list",'Tripal\DoubleTripalController@getFilterDoubleFabricTripalList')->name("getFilterDoubleFabricTripalList");
+    Route::post("getfilter/doubletripal/fabric/list", 'Tripal\DoubleTripalController@getFilterDoubleFabricTripalList')->name("getFilterDoubleFabricTripalList");
 
     //openingtripal
 
@@ -814,114 +814,105 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
 
 
-    Route::post('openingtripal/getFabricType/List/storeData','Tripal\OpeningTripalController@storeData')->name('openingtripal.storeSingleStock');
+    Route::post('openingtripal/getFabricType/List/storeData', 'Tripal\OpeningTripalController@storeData')->name('openingtripal.storeSingleStock');
 
-    Route::get('openingtripal/getFabricType/List/allData','Tripal\OpeningTripalController@getAllOpeningData')->name('openingtripal.getAllOpeningTripal');
+    Route::get('openingtripal/getFabricType/List/allData', 'Tripal\OpeningTripalController@getAllOpeningData')->name('openingtripal.getAllOpeningTripal');
 
     //doubletriplaopening
 
-    Route::get('openingdoubletripal','Tripal\OpeningTripalController@getOpeningDoubleTripalIndex')->name('openingdoubletripal.index');
+    Route::get('openingdoubletripal', 'Tripal\OpeningTripalController@getOpeningDoubleTripalIndex')->name('openingdoubletripal.index');
 
-    Route::post('openingdoubletripal/storeData','Tripal\OpeningTripalController@storeDoubleData')->name('openingdoubletripal.storeDoubleStock');
+    Route::post('openingdoubletripal/storeData', 'Tripal\OpeningTripalController@storeDoubleData')->name('openingdoubletripal.storeDoubleStock');
 
     //final tripal
-    Route::get('openingfinaltripal','Tripal\OpeningTripalController@getOpeningFinalTripalIndex')->name('openingfinaltripal.index');
-    Route::post('openingfinaltripal/storeData','Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
+    Route::get('openingfinaltripal', 'Tripal\OpeningTripalController@getOpeningFinalTripalIndex')->name('openingfinaltripal.index');
+    Route::post('openingfinaltripal/storeData', 'Tripal\OpeningTripalController@storeFinalData')->name('openingfinaltripal.storeFinalStock');
 
     //final tripal edit section
 
-    Route::get('openingfinaltripal/edit/{id}','Tripal\OpeningTripalController@getOpeningFinalTripalEdit')->name('openingfinaltripal.edit');
-    Route::put('openingfinaltripal/update/{id}','Tripal\OpeningTripalController@getOpeningFinalTripalUpdate')->name('openingfinaltripal.update');
-    Route::get('openingfinaltripal/delete/{id}','Tripal\OpeningTripalController@destroyTripal')->name('openingfinaltripal.delete');
+    Route::get('openingfinaltripal/edit/{id}', 'Tripal\OpeningTripalController@getOpeningFinalTripalEdit')->name('openingfinaltripal.edit');
+    Route::put('openingfinaltripal/update/{id}', 'Tripal\OpeningTripalController@getOpeningFinalTripalUpdate')->name('openingfinaltripal.update');
+    Route::get('openingfinaltripal/delete/{id}', 'Tripal\OpeningTripalController@destroyTripal')->name('openingfinaltripal.delete');
 
 
     //sale final tripal
-    Route::get('salefinaltripal','Sale\SaleFinalTripalController@index')->name('salefinaltripal.index');
-    Route::get('salefinaltripal/getSaleFinalTripalStockList','Sale\SaleFinalTripalController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
+    Route::get('salefinaltripal', 'Sale\SaleFinalTripalController@index')->name('salefinaltripal.index');
+    Route::get('salefinaltripal/getSaleFinalTripalStockList', 'Sale\SaleFinalTripalController@getSaleFinalTripalStockList')->name('salefinaltripal.getSaleFinalTripalStockList');
 
-    Route::post('salefinaltripal/store','Sale\SaleFinalTripalController@store')->name('salefinaltripal.store');
+    Route::post('salefinaltripal/store', 'Sale\SaleFinalTripalController@store')->name('salefinaltripal.store');
 
-    Route::get('salefinaltripal/addTripal/{id}','Sale\SaleFinalTripalController@addTripal')->name('salefinaltripals.addTripal');
+    Route::get('salefinaltripal/addTripal/{id}', 'Sale\SaleFinalTripalController@addTripal')->name('salefinaltripals.addTripal');
 
-    Route::get('salefinaltripal/viewTripal/{id}','Sale\SaleFinalTripalController@viewTripal')->name('salefinaltripals.viewTripal');
+    Route::get('salefinaltripal/viewTripal/{id}', 'Sale\SaleFinalTripalController@viewTripal')->name('salefinaltripals.viewTripal');
 
-    Route::get('salefinaltripal/viewTripalBill/{id}','Sale\SaleFinalTripalController@viewTripalBill')->name('salefinaltripals.viewTripalBill');
+    Route::get('salefinaltripal/viewTripalBill/{id}', 'Sale\SaleFinalTripalController@viewTripalBill')->name('salefinaltripals.viewTripalBill');
 
-    Route::get("salefinaltripal/getTripalSaleTotal",'Sale\SaleFinalTripalController@getTripalSaleTotal')->name("getTripalSaleTotal");
+    Route::get("salefinaltripal/getTripalSaleTotal", 'Sale\SaleFinalTripalController@getTripalSaleTotal')->name("getTripalSaleTotal");
 
-    Route::get("salefinaltripal/getTripalSale/Pdf/{id}",'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
-    Route::get("salefinaltripal/getTripalSale/excel/{id}",'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
+    Route::get("salefinaltripal/getTripalSale/Pdf/{id}", 'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
+    Route::get("salefinaltripal/getTripalSale/excel/{id}", 'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
 
 
     //salefinaltripal filter
 
-    Route::post("get/finalTripal/filterName",'Sale\SaleFinalTripalController@getfinaltripalFilter')->name("getfinaltripalFilter");
+    Route::post("get/finalTripal/filterName", 'Sale\SaleFinalTripalController@getfinaltripalFilter')->name("getfinaltripalFilter");
 
-    Route::post('salefinaltripal/store/entryList','Sale\SaleFinalTripalController@finalTripalStoreEntryList')->name('finalsaletripal.storeEntryList');
+    Route::post('salefinaltripal/store/entryList', 'Sale\SaleFinalTripalController@finalTripalStoreEntryList')->name('finalsaletripal.storeEntryList');
 
-    Route::post('salefinaltripal/store/finalList','Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
+    Route::post('salefinaltripal/store/finalList', 'Sale\SaleFinalTripalController@finalTripalStoreList')->name('finalsaletripal.storeList');
 
-    Route::get("get/saleTripal/filterSaleTripalList",'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
+    Route::get("get/saleTripal/filterSaleTripalList", 'Sale\SaleFinalTripalController@getSaleTripalList')->name("getSaleTripalList");
 
     Route::get('salefinaltripal/delete/list', 'Sale\SaleFinalTripalController@deleteEntryList')->name('finalsaletripal.deleteFinalSaleEntry');
 
     Route::get('saleFinalTripal/dataTable', 'Sale\SaleFinalTripalController@dataTable')->name('saleFinalTripal.dataTable');
 
-    Route::get('finaltripal/getstock/filterStocks','Tripal\FinalTripalStockController@filterStock')->name('finaltripal-stock.filterStock');
+    Route::get('finaltripal/getstock/filterStocks', 'Tripal\FinalTripalStockController@filterStock')->name('finaltripal-stock.filterStock');
 
-    Route::get("restock",'Sale\SaleFinalTripalController@restock')->name("admin.restock");
+    Route::get("restock", 'Sale\SaleFinalTripalController@restock')->name("admin.restock");
 
     Route::prefix('nonwovenSale')->group(function () {
         // Define routes here
         Route::get('index', 'Sale\NonwovenSaleController@index')->name('nonwovenSale.index');
-        Route::get('nonwovenSale/getSaleFinalTripalStockList','Sale\NonwovenSaleController@getSaleFinalTripalStockList')->name('nonwovenSale.getSaleFinalTripalStockList');
+        Route::get('nonwovenSale/getSaleFinalTripalStockList', 'Sale\NonwovenSaleController@getSaleFinalTripalStockList')->name('nonwovenSale.getSaleFinalTripalStockList');
 
-        Route::post('nonwovenSale/store','Sale\NonwovenSaleController@store')->name('nonwovenSale.store');
+        Route::post('nonwovenSale/store', 'Sale\NonwovenSaleController@store')->name('nonwovenSale.store');
 
         Route::get('nonwovenSale/dataTable', 'Sale\NonwovenSaleController@dataTable')->name('nonwovenSale.dataTable');
 
-        Route::get('add/{id}','Sale\NonwovenSaleController@add')->name('nonwovenSale.add');
+        Route::get('add/{id}', 'Sale\NonwovenSaleController@add')->name('nonwovenSale.add');
 
-        Route::get('nonwovenSale/viewTripal/{id}','Sale\NonwovenSaleController@viewTripal')->name('nonwovenSale.viewTripal');
+        Route::get('nonwovenSale/viewTripal/{id}', 'Sale\NonwovenSaleController@viewTripal')->name('nonwovenSale.viewTripal');
 
         Route::post('nonwovenSale/storeEntryList', 'Sale\NonwovenSaleController@storeEntryList')->name('finalnonwoven.storeEntryList');
 
-        Route::get("getfilterNonwovenList",'Sale\NonwovenSaleController@getSaleNonwovenList')->name("getSaleNonwovenList");
+        Route::get("getfilterNonwovenList", 'Sale\NonwovenSaleController@getSaleNonwovenList')->name("getSaleNonwovenList");
 
-        Route::post('salefinalnonwoven/store/finalList','Sale\NonwovenSaleController@finalNonwovenStoreList')->name('nonwovensalefinal.storeList');
+        Route::post('salefinalnonwoven/store/finalList', 'Sale\NonwovenSaleController@finalNonwovenStoreList')->name('nonwovensalefinal.storeList');
 
-        Route::get("viewbill/{bill_id}",'Sale\NonwovenSaleController@viewbill')->name('nonwovenSale.viewBill');
+        Route::get("viewbill/{bill_id}", 'Sale\NonwovenSaleController@viewbill')->name('nonwovenSale.viewBill');
 
         Route::get('salefinalnonwoven/delete/list', 'Sale\NonwovenSaleController@deleteEntryList')->name('nonwovenSale.deleteFinalSaleEntry');
-
-
-
-
-
     });
 
     Route::prefix('wastageSale')->group(function () {
         // Define routes here
         Route::get('index', 'Sale\WastageSaleController@index')->name('wastageSale.index');
 
-        Route::post('wastageSale/store','Sale\WastageSaleController@store')->name('wastageSale.store');
+        Route::post('wastageSale/store', 'Sale\WastageSaleController@store')->name('wastageSale.store');
 
         Route::get('wastageSale/dataTable', 'Sale\WastageSaleController@dataTable')->name('wastageSale.dataTable');
 
-        Route::get('add/{id}','Sale\WastageSaleController@add')->name('wastageSale.add');
-        Route::get("viewbill/{bill_id}",'Sale\WastageSaleController@viewbill')->name('wastageSale.viewBill');
+        Route::get('add/{id}', 'Sale\WastageSaleController@add')->name('wastageSale.add');
+        Route::get("viewbill/{bill_id}", 'Sale\WastageSaleController@viewbill')->name('wastageSale.viewBill');
 
-        Route::post('add/storeEntry','Sale\WastageSaleController@storeEntry')->name('wastageSale.storeEntry');
+        Route::post('add/storeEntry', 'Sale\WastageSaleController@storeEntry')->name('wastageSale.storeEntry');
 
         Route::post('getFilter/wastageData', 'Sale\WastageSaleController@getWastageList')->name('getFilterWastageList');
         Route::post('finalwastage/storeEntryList', 'Sale\WastageSaleController@storeFinalEntry')->name('wastageSale.storeFinalEntry');
         Route::get('getWastageQuantity', 'Sale\WastageSaleController@getWastageQuantity')->name('wastageSale.getQuantity');
 
         Route::get('delete/list', 'Sale\WastageSaleController@deleteEntryList')->name('wastageSale.deleteWastageEntry');
-
-
-
-
     });
 
 
@@ -943,7 +934,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
 
-    Route::get('doubletripal/getSingleLaminatedFabric/List','Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
+    Route::get('doubletripal/getSingleLaminatedFabric/List', 'Tripal\DoubleTripalController@getSingleLamFabric')->name('doubletripal.getSingleLaminatedFabric');
 
     Route::get('doubletripals/{id}/status', 'Tripal\DoubleTripalController@changeStatus')->name('doubletripal.status');
     Route::get('doubletripals/{id}/delete', 'Tripal\DoubleTripalController@destroy')->name('doubletripal.delete');
@@ -951,7 +942,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('doubletripals/getUnlamSingleDoubleLam/List', 'Tripal\DoubleTripalController@getUnlamSingleDoubleLam')->name('doubletripal.getUnlamSingleDoubleLam');
 
 
-    Route::post('doubletripal/wastage/submit','Tripal\DoubleTripalController@getWastageStore')->name("doubletripal.wastage.submit");
+    Route::post('doubletripal/wastage/submit', 'Tripal\DoubleTripalController@getWastageStore')->name("doubletripal.wastage.submit");
 
 
     Route::get('doubletripals/create/{id}', 'Tripal\DoubleTripalController@createDoubleTripal')->name('adddoubletripal.create');
@@ -985,7 +976,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::post('finaltripal/name/store', 'Tripal\FinalTripalController@storeTripalName')->name('finaltripal.storeName');
 
-    Route::post('finaltripal/wastage/submit','Tripal\FinalTripalController@getWastageStore')->name("finaltripal.wastage.submit");
+    Route::post('finaltripal/wastage/submit', 'Tripal\FinalTripalController@getWastageStore')->name("finaltripal.wastage.submit");
 
     //singletripal name
     Route::post('singletripal/name/store', 'Tripal\TripalController@storeTripalName')->name('singletripal.storeName');
@@ -1007,16 +998,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::post('transferFabric/storeEntryList', 'GodamTransfer\FinalTripalGodamController@getTripalGodamStore')->name('getTripalGodamStore');
 
-        Route::get("getTripalGodamList/filterData/List",'GodamTransfer\FinalTripalGodamController@getTripalGodamList')->name("transfer.getList");
+        Route::get("getTripalGodamList/filterData/List", 'GodamTransfer\FinalTripalGodamController@getTripalGodamList')->name("transfer.getList");
 
-        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+        Route::get("getTripalGodamList/filterData", 'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
 
-        Route::post("getTripalGodamList/storeData",'GodamTransfer\FinalTripalGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
+        Route::post("getTripalGodamList/storeData", 'GodamTransfer\FinalTripalGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
 
-        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+        Route::get("getTripalGodamList/filterData", 'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
 
-        Route::get("getTripalGodamList/viewBill/{tripalgodam_id}",'GodamTransfer\FinalTripalGodamController@viewBill')->name("tripalGodam.viewBill");
-
+        Route::get("getTripalGodamList/viewBill/{tripalgodam_id}", 'GodamTransfer\FinalTripalGodamController@viewBill')->name("tripalGodam.viewBill");
     });
 
     //nonwoven tranfer
@@ -1036,16 +1026,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::post('transferFabric/storeEntryList', 'GodamTransfer\NonwovenGodamController@getNonwovenGodamStore')->name('getNonwovenGodamStore');
 
-        Route::get("getNonwovenGodamList/filterData/List",'GodamTransfer\NonwovenGodamController@getNonwovenGodamList')->name("transferNonwoven.getList");
+        Route::get("getNonwovenGodamList/filterData/List", 'GodamTransfer\NonwovenGodamController@getNonwovenGodamList')->name("transferNonwoven.getList");
 
-        Route::get("getNonwovenGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
+        Route::get("getNonwovenGodamList/filterData", 'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
 
-        Route::post("getNonwovenGodamList/storeData",'GodamTransfer\NonwovenGodamController@getNonwovenGodamFinalStore')->name("getNonwovenGodamFinalStore");
+        Route::post("getNonwovenGodamList/storeData", 'GodamTransfer\NonwovenGodamController@getNonwovenGodamFinalStore')->name("getNonwovenGodamFinalStore");
 
-        Route::get("getNonwovenGodamList/filterData",'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
+        Route::get("getNonwovenGodamList/filterData", 'GodamTransfer\NonwovenGodamController@deleteList')->name("nonwovengodam.deleteList");
 
-        Route::get("getNonwovenGodamList/viewBill/{nonwovengodam_id}",'GodamTransfer\NonwovenGodamController@viewBill')->name("nonwovenGodam.viewBill");
-
+        Route::get("getNonwovenGodamList/viewBill/{nonwovengodam_id}", 'GodamTransfer\NonwovenGodamController@viewBill')->name("nonwovenGodam.viewBill");
     });
 
     Route::prefix('tripalGodamTransfer')->group(function () {
@@ -1060,20 +1049,19 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::post('transferFabric/storeEntryList', 'GodamTransfer\FinalTripalGodamController@getTripalGodamStore')->name('getTripalGodamStore');
 
-        Route::get("getTripalGodamList/filterData/List",'GodamTransfer\FinalTripalGodamController@getTripalGodamList')->name("transfer.getList");
+        Route::get("getTripalGodamList/filterData/List", 'GodamTransfer\FinalTripalGodamController@getTripalGodamList')->name("transfer.getList");
 
-        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+        Route::get("getTripalGodamList/filterData", 'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
 
-        Route::post("getTripalGodamList/storeData",'GodamTransfer\FinalTripalGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
+        Route::post("getTripalGodamList/storeData", 'GodamTransfer\FinalTripalGodamController@getTripalGodamFinalStore')->name("getTripalGodamFinalStore");
 
-        Route::get("getTripalGodamList/filterData",'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
+        Route::get("getTripalGodamList/filterData", 'GodamTransfer\FinalTripalGodamController@deleteList')->name("tripalgodam.deleteList");
 
-        Route::get("getTripalGodamList/viewBill/{tripalgodam_id}",'GodamTransfer\FinalTripalGodamController@viewBill')->name("tripalGodam.viewBill");
-
+        Route::get("getTripalGodamList/viewBill/{tripalgodam_id}", 'GodamTransfer\FinalTripalGodamController@viewBill')->name("tripalGodam.viewBill");
     });
 
 
-     // _group route
+    // _group route
 
     Route::resource('nonwovenfabrics', 'FabricNonWovenController', [
         'names' => [
@@ -1091,9 +1079,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('nonwovenfabrics/storeBill', 'Nonwoven\NonWovenBillController@store')->name('nonwovenbill.store');
     Route::get('nonwovenfabrics/entry/{bill_id}', 'NonwovenReceiveEntryController@create')->name('nonwovenentry.create');
 
-    Route::post("nonwoven/DanaConsumption/store",'Nonwoven\NonwovenDanaConsumptionController@store')->name('nonwovenDanaConsumption.store');
+    Route::post("nonwoven/DanaConsumption/store", 'Nonwoven\NonwovenDanaConsumptionController@store')->name('nonwovenDanaConsumption.store');
 
-    Route::get("delete/nonwovenDanaConsumption/{id}",'Nonwoven\NonwovenDanaConsumptionController@delDanaConsumption')->name("nonwovenDanaConsumption.delete");
+    Route::get("delete/nonwovenDanaConsumption/{id}", 'Nonwoven\NonwovenDanaConsumptionController@delDanaConsumption')->name("nonwovenDanaConsumption.delete");
 
     Route::resource('nonwovenfabrics-receiveentry', 'NonwovenReceiveEntryController', [
         'names' => [
@@ -1125,8 +1113,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     //nonwoven stock
 
-    Route::get('nonwovenfabrics-receiveentry/getstock/index',[NonWovenStockController::class,'index'])->name('nonwovenfabrics-receiveentrystock.index');
-     // Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('tapeentry-stock.filterStock');
+    Route::get('nonwovenfabrics-receiveentry/getstock/index', [NonWovenStockController::class, 'index'])->name('nonwovenfabrics-receiveentrystock.index');
+    // Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('tapeentry-stock.filterStock');
 
     //
     Route::get('opening/nonwovenfabrics', 'Opening\NonWovenController@index')->name('openingnonwoven.index');
@@ -1134,7 +1122,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
     Route::post('department/getPlantTypeList', 'FabricNonWovenReceiveEntryController@getPlantTypeList')->name('getPlantTypeList');
-     Route::post('department/getPlantNameList', 'FabricNonWovenReceiveEntryController@getPlantNameList')->name('getPlantNameList');
+    Route::post('department/getPlantNameList', 'FabricNonWovenReceiveEntryController@getPlantNameList')->name('getPlantNameList');
 
     // fabric_group route
     Route::get('/fabric-groups/pdf', 'FabricGroupController@createPDF')->name('fabric-groups.pdf');
@@ -1149,7 +1137,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     ]);
     Route::get('fabric-groups/{id}/status', 'FabricGroupController@changeStatus')->name('fabric-groups.status');
     Route::get('fabric-groups/{id}/delete', 'FabricGroupController@destroy')->name('fabric-groups.delete');
-//Storein Item route
+    //Storein Item route
     Route::post('storeinItems/store', 'ItemsOfStoreinController@store')->name('storeinItems.store');
 
     // Items route
@@ -1311,554 +1299,547 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
-});
-// charges route
-Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 
-//Storein route
-// Route::resource('storein',StoreinController::class);
-Route::post('storein/generate-entry-report-view','StoreinController@generateEntryReportView')->name('storein.entry.report.view');
+    // charges route
+    Route::post('charge/store', 'ChargesController@store')->name('charge.store');
 
-Route::get('storein/getItemsDepartment/{items_of_storein_name}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
-Route::get('storein/getUnitOfItems/{items_of_storein_name}', 'StoreinController@getUnitOfItems')->name('storein.getUnitOfItems');
+    //Storein route
+    // Route::resource('storein',StoreinController::class);
+    Route::post('storein/generate-entry-report-view', 'StoreinController@generateEntryReportView')->name('storein.entry.report.view');
 
-Route::get('storein/getDepartentAccCat/{category_id}', 'StoreinController@getDepartentAccCat')->name('storein.getDepartentAccCat');
-//storei report megha
-Route::get('storein/entry-report','StoreinController@entryReport')->name('storein.entryReport');
-Route::get('storein/category-report','StoreinController@categoryReport')->name('storein.categoryReport');
-Route::post('storein/itemCategory-report-view','StoreinController@generateCategoryReportView')->name('storein.itemCatgoryReport.view');
+    Route::get('storein/getItemsDepartment/{items_of_storein_name}', 'StoreinController@getItemsDepartment')->name('storein.getItemsDepartment');
+    Route::get('storein/getUnitOfItems/{items_of_storein_name}', 'StoreinController@getUnitOfItems')->name('storein.getUnitOfItems');
 
-
-Route::get('storein/supplier-report','StoreinController@supplierReport')->name('storein.supplierReport');
-Route::post('storein/item-supplier-report','StoreinController@generateSupplierReportView')->name('storein.itemSupplierReport.view');
-
-Route::get('storein/storeinType-report','StoreinController@storeinTypeReport')->name('storein.storeinTypeReport');
-Route::post('storein/item-storeinType-report','StoreinController@generateStoreinTypeReportView')->name('storein.itemStoreinTypeReport.view');
-
-Route::get('storein/srNo-report','StoreinController@srNoReport')->name('storein.srNoReport');
-Route::post('storein/item-srNo-report','StoreinController@generateSrNoReportView')->name('storein.itemSrNoReport.view');
-
-Route::get('storein/item-report','StoreinController@itemReport')->name('storein.itemReport');
-Route::get('storein/getItemSize','StoreinController@getItemSize')->name('item.getSize');
-
-Route::post('storein/get-item-report','StoreinController@generateItemReportView')->name('storein.itemReport.view');
+    Route::get('storein/getDepartentAccCat/{category_id}', 'StoreinController@getDepartentAccCat')->name('storein.getDepartentAccCat');
+    //storei report megha
+    Route::get('storein/entry-report', 'StoreinController@entryReport')->name('storein.entryReport');
+    Route::get('storein/category-report', 'StoreinController@categoryReport')->name('storein.categoryReport');
+    Route::post('storein/itemCategory-report-view', 'StoreinController@generateCategoryReportView')->name('storein.itemCatgoryReport.view');
 
 
+    Route::get('storein/supplier-report', 'StoreinController@supplierReport')->name('storein.supplierReport');
+    Route::post('storein/item-supplier-report', 'StoreinController@generateSupplierReportView')->name('storein.itemSupplierReport.view');
 
-Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
-Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');
-Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('storein.storeinIndex');
-Route::post('storein/saveStorein', 'StoreinController@saveStorein')->name('storein.saveStorein');
-Route::get('storein/createItems/{id}', 'StoreinController@createItems')->name('storein.createItems');
-Route::post('storein/saveStoreinItems/{id}', 'StoreinController@saveStoreinItems')->name('storein.saveStoreinItems');
-//recent here m
-Route::get('storein/getcategoryItems', 'StoreinController@getcategoryItems')->name('storein.getcategoryItems');
-Route::get('storein/storeInItemsRetrive/{storein_id}', 'StoreinController@storeInItemsRetrive')->name('storein.storeInItemsRetrive');
-Route::get('storein/getEditItemData/{storeinItem_id}', 'StoreinController@getEditItemData')->name('storein.getEditItemData');
-Route::post('storein/EditItemStoreData', 'StoreinController@EditItemStoreData')->name('storein.EditItemStoreData');
-Route::post('storein/saveEntireStorein/{storein_id}', 'StoreinController@saveEntireStorein')->name('storein.saveEntireStorein');
-Route::get('storein/invoiceView/{storein_id}', 'StoreinController@invoiceView')->name('storein.invoiceView');
-Route::get('storein/storeinItemCreate/{id}', 'StoreinController@storeinItemCreate')->name('storein.storeinItemCreate');
-Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemDelete')->name('storein.storeinItemDelete');
-Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
-Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
-Route::get('/storein/getSizeOfItems/{items_of_storein_id}', 'StoreinController@getSizeOfItems')->name('storein.getSizeOfItems');
-Route::get('/storein/getDepartmentSizeUnit', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
+    Route::get('storein/storeinType-report', 'StoreinController@storeinTypeReport')->name('storein.storeinTypeReport');
+    Route::post('storein/item-storeinType-report', 'StoreinController@generateStoreinTypeReportView')->name('storein.itemStoreinTypeReport.view');
+
+    Route::get('storein/srNo-report', 'StoreinController@srNoReport')->name('storein.srNoReport');
+    Route::post('storein/item-srNo-report', 'StoreinController@generateSrNoReportView')->name('storein.itemSrNoReport.view');
+
+    Route::get('storein/item-report', 'StoreinController@itemReport')->name('storein.itemReport');
+    Route::get('storein/getItemSize', 'StoreinController@getItemSize')->name('item.getSize');
+
+    Route::post('storein/get-item-report', 'StoreinController@generateItemReportView')->name('storein.itemReport.view');
 
 
 
-Route::resource('storein', 'StoreinController', [
-    'names' => [
-        'index' => 'storein.index',
-        'create' => 'storein.create',
-        'store' => 'storein.store',
-        'show' => 'storein.show',
-        'edit' => 'storein.edit',
-        'update' => 'storein.update',
-    ]
-]);
-//StoreinType Controller
-Route::post('/storeinType/store', 'StoreinTypeController@store')->name('storeinType.store');
-
-// storein edit routes
-Route::get('storein/editStorein/{storein_id}', 'StoreinController@editStorein')->name('storein.editStorein');
-Route::post('storein/updateStorein/{storein_id}', 'StoreinController@updateStorein')->name('storein.updateStorein');
-Route::get('storein/editStoreinItems', 'StoreinController@editStoreinItems')->name('storein.editStoreinItems');
-
-
-// Tax Controller
-
-Route::get('tax/getPercentageBySlug/{slug}', 'TaxController@getPercentageBySlug')->name('tax.getPercentageBySlug');
-
-Route::get('storein/{code}/invoice', 'StoreinController@getInvoice')->name('storein.invoice');
-Route::get('storein/{code}/status', 'StoreinController@changeStatus')->name('storein.status');
-Route::post('/purchase-products', 'StoreinController@purchaseProducts')->name('storein.purchaseProducts');
-Route::get('storein/{code}/delete', 'StoreinController@destroy')->name('storein.delete');
+    Route::get('storein/createStorein', 'StoreinController@createStorein')->name('storein.createStoreins');
+    Route::get('/storein/pdf', 'StoreinController@createPDF')->name('storein.pdf');
+    Route::get('storein/storeinIndex', 'StoreinController@storeinIndex')->name('storein.storeinIndex');
+    Route::post('storein/saveStorein', 'StoreinController@saveStorein')->name('storein.saveStorein');
+    Route::get('storein/createItems/{id}', 'StoreinController@createItems')->name('storein.createItems');
+    Route::post('storein/saveStoreinItems/{id}', 'StoreinController@saveStoreinItems')->name('storein.saveStoreinItems');
+    //recent here m
+    Route::get('storein/getcategoryItems', 'StoreinController@getcategoryItems')->name('storein.getcategoryItems');
+    Route::get('storein/storeInItemsRetrive/{storein_id}', 'StoreinController@storeInItemsRetrive')->name('storein.storeInItemsRetrive');
+    Route::get('storein/getEditItemData/{storeinItem_id}', 'StoreinController@getEditItemData')->name('storein.getEditItemData');
+    Route::post('storein/EditItemStoreData', 'StoreinController@EditItemStoreData')->name('storein.EditItemStoreData');
+    Route::post('storein/saveEntireStorein/{storein_id}', 'StoreinController@saveEntireStorein')->name('storein.saveEntireStorein');
+    Route::get('storein/invoiceView/{storein_id}', 'StoreinController@invoiceView')->name('storein.invoiceView');
+    Route::get('storein/storeinItemCreate/{id}', 'StoreinController@storeinItemCreate')->name('storein.storeinItemCreate');
+    Route::delete('/storein/storeinItemDelete/{id}', 'StoreinController@storeinItemDelete')->name('storein.storeinItemDelete');
+    Route::delete('/storein/delete/{id}', 'StoreinController@storeinDelete')->name('storein.delete');
+    Route::get('/storein/storinYajraDatabales', 'StoreinController@storinYajraDatabales')->name('storein.storinYajraDatabales');
+    Route::get('/storein/getSizeOfItems/{items_of_storein_id}', 'StoreinController@getSizeOfItems')->name('storein.getSizeOfItems');
+    Route::get('/storein/getDepartmentSizeUnit', 'StoreinController@getDepartmentSizeUnit')->name('storein.getDepartmentSizeUnit');
 
 
-// stockController
-Route::post('stock/createUpdate/{storein_item_id}', 'StockController@createUpdate')->name('stock.createUpdate');
-Route::get('stock/index', 'StockController@index')->name('stock.index');
-Route::get('yajra/yajra', 'StockController@yajra')->name('stock.yajra');
 
-Route::get('stock/filterStockAccCategory/{category_id}', 'StockController@filterStockAccCategory')->name('stock.filterStockAccCategory');
-Route::get('stock/filterStockAccDepartment/{department_id}', 'StockController@filterStockAccDepartment')->name('stock.filterStockAccDepartment');
-//recent megha
-Route::get('storeinStock/filter', 'StockController@filter')->name('storeinStock.filter');
-//filter department acc category
-Route::get('storeinStock/getCategoryDepartment/{category_id}', 'StockController@getCategoryDepartment')->name('storeinStock.getCategoryDepartment');
-//import stock
-Route::post('import/stock',[StockImportController::class,"import"])->name('import.stock');
-//import fabric
-Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
+    Route::resource('storein', 'StoreinController', [
+        'names' => [
+            'index' => 'storein.index',
+            'create' => 'storein.create',
+            'store' => 'storein.store',
+            'show' => 'storein.show',
+            'edit' => 'storein.edit',
+            'update' => 'storein.update',
+        ]
+    ]);
+    //StoreinType Controller
+    Route::post('/storeinType/store', 'StoreinTypeController@store')->name('storeinType.store');
 
-//import bundle stock
-Route::post('import/bundlestock', 'BagBundelStockController@import')->name('import.bundlestock');
+    // storein edit routes
+    Route::get('storein/editStorein/{storein_id}', 'StoreinController@editStorein')->name('storein.editStorein');
+    Route::post('storein/updateStorein/{storein_id}', 'StoreinController@updateStorein')->name('storein.updateStorein');
+    Route::get('storein/editStoreinItems', 'StoreinController@editStoreinItems')->name('storein.editStoreinItems');
 
-/*****************tape entry**************/
-Route::get('tape-entry',[TapeEntryController::class,"index"])->name('tape.entry');
-Route::post('tape-entry/store',[TapeEntryController::class,"tapeentrystore"])->name("tape.entry.store");
-Route::get('tape-entry/receive/create/{id}',[TapeEntryController::class,"create"])->name("tape.entry.receive.create");
-Route::get('tape-entry/receive/view/{id}',[TapeEntryController::class,"view"])->name("tape.entry.receive.view");
-Route::post('tape-entry/receive/delete/{id}',[TapeEntryController::class,"deleteTape"])->name("tape.entry.receive.delete");
 
-//tapre report
-Route::get("tape/report",[TapeEntryController::class,"tape_report"])->name("tape.report");
-Route::get("tape/report/ajax",[TapeEntryController::class,"tape_report_ajax"])->name("tape.report.ajax");
-Route::get("tape/report/amounts/{godam}",[TapeEntryController::class,"tape_report_amounts_ajax"])->name("tape.report.amounts.ajax");
+    // Tax Controller
+
+    Route::get('tax/getPercentageBySlug/{slug}', 'TaxController@getPercentageBySlug')->name('tax.getPercentageBySlug');
+
+    Route::get('storein/{code}/invoice', 'StoreinController@getInvoice')->name('storein.invoice');
+    Route::get('storein/{code}/status', 'StoreinController@changeStatus')->name('storein.status');
+    Route::post('/purchase-products', 'StoreinController@purchaseProducts')->name('storein.purchaseProducts');
+    Route::get('storein/{code}/delete', 'StoreinController@destroy')->name('storein.delete');
+
+
+    // stockController
+    Route::post('stock/createUpdate/{storein_item_id}', 'StockController@createUpdate')->name('stock.createUpdate');
+    Route::get('stock/index', 'StockController@index')->name('stock.index');
+    Route::get('yajra/yajra', 'StockController@yajra')->name('stock.yajra');
+
+    Route::get('stock/filterStockAccCategory/{category_id}', 'StockController@filterStockAccCategory')->name('stock.filterStockAccCategory');
+    Route::get('stock/filterStockAccDepartment/{department_id}', 'StockController@filterStockAccDepartment')->name('stock.filterStockAccDepartment');
+    //recent megha
+    Route::get('storeinStock/filter', 'StockController@filter')->name('storeinStock.filter');
+    //filter department acc category
+    Route::get('storeinStock/getCategoryDepartment/{category_id}', 'StockController@getCategoryDepartment')->name('storeinStock.getCategoryDepartment');
+    //import stock
+    Route::post('import/stock', [StockImportController::class, "import"])->name('import.stock');
+    //import fabric
+    Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
+
+    //import bundle stock
+    Route::post('import/bundlestock', 'BagBundelStockController@import')->name('import.bundlestock');
+
+    /*****************tape entry**************/
+    Route::get('tape-entry', [TapeEntryController::class, "index"])->name('tape.entry');
+    Route::post('tape-entry/store', [TapeEntryController::class, "tapeentrystore"])->name("tape.entry.store");
+    Route::get('tape-entry/receive/create/{id}', [TapeEntryController::class, "create"])->name("tape.entry.receive.create");
+    Route::get('tape-entry/receive/view/{id}', [TapeEntryController::class, "view"])->name("tape.entry.receive.view");
+    Route::post('tape-entry/receive/delete/{id}', [TapeEntryController::class, "deleteTape"])->name("tape.entry.receive.delete");
+
+    //tapre report
+    Route::get("tape/report", [TapeEntryController::class, "tape_report"])->name("tape.report");
+    Route::get("tape/report/ajax", [TapeEntryController::class, "tape_report_ajax"])->name("tape.report.ajax");
+    Route::get("tape/report/amounts/{godam}", [TapeEntryController::class, "tape_report_amounts_ajax"])->name("tape.report.amounts.ajax");
 
     //reteieve planttype
-Route::get('tape-entry/ajax-request/{godam_id}',[TapeEntryController::class,"ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
+    Route::get('tape-entry/ajax-request/{godam_id}', [TapeEntryController::class, "ajaxrequestplanttype"])->name('tape.entry.ajax.planttype');
     //reteieve plantname
-Route::get('tape-entry/ajax-request/plantname/{planttype_id}/{godam_id}',[TapeEntryController::class,"ajaxrequestplantname"])->name('tape.entry.ajax.plantname');
+    Route::get('tape-entry/ajax-request/plantname/{planttype_id}/{godam_id}', [TapeEntryController::class, "ajaxrequestplantname"])->name('tape.entry.ajax.plantname');
     //retrieve shift
-Route::get('tape-entry/ajax-request/shift/{plantname_id}/{godam_id}/{plantType_id}',[TapeEntryController::class,"ajaxrequestshift"])->name('tape.entry.ajax.shift');
+    Route::get('tape-entry/ajax-request/shift/{plantname_id}/{godam_id}/{plantType_id}', [TapeEntryController::class, "ajaxrequestshift"])->name('tape.entry.ajax.shift');
     //get dana info
-Route::post('tape-entry/ajax-request/danainfo',[TapeEntryController::class,"ajaxrequestdanainfo"])->name('tape.entry.ajax.get.danainfo');
+    Route::post('tape-entry/ajax-request/danainfo', [TapeEntryController::class, "ajaxrequestdanainfo"])->name('tape.entry.ajax.get.danainfo');
     // tapeentrystock
-Route::post('tape-entry/stock/store',[TapeEntryController::class,'tapeentrystockstore'])->name('tape.entry.stock.store');
-Route::get("tape/opening",[TapeEntryController::class,"openingcreate"])->name("tape.opening");
-Route::post("tape/opening/store",[TapeEntryController::class,"openingstore"])->name("tape.opening.store");
-/**************tape entry end*************/
-
-
-
-//tapeentry stock
-Route::get('tape-entry/getstock/index',[TapeEntryStockController::class,'index'])->name('tapeentry-stock.index');
- Route::post('tape-entry/getstock/filterStocks',[TapeEntryStockController::class,'filterStock'])->name('tapeentry-stock.filterStock');
-
-/******************** wastages *****************************/
-Route::get('setup/wastage/index',[WastageController::class,'index'])->name('setup.wastage.index');
-Route::get('setup/wastage/create',[WastageController::class,'create'])->name('setup.wastage.create');
-Route::post('setup/wastage/store',[WastageController::class,'store'])->name('setup.wastage.store');
-/******************** wastages  end *****************************/
-//storeoutDepartment
-Route::post('storeoutDepartment/store', [StoreoutDepartmentController::class, 'store'])->name('storeoutDepartment.store');
-//Storeout route
-Route::get('storeout/index', [StoreoutController::class, 'index'])->name('storeout.index');
-Route::get('storeout/create', [StoreoutController::class, 'create'])->name('storeout.create');
-Route::post('storeout/saveStoreout', [StoreoutController::class, 'saveStoreout'])->name('storeout.saveStoreout');
-Route::get('storeout/storeOutItems/{store_out_id}', [StoreoutController::class, 'storeOutItems'])->name('storeout.storeOutItems');
-Route::get('storeout/getStoreOutItemData/{storeout_id}', [StoreoutController::class, 'getStoreOutItemData'])->name('storeout.getStoreOutItemData');
-Route::get('storeout/getEditItemData/{storeoutItem_id}', [StoreoutController::class, 'getEditItemData'])->name('storeout.getEditItemData');
-Route::post('storeout/updateStoreOutItems', [StoreoutController::class, 'updateStoreOutItems'])->name('storeout.updateStoreOutItems');
-Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::class, 'saveEntireStoreOut'])->name('storeout.saveEntireStoreOut');
+    Route::post('tape-entry/stock/store', [TapeEntryController::class, 'tapeentrystockstore'])->name('tape.entry.stock.store');
+    Route::get("tape/opening", [TapeEntryController::class, "openingcreate"])->name("tape.opening");
+    Route::post("tape/opening/store", [TapeEntryController::class, "openingstore"])->name("tape.opening.store");
+    /**************tape entry end*************/
+
+
+
+    //tapeentry stock
+    Route::get('tape-entry/getstock/index', [TapeEntryStockController::class, 'index'])->name('tapeentry-stock.index');
+    Route::post('tape-entry/getstock/filterStocks', [TapeEntryStockController::class, 'filterStock'])->name('tapeentry-stock.filterStock');
+
+    /******************** wastages *****************************/
+    Route::get('setup/wastage/index', [WastageController::class, 'index'])->name('setup.wastage.index');
+    Route::get('setup/wastage/create', [WastageController::class, 'create'])->name('setup.wastage.create');
+    Route::post('setup/wastage/store', [WastageController::class, 'store'])->name('setup.wastage.store');
+    /******************** wastages  end *****************************/
+    //storeoutDepartment
+    Route::post('storeoutDepartment/store', [StoreoutDepartmentController::class, 'store'])->name('storeoutDepartment.store');
+    //Storeout route
+    Route::get('storeout/index', [StoreoutController::class, 'index'])->name('storeout.index');
+    Route::get('storeout/create', [StoreoutController::class, 'create'])->name('storeout.create');
+    Route::post('storeout/saveStoreout', [StoreoutController::class, 'saveStoreout'])->name('storeout.saveStoreout');
+    Route::get('storeout/storeOutItems/{store_out_id}', [StoreoutController::class, 'storeOutItems'])->name('storeout.storeOutItems');
+    Route::get('storeout/getStoreOutItemData/{storeout_id}', [StoreoutController::class, 'getStoreOutItemData'])->name('storeout.getStoreOutItemData');
+    Route::get('storeout/getEditItemData/{storeoutItem_id}', [StoreoutController::class, 'getEditItemData'])->name('storeout.getEditItemData');
+    Route::post('storeout/updateStoreOutItems', [StoreoutController::class, 'updateStoreOutItems'])->name('storeout.updateStoreOutItems');
+    Route::post('storeout/saveEntireStoreOut/{storeout_id}', [StoreoutController::class, 'saveEntireStoreOut'])->name('storeout.saveEntireStoreOut');
 
-Route::get('storeout/invoiceView/{storeout_id}', [StoreoutController::class, 'invoiceView'])->name('storeout.invoiceView');
-// mgha
-Route::get('storeout/receiptReport', [StoreoutController::class, 'receiptReport'])->name('storeout.receiptReport');
-Route::get('storeout/getReceiptNo', [StoreoutController::class, 'getReceiptNo'])->name('storeout.getReceiptNo');
-Route::post('storeout/generateReceiptReportView', [StoreoutController::class, 'generateReceiptReportView'])->name('storeout.receiptReport.view');
+    Route::get('storeout/invoiceView/{storeout_id}', [StoreoutController::class, 'invoiceView'])->name('storeout.invoiceView');
+    // mgha
+    Route::get('storeout/receiptReport', [StoreoutController::class, 'receiptReport'])->name('storeout.receiptReport');
+    Route::get('storeout/getReceiptNo', [StoreoutController::class, 'getReceiptNo'])->name('storeout.getReceiptNo');
+    Route::post('storeout/generateReceiptReportView', [StoreoutController::class, 'generateReceiptReportView'])->name('storeout.receiptReport.view');
 
-Route::get('storeout/dateItemReport', [StoreoutController::class, 'dateItemReport'])->name('storeout.dateItemReport');
-Route::post('storeout/generateDateItemReportView', [StoreoutController::class, 'generateDateItemReportView'])->name('storeout.generateDateItemReport.view');
+    Route::get('storeout/dateItemReport', [StoreoutController::class, 'dateItemReport'])->name('storeout.dateItemReport');
+    Route::post('storeout/generateDateItemReportView', [StoreoutController::class, 'generateDateItemReportView'])->name('storeout.generateDateItemReport.view');
 
 
-// plcement wise
-Route::get('storeout/placement-report','StoreoutController@placementReport')->name('storeout.placementReport');
-Route::post('storeout/generatePlacement-report','StoreoutController@generatePlacementReport')->name('storeout.generatePlacementReport.view');
+    // plcement wise
+    Route::get('storeout/placement-report', 'StoreoutController@placementReport')->name('storeout.placementReport');
+    Route::post('storeout/generatePlacement-report', 'StoreoutController@generatePlacementReport')->name('storeout.generatePlacementReport.view');
 
-//dateDepartPlacement
-Route::get('storeout/dateDepartPlacement-report','StoreoutController@dateDepartPlacementReport')->name('storeout.dateDepartPlacementReport');
-Route::get('storeout/getPlacement', [StoreoutController::class, 'getPlacement'])->name('storeout.getPlacement');
-Route::post('storeout/generatedateDepartPlacement-report','StoreoutController@generatedateDepartPlacementReport')->name('storeout.generatedateDepartPlacementReport.view');
+    //dateDepartPlacement
+    Route::get('storeout/dateDepartPlacement-report', 'StoreoutController@dateDepartPlacementReport')->name('storeout.dateDepartPlacementReport');
+    Route::get('storeout/getPlacement', [StoreoutController::class, 'getPlacement'])->name('storeout.getPlacement');
+    Route::post('storeout/generatedateDepartPlacement-report', 'StoreoutController@generatedateDepartPlacementReport')->name('storeout.generatedateDepartPlacementReport.view');
 
 
 
-//get item acc cat
-//recent by m
-Route::get('storeout/getStoreinItemAccCat', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
-//getDepartmentSizeUnit
-Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
-//getStockQtyRate
-Route::get('/storeout/getStockQtyRate', 'StoreoutController@getStockQtyRate')->name('storeout.getStockQtyRate');
+    //get item acc cat
+    //recent by m
+    Route::get('storeout/getStoreinItemAccCat', [StoreoutController::class, 'getStoreinItemAccCat'])->name('storeout.getStoreinItemAccCat');
+    //getDepartmentSizeUnit
+    Route::get('/storeout/getDepartmentSizeUnit/{items_of_storein_name}/{category_id}', 'StoreoutController@getDepartmentSizeUnit')->name('storeout.getDepartmentSizeUnit');
+    //getStockQtyRate
+    Route::get('/storeout/getStockQtyRate', 'StoreoutController@getStockQtyRate')->name('storeout.getStockQtyRate');
 
-// delete storeoutItem
-Route::delete('storeout/storeoutItemDelete/{storeout_item_id}', [StoreoutController::class, 'storeoutItemDelete'])->name('storeout.storeoutItemDelete');
-//storeout edit
-Route::get('storeout/edit/{storeout_id}', [StoreoutController::class, 'edit'])->name('storeout.edit');
-Route::post('storeout/updateStoreOut/{storeout_id}', [StoreoutController::class, 'updateStoreOut'])->name('storeout.updateStoreOut');
+    // delete storeoutItem
+    Route::delete('storeout/storeoutItemDelete/{storeout_item_id}', [StoreoutController::class, 'storeoutItemDelete'])->name('storeout.storeoutItemDelete');
+    //storeout edit
+    Route::get('storeout/edit/{storeout_id}', [StoreoutController::class, 'edit'])->name('storeout.edit');
+    Route::post('storeout/updateStoreOut/{storeout_id}', [StoreoutController::class, 'updateStoreOut'])->name('storeout.updateStoreOut');
 
-//recent changes
-Route::get('storeout/getDepartmentPlacements/{dept_id}/{storeout_id}', [StoreoutController::class, 'getDepartmentPlacements'])->name('storeout.getDepartmentPlacements');
-// storeoutitem save
-Route::post('storeout/saveStoreoutItems', [StoreoutController::class, 'saveStoreoutItems'])->name('storeout.saveStoreoutItems');
-Route::get('storeout/storoutYajraDatabales', [StoreoutController::class, 'storoutYajraDatabales'])->name('storeout.storoutYajraDatabales');
-Route::delete('storeout/deleteStoreout/{storeout_id}', [StoreoutController::class, 'deleteStoreout'])->name('storeout.deleteStoreout');
+    //recent changes
+    Route::get('storeout/getDepartmentPlacements/{dept_id}/{storeout_id}', [StoreoutController::class, 'getDepartmentPlacements'])->name('storeout.getDepartmentPlacements');
+    // storeoutitem save
+    Route::post('storeout/saveStoreoutItems', [StoreoutController::class, 'saveStoreoutItems'])->name('storeout.saveStoreoutItems');
+    Route::get('storeout/storoutYajraDatabales', [StoreoutController::class, 'storoutYajraDatabales'])->name('storeout.storoutYajraDatabales');
+    Route::delete('storeout/deleteStoreout/{storeout_id}', [StoreoutController::class, 'deleteStoreout'])->name('storeout.deleteStoreout');
 
 
 
-//placement route
-Route::post('placement/save', [PlacementController::class, 'save'])->name('placement.save');
+    //placement route
+    Route::post('placement/save', [PlacementController::class, 'save'])->name('placement.save');
 
 
 
-Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name('theme-settings');
+    Route::post('theme-settings', [ThemeSettingsContoller::class, 'settings'])->name('theme-settings');
 
-/******************** Bag  ************************/
+    /******************** Bag  ************************/
 
-        //for receipts
-    Route::get('fabric/transfer/entry/for/bag/index',[FabricTransferEntryForBagController::class,"index"])->name('fabric.transfer.entry.for.bag');
-    Route::get('fabric/transfer/entry/for/bag/create',[FabricTransferEntryForBagController::class,"create"])->name('fabric.transfer.entry.for.bag.create');
-    Route::post('fabric/transfer/entry/for/bag/store',[FabricTransferEntryForBagController::class,"store"])->name('fabric.transfer.entry.for.bag.store');
+    //for receipts
+    Route::get('fabric/transfer/entry/for/bag/index', [FabricTransferEntryForBagController::class, "index"])->name('fabric.transfer.entry.for.bag');
+    Route::get('fabric/transfer/entry/for/bag/create', [FabricTransferEntryForBagController::class, "create"])->name('fabric.transfer.entry.for.bag.create');
+    Route::post('fabric/transfer/entry/for/bag/store', [FabricTransferEntryForBagController::class, "store"])->name('fabric.transfer.entry.for.bag.store');
 
-        // for actual trasnfer
-    Route::get('fabric/transfer/create/{id}',[FabricTransferEntryForBagController::class,"fabrictransferindex"])->name('fabric.transfer.create');
-    Route::get('get/fabrics/according/godams/{id}',[FabricTransferEntryForBagController::class,"getfabricsaccordinggodams"])->name('get.fabrics.according.godams');
-    Route::get('get/specific/fabric/details/{id}',[FabricTransferEntryForBagController::class,"getspecificfabricdetails"])->name('get.specific.fabric.details');
+    // for actual trasnfer
+    Route::get('fabric/transfer/create/{id}', [FabricTransferEntryForBagController::class, "fabrictransferindex"])->name('fabric.transfer.create');
+    Route::get('get/fabrics/according/godams/{id}', [FabricTransferEntryForBagController::class, "getfabricsaccordinggodams"])->name('get.fabrics.according.godams');
+    Route::get('get/specific/fabric/details/{id}', [FabricTransferEntryForBagController::class, "getspecificfabricdetails"])->name('get.specific.fabric.details');
 
-        // sending to lower
-    Route::get('send/fabric/to/lower/{id}',[FabricTransferEntryForBagController::class,"sendfabrictolower"])->name('send.fabric.to.lower');
-    Route::get("call/details/to/lower/fabric/table",[FabricTransferEntryForBagController::class,"gettemporaryfabricforbag"])->name('call.details.to.lower.fabric.table');
-    Route::post("discard/temporary/table",[FabricTransferEntryForBagController::class,"discard"])->name('discard.temporary.table');
-    Route::post("delete/from/lower/table",[FabricTransferEntryForBagController::class,"deletefromlowertable"])->name('delete.from.lower.table');
-    Route::post("final/save",[FabricTransferEntryForBagController::class,"finalsave"])->name('final.save');
-        //for report what was sent
-    Route::get("view/sent/fabric/bag/{id}",[FabricTransferEntryForBagController::class,"viewSentItem"])->name('view.sent.fabric.bag');
+    // sending to lower
+    Route::get('send/fabric/to/lower/{id}', [FabricTransferEntryForBagController::class, "sendfabrictolower"])->name('send.fabric.to.lower');
+    Route::get("call/details/to/lower/fabric/table", [FabricTransferEntryForBagController::class, "gettemporaryfabricforbag"])->name('call.details.to.lower.fabric.table');
+    Route::post("discard/temporary/table", [FabricTransferEntryForBagController::class, "discard"])->name('discard.temporary.table');
+    Route::post("delete/from/lower/table", [FabricTransferEntryForBagController::class, "deletefromlowertable"])->name('delete.from.lower.table');
+    Route::post("final/save", [FabricTransferEntryForBagController::class, "finalsave"])->name('final.save');
+    //for report what was sent
+    Route::get("view/sent/fabric/bag/{id}", [FabricTransferEntryForBagController::class, "viewSentItem"])->name('view.sent.fabric.bag');
 
-        //prints and cuts starts
-        //entry
-    Route::get("prints/and/cuts/index",[PrintedAndCuttedRollsController::class,"index"])->name('prints.and.cuts.index');
-    Route::get("prints/and/cuts/view/{id}",[PrintedAndCuttedRollsController::class,"view"])->name('prints.and.cuts.view');
-//megha
-    Route::get("printCuts/datafixes",[PrintedAndCuttedRollsController::class,"datafixes"])->name('printCuts.datafixes');
+    //prints and cuts starts
+    //entry
+    Route::get("prints/and/cuts/index", [PrintedAndCuttedRollsController::class, "index"])->name('prints.and.cuts.index');
+    Route::get("prints/and/cuts/view/{id}", [PrintedAndCuttedRollsController::class, "view"])->name('prints.and.cuts.view');
+    //megha
+    Route::get("printCuts/datafixes", [PrintedAndCuttedRollsController::class, "datafixes"])->name('printCuts.datafixes');
 
-    Route::get("prints/and/cuts/create/entry",[PrintedAndCuttedRollsController::class,"createEntry"])->name('prints.and.cuts.create.entry');
-    Route::post("prints/and/cuts/store/entry",[PrintedAndCuttedRollsController::class,"storeEntry"])->name('prints.and.cuts.store.entry');
+    Route::get("prints/and/cuts/create/entry", [PrintedAndCuttedRollsController::class, "createEntry"])->name('prints.and.cuts.create.entry');
+    Route::post("prints/and/cuts/store/entry", [PrintedAndCuttedRollsController::class, "storeEntry"])->name('prints.and.cuts.store.entry');
 
-    Route::get("prints/and/cuts/createPrintedRolls/{id}",[PrintedAndCuttedRollsController::class,"createPrintedRolls"])->name('prints.and.cuts.createPrintedRolls');
+    Route::get("prints/and/cuts/createPrintedRolls/{id}", [PrintedAndCuttedRollsController::class, "createPrintedRolls"])->name('prints.and.cuts.createPrintedRolls');
 
-    Route::post("printsAndCuts/getFabric",[PrintedAndCuttedRollsController::class,"getFabric"])->name('printsAndCuts.getFabric');
-    Route::post("printsAndCuts/getDanaGroup",[PrintedAndCuttedRollsController::class,"getDanaGroup"])->name('printsAndCuts.getDanaGroup');
+    Route::post("printsAndCuts/getFabric", [PrintedAndCuttedRollsController::class, "getFabric"])->name('printsAndCuts.getFabric');
+    Route::post("printsAndCuts/getDanaGroup", [PrintedAndCuttedRollsController::class, "getDanaGroup"])->name('printsAndCuts.getDanaGroup');
 
-    Route::post("printsAndCuts/getDanaName",[PrintedAndCuttedRollsController::class,"getDanaName"])->name('printsAndCuts.getDanaName');
+    Route::post("printsAndCuts/getDanaName", [PrintedAndCuttedRollsController::class, "getDanaName"])->name('printsAndCuts.getDanaName');
 
-    Route::post("printsAndCuts/getStockQuantity",[PrintedAndCuttedRollsController::class,"getStockQuantity"])->name('printsAndCuts.getStockQuantity');
+    Route::post("printsAndCuts/getStockQuantity", [PrintedAndCuttedRollsController::class, "getStockQuantity"])->name('printsAndCuts.getStockQuantity');
 
-    Route::post("tripal/getDanaQuantity",'Tripal\TripalController@getStockQuantity')->name('tripalDana.getStockQuantity');
+    Route::post("tripal/getDanaQuantity", 'Tripal\TripalController@getStockQuantity')->name('tripalDana.getStockQuantity');
 
-    Route::post("fabricsendrecive/getStockQuantity",[FabricSendReceiveController::class,"getStockQuantity"])->name('fabricsendrecive.getStockQuantity');
+    Route::post("fabricsendrecive/getStockQuantity", [FabricSendReceiveController::class, "getStockQuantity"])->name('fabricsendrecive.getStockQuantity');
 
-    Route::post("getfilter/fabricsendrecive/fabric/list",'FabricSendReceiveController@getFsrFilterDataName')->name("getFilterFabricSendRecieveListName");
+    Route::post("getfilter/fabricsendrecive/fabric/list", 'FabricSendReceiveController@getFsrFilterDataName')->name("getFilterFabricSendRecieveListName");
 
 
 
 
-/******************** Bag  End ************************/
-/****************Group Start********************/
-    Route::post("group/store",[GroupController::class,"store"])->name('group.store');
+    /******************** Bag  End ************************/
+    /****************Group Start********************/
+    Route::post("group/store", [GroupController::class, "store"])->name('group.store');
 
 
-/****************Group End********************/
+    /****************Group End********************/
 
-/****************Bag Brand Start********************/
-Route::post("bagBrand/store",[BagBrandController::class,"store"])->name('bagBrand.store');
-Route::get("bagBrand/getBagBrandFromGroup/{group_id}",[BagBrandController::class,"getBagBrandFromGroup"])->name('bagBrand.getBagBrandFromGroup');
+    /****************Bag Brand Start********************/
+    Route::post("bagBrand/store", [BagBrandController::class, "store"])->name('bagBrand.store');
+    Route::get("bagBrand/getBagBrandFromGroup/{group_id}", [BagBrandController::class, "getBagBrandFromGroup"])->name('bagBrand.getBagBrandFromGroup');
 
-/****************Bag Brand End********************/
+    /****************Bag Brand End********************/
 
-/***************printing and cutting bag item start*****************/
-Route::post("printingAndCuttingBagItem/store",[PrintingAndCuttingBagItemController::class,"store"])->name('printingAndCuttingBagItem.store');
-Route::get("printingAndCuttingBagItem",[PrintingAndCuttingBagItemController::class,"getPrintsAndCutsBagItems"])->name('printingAndCuttingBagItem.getPrintsAndCutsBagItems');
-Route::delete("printingAndCuttingBagItem/{printingAndCuttingBagItem_id}",[PrintingAndCuttingBagItemController::class,"itemDelete"])->name('printingAndCuttingBagItem.itemDelete');
-Route::post("printingAndCuttingBagItem/updateStock",[PrintingAndCuttingBagItemController::class,"updateStock"])->name('printingAndCuttingBagItem.updateStock');
+    /***************printing and cutting bag item start*****************/
+    Route::post("printingAndCuttingBagItem/store", [PrintingAndCuttingBagItemController::class, "store"])->name('printingAndCuttingBagItem.store');
+    Route::get("printingAndCuttingBagItem", [PrintingAndCuttingBagItemController::class, "getPrintsAndCutsBagItems"])->name('printingAndCuttingBagItem.getPrintsAndCutsBagItems');
+    Route::delete("printingAndCuttingBagItem/{printingAndCuttingBagItem_id}", [PrintingAndCuttingBagItemController::class, "itemDelete"])->name('printingAndCuttingBagItem.itemDelete');
+    Route::post("printingAndCuttingBagItem/updateStock", [PrintingAndCuttingBagItemController::class, "updateStock"])->name('printingAndCuttingBagItem.updateStock');
 
 
 
+
+    /***************printing and cutting bag item end*****************/
+    /*************************PrintsAndCutsDanaConsumptionController start****************************/
+    Route::post("printingAndCuttingDanaConsumption/store", [PrintsAndCutsDanaConsumptionController::class, "store"])->name('printingAndCuttingDanaConsumption.store');
+
+    Route::post("printingAndCuttingDanaConsumption/getPrintsAndCutsDanaConsumption", [PrintsAndCutsDanaConsumptionController::class, "getPrintsAndCutsDanaConsumption"])->name('printingAndCuttingBagItem.getPrintsAndCutsDanaConsumption');
 
-/***************printing and cutting bag item end*****************/
-/*************************PrintsAndCutsDanaConsumptionController start****************************/
-Route::post("printingAndCuttingDanaConsumption/store",[PrintsAndCutsDanaConsumptionController::class,"store"])->name('printingAndCuttingDanaConsumption.store');
+    Route::post("printingAndCuttingDanaConsumption/deleteConsumedDana", [PrintsAndCutsDanaConsumptionController::class, "deleteConsumedDana"])->name('printingAndCuttingBagItem.deleteConsumedDana');
+
+    /*************************PrintsAndCutsDanaConsumptionController end****************************/
+    /**********************Bundelling start***************************/
+    Route::controller(BagBundelEntryController::class)
+        ->prefix('bagBundelling')
+        ->group(function () {
+            Route::get("index", "index")->name('bagBundelling.index');
+            Route::get("createBagBundelEntry", "createBagBundleEntry")->name('bagBundelling.createBagBundleEntry');
+            Route::post("getBrandBag", "getBrandBag")->name('bundelling.getBrandBag');
+            Route::post("update/{bagBundleEntryId}", "update")->name('bagBundelling.update');
 
-Route::post("printingAndCuttingDanaConsumption/getPrintsAndCutsDanaConsumption",[PrintsAndCutsDanaConsumptionController::class,"getPrintsAndCutsDanaConsumption"])->name('printingAndCuttingBagItem.getPrintsAndCutsDanaConsumption');
+            Route::post("store", "store")->name('bagBundelling.store');
+            Route::get("edit/{bagBundelEntry_id}", "edit")->name('bagBundelling.edit');
+            Route::post("saveEntireBagBundelling", "saveEntireBagBundelling")->name('bagBundelling.saveEntireBagBundelling');
+        });
 
-Route::post("printingAndCuttingDanaConsumption/deleteConsumedDana",[PrintsAndCutsDanaConsumptionController::class,"deleteConsumedDana"])->name('printingAndCuttingBagItem.deleteConsumedDana');
-
-/*************************PrintsAndCutsDanaConsumptionController end****************************/
-/**********************Bundelling start***************************/
-Route::controller(BagBundelEntryController::class)
-->prefix('bagBundelling')
-->group(function(){
-    Route::get("index","index")->name('bagBundelling.index');
-    Route::get("createBagBundelEntry","createBagBundleEntry")->name('bagBundelling.createBagBundleEntry');
-    Route::post("getBrandBag","getBrandBag")->name('bundelling.getBrandBag');
-    Route::post("update/{bagBundleEntryId}","update")->name('bagBundelling.update');
-
-    Route::post("store","store")->name('bagBundelling.store');
-    Route::get("edit/{bagBundelEntry_id}","edit")->name('bagBundelling.edit');
-    Route::post("saveEntireBagBundelling","saveEntireBagBundelling")->name('bagBundelling.saveEntireBagBundelling');
-
-});
-
-Route::controller(BagBundelItemController::class)
-->prefix('bagBundelItem')
-->group(function(){
-    Route::post("getAvailableStock","getAvailableStock")->name('bagBundelItem.getAvailableStock');
-    Route::get("createBagBundelItem/{bagBundelEntryId}","index")->name('bagBundelItem.index');
-    Route::post("getBagBundelItemData","getBagBundelItemData")->name('bagBundelItem.getBagBundelItemData');
-    Route::post("getBagBundelItem","store")->name('bagBundelItem.store');
-    Route::delete("deleteBagBundelItem/{bagBundelItemId}","deleteBagBundelItem")->name('bagBundelItem.deleteBagBundelItem');
-});
-
-Route::controller(BagBundelStockController::class)
-->prefix('bagBundelStock')
-->group(function(){
-    Route::get("index","index")->name('bagBundelStock.index');
-    Route::get("bagBundellingYajraDatatables","bagBundellingYajraDatatables")->name('bagBundelStock.bagBundellingYajraDatatables');
-});
-
-/**********************Bundelling ends***************************/
-
-/*****************************Bag Selling start**********************************/
-Route::controller(BagSellingEntryController::class)
-->prefix('bagSelling')
-->group(function(){
-    Route::get("index","index")->name('bagSelling.index');
-    Route::get("create","create")->name('bagSelling.create');
-    Route::post("store","store")->name('bagSelling.store');
-    Route::get("getBagBrand","getBagBrand")->name('bagSelling.getBagBrand');
-    Route::get("getBundleNo","getBundleNo")->name('bagSelling.getBundleNo');
-    Route::get("getPcsWeightAvg","getPcsWeightAvg")->name('bagSelling.getPcsWeightAvg');
-    Route::get("bagSellingYajraDatatables","bagSellingYajraDatatables")->name('bagSelling.bagSellingYajraDatatables');
-    Route::get("edit/{bagSellingEntry_id}","edit")->name('bagSellingEntry.edit');
-    Route::post("update/{bagSellingEntry_id}","update")->name('bagSellingEntry.update');
-});
-
-
-Route::controller(BagSalesStockController::class)
-->prefix('bagSalesStock')
-->group(function(){
-    Route::get("index","index")->name('bagSalesStock.index');
-     Route::get("bagSalesStockYajraDatatables","bagSalesStockYajraDatatables")->name('bagSalesStock.bagSalesStockYajraDatatables');
-});
-
-
-Route::controller(BagSellingItemController::class)
-->prefix('bagSellingItem')
-->group(function(){
-
-     Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
-    // Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
-     Route::post("store","store")->name('bagSellingItem.store');
-
-});
-Route::post("bagSellingItem/saveEntireBagSellingEntry",[BagSellingItemController::class,"saveEntireBagSellingEntry"])->name('bagSellingItem.saveEntireBagSellingEntry');
-Route::controller(PurchaseOrderController::class)
-->prefix('bagSellingItem')
-->group(function(){
-
-     Route::get("purchaseOrder","purchaseOrder")->name('purchaseOrder.index');
-
-});
-
-
-/*****************************Bag Selling end************************************/
-/**************************raw material opening**********************************/
-Route::controller(RawmaterialOpeningEntryController::class)
-->prefix('openingRawmaterialEntry')
-->group(function(){
-    Route::get("index","index")->name('openingRawmaterialEntry.index');
-    Route::get("create","create")->name('openingRawmaterialEntry.create');
-    Route::post("store","store")->name('openingRawmaterialEntry.store');
-    Route::get("getDanaGroupDanaName/{danaGroup_id}","getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
-    Route::post("saveEntire","saveEntire")->name('openingRawmaterialEntry.saveEntire');
-    Route::get("tableData","tableData")->name('rawMaterialOpening.tableData');
-    Route::get("edit/{rawMaterialOpening_id}","edit")->name('rawMaterialOpening.edit');
-    Route::post("update/{openingRawmaterialEntry_id}","update")->name('rawMaterialOpening.update');
-    Route::delete("delete/{openingRawmaterialEntry_id}","delete")->name('rawMaterialOpening.delete');
-
-});
-Route::post('openingRawMaterial/import',[StockImportController::class,"openingRawmaterialImport"])->name('openingRawMaterial.openingRawmaterialImport');
-
-Route::controller(RawmaterialOpeningItemController::class)
-->prefix('openingRawmaterialItem')
-->group(function(){
-
-    Route::post("store","store")->name('openingRawmaterialItem.store');
-    Route::get("getRawmaterialItem","getRawmaterialItem")->name('openingRawmaterialEntry.getRawmaterialItem');
-    Route::delete("delete/{id}","delete")->name('openingRawmaterialItem.delete');
-    // Route::get("getDanaGroupDanaName/{danaGroup_id}","getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
-
-});
-
-/**************************raw material opening end**********************************/
-
-/**************************wastage stock start***************************************/
-Route::controller(WastageStockController::class)
-->prefix('wastageStock')
-->group(function(){
-    Route::get("index","index")->name('wastageStock.index');
-    Route::get("yajraDatatables","yajraDatatables")->name('wastageStock.yajraDatatables');
-});
-Route::post('openingWastage/import',[StockImportController::class,"openingWastageImport"])->name('openingWastage.openingWastageImport');
-
-/**************************wastage stock end****************************************/
-
-/*********************************BswSendLamFabForPrinting*************************************/
-Route::controller(BswSendLamFabForPrintingController::class)
-->prefix('BswLamFabSendForPrinting')
-->group(function(){
-    Route::get("index","index")->name('BswLamFabSendForPrinting.index');
-    Route::get("create","create")->name('BswLamFabSendForPrinting.create');
-    Route::post("saveEntry","saveEntry")->name('BswLamFabSendForPrinting.saveEntry');
-    Route::get("createItems/{id}","createItems")->name('BswLamFabSendForPrinting.createItems');
-    Route::get("yajraDatatables","yajraDatatables")->name('test.yajraDatatables');
-    Route::get("edit/{id}","edit")->name('BswLamFabSendForPrinting.edit');
-
-    Route::get("lamFabData","lamFabData")->name('BswLamFabSendForPrinting.lamFabData');
-    Route::get("getBrandBag","getBrandBag")->name('BswLamFabSendForPrinting.getBrandBag');
-});
-
-Route::post('fabricdetail/destroy/data/{fabricDetail_id}','FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
-
-Route::controller(BswSentLamFabController::class)
-->prefix('bswSentLamFab')
-->group(function(){
-    Route::post("store","store")->name('bswSentLamFab.store');
-    Route::get("lamFabData","lamFabData")->name('bswSentLamFab.lamFabData');
-
-});
-Route::controller(PrintedFabricController::class)
-->prefix('printedFabric')
-->group(function(){
-    Route::post("store","store")->name('printedFabric.store');
-});
-
-Route::controller(BswLamPrintedFabricStockController::class)
-->prefix('bswLamPrintedFabStock')
-->group(function(){
-    Route::post("store","store")->name('bswLamPrintedFabStock.store');
-    Route::get("printedLamFabData","printedLamFabData")->name('bswLamPrintedFabStock.printedLamFabData');
-});
-
-Route::controller(PrintedFabDanaConsumptController::class)
-->prefix('printFabDanaConsumpt')
-->group(function(){
-    Route::post("store","store")->name('printFabDanaConsumpt.store');
-    Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
-});
-/*********************************BswSendLamFabForPrinting end*********************************/
-/*********************************SQL DUMP*********************************/
-Route::controller(SqlDumpController::class)
-->prefix('sqlDownload')
-->group(function(){
-    Route::get("download","download")->name('sqlDownload.download');
-    Route::post("importSql","importSql")->name('sqlDownload.importSql');
-});
-
-Route::controller(BswLamFabForPrintingEntryController::class)
-->prefix('fabPrintingEntry')
-->group(function(){
-    Route::post("saveEntire","saveEntire")->name('fabPrintingEntry.saveEntire');
-    // Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
-});
-
-/***********************************END SQL DUMP*************************************/
-/*********************************BswFabSendcurtxReceivpatchvalveController*****************************************/
-Route::controller(BswFabSendcurtxReceivpatchvalveEntryController::class)
-->prefix('fabSendCuetxReceivePatchValveEntry')
-->group(function(){
-    Route::get("yajraDatatables","yajraDatatables")->name('fabSendCuetxReceivePatchValveEntry.yajraDatatables');
-    Route::get("index","index")->name('fabSendCuetxReceivePatchValveEntry.index');
-    Route::get("create","create")->name('fabSendCuetxReceivePatchValveEntry.create');
-    Route::post("store","store")->name('fabSendCuetxReceivePatchValveEntry.store');
-    Route::post("saveEntire","saveEntire")->name('fabSendCuetxReceivePatchValveEntry.saveEntire');
-
-});
-Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
-->prefix('fabSendCuetxReceivePatchValveItems')
-->group(function(){
-    Route::get("createItems","createItems")->name('fabSendCuetxReceivePatchValveItems.createItems');
-    Route::get("getFabricName","getFabricName")->name('fabSendCuetxReceivePatchValveItems.getFabricName');
-    Route::get("fabData","fabData")->name('fabSendCuetxReceivePatchValveItems.fabData');
-    Route::post("store","store")->name('fabSendCuetxReceivePatchValveItems.store');
-    Route::get("lamFabData","lamFabData")->name('fabSendCuetxReceivePatchValveItems.lamFabData');
-    Route::get("getAvailableQty","getAvailableQty")->name('fabSendCuetxReceivePatchValveItems.getAvailableQty');
-    Route::delete("delete/{id}","delete")->name('fabSendCuetxReceivePatchValveItems.delete');
-    Route::get("edit/{id}","edit")->name('fabSendCuetxReceivePatchValveItems.edit');
-});
-
-/*********************************BswFabSendcurtxReceivpatchvalveController*****************************************/
-/************************************closing storein*******************************************/
-
-Route::controller(ClosingStoreinReportController::class)
-->prefix('closingStoreinReport')
-->group(function(){
-    Route::get("closing","closing")->name('closingStoreinReport.closing');
-    Route::get("index","index")->name('closingStoreinReport.index');
-    Route::get("yajraReport","yajraReport")->name('closingStoreinReport.yajraReport');
-});
-
-/****************************************/
-/*********************curtexToPatchVal START******************************/
-Route::controller(CurtexToPatchValFabricController::class)
-->prefix('curtexToPatchValFabric')
-->group(function(){
-    Route::post("store","store")->name('curtexToPatchValFabric.store');
-    Route::get("getcrtxToPtchValFabricName","getcrtxToPtchValFabricName")->name('curtexToPatchValFabric.getcrtxToPtchValFabricName');
-
-});
-/*********************curtexToPatchVal END******************************/
-/******************ToPatchValveUnlamFabricStockController start************************/
-Route::controller(ToPatchValveUnlamFabricStockController::class)
-->prefix('toPatchValveUnlamFabricStock')
-->group(function(){
-    Route::post("store","store")->name('toPatchValveUnlamFabricStock.store');
-    Route::get("threeDiffStockData","threeDiffStockData")->name('toPatchValveUnlamFabricStock.threeDiffStockData');
-    Route::get("getcrtxToPtchValFabricName","getcrtxToPtchValFabricName")->name('toPatchValveUnlamFabricStock.getcrtxToPtchValFabricName');
-});
-/***************************ToPatchValveUnlamFabricStockController end********************************/
-/**************************************PatchValDanaConsumptController**************************************/
-
-Route::controller(PatchValDanaConsumptController::class)
-->prefix('patchValvDanaConsumpt')
-->group(function(){
-    Route::post("store","store")->name('patchValvDanaConsumpt.store');
-    Route::get("getDanaConsumptData","getDanaConsumptData")->name('patchValvDanaConsumpt.getDanaConsumptData');
-    Route::delete("delete/{id}","delete")->name('patchValvDanaConsumpt.delete');
-});
-/**********************************PatchValDanaConsumptController end****************************************/
-
-/**************************************RawMaterialSalesController**************************************/
-Route::controller(RawMaterialSalesEntryController::class)
-->prefix('rawMaterialSalesEntry')
-->group(function(){
-    Route::get("index","index")->name('rawMaterialSalesEntry.index');
-    Route::get("create","create")->name('rawMaterialSalesEntry.create');
-    Route::post("store","store")->name('rawMaterialSalesEntry.store');
-    Route::get("yajraDatatables","yajraDatatables")->name('rawMaterialSalesEntry.yajraDatatables');
-    Route::get("edit/{id}","edit")->name('rawMaterialSalesEntry.edit');
-    Route::post("saveEntire","saveEntire")->name('rawMaterialSalesEntry.saveEntire');
-
-});
-/**************************************RawMaterialSalesController End**************************************/
-Route::controller(RawMaterialItemsSaleController::class)
-->prefix('rawMaterialItemsSalesEntry')
-->group(function(){
-    Route::get("create/{id}","create")->name('rawMaterialItemsSalesEntry.create');
-    Route::get("getDanaGroupDanaName","getDanaGroupDanaName")->name('rawMaterialItemsSalesEntry.getDanaGroupDanaName');
-    Route::get("getDanaStockQty","getDanaStockQty")->name('rawMaterialItemsSalesEntry.getDanaStockQty');
-    Route::post("store","store")->name('rawMaterialItemsSalesEntry.store');
-    Route::get("getSalesData","getSalesData")->name('rawMaterialItemsSalesEntry.getSalesData');
-    Route::delete("delete/{salesItem_id}","delete")->name('rawMaterialItemsSalesEntry.delete');
+    Route::controller(BagBundelItemController::class)
+        ->prefix('bagBundelItem')
+        ->group(function () {
+            Route::post("getAvailableStock", "getAvailableStock")->name('bagBundelItem.getAvailableStock');
+            Route::get("createBagBundelItem/{bagBundelEntryId}", "index")->name('bagBundelItem.index');
+            Route::post("getBagBundelItemData", "getBagBundelItemData")->name('bagBundelItem.getBagBundelItemData');
+            Route::post("getBagBundelItem", "store")->name('bagBundelItem.store');
+            Route::delete("deleteBagBundelItem/{bagBundelItemId}", "deleteBagBundelItem")->name('bagBundelItem.deleteBagBundelItem');
+        });
+
+    Route::controller(BagBundelStockController::class)
+        ->prefix('bagBundelStock')
+        ->group(function () {
+            Route::get("index", "index")->name('bagBundelStock.index');
+            Route::get("bagBundellingYajraDatatables", "bagBundellingYajraDatatables")->name('bagBundelStock.bagBundellingYajraDatatables');
+        });
+
+    /**********************Bundelling ends***************************/
+
+    /*****************************Bag Selling start**********************************/
+    Route::controller(BagSellingEntryController::class)
+        ->prefix('bagSelling')
+        ->group(function () {
+            Route::get("index", "index")->name('bagSelling.index');
+            Route::get("create", "create")->name('bagSelling.create');
+            Route::post("store", "store")->name('bagSelling.store');
+            Route::get("getBagBrand", "getBagBrand")->name('bagSelling.getBagBrand');
+            Route::get("getBundleNo", "getBundleNo")->name('bagSelling.getBundleNo');
+            Route::get("getPcsWeightAvg", "getPcsWeightAvg")->name('bagSelling.getPcsWeightAvg');
+            Route::get("bagSellingYajraDatatables", "bagSellingYajraDatatables")->name('bagSelling.bagSellingYajraDatatables');
+            Route::get("edit/{bagSellingEntry_id}", "edit")->name('bagSellingEntry.edit');
+            Route::post("update/{bagSellingEntry_id}", "update")->name('bagSellingEntry.update');
+        });
+
+
+    Route::controller(BagSalesStockController::class)
+        ->prefix('bagSalesStock')
+        ->group(function () {
+            Route::get("index", "index")->name('bagSalesStock.index');
+            Route::get("bagSalesStockYajraDatatables", "bagSalesStockYajraDatatables")->name('bagSalesStock.bagSalesStockYajraDatatables');
+        });
+
+
+    Route::controller(BagSellingItemController::class)
+        ->prefix('bagSellingItem')
+        ->group(function () {
+
+            Route::get("getBagSellingItemData", "getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
+            // Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
+            Route::post("store", "store")->name('bagSellingItem.store');
+        });
+    Route::post("bagSellingItem/saveEntireBagSellingEntry", [BagSellingItemController::class, "saveEntireBagSellingEntry"])->name('bagSellingItem.saveEntireBagSellingEntry');
+    Route::controller(PurchaseOrderController::class)
+        ->prefix('bagSellingItem')
+        ->group(function () {
+
+            Route::get("purchaseOrder", "purchaseOrder")->name('purchaseOrder.index');
+        });
+
+
+    /*****************************Bag Selling end************************************/
+    /**************************raw material opening**********************************/
+    Route::controller(RawmaterialOpeningEntryController::class)
+        ->prefix('openingRawmaterialEntry')
+        ->group(function () {
+            Route::get("index", "index")->name('openingRawmaterialEntry.index');
+            Route::get("create", "create")->name('openingRawmaterialEntry.create');
+            Route::post("store", "store")->name('openingRawmaterialEntry.store');
+            Route::get("getDanaGroupDanaName/{danaGroup_id}", "getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
+            Route::post("saveEntire", "saveEntire")->name('openingRawmaterialEntry.saveEntire');
+            Route::get("tableData", "tableData")->name('rawMaterialOpening.tableData');
+            Route::get("edit/{rawMaterialOpening_id}", "edit")->name('rawMaterialOpening.edit');
+            Route::post("update/{openingRawmaterialEntry_id}", "update")->name('rawMaterialOpening.update');
+            Route::delete("delete/{openingRawmaterialEntry_id}", "delete")->name('rawMaterialOpening.delete');
+        });
+    Route::post('openingRawMaterial/import', [StockImportController::class, "openingRawmaterialImport"])->name('openingRawMaterial.openingRawmaterialImport');
+
+    Route::controller(RawmaterialOpeningItemController::class)
+        ->prefix('openingRawmaterialItem')
+        ->group(function () {
+
+            Route::post("store", "store")->name('openingRawmaterialItem.store');
+            Route::get("getRawmaterialItem", "getRawmaterialItem")->name('openingRawmaterialEntry.getRawmaterialItem');
+            Route::delete("delete/{id}", "delete")->name('openingRawmaterialItem.delete');
+            // Route::get("getDanaGroupDanaName/{danaGroup_id}","getDanaGroupDanaName")->name('openingRawmaterialEntry.getDanaGroupDanaName');
+
+        });
+
+    /**************************raw material opening end**********************************/
+
+    /**************************wastage stock start***************************************/
+    Route::controller(WastageStockController::class)
+        ->prefix('wastageStock')
+        ->group(function () {
+            Route::get("index", "index")->name('wastageStock.index');
+            Route::get("yajraDatatables", "yajraDatatables")->name('wastageStock.yajraDatatables');
+        });
+    Route::post('openingWastage/import', [StockImportController::class, "openingWastageImport"])->name('openingWastage.openingWastageImport');
+
+    /**************************wastage stock end****************************************/
+
+    /*********************************BswSendLamFabForPrinting*************************************/
+    Route::controller(BswSendLamFabForPrintingController::class)
+        ->prefix('BswLamFabSendForPrinting')
+        ->group(function () {
+            Route::get("index", "index")->name('BswLamFabSendForPrinting.index');
+            Route::get("create", "create")->name('BswLamFabSendForPrinting.create');
+            Route::post("saveEntry", "saveEntry")->name('BswLamFabSendForPrinting.saveEntry');
+            Route::get("createItems/{id}", "createItems")->name('BswLamFabSendForPrinting.createItems');
+            Route::get("yajraDatatables", "yajraDatatables")->name('test.yajraDatatables');
+            Route::get("edit/{id}", "edit")->name('BswLamFabSendForPrinting.edit');
+
+            Route::get("lamFabData", "lamFabData")->name('BswLamFabSendForPrinting.lamFabData');
+            Route::get("getBrandBag", "getBrandBag")->name('BswLamFabSendForPrinting.getBrandBag');
+        });
+
+    Route::post('fabricdetail/destroy/data/{fabricDetail_id}', 'FabricController@fabricDetailDestroy')->name("fabricdetail.destroy");
+
+    Route::controller(BswSentLamFabController::class)
+        ->prefix('bswSentLamFab')
+        ->group(function () {
+            Route::post("store", "store")->name('bswSentLamFab.store');
+            Route::get("lamFabData", "lamFabData")->name('bswSentLamFab.lamFabData');
+        });
+    Route::controller(PrintedFabricController::class)
+        ->prefix('printedFabric')
+        ->group(function () {
+            Route::post("store", "store")->name('printedFabric.store');
+        });
+
+    Route::controller(BswLamPrintedFabricStockController::class)
+        ->prefix('bswLamPrintedFabStock')
+        ->group(function () {
+            Route::post("store", "store")->name('bswLamPrintedFabStock.store');
+            Route::get("printedLamFabData", "printedLamFabData")->name('bswLamPrintedFabStock.printedLamFabData');
+        });
+
+    Route::controller(PrintedFabDanaConsumptController::class)
+        ->prefix('printFabDanaConsumpt')
+        ->group(function () {
+            Route::post("store", "store")->name('printFabDanaConsumpt.store');
+            Route::get("getData", "getData")->name('printFabDanaConsumpt.getData');
+        });
+    /*********************************BswSendLamFabForPrinting end*********************************/
+    /*********************************SQL DUMP*********************************/
+    Route::controller(SqlDumpController::class)
+        ->prefix('sqlDownload')
+        ->group(function () {
+            Route::get("download", "download")->name('sqlDownload.download');
+            Route::post("importSql", "importSql")->name('sqlDownload.importSql');
+        });
+
+    Route::controller(BswLamFabForPrintingEntryController::class)
+        ->prefix('fabPrintingEntry')
+        ->group(function () {
+            Route::post("saveEntire", "saveEntire")->name('fabPrintingEntry.saveEntire');
+            // Route::get("getData","getData")->name('printFabDanaConsumpt.getData');
+        });
+
+    /***********************************END SQL DUMP*************************************/
+    /*********************************BswFabSendcurtxReceivpatchvalveController*****************************************/
+    Route::controller(BswFabSendcurtxReceivpatchvalveEntryController::class)
+        ->prefix('fabSendCuetxReceivePatchValveEntry')
+        ->group(function () {
+            Route::get("yajraDatatables", "yajraDatatables")->name('fabSendCuetxReceivePatchValveEntry.yajraDatatables');
+            Route::get("index", "index")->name('fabSendCuetxReceivePatchValveEntry.index');
+            Route::get("create", "create")->name('fabSendCuetxReceivePatchValveEntry.create');
+            Route::post("store", "store")->name('fabSendCuetxReceivePatchValveEntry.store');
+            Route::post("saveEntire", "saveEntire")->name('fabSendCuetxReceivePatchValveEntry.saveEntire');
+        });
+    Route::controller(BswFabSendcurtxReceivpatchvalveItemsController::class)
+        ->prefix('fabSendCuetxReceivePatchValveItems')
+        ->group(function () {
+            Route::get("createItems", "createItems")->name('fabSendCuetxReceivePatchValveItems.createItems');
+            Route::get("getFabricName", "getFabricName")->name('fabSendCuetxReceivePatchValveItems.getFabricName');
+            Route::get("fabData", "fabData")->name('fabSendCuetxReceivePatchValveItems.fabData');
+            Route::post("store", "store")->name('fabSendCuetxReceivePatchValveItems.store');
+            Route::get("lamFabData", "lamFabData")->name('fabSendCuetxReceivePatchValveItems.lamFabData');
+            Route::get("getAvailableQty", "getAvailableQty")->name('fabSendCuetxReceivePatchValveItems.getAvailableQty');
+            Route::delete("delete/{id}", "delete")->name('fabSendCuetxReceivePatchValveItems.delete');
+            Route::get("edit/{id}", "edit")->name('fabSendCuetxReceivePatchValveItems.edit');
+        });
+
+    /*********************************BswFabSendcurtxReceivpatchvalveController*****************************************/
+    /************************************closing storein*******************************************/
+
+    Route::controller(ClosingStoreinReportController::class)
+        ->prefix('closingStoreinReport')
+        ->group(function () {
+            Route::get("closing", "closing")->name('closingStoreinReport.closing');
+            Route::get("index", "index")->name('closingStoreinReport.index');
+            Route::get("yajraReport", "yajraReport")->name('closingStoreinReport.yajraReport');
+        });
+
+    /****************************************/
+    /*********************curtexToPatchVal START******************************/
+    Route::controller(CurtexToPatchValFabricController::class)
+        ->prefix('curtexToPatchValFabric')
+        ->group(function () {
+            Route::post("store", "store")->name('curtexToPatchValFabric.store');
+            Route::get("getcrtxToPtchValFabricName", "getcrtxToPtchValFabricName")->name('curtexToPatchValFabric.getcrtxToPtchValFabricName');
+        });
+    /*********************curtexToPatchVal END******************************/
+    /******************ToPatchValveUnlamFabricStockController start************************/
+    Route::controller(ToPatchValveUnlamFabricStockController::class)
+        ->prefix('toPatchValveUnlamFabricStock')
+        ->group(function () {
+            Route::post("store", "store")->name('toPatchValveUnlamFabricStock.store');
+            Route::get("threeDiffStockData", "threeDiffStockData")->name('toPatchValveUnlamFabricStock.threeDiffStockData');
+            Route::get("getcrtxToPtchValFabricName", "getcrtxToPtchValFabricName")->name('toPatchValveUnlamFabricStock.getcrtxToPtchValFabricName');
+        });
+    /***************************ToPatchValveUnlamFabricStockController end********************************/
+    /**************************************PatchValDanaConsumptController**************************************/
+
+    Route::controller(PatchValDanaConsumptController::class)
+        ->prefix('patchValvDanaConsumpt')
+        ->group(function () {
+            Route::post("store", "store")->name('patchValvDanaConsumpt.store');
+            Route::get("getDanaConsumptData", "getDanaConsumptData")->name('patchValvDanaConsumpt.getDanaConsumptData');
+            Route::delete("delete/{id}", "delete")->name('patchValvDanaConsumpt.delete');
+        });
+    /**********************************PatchValDanaConsumptController end****************************************/
+
+    /**************************************RawMaterialSalesController**************************************/
+    Route::controller(RawMaterialSalesEntryController::class)
+        ->prefix('rawMaterialSalesEntry')
+        ->group(function () {
+            Route::get("index", "index")->name('rawMaterialSalesEntry.index');
+            Route::get("create", "create")->name('rawMaterialSalesEntry.create');
+            Route::post("store", "store")->name('rawMaterialSalesEntry.store');
+            Route::get("yajraDatatables", "yajraDatatables")->name('rawMaterialSalesEntry.yajraDatatables');
+            Route::get("edit/{id}", "edit")->name('rawMaterialSalesEntry.edit');
+            Route::post("saveEntire", "saveEntire")->name('rawMaterialSalesEntry.saveEntire');
+        });
+    /**************************************RawMaterialSalesController End**************************************/
+    Route::controller(RawMaterialItemsSaleController::class)
+        ->prefix('rawMaterialItemsSalesEntry')
+        ->group(function () {
+            Route::get("create/{id}", "create")->name('rawMaterialItemsSalesEntry.create');
+            Route::get("getDanaGroupDanaName", "getDanaGroupDanaName")->name('rawMaterialItemsSalesEntry.getDanaGroupDanaName');
+            Route::get("getDanaStockQty", "getDanaStockQty")->name('rawMaterialItemsSalesEntry.getDanaStockQty');
+            Route::post("store", "store")->name('rawMaterialItemsSalesEntry.store');
+            Route::get("getSalesData", "getSalesData")->name('rawMaterialItemsSalesEntry.getSalesData');
+            Route::delete("delete/{salesItem_id}", "delete")->name('rawMaterialItemsSalesEntry.delete');
+        });
 });
