@@ -42,6 +42,19 @@ class FabricController extends Controller
 
     public function fixData()
     {
+        $godamTransferLists = FabricGodamList::all();
+        foreach($godamTransferLists as $godamTransferList){
+            $fabric = Fabric::where('id',$godamTransferList->fabric_id)->first();
+            if($fabric){
+                $godamTransferList->name = $fabric->name;
+                $godamTransferList->save();
+            }
+        }
+        dd('done');
+    }
+
+    public function fixDatainActiveFabric()
+    {
         $table = '<table>';
         $table .= '<thead><tr><th>Roll No</th><th>Name</th><th>Net Wt</th><th>Gross Wt</th><th>Meter</th></tr></thead>';
         $table .= '<tbody>';
@@ -55,6 +68,7 @@ class FabricController extends Controller
             $table .= '<td>' . $item['meter'] . '</td>';
             $table .= '</tr>';
         }
+
 
         // Close the table
         $table .= '</tbody>';
@@ -83,7 +97,7 @@ class FabricController extends Controller
         dd('done');
     }
 
-    public function NotInStockNotInGodamNotInSingalTripal()
+    public function fixDataNotInGodamTransferNotInSingleTripal()
     {
         $fabrics = Fabric::where('godam_id', 2)->orderBy('roll_no', 'ASC')->get();
 

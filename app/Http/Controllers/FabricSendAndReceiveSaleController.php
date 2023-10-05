@@ -164,7 +164,7 @@ class FabricSendAndReceiveSaleController extends Controller
             'lory_number' => "required",
             'dp_number' => [
                 'required',
-                new ValidDpNumber($this->request['partyname']),
+                // new ValidDpNumber($this->request['partyname']),
             ],
             'gp_number' => "required"
         ]);
@@ -182,9 +182,9 @@ class FabricSendAndReceiveSaleController extends Controller
                 'remarks' => $this->request['remarks'],
             ]);
 
-            $deliveryOrder = DeliveryOrder::where('do_no', $this->request['dp_number'])->firstOrFail();
-            $deliveryOrder->status = "Approved & Delivered";
-            $deliveryOrder->save();
+            // $deliveryOrder = DeliveryOrder::where('do_no', $this->request['dp_number'])->firstOrFail();
+            // $deliveryOrder->status = "Approved & Delivered";
+            // $deliveryOrder->save();
 
             DB::commit();
             return redirect()->back()->withSuccess('SaleFinalTripal created successfully!');
