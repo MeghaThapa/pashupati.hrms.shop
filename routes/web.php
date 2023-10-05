@@ -1594,6 +1594,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
             Route::post("store", "store")->name('bagBundelling.store');
             Route::get("edit/{bagBundelEntry_id}", "edit")->name('bagBundelling.edit');
+            Route::get("view/{bagBundelEntry_id}", "view")->name('bagBundelling.view');
             Route::post("saveEntireBagBundelling", "saveEntireBagBundelling")->name('bagBundelling.saveEntireBagBundelling');
         });
 
@@ -1623,6 +1624,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             Route::get("index", "index")->name('bagSelling.index');
             Route::get("create", "create")->name('bagSelling.create');
             Route::post("store", "store")->name('bagSelling.store');
+            Route::get("view/{bagSellingEntry_id}", "view")->name('bagSelling.view');
             Route::get("getBagBrand", "getBagBrand")->name('bagSelling.getBagBrand');
             Route::get("getBundleNo", "getBundleNo")->name('bagSelling.getBundleNo');
             Route::get("getPcsWeightAvg", "getPcsWeightAvg")->name('bagSelling.getPcsWeightAvg');

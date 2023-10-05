@@ -20,7 +20,6 @@ class BagBundelEntryController extends Controller
     public function index()
     {
         $bagBundelEntries = BagBundelEntry::with(['group', 'bagBrand'])->get(['id', 'nepali_date', 'receipt_no', 'receipt_date', 'total_bundle_quantity', 'status']);
-        //return $bagBundelEntries;
         return view('admin.bag.bagBundelling.index', compact('bagBundelEntries'));
     }
 
@@ -33,6 +32,13 @@ class BagBundelEntryController extends Controller
             ->distinct('group_id')
             ->get(['group_id']);
         return view('admin.bag.bagBundelling.create', compact('bagBundelEntryData', 'groups'));
+    }
+
+    public function view($bagBundelEntry_id)
+    {
+        $data = BagBundelEntry::with('bagBundelItems', 'bagBundelItems.group:id,name', 'bagBundelItems.bagBrand:id,name')->find($bagBundelEntry_id);
+        // return $data;
+        return view('admin.bag.bagBundelling.view', compact('data'));
     }
 
     /**
@@ -84,8 +90,9 @@ class BagBundelEntryController extends Controller
     {
         try {
             DB::beginTransaction();
-            $bagBundelEntry = BagBundelEntry::find($request->bagBundellingEntry_id);
+            $bagBundelEntry = BagBundelEntry::withCount('bagBundelItems')->find($request->bagBundellingEntry_id);
             $bagBundelEntry->status = 'completed';
+            $bagBundelEntry->total_bundle_quantity = $bagBundelEntry->bag_bundel_items_count;
             $bagBundelEntry->save();
 
             $bagBundelItems = BagBundelItem::where('bag_bundel_entry_id', $bagBundelEntry->id)->get();
@@ -93,7 +100,7 @@ class BagBundelEntryController extends Controller
                 //change status to completed
                 $item->status = 'completed';
                 $item->save();
-                
+
                 $bagBundelStock = new BagBundelStock();
                 $bagBundelStock->group_id = $item->group_id;
                 $bagBundelStock->bag_brand_id = $item->bag_brand_id;
@@ -110,7 +117,6 @@ class BagBundelEntryController extends Controller
         } catch (Exception $ex) {
         }
         DB::rollback();
-        // return redirect()->route('prints.and.cuts.index');
     }
 
     public function calculateBundles($totalBags, $bundleSize)
