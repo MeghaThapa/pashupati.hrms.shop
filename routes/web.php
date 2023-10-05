@@ -537,11 +537,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::post("entry/store","store")->name('entry.store');
 
         Route::get("create/{entry_id}","create")->name("create");
+        Route::get("edit/{entry_id}","edit")->name("entry.edit");
         Route::post("store","storeSale")->name("store");
         Route::get("get/list","getSales")->name("get.list");
+        Route::post("restore","restoreStock")->name("restore");
 
         Route::post("delete","delete")->name('delete');
         Route::post("final/submit","submit")->name("submit");
+        Route::post("final/update","finalUpdate")->name("final.update");
 
         Route::any("index/ajax/sums","indexsumsajax")->name("index.ajax.sums");
         Route::get("viewbill/{bill_id}","viewBill")->name("viewBill");

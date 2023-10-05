@@ -639,10 +639,11 @@ class RawMaterialReportController extends Controller
     private function getRawMaterialArray($godam_id)
     {
         $rawMaterialsResults = DB::table('raw_materials')
-            ->leftJoin('raw_material_items', 'raw_materials.id', '=', 'raw_material_items.raw_material_id')
+            ->join('raw_material_items', 'raw_materials.id', '=', 'raw_material_items.raw_material_id')
             ->join('storein_types', 'raw_materials.storein_type_id', '=', 'storein_types.id')
             ->join('dana_names', 'raw_material_items.dana_name_id', '=', 'dana_names.id')
             ->select(
+                'dana_names.id as dana_name_id',
                 'dana_names.name as dana_name',
                 'raw_materials.date',
                 'raw_materials.to_godam_id',
@@ -652,12 +653,14 @@ class RawMaterialReportController extends Controller
             )
             ->where('raw_materials.to_godam_id', $godam_id)
             ->orWhere('raw_materials.from_godam_id', $godam_id)
-            ->groupBy('dana_name', 'raw_materials.date', 'import_from', 'from_godam_id', 'to_godam_id')
+            ->groupBy('dana_name_id','dana_name', 'raw_materials.date', 'import_from', 'from_godam_id', 'to_godam_id')
             ->orderBy('dana_name', 'asc')
             ->orderBy('raw_materials.date', 'asc')
             ->get();
 
         $resultArray = [];
+
+        // dd($rawMaterialsResults);
 
         foreach ($rawMaterialsResults as $resultRawMaterial) {
             $danaName = $resultRawMaterial->dana_name;

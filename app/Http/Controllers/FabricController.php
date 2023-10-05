@@ -42,6 +42,63 @@ class FabricController extends Controller
 
     public function fixData()
     {
+        $godamTransferLists = FabricGodamList::all();
+        foreach($godamTransferLists as $godamTransferList){
+            $fabric = Fabric::where('id',$godamTransferList->fabric_id)->first();
+            if($fabric){
+                $godamTransferList->name = $fabric->name;
+                $godamTransferList->save();
+            }
+        }
+        dd('done');
+    }
+
+    public function fixDatainActiveFabric()
+    {
+        $table = '<table>';
+        $table .= '<thead><tr><th>Roll No</th><th>Name</th><th>Net Wt</th><th>Gross Wt</th><th>Meter</th></tr></thead>';
+        $table .= '<tbody>';
+        $fabricStock = FabricStock::where('status_type','inactive')->where('godam_id',2)->get();
+        foreach($fabricStock as $item){
+            $table .= '<tr>';
+            $table .= '<td>' . $item['roll_no'] . '</td>';
+            $table .= '<td>' . $item['name'] . '</td>';
+            $table .= '<td>' . $item['net_wt'] . '</td>';
+            $table .= '<td>' . $item['gross_wt'] . '</td>';
+            $table .= '<td>' . $item['meter'] . '</td>';
+            $table .= '</tr>';
+        }
+
+
+        // Close the table
+        $table .= '</tbody>';
+        $table .= '</table>';
+
+        // Echo the HTML table
+        echo $table;
+
+        die();
+    }
+
+    public function fixDataStock()
+    {
+        $uniqueRows = DB::table('bag_fabric_receive_item_sent_stock')
+            ->select('fabric_id', DB::raw('MAX(id) as max_id'))
+            ->groupBy('fabric_id')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+
+        foreach ($uniqueRows as $row) {
+            DB::table('bag_fabric_receive_item_sent_stock')
+                ->where('fabric_id', $row->fabric_id)
+                ->where('id', '<>', $row->max_id)
+                ->delete();
+        }
+        dd('done');
+    }
+
+    public function fixDataNotInGodamTransferNotInSingleTripal()
+    {
         $fabrics = Fabric::where('godam_id', 2)->orderBy('roll_no', 'ASC')->get();
 
         // Create a temporary associative array to check for unique roll_no values
