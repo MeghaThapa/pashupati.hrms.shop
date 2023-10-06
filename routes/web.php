@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TapeProductionController;
 use App\Http\Controllers\CCPlantController;
 use App\Http\Controllers\FabricSendAndReceiveSaleController;
 use App\Http\Controllers\FabricTransferEntryForBagController;
@@ -236,7 +237,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/godamTransferDetail', 'RawMaterialController@godamTransferDetail')->name('rawMaterial.godamTransferDetail');
 
     Route::post('rawMaterial/filterGodamTransferAccGodam', 'RawMaterialController@filterGodamTransferAccGodam')->name('rawMaterial.filterGodamTransferAccGodam');
-
 
     //for gana name from rawmaterial stock
     Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
@@ -1311,6 +1311,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('finaltripalrewinding-report-view', 'Tripal\Report\FinalTripalRewindingController@generateFinalTripalView')->name('finaltripalrewinding.view');
 
 
+    Route::get('tape-production/report',TapeProductionController::class)->name('tape.production.report');
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
