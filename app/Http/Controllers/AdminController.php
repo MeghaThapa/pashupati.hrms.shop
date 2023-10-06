@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Charts\ExpenseChart;
-use App\Charts\FinishedQtyChart;
-use App\Charts\PurchaseChart;
-use App\Charts\TransferredQtyChart;
-use App\Models\Category;
-use App\Models\Expense;
-use App\Models\FinishedProduct;
-use App\Models\GeneralSetting;
-use App\Models\ProcessingProduct;
-use App\Models\Purchase;
-use App\Models\Staff;
-use App\Models\SubCategory;
-use App\Models\Supplier;
-use App\Models\TransferredProduct;
 use App\Models\User;
+use App\Models\Staff;
+use App\Models\Expense;
+use App\Models\Category;
+use App\Models\Purchase;
+use App\Models\Supplier;
+use App\Models\SubCategory;
+use App\Charts\ExpenseChart;
 use Illuminate\Http\Request;
+use App\Charts\PurchaseChart;
+use App\Models\GeneralSetting;
+use App\Models\FinishedProduct;
+use Illuminate\Validation\Rule;
+use App\Charts\FinishedQtyChart;
+use App\Models\ProcessingProduct;
+use App\Models\TransferredProduct;
+use App\Charts\TransferredQtyChart;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -212,7 +213,14 @@ class AdminController extends Controller
             'currencyPosition' => 'required|string',
             'timezone' => 'nullable|string',
             'purchaseCodePrefix' => 'required|string|max:20',
-            'bag_bundel_no' => 'required|string|max:20',
+            'bag_bundel_no' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (substr_count($value, '-') !== 1) {
+                        $fail("The $attribute must contain exactly one hyphen.");
+                    }
+                },
+            ],
             'processingCodePrefix' => 'required|string|max:20',
             'finishedCodePrefix' => 'required|string|max:20',
             'transferredCodePefix' => 'required|string|max:20',
