@@ -36,9 +36,7 @@
             <a class='btn btn-primary go-back float-right'>Go back</a>
             <br><br>
             <div class="form">
-                <form action="" id="bagBundelItemStore">
-                    {{-- <input type="text" value="{{ $data->id }}" class="form-control" id='printAndCutEntryId'
-                        name='printAndCutEntry_id' hidden> --}}
+                <form action="{{ route('bagBundelItem.store') }}" id="bagBundelItemStore">
                     <div class="row">
                         <input type="text" name="bag_bundel_entry_id" value="{{ $bagBundelEntry->id }}" hidden>
                         <div class="col-md-2">
@@ -83,7 +81,7 @@
                         </div>
                         <div class="col-md-2">
                             <label for="gross_weight">Qty in Kg</label>
-                            <input type="text" class="form-control" id="qtyInKg" name="qty_in_kg">
+                            <input type="text" class="form-control" id="qtyInKg" name="quantity_in_kg">
                         </div>
                         <div class="col-md-2">
                             <label for="gross_weight">Quantity in pcs</label>
@@ -230,43 +228,90 @@
             }, 2000); // 5000 milliseconds = 5 seconds
         }
 
-        document.getElementById('bagBundelItemStore').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = e.target;
-            let bag_bundel_entry_id = form.elements['bag_bundel_entry_id'].value;
-            let group_id = form.elements['group_id'].value;
-            let brand_bag_id = form.elements['brand_bag_id'].value;
-            let quantity_in_kg = form.elements['qty_in_kg'].value;
-            let quantity_Pcs = form.elements['quantity_in_pcs'].value;
-            let avg_weight = form.elements['avg_weight'].value;
-            let bundel_no = form.elements['bundel_no'].value;
-            $.ajax({
-                url: "{{ route('bagBundelItem.store') }}",
-                method: 'post',
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    bag_bundel_entry_id: bag_bundel_entry_id,
-                    group_id: group_id,
-                    brand_bag_id: brand_bag_id,
-                    quantity_in_kg: quantity_in_kg,
-                    quantity_Pcs: quantity_Pcs,
-                    avg_weight: avg_weight,
-                    bundel_no: bundel_no
-                },
-                success: function(response) {
-                    console.log('output', response);
-                    setIntoTable(response);
-                    deleteEventBtn();
-                    setTimeout(function() {
-                        //  updateBundleNo();
-                    }, 3000);
-
-                },
-                error: function(xhr, status, error) {
-                    setErrorMsg(xhr.responseJSON.message);
-                }
+        $('#bagBundelItemStore').on('submit', function(e) {
+                e.preventDefault();
+                let url = $(this).attr('action');
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: url,
+                    type: "POST",
+                    data: new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend: function() {
+                        console.log('ajax fired');
+                    },
+                    success: function(data) {
+                        if (data.status == true) {
+                            $('#bagBundellingData').empty();
+                            $('#bagBundellingData').html(data.view);
+                            $('#bundelNo').val(data.newNumber);
+                            $('#qtyInKg').val("");
+                            $('#quantityInPcs').val("");
+                            $('#avgWeight').val("");
+                            $('#availableStock').val(data.available_stock);
+                            swal.fire("Added!", "Bag Bundle Item Added Successfully!", "success");
+                        } else {
+                            swal.fire("Failed!", "Bundle item Addition failed!", "error");
+                        }
+                    },
+                    error: function(xhr) {
+                        var i = 0;
+                        $('.help-block').remove();
+                        $('.has-error').removeClass('has-error');
+                        for (var error in xhr.responseJSON.errors) {
+                            $('#add_' + error).removeClass('has-error');
+                            $('#add_' + error).addClass('has-error');
+                            $('#error_' + error).html(
+                                '<span class="help-block ' + error + '">*' + xhr
+                                .responseJSON.errors[
+                                    error] + '</span>');
+                            i++;
+                        }
+                    }
+                });
             });
-        });
+
+        // document.getElementById('bagBundelItemStore_old').addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     const form = e.target;
+        //     let bag_bundel_entry_id = form.elements['bag_bundel_entry_id'].value;
+        //     let group_id = form.elements['group_id'].value;
+        //     let brand_bag_id = form.elements['brand_bag_id'].value;
+        //     let quantity_in_kg = form.elements['qty_in_kg'].value;
+        //     let quantity_Pcs = form.elements['quantity_in_pcs'].value;
+        //     let avg_weight = form.elements['avg_weight'].value;
+        //     let bundel_no = form.elements['bundel_no'].value;
+        //     $.ajax({
+        //         url: "{{ route('bagBundelItem.store') }}",
+        //         method: 'post',
+        //         data: {
+        //             _token: "{{ csrf_token() }}",
+        //             bag_bundel_entry_id: bag_bundel_entry_id,
+        //             group_id: group_id,
+        //             brand_bag_id: brand_bag_id,
+        //             quantity_in_kg: quantity_in_kg,
+        //             quantity_Pcs: quantity_Pcs,
+        //             avg_weight: avg_weight,
+        //             bundel_no: bundel_no
+        //         },
+        //         success: function(response) {
+        //             console.log('output', response);
+        //             setIntoTable(response);
+        //             deleteEventBtn();
+        //             setTimeout(function() {
+        //                 //  updateBundleNo();
+        //             }, 3000);
+
+        //         },
+        //         error: function(xhr, status, error) {
+        //             setErrorMsg(xhr.responseJSON.message);
+        //         }
+        //     });
+        // });
 
 
         let sn = 1;
@@ -408,7 +453,7 @@
             selectElement.trigger('change.select2');
 
         }
-        
+
         function setErrorMsg(errorMessage) {
             let errorContainer = document.getElementById('error_msg');
             errorContainer.hidden = false;
