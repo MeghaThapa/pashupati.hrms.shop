@@ -17,11 +17,11 @@ class TapeProductionController extends Controller
 
             $plantArray = $this->getPlantArray($request);
 
-            $view = view('admin.tapeentry.ssr.reportview', compact('plantArray', 'request'))->render();
+            $view = view('admin.TapeEntry.ssr.reportview', compact('plantArray', 'request'))->render();
             return response(['status' => true, 'data' => $view]);
         }
         $godams = Godam::all();
-        return view('admin.tapeentry.report', compact('godams'));
+        return view('admin.TapeEntry.report', compact('godams'));
     }
 
     private function getPlantArray($request)

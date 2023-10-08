@@ -1,31 +1,31 @@
 <h3>Summary of Tape Production Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3>
 <table class="table table-bordered table-responsive">
-    <thead>
+    <thead class="text-bold">
         <tr>
-            <th></th>
-            <th colspan="7" style="text-align: center;">Tape Plant PSI</th>
-            <th colspan="3" style="text-align: center;">Tape Plant Erema</th>
-            <th colspan="3" style="text-align: center;">BSW Plant</th>
-            <th colspan="3" style="text-align: center;">Total All Tape Plant</th>
+            <th style="text-align: center;border: 2px solid black;"></th>
+            <th colspan="7" style="text-align: center;border: 2px solid black;">Tape Plant PSI</th>
+            <th colspan="3" style="text-align: center;border: 2px solid black;">Tape Plant Erema</th>
+            <th colspan="3" style="text-align: center;border: 2px solid black;">BSW Plant</th>
+            <th colspan="3" style="text-align: center;border: 2px solid black;">Total All Tape Plant</th>
         </tr>
         <tr>
-            <th style="min-width: 120px;">Date</th>
-            <th>Kolsite</th>
-            <th>Lohia 1</th>
-            <th>Lohia 2</th>
-            <th>Lohia 3</th>
-            <th>Total</th>
-            <th>Wastage</th>
-            <th>%</th>
-            <th>Lohia 4</th>
-            <th>Wastage</th>
-            <th>%</th>
-            <th>BSW</th>
-            <th>Wastage</th>
-            <th>%</th>
-            <th>Total</th>
-            <th>Wastage</th>
-            <th>%</th>
+            <th style="min-width: 120px;border: 1px solid black;">Date</th>
+            <th style="border: 1px solid black;">Kolsite</th>
+            <th style="border: 1px solid black;">Lohia 1</th>
+            <th style="border: 1px solid black;">Lohia 2</th>
+            <th style="border: 1px solid black;">Lohia 3</th>
+            <th style="border: 1px solid black;">Total</th>
+            <th style="border: 1px solid black;">Wastage</th>
+            <th style="border: 1px solid black;">%</th>
+            <th style="border: 1px solid black;">Lohia 4</th>
+            <th style="border: 1px solid black;">Wastage</th>
+            <th style="border: 1px solid black;">%</th>
+            <th style="border: 1px solid black;">BSW</th>
+            <th style="border: 1px solid black;">Wastage</th>
+            <th style="border: 1px solid black;">%</th>
+            <th style="border: 1px solid black;">Total</th>
+            <th style="border: 1px solid black;">Wastage</th>
+            <th style="border: 1px solid black;">%</th>
         </tr>
     </thead>
     <tbody>
