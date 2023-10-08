@@ -25,5 +25,21 @@ class TapeEntryItemModel extends Model
         return $this->belongsTo(Godam::class,"toGodam_id","id");
     }
 
- 
+    public function getPlantType()
+    {
+        return $this->belongsTo('App\Models\ProcessingStep','plantType_id');
+    }
+
+    // Plant Name Ex. Koslite, lohia-1, etc
+    public function getPlantName()
+    {
+        return $this->belongsTo('App\Models\ProcessingSubcat','plantName_id');
+    }
+
+    public function getShift()
+    {
+        return $this->belongsTo('App\Models\Shift','shift_id');
+    }
+
+
 }

@@ -27,7 +27,10 @@ class BagBundelItemController extends Controller
             ->distinct('group_id')
             ->get(['group_id']);
         $bundleNo = self::generateBagBundelNumber();
-        return view('admin.bag.bagBundelling.createItem', compact('groups', 'bagBundelEntry', 'bundleNo'));
+        $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
+            ->where('bag_bundel_entry_id', $bagBundelEntry->id)
+            ->get();
+        return view('admin.bag.bagBundelling.createItem', compact('groups', 'bagBundelEntry', 'bundleNo','bagBundelItems'));
     }
 
     public function getBagBundelItemData(Request $request)
