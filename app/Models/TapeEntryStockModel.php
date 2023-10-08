@@ -9,7 +9,7 @@ use App\Models\TapeEntry;
 class TapeEntryStockModel extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'tape_entry_stock';
     protected $id = "id";
     protected $fillable = [
@@ -28,18 +28,4 @@ class TapeEntryStockModel extends Model
         return $this->belongsTo('App\Models\Godam','toGodam_id');
     }
 
-    public function getPlantType()
-    {
-        return $this->belongsTo('App\Models\ProcessingStep','plantType_id');
-    }
-
-    public function getPlantName()
-    {
-        return $this->belongsTo('App\Models\ProcessingSubcat','plantName_id');
-    }
-
-    public function getShift()
-    {
-        return $this->belongsTo('App\Models\Shift','shift_id');
-    }
 }
