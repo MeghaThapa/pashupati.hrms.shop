@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="font-weight-bold">
-                                    <p><strong>{{ __('DATE') }}:</strong>{{ $data->receipt_date }}</p>
+                                    <p><strong>{{ __('DATE') }}:</strong>{{ $bagBundelEntry->receipt_date }}</p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -56,7 +56,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="font-weight-bold">
-                                    <p><strong>{{ __('Receipt. No.') }}:</strong> {{ $data->receipt_no }}</p>
+                                    <p><strong>{{ __('Receipt. No.') }}:</strong> {{ $bagBundelEntry->receipt_no }}</p>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                                                             @php
                                                                 $i = 1;
                                                             @endphp
-                                                            @foreach ($data->bagBundelItems as $item)
+                                                            @foreach ($bagBundelEntry->bagBundelItems as $item)
                                                                 <tr>
                                                                     <td>{{ $i++ }}</td>
                                                                     <td>{{ $item->bundel_no }}</td>
@@ -105,7 +105,7 @@
                                                             <tr>
                                                                 <td colspan="6" class="text-right">Total Bundel</td>
                                                                 <td colspan="2">
-                                                                    {{ $data->total_bundle_quantity ? $data->total_bundle_quantity : '0' }}
+                                                                    {{ $bagBundelEntry->total_bundle_quantity ? $bagBundelEntry->total_bundle_quantity : '0' }}
                                                                     bundel
                                                                 </td>
                                                             </tr>

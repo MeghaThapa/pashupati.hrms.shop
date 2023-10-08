@@ -36,9 +36,9 @@ class BagBundelEntryController extends Controller
 
     public function view($bagBundelEntry_id)
     {
-        $data = BagBundelEntry::with('bagBundelItems', 'bagBundelItems.group:id,name', 'bagBundelItems.bagBrand:id,name')->find($bagBundelEntry_id);
-        // return $data;
-        return view('admin.bag.bagBundelling.view', compact('data'));
+        $bagBundelEntry = BagBundelEntry::with('bagBundelItems', 'bagBundelItems.group:id,name', 'bagBundelItems.bagBrand:id,name')->find($bagBundelEntry_id);
+        // return $bagBundelEntry;
+        return view('admin.bag.bagBundelling.view', compact('bagBundelEntry'));
     }
 
     /**
