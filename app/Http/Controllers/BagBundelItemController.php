@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Models\BagBundelItem;
 use App\Models\BagBundelEntry;
 use App\Models\GeneralSetting;
+use Illuminate\Validation\Rule;
 use App\Libraries\Nepali_Calendar;
-use Carbon\Carbon;
 use App\Models\PrintingAndCuttingBagStock;
-use Illuminate\Http\Request;
-use DB;
 
 class BagBundelItemController extends Controller
 {
@@ -84,19 +85,20 @@ class BagBundelItemController extends Controller
 
     public function generateBagBundelNumber()
     {
-        $setting = GeneralSetting::where('key', 'bag_bundle_no')->get('value')->first();
-        $bagBundelitem = BagBundelItem::latest()->first();
+        $setting       = GeneralSetting::where('key', 'bag_bundle_no')->get('value')->first();
+        $settingValue  = explode('-', $setting->value);
+        $bagBundelitem = BagBundelItem::where('bundel_prefix', $settingValue[0])->latest()->first();
         if ($bagBundelitem) {
-            $bundelNo = $bagBundelitem->bundel_no;
-            list($part1, $part2) = explode('-', $bundelNo);
-            $newPart2 = str_pad((int)$part2 + 1, strlen($part2), '0', STR_PAD_LEFT);
-            $newBundelNo = $part1 . '-' . $newPart2;
-            return $newBundelNo;
-        } else {
-            $prefixValue = $setting->value; // Get the original value
-            $newBundelNo = $prefixValue . '01';
-            return $newBundelNo;
+            $currentNumber = intval($bagBundelitem->bundel_suffix);
+
+            if ($currentNumber >= (int)$settingValue[1]) {
+                $newNumber = $currentNumber + 1;
+                $newBundelNo = $settingValue[0] . '-' . $newNumber;
+                return $newBundelNo;
+            }
         }
+        $newBundelNo = $settingValue[0] . '-' . $settingValue[1];
+        return $newBundelNo;
     }
     public function generateBagBundelNumberOld()
     {
@@ -137,16 +139,27 @@ class BagBundelItemController extends Controller
                 'group_id' => 'required',
                 'brand_bag_id' => 'required',
                 'quantity_in_kg' => 'required',
-                'quantity_Pcs' => 'required',
+                'quantity_in_pcs' => 'required',
                 'avg_weight' => 'required',
-                'bundel_no' => 'required|unique:bag_bundel_items,bundel_no'
+                'bundel_no' => [
+                    'required',
+                    Rule::unique('bag_bundel_items', 'bundel_no'),
+                    function ($attribute, $value, $fail) {
+                        if (substr_count($value, '-') !== 1) {
+                            $fail("The $attribute must contain exactly one hyphen.");
+                        }
+                    },
+                ],
             ]);
+            $bunderNumber = explode('-', $request->bundel_no);
             $bagBundelItem = new BagBundelItem();
+            $bagBundelItem->bundel_prefix = $bunderNumber[0];
+            $bagBundelItem->bundel_suffix = $bunderNumber[1];
             $bagBundelItem->bag_bundel_entry_id = $request->bag_bundel_entry_id;
             $bagBundelItem->group_id = $request->group_id;
             $bagBundelItem->bag_brand_id = $request->brand_bag_id;
             $bagBundelItem->qty_in_kg = $request->quantity_in_kg;
-            $bagBundelItem->qty_pcs = $request->quantity_Pcs;
+            $bagBundelItem->qty_pcs = $request->quantity_in_pcs;
             $bagBundelItem->average_weight = $request->avg_weight;
             $bagBundelItem->status = 'sent';
             $bagBundelItem->bundel_no = $request->bundel_no;
@@ -164,9 +177,27 @@ class BagBundelItemController extends Controller
                 $printingAndCuttingBagStock->save();
             }
             DB::commit();
-            return $bagBundelItem;
+            $newNumber = $this->generateBagBundelNumber();
+            $availableStock = PrintingAndCuttingBagStock::where('group_id', $request->group_id)
+                ->where('bag_brand_id', $request->brand_bag_id)
+                ->get(['quantity_piece'])
+                ->first();
+
+            $bagBundelentry_id = BagBundelEntry::find($request->bag_bundel_entry_id)->id;
+            //return  $bagBundelentry_id;
+            $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
+                ->where('bag_bundel_entry_id', $bagBundelentry_id)
+                ->get();
+
+            $view = view('admin.bag.bagBundelling.ssr.tableview',compact('bagBundelItems'))->render();
+            return response([
+                'status' => true, 'message' => 'Bag Bundel Item Created Successfully',
+                'newNumber' => $newNumber, 'available_stock' => $availableStock->quantity_piece,
+                'view' => $view
+            ], 200);
         } catch (Exception $ex) {
             DB::rollBack();
+            return response(['status' => false, 'message' => $ex->getMessage()]);
         }
     }
 

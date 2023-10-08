@@ -42,6 +42,109 @@ class FabricController extends Controller
 
     public function fixData()
     {
+        // $this->fixStockData();
+        $this->fixDataNotInGodamTransferNotInSingleTripal();
+    }
+
+    private function fixStockData(){
+        $items = [
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 104],
+            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 134],
+            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 157],
+            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 178],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 184],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 190],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 39],
+            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 40],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 48],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 57],
+            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 59],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 61],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 78],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 84],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 85],
+            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 90],
+            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 91],
+            ['name' => '24"T Blue Checker Sugar(5.00-Gram)', 'roll_no' => 119],
+            ['name' => '24"T Blue Checker Sugar(5.00-Gram)', 'roll_no' => 130],
+            ['name' => '24"T Blue Sugar(5.00-Gram)', 'roll_no' => 139],
+        ];
+
+        foreach($items as $item){
+            $fabric = Fabric::where('name',$item['name'])->where('roll_no',$item['roll_no'])->first();
+            if($fabric){
+                $fabricStock = FabricStock::where('fabric_id',$fabric->id)->first();
+                if(!$fabricStock){
+                    $fabricStock = new FabricStock();
+                    $fabricStock->name = $fabric->name;
+                    $fabricStock->status = "active";
+                    $fabricStock->slug = $fabric->slug;
+                    $fabricStock->fabricgroup_id = $fabric->fabricgroup_id;
+                    $fabricStock->godam_id = $fabric->godam_id;
+                    $fabricStock->average_wt = $fabric->average_wt;
+                    $fabricStock->gram_wt = $fabric->gram_wt;
+                    $fabricStock->gross_wt = $fabric->gross_wt;
+                    $fabricStock->net_wt = $fabric->net_wt;
+                    $fabricStock->meter = $fabric->meter;
+                    $fabricStock->roll_no = $fabric->roll_no;
+                    $fabricStock->loom_no = $fabric->loom_no;
+                    $fabricStock->bill_no = $fabric->bill_no;
+                    $fabricStock->status = $fabric->status;
+                    $fabricStock->is_laminated = $fabric->is_laminated;
+                    $fabricStock->fabric_id = $fabric->id;
+                    $fabricStock->date_np = $fabric->date_np;
+                    $fabricStock->save();
+                }
+            }
+        }
+    }
+
+    public function fixDatainActiveFabric()
+    {
+        $table = '<table>';
+        $table .= '<thead><tr><th>Roll No</th><th>Name</th><th>Net Wt</th><th>Gross Wt</th><th>Meter</th></tr></thead>';
+        $table .= '<tbody>';
+        $fabricStock = FabricStock::where('status_type','inactive')->where('godam_id',2)->get();
+        foreach($fabricStock as $item){
+            $table .= '<tr>';
+            $table .= '<td>' . $item['roll_no'] . '</td>';
+            $table .= '<td>' . $item['name'] . '</td>';
+            $table .= '<td>' . $item['net_wt'] . '</td>';
+            $table .= '<td>' . $item['gross_wt'] . '</td>';
+            $table .= '<td>' . $item['meter'] . '</td>';
+            $table .= '</tr>';
+        }
+
+
+        // Close the table
+        $table .= '</tbody>';
+        $table .= '</table>';
+
+        // Echo the HTML table
+        echo $table;
+
+        die();
+    }
+
+    public function fixDataStock()
+    {
+        $uniqueRows = DB::table('bag_fabric_receive_item_sent_stock')
+            ->select('fabric_id', DB::raw('MAX(id) as max_id'))
+            ->groupBy('fabric_id')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+
+        foreach ($uniqueRows as $row) {
+            DB::table('bag_fabric_receive_item_sent_stock')
+                ->where('fabric_id', $row->fabric_id)
+                ->where('id', '<>', $row->max_id)
+                ->delete();
+        }
+        dd('done');
+    }
+
+    public function fixDataNotInGodamTransferNotInSingleTripal()
+    {
         $fabrics = Fabric::where('godam_id', 2)->orderBy('roll_no', 'ASC')->get();
 
         // Create a temporary associative array to check for unique roll_no values

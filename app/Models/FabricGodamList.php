@@ -15,7 +15,7 @@ class FabricGodamList extends Model
 
     public function fabric()
     {
-        return $this->belongsTo(Fabric::class,'roll','roll_no');
+        return $this->belongsTo(Fabric::class);
     }
 
     public function getFromGodam()

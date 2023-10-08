@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TapeProductionController;
 use App\Http\Controllers\CCPlantController;
 use App\Http\Controllers\FabricSendAndReceiveSaleController;
 use App\Http\Controllers\FabricTransferEntryForBagController;
@@ -236,7 +237,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/godamTransferDetail', 'RawMaterialController@godamTransferDetail')->name('rawMaterial.godamTransferDetail');
 
     Route::post('rawMaterial/filterGodamTransferAccGodam', 'RawMaterialController@filterGodamTransferAccGodam')->name('rawMaterial.filterGodamTransferAccGodam');
-
 
     //for gana name from rawmaterial stock
     Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
@@ -536,12 +536,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("entry/index/ajax", "indexajax")->name("entry.index.ajax");
         Route::post("entry/store", "store")->name('entry.store');
 
-        Route::get("create/{entry_id}", "create")->name("create");
-        Route::post("store", "storeSale")->name("store");
-        Route::get("get/list", "getSales")->name("get.list");
+        Route::get("create/{entry_id}","create")->name("create");
+        Route::get("edit/{entry_id}","edit")->name("entry.edit");
+        Route::post("store","storeSale")->name("store");
+        Route::get("get/list","getSales")->name("get.list");
+        Route::post("restore","restoreStock")->name("restore");
 
         Route::post("delete", "delete")->name('delete');
         Route::post("final/submit", "submit")->name("submit");
+        Route::post("final/update","finalUpdate")->name("final.update");
 
         Route::any("index/ajax/sums", "indexsumsajax")->name("index.ajax.sums");
         Route::get("viewbill/{bill_id}", "viewBill")->name("viewBill");
@@ -1296,6 +1299,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('finaltripalrewinding-report-view', 'Tripal\Report\FinalTripalRewindingController@generateFinalTripalView')->name('finaltripalrewinding.view');
 
 
+    Route::get('tape-production/report',TapeProductionController::class)->name('tape.production.report');
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');

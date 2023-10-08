@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('bag_bundel_items', function (Blueprint $table) {
             $table->id();
             $table->string('bundel_no');
+            $table->string('bundel_prefix');
+            $table->string('bundel_suffix');
+
 
             $table->unsignedBigInteger("bag_bundel_entry_id");
             $table->foreign("bag_bundel_entry_id")->references("id")->on('bag_bundel_entries')->onDelete('cascade');
