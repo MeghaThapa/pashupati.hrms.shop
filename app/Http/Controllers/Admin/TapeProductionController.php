@@ -62,16 +62,42 @@ class TapeProductionController extends Controller
         foreach ($resultArray as $date => $data) {
             $rowData[$date]['date'] = $date;
 
+            $rowData[$date]['godam_one_total_loading'] = 0;
+            $rowData[$date]['godam_one_total_running'] = 0;
+            $rowData[$date]['godam_one_total_bypass_wastage'] = 0;
+
+            $rowData[$date]['godam_two_total_loading'] = 0;
+            $rowData[$date]['godam_two_total_running'] = 0;
+            $rowData[$date]['godam_two_total_bypass_wastage'] = 0;
+
+            $rowData[$date]['godam_three_total_loading'] = 0;
+            $rowData[$date]['godam_three_total_running'] = 0;
+            $rowData[$date]['godam_three_total_bypass_wastage'] = 0;
+
             foreach ($data as $item) {
                 $plantName = ProcessingSubcat::whereId($item['plantName_id'])->first()->name;
                 $rowData[$date][$plantName] = $item['tape_qty_in_kg'];
-                $rowData[$date]['total_loading'] = $item['total_loading'];
-                $rowData[$date]['total_running'] = $item['total_running'];
-                $rowData[$date]['total_bypass_wastage'] = $item['total_bypass_wastage'];
-                $rowData[$date]['toGodam_id'] = $item['toGodam_id'];
+
+                if($item['toGodam_id'] == 1){
+                    $rowData[$date]['godam_one_total_loading'] = $rowData[$date]['godam_one_total_loading']+$item['total_loading'];
+                    $rowData[$date]['godam_one_total_running'] = $rowData[$date]['godam_one_total_running']+$item['total_running'];
+                    $rowData[$date]['godam_one_total_bypass_wastage'] = $rowData[$date]['godam_one_total_bypass_wastage'] + $item['total_bypass_wastage'];
+
+                    $rowData[$date]['psi'] = $item['toGodam_id'];
+                }elseif($item['toGodam_id'] == 2){
+                    $rowData[$date]['godam_two_total_loading'] = $rowData[$date]['godam_two_total_loading'] + $item['total_loading'];
+                    $rowData[$date]['godam_two_total_running'] = $rowData[$date]['godam_two_total_running'] + $item['total_running'];
+                    $rowData[$date]['godam_two_total_bypass_wastage'] = $rowData[$date]['godam_two_total_bypass_wastage'] + $item['total_bypass_wastage'];
+                    $rowData[$date]['newpsi'] = $item['toGodam_id'];
+                }elseif($item['toGodam_id'] ==3 ){
+                    $rowData[$date]['godam_three_total_loading'] = $rowData[$date]['godam_three_total_loading'] +  $item['total_loading'];
+                    $rowData[$date]['godam_three_total_running'] = $rowData[$date]['godam_three_total_running'] + $item['total_running'];
+                    $rowData[$date]['godam_three_total_bypass_wastage'] = $rowData[$date]['godam_three_total_bypass_wastage'] + $item['total_bypass_wastage'];
+                    $rowData[$date]['bsw'] = $item['toGodam_id'];
+                }
+
             }
         }
-
         return $rowData;
     }
 }

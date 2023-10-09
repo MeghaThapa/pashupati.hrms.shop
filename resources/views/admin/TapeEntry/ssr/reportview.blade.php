@@ -96,9 +96,9 @@
                     @endphp
                 </td>
                 <td>
-                    @if($item['toGodam_id']==1)
+                    @if(isset($item['psi']))
                     @php
-                    $totalPSIWastage =  $item['total_loading'] + $item['total_loading'] + $item['total_bypass_wastage'];
+                    $totalPSIWastage =  $item['godam_one_total_loading'] + $item['godam_one_total_running'] + $item['godam_one_total_bypass_wastage'];
                     @endphp
                     {{ $totalPSIWastage }}
                     @else
@@ -130,9 +130,9 @@
                     @endif
                 </td>
                 <td>
-                    @if($item['toGodam_id']==2)
+                    @if( isset($item['newpsi']))
                     @php
-                    $totalNewPSIWastage =  $item['total_loading'] + $item['total_loading'] + $item['total_bypass_wastage'];
+                    $totalNewPSIWastage =  $item['godam_two_total_loading'] + $item['godam_two_total_running'] + $item['godam_two_total_bypass_wastage'];
                     $finalNewPSIWastage += $totalNewPSIWastage;
                     @endphp
                     {{ $totalNewPSIWastage }}
@@ -168,9 +168,9 @@
                 </td>
 
                 <td>
-                    @if($item['toGodam_id']==3)
+                    @if(isset($item['bsw']))
                     @php
-                    $totalBSWWastage =  $item['total_loading'] + $item['total_loading'] + $item['total_bypass_wastage'];
+                    $totalBSWWastage =  $item['godam_three_total_loading'] + $item['godam_three_total_running'] + $item['godam_three_total_bypass_wastage'];
                     $finalBSWWastage += $totalBSWWastage;
                     @endphp
                     {{ $totalBSWWastage }}
