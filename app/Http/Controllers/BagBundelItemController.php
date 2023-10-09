@@ -30,7 +30,7 @@ class BagBundelItemController extends Controller
         $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
             ->where('bag_bundel_entry_id', $bagBundelEntry->id)
             ->get();
-        return view('admin.bag.bagBundelling.createItem', compact('groups', 'bagBundelEntry', 'bundleNo','bagBundelItems'));
+        return view('admin.bag.bagBundelling.createItem', compact('groups', 'bagBundelEntry', 'bundleNo', 'bagBundelItems'));
     }
 
     public function getBagBundelItemData(Request $request)
@@ -173,8 +173,11 @@ class BagBundelItemController extends Controller
                 ->where('bag_brand_id', $bagBundelItem->bag_brand_id)
                 ->first();
             // return $printingAndCuttingBagStock;
+
+
             $printingAndCuttingBagStock->quantity_piece = $printingAndCuttingBagStock->quantity_piece - $bagBundelItem->qty_pcs;
             if ($printingAndCuttingBagStock->quantity_piece <= 0) {
+                $printingAndCuttingBagStock->save();
                 $printingAndCuttingBagStock->delete();
             } else {
                 $printingAndCuttingBagStock->save();
@@ -192,10 +195,10 @@ class BagBundelItemController extends Controller
                 ->where('bag_bundel_entry_id', $bagBundelentry_id)
                 ->get();
 
-            $view = view('admin.bag.bagBundelling.ssr.tableview',compact('bagBundelItems'))->render();
+            $view = view('admin.bag.bagBundelling.ssr.tableview', compact('bagBundelItems'))->render();
             return response([
                 'status' => true, 'message' => 'Bag Bundel Item Created Successfully',
-                'newNumber' => $newNumber, 'available_stock' => $availableStock->quantity_piece,
+                'newNumber' => $newNumber, 'available_stock' => $availableStock ? $availableStock->quantity_piece : 0,
                 'view' => $view
             ], 200);
         } catch (Exception $ex) {
