@@ -61,9 +61,14 @@
 
                                             </div>
                                         @elseif($bagBundelEntry->status == 'completed')
+
                                             <a class="btn btn-success"
                                                 href="{{ route('bagBundelling.view', ['bagBundelEntry_id' => $bagBundelEntry->id]) }}">
                                                 <i class="fa fa-eye" aria-hidden="true"></i> </a>
+
+                                            {{-- <a class="btn btn-success" href="javascript:void(0)"> <i class="fa fa-eye"
+                                                    aria-hidden="true"></i> </a> --}}
+
                                         @endif
                                     </td>
                                 </tr>

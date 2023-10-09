@@ -33,24 +33,14 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
-                            <input type="text" class="form-control ndp-nepali-calendar" id="start_date" name="start_date" value="">
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="text" class="form-control ndp-nepali-calendar" id="end_date" name="end_date" value="">
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="">
                         </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="godamID">Select Godam</label>
-                        <select class="form-control" id="godamID">
-                            <option value="" selected disabled>{{ __('Select Godam Name') }}</option>
-                            @foreach ($godams as $data)
-                                <option value="{{ $data->id }}">{{ $data->name }}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group mt-4">
@@ -65,25 +55,8 @@
     </div>
 @endsection
 @section('extra-script')
-    <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
     <script>
         $(function(){
-
-            var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
-
-            $('#start_date').val(currentDate);
-            $('#start_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-            });
-
-            $('#end_date').val(currentDate);
-            $('#end_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-            });
 
             $("#generateReport").click(function(e) {
                 e.preventDefault()

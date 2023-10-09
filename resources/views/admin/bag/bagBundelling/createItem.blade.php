@@ -118,6 +118,42 @@
                         </tr>
                     </thead>
                     <tbody id="bagBundellingData">
+                        @php
+                            $i = 0;
+                            $totalKg = 0;
+                            $toalPcs = 0;
+                        @endphp
+                        @foreach ($bagBundelItems as $item)
+                            <tr id="editRow-1">
+                                <td>{{ ++$i }}</td>
+                                <td class="rowGroupName">{{ $item->group->name }}</td>
+                                <td class="rowBrandBagName">{{ $item->bagBrand->name }}</td>
+                                <td class="rowQuantity_piece">{{ $item->qty_in_kg }}</td>
+                                <td class="rowAverage">{{ $item->qty_pcs }}</td>
+                                <td class="rowWastage">{{ $item->average_weight }}</td>
+                                <td class="rowRollno">{{ $item->bundel_no }}</td>
+                                <td>
+                                    <button class="btn btn-danger dltBagBundelItem" data-id="{{ $item->id }}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @php
+                                $totalKg += $item->qty_in_kg;
+                                $toalPcs += $item->qty_pcs;
+                            @endphp
+                        @endforeach
+                        <tr style="font-weight: 600;">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{ $totalKg }}</td>
+                            <td>{{ $toalPcs }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -164,32 +200,6 @@
         quantityInKg.addEventListener('input', averageWeight);
         quantityInPcs.addEventListener('input', averageWeight);
 
-        function getBagBundellingItemData() {
-            let bagBundelEntry_id = {!! json_encode($bagBundelEntry->id) !!}
-            return new Promise(function(resolve, reject) {
-
-                $.ajax({
-                    url: "{{ route('bagBundelItem.getBagBundelItemData') }}",
-                    method: 'post',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        bagBundelEntry_id: bagBundelEntry_id,
-                    },
-                    success: function(response) {
-
-                        response.forEach(function($item) {
-                            setIntoTable($item)
-                        })
-                        resolve();
-                    },
-                    error: function(xhr, status, error) {
-                        setErrorMsg(xhr.responseJSON.message);
-                        reject();
-                    }
-                });
-            });
-        }
-
         function averageWeight() {
             let valueInKg = parseFloat(quantityInKg.value.trim());
             let valueInPcs = parseFloat(quantityInPcs.value.trim());
@@ -229,109 +239,52 @@
         }
 
         $('#bagBundelItemStore').on('submit', function(e) {
-                e.preventDefault();
-                let url = $(this).attr('action');
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: url,
-                    type: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    beforeSend: function() {
-                        console.log('ajax fired');
-                    },
-                    success: function(data) {
-                        if (data.status == true) {
-                            $('#bagBundellingData').empty();
-                            $('#bagBundellingData').html(data.view);
-                            $('#bundelNo').val(data.newNumber);
-                            $('#qtyInKg').val("");
-                            $('#quantityInPcs').val("");
-                            $('#avgWeight').val("");
-                            $('#availableStock').val(data.available_stock);
-                            swal.fire("Added!", "Bag Bundle Item Added Successfully!", "success");
-                        } else {
-                            swal.fire("Failed!", "Bundle item Addition failed!", "error");
-                        }
-                    },
-                    error: function(xhr) {
-                        var i = 0;
-                        $('.help-block').remove();
-                        $('.has-error').removeClass('has-error');
-                        for (var error in xhr.responseJSON.errors) {
-                            $('#add_' + error).removeClass('has-error');
-                            $('#add_' + error).addClass('has-error');
-                            $('#error_' + error).html(
-                                '<span class="help-block ' + error + '">*' + xhr
-                                .responseJSON.errors[
-                                    error] + '</span>');
-                            i++;
-                        }
+            e.preventDefault();
+            let url = $(this).attr('action');
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: url,
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    console.log('ajax fired');
+                },
+                success: function(data) {
+                    if (data.status == true) {
+                        $('#bagBundellingData').empty();
+                        $('#bagBundellingData').html(data.view);
+                        $('#bundelNo').val(data.newNumber);
+                        $('#qtyInKg').val("");
+                        $('#quantityInPcs').val("");
+                        $('#avgWeight').val("");
+                        $('#availableStock').val(data.available_stock);
+                        swal.fire("Added!", "Bag Bundle Item Added Successfully!", "success");
+                    } else {
+                        swal.fire("Failed!", "Bundle item Addition failed!", "error");
                     }
-                });
+                },
+                error: function(xhr) {
+                    var i = 0;
+                    $('.help-block').remove();
+                    $('.has-error').removeClass('has-error');
+                    for (var error in xhr.responseJSON.errors) {
+                        $('#add_' + error).removeClass('has-error');
+                        $('#add_' + error).addClass('has-error');
+                        $('#error_' + error).html(
+                            '<span class="help-block ' + error + '">*' + xhr
+                            .responseJSON.errors[
+                                error] + '</span>');
+                        i++;
+                    }
+                }
             });
+        });
 
-        // document.getElementById('bagBundelItemStore_old').addEventListener('submit', function(e) {
-        //     e.preventDefault();
-        //     const form = e.target;
-        //     let bag_bundel_entry_id = form.elements['bag_bundel_entry_id'].value;
-        //     let group_id = form.elements['group_id'].value;
-        //     let brand_bag_id = form.elements['brand_bag_id'].value;
-        //     let quantity_in_kg = form.elements['qty_in_kg'].value;
-        //     let quantity_Pcs = form.elements['quantity_in_pcs'].value;
-        //     let avg_weight = form.elements['avg_weight'].value;
-        //     let bundel_no = form.elements['bundel_no'].value;
-        //     $.ajax({
-        //         url: "{{ route('bagBundelItem.store') }}",
-        //         method: 'post',
-        //         data: {
-        //             _token: "{{ csrf_token() }}",
-        //             bag_bundel_entry_id: bag_bundel_entry_id,
-        //             group_id: group_id,
-        //             brand_bag_id: brand_bag_id,
-        //             quantity_in_kg: quantity_in_kg,
-        //             quantity_Pcs: quantity_Pcs,
-        //             avg_weight: avg_weight,
-        //             bundel_no: bundel_no
-        //         },
-        //         success: function(response) {
-        //             console.log('output', response);
-        //             setIntoTable(response);
-        //             deleteEventBtn();
-        //             setTimeout(function() {
-        //                 //  updateBundleNo();
-        //             }, 3000);
-
-        //         },
-        //         error: function(xhr, status, error) {
-        //             setErrorMsg(xhr.responseJSON.message);
-        //         }
-        //     });
-        // });
-
-
-        let sn = 1;
-        //set data in the table
-        function setIntoTable(res) {
-            var html = "";
-            html = "<tr id=editRow-" + res.id + "><td>" + sn +
-                "</td><td class='rowGroupName'>" + res.group.name +
-                "</td><td class='rowBrandBagName'>" + res.bag_brand.name +
-                "</td><td class='rowQuantity_piece'>" + res.qty_in_kg +
-                "</td><td class='rowAverage'>" + res.qty_pcs +
-                "</td><td class='rowWastage'>" + res.average_weight +
-                "</td><td class='rowRollno'>" + res.bundel_no +
-                "</td> <td>" +
-                "<button class='btn btn-danger dltBagBundelItem' data-id=" +
-                res.id + " ><i class='fas fa-trash-alt'></i> </button>" + "</td></tr>";
-            document.getElementById('bagBundellingData').innerHTML += html;
-            sn++;
-            clearInputFields();
-        }
         //clear input fields
         function clearInputFields() {
             document.getElementById('qtyInKg').value = "";
