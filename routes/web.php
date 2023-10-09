@@ -973,6 +973,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('finalTripal/dataTable', 'Tripal\FinalTripalController@dataTable')->name('finalTripal.dataTable');
 
+    Route::get('finalTripalList/dataTable', 'Tripal\FinalTripalController@finalListdataTable')->name('finalTripalList.dataTable');
+
     Route::get('tripal/getDoubleFabricStockList/final', 'Tripal\FinalTripalController@getDoubleFabricStockList')->name('finaltripal.getDoubleFabricStockList');
 
     Route::post('tripal/store/tripalEntry', 'Tripal\FinalTripalController@storeTripalEntry')->name('tripalEntryStore');
