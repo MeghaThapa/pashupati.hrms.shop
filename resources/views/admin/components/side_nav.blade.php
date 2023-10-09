@@ -1500,7 +1500,7 @@
 
                     <i class="nav-icon fas fa-chart-area"></i>
 
-                    <p>{{ __('Stocks') }}</p>
+                    <p>{{ __('Fabric Sent For BagStocks') }}</p>
 
                 </a>
 
