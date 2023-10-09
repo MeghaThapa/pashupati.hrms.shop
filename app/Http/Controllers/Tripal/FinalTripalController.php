@@ -92,6 +92,30 @@ class FinalTripalController extends Controller
             ->make(true);
     }
 
+    public function finalListdataTable(Request $request)
+    {
+        // dd('lol',$request->bill_id);
+        $tripalGodam = FinalTripal::where('bill_id',$request->bill_id)->orderBy('created_at','DESC')
+                       ->get();
+
+        return DataTables::of($tripalGodam)
+            ->addIndexColumn()
+            
+            ->addColumn('action', function ($row) {
+
+                return "
+                <a class='btn btn-danger deleteTripalEntryList'  
+                         data-id='{$row->id}' 
+                         href='{$row->id}'>Delete</a>";
+
+               // return '<a href="' . route('finaltripal.deleteTripalEntryLists', ['id' => $row->id]) . '" class="btn btn-danger"><i class="fas fa-trash"></i></a>';
+              
+
+            })
+            ->rawColumns(['fromgodam','togodam','action'])
+            ->make(true);
+    }
+
 
     public function createFinaltripal($id)
     {
@@ -274,18 +298,19 @@ class FinalTripalController extends Controller
         //     'name'    => 'required|unique:final_tripal_names,name',
         // ]);
         // dd($request);
+        // dd('hey');
 
         try{
 
 
            DB::beginTransaction();
 
-           $find_tripal_bill = TripalEntry::where('bill_id',$request->bill_id)->value('id');
+          
            $bill_id = $request->bill_id;
-           // dd($)
-           $find_bill = TripalEntry::find($find_tripal_bill);
+           
+           $find_bill = FinalTripalBill::find($bill_id);
            $findtripalname = FinalTripalName::where('id',$request->tripal)->value('name');
-           // dd($request,$find_bill);
+         
 
            $todayEnglishDate = Carbon::now()->format('Y-n-j');
 
@@ -296,9 +321,9 @@ class FinalTripalController extends Controller
                "slug" => $findtripalname,
                "bill_number" => $request['bill_no'],
                'bill_date' => $request['bill_date'],
-               "department_id" => $find_bill->department_id,
+               "department_id" => $find_bill->godam_id,
                "finaltripalname_id" => $request->tripal,
-               "loom_no" => $find_bill->loom_no,
+               // "loom_no" => $find_bill->loom_no,
                "roll_no" => $request['roll'],
                'gross_wt' => $request['gross_weight'],
                "meter" => $request['meter'],
@@ -316,10 +341,10 @@ class FinalTripalController extends Controller
                "slug" => $findtripalname,
                "bill_number" => $request['bill_no'],
                'bill_date' => $request['bill_date'],
-               "department_id" => $find_bill->department_id,
+               "department_id" => $find_bill->godam_id,
                "finaltripalname_id" => $request->tripal,
-               "gram" =>  $find_bill->gram,
-               "loom_no" => $find_bill->loom_no,
+               // "gram" =>  $find_bill->gram,
+               // "loom_no" => $find_bill->loom_no,
                "roll_no" => $request['roll'],
                'gross_wt' => $request['gross_weight'],
                "meter" => $request['meter'],
@@ -337,7 +362,10 @@ class FinalTripalController extends Controller
 
                 
            DB::commit();
-           return back();
+            return response([
+            "message" => "Added Successfully" 
+        ]);
+           // return back();
         }
         catch(Exception $e){
             DB::rollback();
@@ -451,7 +479,11 @@ class FinalTripalController extends Controller
          
 
             DB::commit();
-            return response(200);
+            // return back();
+            return response([
+                "message" => "Deleted Successfully" 
+            ]);
+            // return response(200);
 
         }catch(Exception $e){
             dd($e);

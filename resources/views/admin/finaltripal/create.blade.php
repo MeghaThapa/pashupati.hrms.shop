@@ -274,8 +274,8 @@
                 <p style="font-weight: bold;"></p>
             </div>
             <div class="card-body table-responsive">
-                <form action='{{ route("finaltripal.store") }}' method="post">
-                    @csrf
+                
+                    
                     <input type="hidden" name="bill_id" value="{{$id}}" id="bill_id">
                   <div class="row p-2">
                     <div class="col-md-3">
@@ -379,7 +379,7 @@
                     
 
                     <div class="col-md-3">
-                        <button class=" form-control btn btn-primary" id='add_dana_consumption' type="submit">
+                        <button class=" form-control btn btn-primary" id='finaltripalStore'>
                             Add
                         </button>
                     </div>
@@ -387,7 +387,7 @@
                   <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
                   <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
 
-                </form>
+                
             </div>
         </div>
     </div>
@@ -398,7 +398,7 @@
                 <p style="font-weight: bold;">FinalTripal</p>
             </div>
             <div class="card-body table-responsive" style="padding:opx !important">
-                <table class="table table-bordered" id="finaltripal">
+                <table class="table table-bordered" id="finalTripalListTable">
                     <thead>
                         <tr>
                             <th>{{ __('Sr.No') }}</th>
@@ -413,7 +413,7 @@
                         </tr>
                     </thead>
 
-                    <tbody id="finaltripal">
+                    <tbody id="finalTripalListTable">
                     </tbody>
                   
 
@@ -484,9 +484,9 @@
                 </tr>
             </thead>
             <tbody >
-                @foreach($danalist as $list)
+                @foreach($danalist as $key=>$list)
                 <tr>
-                    <td>#</td>
+                    <td>{{$key+1}}</td>
                     <td>{{$list->godam->name}}</td>
 
                     <td>{{$list->danaName->name}}</td>
@@ -743,6 +743,49 @@
       }
     });
   });
+   $("body").on("click","#finaltripalStore", function(event){
+                  // debugger;
+                  var tripal = $('#tripal').val(),
+                      bill_id = $('#bill_id').val(),
+                      roll = $('#roll').val(),
+                      gross_weight = $('#gross_weight').val(),
+                      net_wt = $('#net_wt').val(),
+                      meter = $('#meter').val(),
+                      average = $('#average').val(),
+                      gsm = $('#gsm').val(),
+                      bill_nos = $('#bill_nos').val(),
+                      bill_dates = $('#bill_dates').val(),
+                      token = $('meta[name="csrf-token"]').attr('content');
+
+                      // debugger;
+                  $.ajax({
+                    type:"POST",
+                    dataType:"JSON",
+                    url:"{{route('finaltripal.store')}}",
+                    data:{
+                      _token: token,
+                      tripal: tripal,
+                      bill_id: bill_id,
+                      roll: roll,
+                      gross_weight: gross_weight,
+                      net_wt: net_wt,
+                      meter: meter,
+                      average: average,
+                      gsm: gsm,
+                      bill_no: bill_nos,
+                      bill_date: bill_dates,
+                    },
+                    success: function(response){
+                        console.log(response);
+                        $('#finalTripalListTable').DataTable().ajax.reload();
+                      // $('#tripal_decimalname').val(response.name);
+
+                    },
+                    error: function(event){
+                      alert("Sorry");
+                    }
+                  });
+                });
 </script>
 <script>
 
@@ -775,6 +818,34 @@
         $("#average").val(average);
 
     });
+
+    $(document).on('click','.deleteTripalEntryList',function(e){
+        e.preventDefault();
+        let id = $(this).attr('data-id');
+        deletefromtripalList(id);
+    });
+
+    function deletefromtripalList(data){
+       var data_id = data,
+       token = $('meta[name="csrf-token"]').attr('content');
+       $.ajax({
+         type:"GET",
+         dataType:"JSON",
+         url:"{{route('finaltripal.deleteTripalEntryLists')}}",
+         data:{
+           _token: token,
+           id: data_id,
+       },
+       success: function(response){
+            $('#finalTripalListTable').DataTable().ajax.reload();
+       },
+       error: function(event){
+           alert("Sorry");
+       }
+       });
+
+
+    }
 
 
 
@@ -1418,48 +1489,10 @@
         $("#compareunlamtbody").empty();
     }
 
-    $(document).ready(function(){
-        $(document).on('click',"#deletetripalentry",function(e){
-            e.preventDefault();
-
-            var id = $(this).attr('data-id'),
-                token = $('meta[name="csrf-token"]').attr('content');
-
-
-                $.ajax({
-                  type:"GET",
-                  dataType:"JSON",
-                  url:"{{route('finaltripal.deleteTripalEntryLists')}}",
-                  data:{
-                    _token: token,
-                    id: id,
-                  },
-                  success: function(response){
-                    window.location.reload();
-                    // $('#tripal_decimalname').val(response.name);
-
-                  },
-                  error: function(event){
-                    alert("Sorry");
-                  }
-                });
-            
-        });
-    });
+ 
 
     function putonlamtbody(response){
-        console.log(response);
-        // response.lam.forEach(element => {
-        //     let tr = $("<tr></tr>").appendTo("#comparelamtbody");
-        //     tr.append(`<td>#</td>`);
-        //     tr.append(`<td>${element.name}</td>`);
-        //     tr.append(`<td>${element.roll_no}</td>`);
-        //     tr.append(`<td>${element.net_wt}</td>`);
-        //     tr.append(`<td>${element.gross_wt}</td>`);
-        //     tr.append(`<td>${element.meter}</td>`);
-        //     tr.append(`<td>${element.average_wt}</td>`);
-        //     tr.append(`<td>${element.gram}</td>`);
-        // });
+      
 
         response.tripalentry.forEach(element => {
             let tr = $("<tr></tr>").appendTo("#compareunlamtbody");
@@ -1472,19 +1505,6 @@
             tr.append(`<td>${element.average_wt}</td>`);
          
             
-        });
-
-        response.finaltripal.forEach(element => {
-            let tr = $("<tr></tr>").appendTo("#finaltripal");
-            tr.append(`<td>#</td>`);
-            tr.append(`<td>${element.name}</td>`);
-            tr.append(`<td>${element.roll_no}</td>`);
-            tr.append(`<td>${element.gross_wt}</td>`);
-            tr.append(`<td>${element.net_wt}</td>`);
-            tr.append(`<td>${element.meter}</td>`);
-            tr.append(`<td>${element.average_wt}</td>`);
-            tr.append(`<td>${element.gram}</td>`);
-            tr.append(`<td><div class="btn-group"><a id="deletetripalentry"  href="${element.id}" data-id="${element.id}" class="btn btn-info">Delete</a></div></td>`);
         });
 
         weightdiffs(response);
@@ -1651,5 +1671,61 @@
         });
 
     /************************** Check weights matches for consumption and lamination and final submit   **********************************/
+</script>
+
+<script>
+    $('document').ready(function() {
+        let bill_id = $('#bill_id').val();
+        var table = $('#finalTripalListTable').DataTable({
+            lengthMenu: [
+                [30, 40, 50, -1],
+                ['30 rows', '40 rows', '50 rows', 'Show all']
+            ],
+            style: 'bootstrap4',
+            processing: true,
+            serverSide: true,
+            ajax : {
+                url : "{{ route('finalTripalList.dataTable') }}",
+                method : "get",
+                data :{
+                    "_token" : $("meta[name='csrf-token']").attr("content"),
+                    'bill_id' : bill_id,
+                }
+            },
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'name'
+                },
+                {
+                    data: 'roll_no'
+                },
+                {
+                    data: 'gross_wt'
+                },
+                {
+                    data: 'net_wt'
+                },
+                {
+                    data: 'meter'
+                },
+                {
+                    data: 'average_wt'
+                },
+                {
+                    data: 'gram'
+                },
+
+                {
+                    data: 'action',
+                    orderable: true,
+                    searchable: true,
+                },
+            ]
+        });
+   
+
+    });
 </script>
 @endsection
