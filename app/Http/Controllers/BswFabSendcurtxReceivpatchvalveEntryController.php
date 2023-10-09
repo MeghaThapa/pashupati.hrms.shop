@@ -12,25 +12,12 @@ use Yajra\DataTables\Facades\DataTables;
 class BswFabSendcurtxReceivpatchvalveEntryController extends Controller
 {
     public function index(){
-         $this->fixData();
+        
         return view('admin.bsw.patch_valve.index');
     }
 
 
-    // private function fixData(){
-    //    $items = PrintingAndCuttingBagItem::all();
-    //    foreach($items as $item){
-    //         $fabric=Fabric::where('meter', $item->meter)
-    //         ->where('roll_no',$item->roll_no)
-    //         ->first();
-    //         if($fabric){
-    //          $item->fabric_id =$fabric->id;
-    //          $item->save();
-    //          }else{
-    //             dd($item);
-    //          }
-    //    }
-    // }
+
 
     public function yajraDatatables(){
          $bswCurtexToPatchValveEntryDatas=BswFabSendcurtxReceivpatchvalveEntry::with(['plantType:id,name','plantName:id,name','shift:id,name','godam:id,name'])

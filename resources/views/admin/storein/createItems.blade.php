@@ -60,8 +60,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                width:150px !important;
-                                                                                                                                                                                                                                                            } */
+                                                                                                                                                                                                                                                                    width:150px !important;
+                                                                                                                                                                                                                                                                } */
     </style>
 @endsection
 
@@ -1754,9 +1754,9 @@
                     $.ajax({
                         url: "{{ route('storein.getDepartmentSizeUnit') }}",
                         method: 'GET',
-                        data:{
-                            items_of_storein_name:item_name,
-                            category_id:category_id
+                        data: {
+                            items_of_storein_name: item_name,
+                            category_id: category_id
                         },
                         success: function(response) {
                             console.log('test', response);
@@ -2314,17 +2314,17 @@
                 for (var i = 0; i < deleteButtons.length; i++) {
                     deleteButtons[i].addEventListener('click', function(event) {
                         let itemId = this.getAttribute('data-id');
-                        // console.log(itemId);
                         new swal({
-                                title: "Are you sure?",
-                                text: "Do you want to delete Item.",
-                                icon: "warning",
-                                buttons: true,
-                                dangerMode: true,
-                                closeOnClickOutside: false,
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'No, cancel!',
+                                reverseButtons: true
                             })
                             .then((willDelete) => {
-                                if (willDelete) {
+                                if (willDelete.isConfirmed == true) {
                                     $.ajax({
                                         url: '{{ route('storein.storeinItemDelete', ['id' => ':lol']) }}'
                                             .replace(':lol', itemId),
@@ -2334,8 +2334,6 @@
                                             "_token": "{{ csrf_token() }}",
                                         },
                                         success: function(result) {
-
-
                                             dataRetrive();
                                             totalAmountCalculation();
                                             new swal({
@@ -2368,7 +2366,6 @@
                 for (var i = 0; i < editButtons.length; i++) {
                     editButtons[i].addEventListener('click', function(event) {
                         let itemId = this.getAttribute('data-id');
-                        //console.log('select id item =',itemId);
                         $.ajax({
                             url: '{{ route('storein.getEditItemData', ['storeinItem_id' => ':lol']) }}'
                                 .replace(':lol', itemId),

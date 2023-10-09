@@ -30,7 +30,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('printing_and_cutting_bag_items', function (Blueprint $table) {
+          Schema::table('printing_and_cutting_bag_items', function (Blueprint $table) {
             $table->dropColumn('bag_fabric_receive_item_sent_stock_id');
         });
     }

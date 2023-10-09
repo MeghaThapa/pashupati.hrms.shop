@@ -189,6 +189,17 @@
         $(document).ready(function() {
             getrawMaterialSalesData();
 
+            function checkRowInTable() {
+                console.log('hit')
+                let tableTbody = document.querySelector("#rawMaterialItemSalesTable tbody");
+                let saveBtn = document.getElementById('saveEntireRawMaterialSales');
+                if (tableTbody.rows.length <= 0) {
+                    saveBtn.disabled = true;
+                } else {
+                    saveBtn.disabled = false;
+                }
+            }
+
             $('#danaGroup').on('select2:select', function(e) {
                 let danaGroup_id = e.target.value;
                 let godam_id = JSON.parse(`{!! json_encode($rawMaterialSalesEntry->godam_id) !!}`);
@@ -275,10 +286,10 @@
                         quantity_in_kg: quantity_in_kg.value,
                     },
                     success: function(response) {
-                        console.log(response);
                         setMessage('success_msg', 'succefully added another sales item');
                         $("#rawMaterialItemTbody").empty();
                         getrawMaterialSalesData();
+                        checkRowInTable();
                         // clearInputFields();
                         // setIntoTable(response.rawMaterialItem);
                         // calculateTotalQuantity();
@@ -327,9 +338,7 @@
                     success: function(response) {
                         rawMaterialSalesData(response);
                         checkRowInTable();
-                        // document.getElementById('totalLamMeter').value = response.totalMeter;
-                        // document.getElementById('totalLamNetWt').value = (response.totalNetWt).toFixed(
-                        //     2);
+
                     },
                     error: function(error) {
                         // Handle the error if the AJAX request fails
@@ -361,15 +370,16 @@
                 e.preventDefault();
                 let salesItem_id = this.getAttribute('data-id');
                 new swal({
-                        title: "Are you sure?",
-                        text: "Do you want to delete Item.",
-                        icon: "warning",
-                        buttons: true,
-                        dangerMode: true,
-                        closeOnClickOutside: false,
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, cancel!',
+                        reverseButtons: true
                     })
                     .then((willDelete) => {
-                        if (willDelete) {
+                        if (willDelete.isConfirmed == true) {
                             $.ajax({
                                 url: '{{ route('rawMaterialItemsSalesEntry.delete', ['salesItem_id' => ':lol']) }}'
                                     .replace(':lol', salesItem_id),
@@ -381,20 +391,22 @@
                                 success: function(result) {
                                     $("#rawMaterialItemTbody").empty();
                                     getrawMaterialSalesData();
+                                    checkRowInTable();
                                     new swal({
-                                        title: "Success",
-                                        text: "Data deleted",
-                                        type: 'success',
-                                        timer: '1500'
+                                        icon: 'success',
+                                        title: 'item deleted successfully',
+                                        showConfirmButton: false,
+                                        timer: 1500
                                     });
                                     // checkRowInTable();
                                 },
                                 error: function(result) {
                                     new swal({
-                                        title: "Error",
-                                        text: "something went wrong",
-                                        type: 'error',
-                                        timer: '1500'
+                                        position: 'top-end',
+                                        icon: 'danger',
+                                        title: 'Something Went Wrong',
+                                        showConfirmButton: false,
+                                        timer: 1000
                                     });
                                 }
                             });

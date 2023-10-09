@@ -33,76 +33,80 @@ class BagSellingEntryController extends Controller
      */
     public function create()
     {
-        $suppliers=Supplier::where('status','1')->get();
+        $suppliers = Supplier::where('status', '1')->get();
         //return  $suppliers;
         $nepaliDate = getNepaliDate(date('Y-m-d'));
         $date = date('Y-m-d');
-         $bagSellingEntryData=null;
-        return view('admin.bag.bagSelling.createEntry',compact('nepaliDate','date','suppliers','bagSellingEntryData'));
+        $bagSellingEntryData = null;
+        return view('admin.bag.bagSelling.createEntry', compact('nepaliDate', 'date', 'suppliers', 'bagSellingEntryData'));
     }
-     public function edit($bagSellingEntry_id)
+    public function edit($bagSellingEntry_id)
     {
-          $suppliers=Supplier::where('status','1')->get();
-        $bagSellingEntryData=BagSellingEntry::with('supplier')
-        ->where('id',$bagSellingEntry_id)
-        ->get(['id','challan_no','date','nepali_date','supplier_id','gp_no','lorry_no','do_no','rem'])
-        ->first();
-         return view('admin.bag.bagSelling.createEntry',compact('bagSellingEntryData','suppliers'));
-
+        $suppliers = Supplier::where('status', '1')->get();
+        $bagSellingEntryData = BagSellingEntry::with('supplier')
+            ->where('id', $bagSellingEntry_id)
+            ->get(['id', 'challan_no', 'date', 'nepali_date', 'supplier_id', 'gp_no', 'lorry_no', 'do_no', 'rem'])
+            ->first();
+        return view('admin.bag.bagSelling.createEntry', compact('bagSellingEntryData', 'suppliers'));
     }
-    public function bagSellingYajraDatatables(){
-        $bagSellingEntryDatas=BagSellingEntry::with('supplier:id,name')
-        ->get(['id','challan_no','date','nepali_date','supplier_id','gp_no','lorry_no','do_no','rem','status']);
+    public function bagSellingYajraDatatables()
+    {
+        $bagSellingEntryDatas = BagSellingEntry::with('supplier:id,name')
+            ->get(['id', 'challan_no', 'date', 'nepali_date', 'supplier_id', 'gp_no', 'lorry_no', 'do_no', 'rem', 'status']);
 
         return DataTables::of($bagSellingEntryDatas)
             ->addIndexColumn()
             ->addColumn('statusBtn', function ($bagSellingEntryData) {
-                return '<span class="badge badge-pill badge-success">'.$bagSellingEntryData->status.'</span>';
+                return '<span class="badge badge-pill badge-success">' . $bagSellingEntryData->status . '</span>';
             })
             ->addColumn('action', function ($bagSellingEntryData) {
-                $actionBtn='';
-                if($bagSellingEntryData->status == 'running'){
+                $actionBtn = '';
+                if ($bagSellingEntryData->status == 'running') {
                     $actionBtn .= '
                 <a class="btnEdit" href="' . route('bagSellingEntry.edit', ['bagSellingEntry_id' => $bagSellingEntryData->id]) . '" >
                     <button class="btn btn-primary">
                         <i class="fas fa-edit fa-lg"></i>
                     </button>
                 </a>
-
-                <button class="btn btn-danger" id="dltBagSellingEntry" data-id="'.$bagSellingEntryData->id.'">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-
                 ';
-                }
-                else{
+                    //   <button class="btn btn-danger" id="dltBagSellingEntry" data-id="' . $bagSellingEntryData->id . '">
+                    // <i class="fas fa-trash-alt"></i>
+                    // </button>
+                } else {
                     $actionBtn .= '
-                <button class="btn btn-info" id="dltBagSellingEntry" data-id="'.$bagSellingEntryData->id.'">
-                    <i class="fas fa-eye"></i>
-                </button>
-                '
-                ;
+                <a class="btnEdit" href="' . route('bagSelling.view', ['bagSellingEntry_id' => $bagSellingEntryData->id]) . '" >
+                    <button class="btn btn-info" data-id="' . $bagSellingEntryData->id . '">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                 </a>
+                ';
                 }
 
 
                 return $actionBtn;
             })
-            ->rawColumns(['action','statusBtn'])
+            ->rawColumns(['action', 'statusBtn'])
             ->make(true);
     }
 
-    public function store(Request $request){
+    public function view($bagSellingEntry_id)
+    {
+        $bagSellingEntry = BagSellingEntry::with('bagSellingItem', 'supplier:id,name', 'bagSellingItem.group:id,name', 'bagSellingItem.brandBag:id,name')->find($bagSellingEntry_id);
+        return view('admin.bag.bagSelling.view', compact('bagSellingEntry'));
+    }
+    public function store(Request $request)
+    {
         $request->validate([
-                'challan_no'=>'required',
-                'date' =>'required',
-                'date_np'=>'required',
-                'supplier_id'=>'required',
-                'gp_no'=>'required',
-                'lorry_no'=>'required',
-                'do_no'=>'required',
-                'rem'=>'required',
+            'challan_no' => 'required',
+            'date' => 'required',
+            'date_np' => 'required',
+            'supplier_id' => 'required',
+            'gp_no' => 'required',
+            'lorry_no' => 'required',
+            'do_no' => 'required',
+            'rem' => 'required',
         ]);
-        $bagSellingEntry=new BagSellingEntry();
+        $bagSellingEntry = new BagSellingEntry();
         $bagSellingEntry->challan_no = $request->challan_no;
         $bagSellingEntry->date = $request->date;
         $bagSellingEntry->nepali_date = $request->date_np;
@@ -113,38 +117,38 @@ class BagSellingEntryController extends Controller
         $bagSellingEntry->rem = $request->rem;
         $bagSellingEntry->save();
         $bagSellingEntry->load('supplier:id,name');
-        //return $bagSellingEntryData;
-        $groups=BagBundelStock::with('group')
-        ->select('group_id')
-        ->distinct('group_id')
-        ->get()
-        ;
+        $groups = BagBundelStock::with('group')
+            ->select('group_id')
+            ->distinct('group_id')
+            ->get();
 
-        //return $groups;
-        return view('admin.bag.bagSelling.createSalesItem',compact('bagSellingEntry','groups'));
+        return view('admin.bag.bagSelling.createSalesItem', compact('bagSellingEntry', 'groups'));
     }
 
-    public function getBagBrand(Request $request){
-        $bagBundelStock= BagBundelStock::with('bagBrand:id,name')
-        ->where('group_id',$request->group_id)
-        ->select('bag_brand_id')
-        ->distinct('bag_brand_id')
-        ->get();
+    public function getBagBrand(Request $request)
+    {
+        $bagBundelStock = BagBundelStock::with('bagBrand:id,name')
+            ->where('group_id', $request->group_id)
+            ->select('bag_brand_id')
+            ->distinct('bag_brand_id')
+            ->get();
         return $bagBundelStock;
     }
 
-    public function getBundleNo(Request $request){
-         $bundleNos= BagBundelStock::where('group_id',$request->group_id)
-        ->where('bag_brand_id',$request->brandBrandId)
-        ->get(['id','bundle_no']);
+    public function getBundleNo(Request $request)
+    {
+        $bundleNos = BagBundelStock::where('group_id', $request->group_id)
+            ->where('bag_brand_id', $request->brandBrandId)
+            ->get(['id', 'bundle_no']);
         return $bundleNos;
     }
 
-    public function getPcsWeightAvg(Request $request){
+    public function getPcsWeightAvg(Request $request)
+    {
 
-        $pcsWeightAvg =BagBundelStock::where('bundle_no',$request->bundel_no)
-        ->get(['qty_pcs','qty_in_kg','average_weight'])
-        ->first();
+        $pcsWeightAvg = BagBundelStock::where('bundle_no', $request->bundel_no)
+            ->get(['qty_pcs', 'qty_in_kg', 'average_weight'])
+            ->first();
         return  $pcsWeightAvg;
     }
 
@@ -183,15 +187,14 @@ class BagSellingEntryController extends Controller
      */
     public function update(Request $request, $bagSellingEntry_id)
     {
-         $bagSellingEntry=BagSellingEntry::with('supplier:id,name')
-       ->find($bagSellingEntry_id);
-       //return  $bagSellingEntry->id;
-       $groups=BagBundelStock::with('group')
-        ->select('group_id')
-        ->distinct('group_id')
-        ->get()
-        ;
-     return view('admin.bag.bagSelling.createSalesItem',compact('bagSellingEntry','groups'));
+        $bagSellingEntry = BagSellingEntry::with('supplier:id,name')
+            ->find($bagSellingEntry_id);
+        //return  $bagSellingEntry->id;
+        $groups = BagBundelStock::with('group')
+            ->select('group_id')
+            ->distinct('group_id')
+            ->get();
+        return view('admin.bag.bagSelling.createSalesItem', compact('bagSellingEntry', 'groups'));
     }
 
     /**

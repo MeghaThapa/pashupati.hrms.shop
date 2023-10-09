@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class BagSellingEntry extends Model
 {
     use HasFactory;
-
-     public function supplier()
-   {
-       return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
-   }
+    protected $table = 'bag_selling_entries';
+    public function bagSellingItem()
+    {
+        return $this->hasMany(BagSellingItem::class, "bag_selling_entry_id", "id");
+    }
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+    }
 }

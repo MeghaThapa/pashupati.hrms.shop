@@ -164,6 +164,7 @@ class BagBundelItemController extends Controller
             $bagBundelItem->qty_in_kg = $request->quantity_in_kg;
             $bagBundelItem->qty_pcs = $request->quantity_in_pcs;
             $bagBundelItem->average_weight = $request->avg_weight;
+            $bagBundelItem->status = 'sent';
             $bagBundelItem->bundel_no = $request->bundel_no;
             $bagBundelItem->save();
             $bagBundelItem->load(['group:id,name', 'bagBrand:id,name'])->first();

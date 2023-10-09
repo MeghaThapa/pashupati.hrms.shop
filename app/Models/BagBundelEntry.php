@@ -8,12 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class BagBundelEntry extends Model
 {
     use HasFactory;
-    protected $table='bag_bundel_entries';
-     public function group(){
+    protected $table = 'bag_bundel_entries';
+    public function group()
+    {
         return $this->belongsTo(Group::class, 'group_id');
     }
 
-    public function bagBrand(){
+    public function bagBrand()
+    {
         return $this->belongsTo(BagBrand::class, 'bag_brand_id');
+    }
+    public function bagBundelItems()
+    {
+        return $this->hasMany(BagBundelItem::class, "bag_bundel_entry_id", "id");
     }
 }

@@ -65,8 +65,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
     </style>
 @endsection
 @section('content')
@@ -124,28 +124,28 @@
                         </div>
                         <div class="col-md-3">
                             <label for="Fabric">Fabric </label>
-                            <select name="fabric_id" class="form-control advance-select-box" id="fabricId">
+                            <select name="fabric_id" class="form-control advance-select-box" id="fabricId" disabled>
                                 <option value="">Fabric Hre</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label for="net_weight">Net Weight </label>
-                            <input type="text" class="form-control" id="netWeight" name="net_weight">
+                            <input type="text" class="form-control" id="netWeight" name="net_weight" readonly>
                         </div>
                         <div class="col-md-3">
                             <label for="gross_weight">Gross Weight </label>
-                            <input type="text" class="form-control" id="grossWeight" name="gross_weight">
+                            <input type="text" class="form-control" id="grossWeight" name="gross_weight" readonly>
                         </div>
                     </div>
                     <hr>
                     <div class="row">
                         <div class="col-md-3">
                             <label for="meter">Meter</label>
-                            <input type="text" class="form-control" id="meter" name="meter">
+                            <input type="text" class="form-control" id="meter" name="meter" readonly>
                         </div>
                         <div class="col-md-3">
                             <label for="average">Average</label>
-                            <input type="text" class="form-control" id="average" name="average">
+                            <input type="text" class="form-control" id="average" name="average" readonly>
                         </div>
                         <div class="col-md-3">
                             <label for="cut_length">Cut Length</label>
@@ -820,8 +820,9 @@
                     },
                     success: function(response) {
                         console.log(response.error);
-                        setOptionInSelect('fabricId', response.fabric.id, response.fabric
+                        setOptionInFabSelect('fabricId', response.fabric.id, response.fabric
                             .name);
+
                         $('#netWeight').val(response.net_wt);
                         $('#grossWeight').val(response.gross_wt);
                         $('#average').val(response.average);
@@ -979,18 +980,14 @@
                             waste_type_id: waste_type_id.value
                         },
                         success: function(response) {
-                            console.log('megha mm', response);
-                            // console.log('test res megha', response.printingAndCuttingBagItem)
                             setSuccessMessage(response.message);
                             setIntoTable(response.printingAndCuttingBagItem);
                             deleteEventBtn();
-                            // $('#bagBrandModel').modal('hide');
-                            // setSuccessMessage(response.message);
-                            // setOptionInSelect('bagBrand', response.bagBrand.id,
-                            //     response.bagBrand.name);
                         },
                         error: function(xhr, status, error) {
-                            setErrorMsg(xhr.responseJSON.message);
+
+                            alert(xhr.responseJSON.error);
+
                         }
                     });
                 });
@@ -1204,25 +1201,26 @@
                 $(element_id).html(selectOptions);
             }
 
-            // function setOptionInSelect(elementId, optionId, optionText) {
-            //     let selectElement = $('#' + elementId);
+            function setOptionInFabSelect(elementId, optionId, optionText) {
+                let selectElement = $('#' + elementId);
 
-            //     selectElement.empty();
-            //     // create a new option element
-            //     let newOption = $('<option>');
+                selectElement.empty();
+                // create a new option element
+                let newOption = $('<option>');
 
-            //     // set the value and text of the new option element
-            //     newOption.val(optionId).text(optionText);
+                // set the value and text of the new option element
+                newOption.val(optionId).text(optionText);
 
-            //     // append the new option element to the select element
-            //     selectElement.append(newOption);
+                // append the new option element to the select element
+                selectElement.append(newOption);
 
-            //     newOption.prop('selected', true);
+                newOption.prop('selected', true);
 
-            //     // refresh the select2 element to update the UI
-            //     selectElement.trigger('change.select2');
-            //     // $('#' + elementId).val(optionId).trigger('change.select2');
-            // }
+                // refresh the select2 element to update the UI
+                selectElement.trigger('change.select2');
+                // $('#' + elementId).val(optionId).trigger('change.select2');
+            }
+
             function setOptionInSelect(elementId, optionId, optionText) {
                 let selectElement = $('#' + elementId);
                 let newOption = $('<option>');
