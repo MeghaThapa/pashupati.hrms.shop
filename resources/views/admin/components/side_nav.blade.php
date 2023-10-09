@@ -1125,36 +1125,36 @@
                     </li>
 
 
-                        <li class="nav-item">
-                            <a href="{{ route('singletripal.report') }}"
-                                class="nav-link {{ request()->is('admin/singletripal-report*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-tags"></i>
-                                <p>Single Tripal Report</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('doubletripal.report') }}"
-                                class="nav-link {{ request()->is('admin/doubletripal-report*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-tags"></i>
-                                <p>Double Tripal Report</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('finaltripal.report') }}"
-                                class="nav-link {{ request()->is('admin/finaltripal-report*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-tags"></i>
-                                <p>Final Tripal Report</p>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="{{ route('singletripal.report') }}"
+                            class="nav-link {{ request()->is('admin/singletripal-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Single Tripal Report</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('doubletripal.report') }}"
+                            class="nav-link {{ request()->is('admin/doubletripal-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Double Tripal Report</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('finaltripal.report') }}"
+                            class="nav-link {{ request()->is('admin/finaltripal-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Final Tripal Report</p>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('finaltripalrewinding.report') }}"
-                                class="nav-link {{ request()->is('admin/finaltripalrewinding-report*') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-tags"></i>
-                                <p>FinalTripal Rewinding Report</p>
-                            </a>
-                        </li>
-            </ul>
+                    <li class="nav-item">
+                        <a href="{{ route('finaltripalrewinding.report') }}"
+                            class="nav-link {{ request()->is('admin/finaltripalrewinding-report*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>FinalTripal Rewinding Report</p>
+                        </a>
+                    </li>
+                </ul>
 
             <li class="nav-item">
 
@@ -1480,7 +1480,18 @@
                 </a>
 
             </li>
+            <li class="nav-item">
 
+                <a href="{{ route('bagFabricReceiveItemSentStock.index') }}"
+                    class="nav-link {{ request()->routeIs('bagFabricReceiveItemSentStock.index') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-chart-area"></i>
+
+                    <p>{{ __('Stocks') }}</p>
+
+                </a>
+
+            </li>
 
 
             <li class="nav-item">
