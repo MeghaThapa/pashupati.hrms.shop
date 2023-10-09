@@ -9,6 +9,8 @@ use App\Http\Controllers\PrintedAndCuttedRollsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ThemeSettingsContoller;
+
+use App\Http\Controllers\BagFabricReceiveItemSentStockController;
 use App\Http\Controllers\SetupstoreinController;
 use App\Http\Controllers\SetupstoreoutController;
 use App\Http\Controllers\ItemController;
@@ -536,15 +538,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("entry/index/ajax", "indexajax")->name("entry.index.ajax");
         Route::post("entry/store", "store")->name('entry.store');
 
-        Route::get("create/{entry_id}","create")->name("create");
-        Route::get("edit/{entry_id}","edit")->name("entry.edit");
-        Route::post("store","storeSale")->name("store");
-        Route::get("get/list","getSales")->name("get.list");
-        Route::post("restore","restoreStock")->name("restore");
+        Route::get("create/{entry_id}", "create")->name("create");
+        Route::get("edit/{entry_id}", "edit")->name("entry.edit");
+        Route::post("store", "storeSale")->name("store");
+        Route::get("get/list", "getSales")->name("get.list");
+        Route::post("restore", "restoreStock")->name("restore");
 
         Route::post("delete", "delete")->name('delete');
         Route::post("final/submit", "submit")->name("submit");
-        Route::post("final/update","finalUpdate")->name("final.update");
+        Route::post("final/update", "finalUpdate")->name("final.update");
 
         Route::any("index/ajax/sums", "indexsumsajax")->name("index.ajax.sums");
         Route::get("viewbill/{bill_id}", "viewBill")->name("viewBill");
@@ -1299,7 +1301,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post('finaltripalrewinding-report-view', 'Tripal\Report\FinalTripalRewindingController@generateFinalTripalView')->name('finaltripalrewinding.view');
 
 
-    Route::get('tape-production/report',TapeProductionController::class)->name('tape.production.report');
+    Route::get('tape-production/report', TapeProductionController::class)->name('tape.production.report');
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
@@ -1568,6 +1570,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get("bagBrand/getBagBrandFromGroup/{group_id}", [BagBrandController::class, "getBagBrandFromGroup"])->name('bagBrand.getBagBrandFromGroup');
 
     /****************Bag Brand End********************/
+    /**********************************BagFabricReceiveItemSentStockController ************************************/
+    Route::get("bagFabricReceiveItemSentStock", [BagFabricReceiveItemSentStockController::class, "index"])->name('bagFabricReceiveItemSentStock.index');
+    /**********************************************************************/
 
     /***************printing and cutting bag item start*****************/
     Route::post("printingAndCuttingBagItem/store", [PrintingAndCuttingBagItemController::class, "store"])->name('printingAndCuttingBagItem.store');
