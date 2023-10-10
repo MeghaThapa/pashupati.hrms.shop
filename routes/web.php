@@ -746,7 +746,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('finaltripals/viewBill/{id}', 'Tripal\FinalTripalBillController@viewBill')->name('finaltripal.viewbill');
 
-    Route::get('finaltripals/getFilterFinalStock', 'Tripal\FinalTripalStockController@getFilterList')->name('finaltripal.getFilterList');
+    Route::post('finaltripals/getFilterFinalStock', 'Tripal\FinalTripalStockController@getFilterList')->name('finaltripal.getFilterList');
 
     Route::get('tripals/{id}/status', 'Tripal\TripalController@changeStatus')->name('tripal.status');
     Route::get('tripals/{id}/delete', 'Tripal\TripalController@destroy')->name('tripal.delete');
