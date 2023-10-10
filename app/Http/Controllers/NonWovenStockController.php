@@ -19,86 +19,107 @@ class NonWovenStockController extends Controller
 {
     public function index()
     {
-       $helper= new AppHelper();
-       $settings= $helper->getGeneralSettigns();
+        $helper = new AppHelper();
+        $settings = $helper->getGeneralSettigns();
 
-       $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
-       // $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
+        // $nonwoven_stocks = FabricNonWovenReceiveEntryStock::paginate(35);
 
-        // dd($nonwoven_stocks);
+        $godams = Godam::where('status', 'active')->get(['id', 'name']);
+        $uniqueGSMs  = $this->getUniqueGSM();
+        $uniqueFabricNames = $this->getUniqueFabricName();
+        $uniqueFabricColors = $this->getUniqueFabricColor();
 
-        $godams=Godam::where('status','active')->get(['id','name']);
-        $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
-        $plantnames= ProcessingSubcat::where('status','active')->get(['id','name']);
-
-        return view('admin.nonwovenstock.getstock',
-        compact('settings','nonwoven_stocks','godams','planttypes','plantnames'));
-
+        return view(
+            'admin.nonwovenstock.getstock',
+            compact('settings', 'godams', 'uniqueGSMs', 'uniqueFabricNames', 'uniqueFabricColors')
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function filterStock(Request $request)
     {
-        //
+
+        $nonWovenStocks = FabricNonWovenReceiveEntryStock::query();
+
+        if ($request->fabric_gsm) {
+            $nonWovenStocks->where('fabric_gsm', $request->fabric_gsm);
+        }
+        if ($request->fabric_name) {
+            $nonWovenStocks->where('fabric_name', $request->fabric_name);
+        }
+        if ($request->fabric_color) {
+            $nonWovenStocks->where('fabric_color', $request->fabric_color);
+        }
+
+        $nonWovenStocks = $nonWovenStocks->with('getGodam')->get();
+
+        $nonWovenStockArray = [];
+
+        foreach ($nonWovenStocks as $nonWovenStock) {
+            $fabricName = $nonWovenStock->fabric_name;
+
+            $nonWovenStockArray[$fabricName][] = [
+                'godam_id'     => $nonWovenStock->getGodam->name,
+                'fabric_roll'  => $nonWovenStock->fabric_roll,
+                'fabric_gsm'   => $nonWovenStock->fabric_gsm,
+                'fabric_name'  => $nonWovenStock->fabric_name,
+                'fabric_color' => $nonWovenStock->fabric_color,
+                'length'       => $nonWovenStock->length,
+                'gross_weight' => $nonWovenStock->gross_weight,
+                'net_weight'   => $nonWovenStock->net_weight,
+            ];
+        }
+
+        $summaryData = [];
+
+        foreach ($nonWovenStockArray as $fabricName => $fabricEntries) {
+            $countFabricRoll = count($fabricEntries);
+            $sumLength = 0;
+            $sumGrossWeight = 0;
+            $sumNetWeight = 0;
+
+            foreach ($fabricEntries as $entry) {
+                $sumLength += floatval($entry['length']);
+                $sumGrossWeight += floatval($entry['gross_weight']);
+                $sumNetWeight += floatval($entry['net_weight']);
+            }
+
+            $summaryData[] = [
+                'fabric_name' => $fabricName,
+                'count(fabric_roll)' => $countFabricRoll,
+                'sum(length)' => $sumLength,
+                'sum(gross_weight)' => $sumGrossWeight,
+                'sum(net_weight)' => $sumNetWeight,
+            ];
+        }
+
+        $view = view('admin.nonwovenstock.ssr.stock_report_view', compact('nonWovenStockArray','summaryData'))->render();
+        return response(['status' => true, 'data' => $view]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    private function getUniqueGSM()
     {
-        //
+        $uniqueGSM = FabricNonWovenReceiveEntryStock::select('fabric_non_woven_receive_entry_stocks.fabric_gsm')
+            ->distinct()
+            ->orderByRaw('CAST(fabric_non_woven_receive_entry_stocks.fabric_gsm AS UNSIGNED) ASC')
+            ->get();
+        return $uniqueGSM;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    private function getUniqueFabricName()
     {
-        //
+        $uniqueFabricName = FabricNonWovenReceiveEntryStock::select('fabric_non_woven_receive_entry_stocks.fabric_name')
+            ->distinct()
+            ->orderBy('fabric_non_woven_receive_entry_stocks.fabric_name', 'asc')
+            ->get();
+        return $uniqueFabricName;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    private function getUniqueFabricColor()
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $uniqueFabricColor = FabricNonWovenReceiveEntryStock::select('fabric_non_woven_receive_entry_stocks.fabric_color')
+            ->distinct()
+            ->orderBy('fabric_non_woven_receive_entry_stocks.fabric_color', 'asc')
+            ->get();
+        return $uniqueFabricColor;
     }
 }

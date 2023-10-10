@@ -37,6 +37,7 @@
     </thead>
     <tbody>
         @php
+        $i = 0;
         $totalGodamOneRunLoom = 0;
         $totalGodamOneRunDown = 0;
         $totalGodamOneMeter = 0;
@@ -86,6 +87,7 @@
                 $subTotalGodamThreePercentage = 0;
                 @endphp
 
+                <td>{{ ++$i }}</td>
                 <td>{{ $item['date'] }}</td>
                 <td>@if( isset($item['godam_one_run_loom']))
                     {{ $item['godam_one_run_loom'] }}
@@ -255,6 +257,7 @@
         @endforeach
         <tfoot>
             <tr>
+                <td></td>
                 <td>Total</td>
                 <td>{{ $totalGodamOneRunLoom }}</td>
                 <td>{{ $totalGodamOneRunDown }}</td>

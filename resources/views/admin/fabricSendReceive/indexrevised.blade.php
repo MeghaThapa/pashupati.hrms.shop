@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-
-
 @section('extra-style')
     <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
 
@@ -9,14 +7,8 @@
 
     <style>
         .col-form-label {
-
             font-size: 12px !important;
-
-
-
         }
-
-
 
         .dynamic-btn {
 
@@ -31,8 +23,6 @@
             align-items: center;
 
         }
-
-
 
         #storeinSubmitBtn {
 
@@ -50,22 +40,14 @@
 
         }
 
-
-
         .fa-plus {
 
             font-size: 10px;
 
         }
 
-
-
         .form-control {
-
             font-size: 12px !important;
-
-
-
         }
 
 
@@ -142,16 +124,12 @@
     </style>
 @endsection
 
-
-
 @section('content')
     <div class="card-body p-0 m-0">
 
         <form id="createRawMaterial">
 
             @csrf
-
-
 
             <div class="row">
 
@@ -164,8 +142,8 @@
                     <input type="text" class="form-control" id="billnumber" value="{{ $data->bill_number }}"
                         name="bill_number" disabled required />
 
-                        <input type="hidden" class="form-control" id="bill_id" value="{{ $id }}"
-                            name="bill_id" disabled required />
+                    <input type="hidden" class="form-control" id="bill_id" value="{{ $id }}" name="bill_id"
+                        disabled required />
 
                 </div>
 
@@ -300,7 +278,6 @@
 
                         @foreach ($uniqueFabrics as $fabric)
                             <option value="{{ $fabric->id }}">{{ $fabric->name }}
-
                             </option>
                         @endforeach
 
@@ -350,13 +327,9 @@
                 </div>
 
                 <div>
-
                     <button id="getfabricsrelated" class="btn btn-primary mt-4">
-
                         Add
-
                     </button>
-
                 </div>
 
             </div>
@@ -702,13 +675,15 @@
                             </thead>
 
                             <tbody id="dana-consumption-tbodys">
-                                @foreach($consumptions as $key=> $consumption)
-                                <tr>
-                                    <td>{{$key+1}}</td>
-                                    <td>{{$consumption->dananame->name}}</td>
-                                    <td>{{$consumption->consumption_quantity}}</td>
-                                    <td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="{{$consumption->id}}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>
-                                </tr>
+                                @foreach ($consumptions as $key => $consumption)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>{{ $consumption->dananame->name }}</td>
+                                        <td>{{ $consumption->consumption_quantity }}</td>
+                                        <td><a href="javascript:void(0)" class="btn btn-danger delete-dana"
+                                                data-id="{{ $consumption->id }}"> <i class="fa fa-trash"
+                                                    aria-hidden="true"></i> </a></td>
+                                    </tr>
                                 @endforeach
 
                             </tbody>
@@ -1371,7 +1346,7 @@
                         "delete_id": $("#delete_lam_id").val(),
                     },
                     success: function(response) {
-                        if(response.status==true){
+                        if (response.status == true) {
                             $('#deleteModal').modal('hide');
                             window.location.reload();
                         }
@@ -1392,7 +1367,7 @@
                         "delete_id": $("#delete_unlam_id").val(),
                     },
                     success: function(response) {
-                        if(response.status==true){
+                        if (response.status == true) {
                             $('#deleteModal2').modal('hide');
                             window.location.reload();
                         }
@@ -1441,7 +1416,7 @@
 
                                 tr.append(
                                     `<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`
-                                    );
+                                );
 
                             });
 
@@ -1471,8 +1446,6 @@
 
                 }
 
-
-
                 let fabric_name_id = $(this).val();
 
                 fabricTable = $("#sameFabricsTable").DataTable({
@@ -1499,8 +1472,8 @@
 
                             data._token = $("meta[name='csrf-token']").attr("content"),
 
-                                data.fabric_name_id = fabric_name_id
-
+                            data.fabric_name_id = fabric_name_id,
+                            data.godam_id = {{ $data->godam_id }}
                         }
 
                     },
@@ -1856,7 +1829,7 @@
 
                 tr.append(
                     `<td><div class="btn-group"><a id="sendforlamination" data-group='${group}' data-standard='${result}' data-title='${d.getfabric.name}' href="${d.id}" data-group_id="${group_id}" data-id="${d.id}" class="btn btn-info">Send</a><a id="deletesendforlamination" class="btn btn-danger" data-id="${d.id}">delete</a></div></td>`
-                    );
+                );
 
             });
 
@@ -2037,23 +2010,23 @@
                     token = $('meta[name="csrf-token"]').attr('content');
 
 
-                    $.ajax({
-                      type:"POST",
-                      dataType:"JSON",
-                      url:"{{route('getFilterFabricSendRecieveListName')}}",
-                      data:{
+                $.ajax({
+                    type: "POST",
+                    dataType: "JSON",
+                    url: "{{ route('getFilterFabricSendRecieveListName') }}",
+                    data: {
                         _token: token,
                         titles: titles,
                         ids: ids,
-                      },
-                      success: function(response){
+                    },
+                    success: function(response) {
                         $('#data-number').val(response.name);
 
-                      },
-                      error: function(event){
+                    },
+                    error: function(event) {
                         alert("Sorry");
-                      }
-                    });
+                    }
+                });
 
             });
 
@@ -2090,7 +2063,7 @@
 
 
             let data = parseInt($("#sendforlamination").data("title"));
-            console.log(data,'lol');
+            console.log(data, 'lol');
 
             // let gram1 = (count1 / data).toFixed(3);
             let gram1 = (count1 / dataName).toFixed(3);
@@ -2327,7 +2300,7 @@
 
                 tr.append(
                     `<td><button class="btn btn-sm btn-danger del_lam" data-row="${element.id}"><i class="fa fa-trash"></i></button></td>`
-                    );
+                );
 
             });
 
@@ -2353,7 +2326,9 @@
 
                 tr.append(`<td>${element.getfabric.gram_wt}</td>`);
 
-                tr.append(`<td><button class="btn btn-danger del_unlam" data-row="${element.id}"><i class="fa fa-trash"></i></button></td>`);
+                tr.append(
+                    `<td><button class="btn btn-danger del_unlam" data-row="${element.id}"><i class="fa fa-trash"></i></button></td>`
+                    );
 
             });
 
@@ -2426,7 +2401,7 @@
         });
 
         $('#danaNameId').on('select2:select', function(e) {
-          
+
             // let autoloader_id = e.params.data.id;
             let autoloader_id = $("#danaNameId option:selected").attr("autoloaderid");
             $('#avilableStock').empty();
@@ -2445,7 +2420,7 @@
                     console.log(response.data);
                     $("#avilableStock").val(response.data.quantity);
                     // document.getElementById('avilableStock').value = response.quantity;
-                  
+
                 },
                 error: function(xhr, status, error) {
                     setErrorMsg(xhr.responseJSON.message);
@@ -2517,7 +2492,7 @@
 
                         tr.append(
                             `<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`
-                            );
+                        );
 
                     })
 
@@ -2621,7 +2596,7 @@
 
                             tr.append(
                                 `<td><a href="javascript:void(0)" class="btn btn-danger delete-dana" data-id="${data.id}"> <i class="fa fa-trash" aria-hidden="true"></i> </a></td>`
-                                );
+                            );
 
                         });
 

@@ -306,10 +306,8 @@ class FabricSendReceiveController extends Controller
         $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $id)->with("dananame");
 
         $consumptions = $query->get();
-        // dd($consumptions);
 
         $total_consumption = $query->sum("consumption_quantity");
-
 
         return view('admin.fabricSendReceive.indexrevised', compact("data", "dana", "uniqueFabrics",'id','consumptions','total_consumption'));
     }
@@ -396,9 +394,7 @@ class FabricSendReceiveController extends Controller
 
             $fabric_name = FabricStock::where("id", $fabric_name_id)->value("name");
 
-            $fabrics = FabricStock::where("name", $fabric_name)->get();
-
-
+            $fabrics = FabricStock::where("name", $fabric_name)->where('godam_id',$request->godam_id)->get();
 
             return DataTables::of($fabrics)
 
@@ -473,7 +469,7 @@ class FabricSendReceiveController extends Controller
             $roll_number = $request->roll_no;
 
             $fsr_entry_id = $request->fsr_entry_id;
-            
+
 
 
 
@@ -1062,13 +1058,13 @@ class FabricSendReceiveController extends Controller
            DB::beginTransaction();
            if ($request->ajax()) {
 
-              
+
 
                $autoloaderStock = AutoLoadItemStock::find($request->autoloader_id);
                // dd($autoloaderStock);
                // dd($request);
 
-              
+
                // dd($request);
                // dd($request->quantity,$autoloaderStock->quantity);
                $fsrDanaConsumption=FabricSendAndReceiveDanaConsumption::where('fsr_entry_id', $request->fsr_entry_id)
@@ -1107,8 +1103,8 @@ class FabricSendReceiveController extends Controller
 
                        ]);
                        // dd($daata);
-                     
-                     
+
+
                }
 
                $autoloaderStock->quantity -=$request->consumption;
@@ -1118,7 +1114,7 @@ class FabricSendReceiveController extends Controller
                    $autoloaderStock->save();
                }
 
-               
+
 
 
                // $query = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $request->fsr_entry_id)->with("dananame");
@@ -1137,22 +1133,22 @@ class FabricSendReceiveController extends Controller
 
                // ]);
            }
-           
+
 
            DB::commit();
        }catch(Exception $e){
         dd($e);
            // DB::rollBack();
            return response([
-               "message" => "Something went wrong!{$e->getMessage()}" 
+               "message" => "Something went wrong!{$e->getMessage()}"
            ]);
        }
 
-     
 
-     
 
-      
+
+
+
     }
 
 
@@ -1215,7 +1211,7 @@ class FabricSendReceiveController extends Controller
                $autoloaderStock->save();
                $find_data->delete();
            }
-    
+
            DB::commit();
             return back();
 
@@ -1662,14 +1658,14 @@ class FabricSendReceiveController extends Controller
 
     public function getFsrFilterDataName(Request $request){
         // dd($request);
-        
-        
+
+
         $input = $request->titles;
         $parts = explode(' ', $input);
-        $firstString = $parts[0];   
-                
+        $firstString = $parts[0];
+
         $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-        
+
         return response([
             'name' => $find_name,
         ]);
