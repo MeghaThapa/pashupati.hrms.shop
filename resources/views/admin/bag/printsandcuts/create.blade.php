@@ -65,8 +65,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
     </style>
 @endsection
 @section('content')
@@ -806,8 +806,10 @@
             //     document.getElementById('qtyInKg').value = qtyInKg;
             // }
 
+            let timeoutId;
 
-            document.getElementById('rollNumber').addEventListener('input', getFabric);
+            document.getElementById('rollNumber').addEventListener('blur', getFabric);
+
 
             function getFabric() {
                 let roll_no = document.getElementById('rollNumber').value;
@@ -820,6 +822,7 @@
                     },
                     success: function(response) {
                         console.log(response.error);
+                        clearAutoFilledInput();
                         setOptionInFabSelect('fabricId', response.fabric.id, response.fabric
                             .name);
 
@@ -829,7 +832,7 @@
                         $('#meter').val(response.meter);
                     },
                     error: function(xhr, status, error) {
-
+                        clearAutoFilledInput();
                         if (xhr.status === 404) {
                             alert("Error: " + xhr.responseJSON.error);
                         }
@@ -837,6 +840,14 @@
                 });
             }
 
+            function clearAutoFilledInput() {
+                console.log('here');
+                setOptionInFabSelect('fabricId', '', ''); // Clear 'fabricId'
+                $('#netWeight').val('');
+                $('#grossWeight').val('');
+                $('#average').val('');
+                $('#meter').val('');
+            }
             // Adding event listeners
             document.getElementById('meter').addEventListener('input', checkInputs);
             document
