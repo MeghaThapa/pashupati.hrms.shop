@@ -915,6 +915,19 @@
 
             </li>
 
+            <li class="nav-item">
+
+                <a href="{{ route('fabric.production.report') }}"
+                    class="nav-link {{ request()->routeIs('fabric-production/report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Fabric Production Report</p>
+
+                </a>
+
+            </li>
+
 
             <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
 
