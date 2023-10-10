@@ -4,7 +4,7 @@
     <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
 @endsection
 @section('content')
-   
+
     <div style="display: flex;
     justify-content: space-evenly;
     flex-direction: column;
@@ -13,90 +13,94 @@
         <img class="lg-logo" src="{{ $settings->logo }}" alt="{{ $settings->companyName }}" width="250" height="50">
         <h3>NonwovenFabric Receive Entry Stock</h3>
     </div>
-{{--     <form action="{{ route('tapeentry-stock.filterStock') }}" method="POST">
+
+    <form id="filterData" action="{{ route('nonwovenfabrics-receiveentrystock.filterStock') }}" method="POST">
         @csrf
         <div class="row">
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Godam</label>
-                <select class="advance-select-box form-control" id="danaGroupId_model" name="godam_id">
-                    <option value="" selected disabled>{{ __('Select Godam') }}</option>
-                    @foreach ($godams as $godam)
-                        <option value="{{ $godam->id }}">{{ $godam->name }}</option>
+            <div class="col-sm-3">
+                <label>Fabric GSM</label>
+                <select name="fabric_gsm" class="form-control select2">
+                    <option value="">Select GSM</option>
+                    @foreach($uniqueGSMs as $uniqueGSM)
+                        <option>{{ $uniqueGSM->fabric_gsm }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Type</label>
-                <select class="advance-select-box form-control" id="planttype_id" name="planttypes_id">
-                    <option value="" selected disabled>{{ __('Select Plant Type') }}</option>
-                    @foreach ($planttypes as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
-                    @endforeach
-
-                </select>
-
-            </div>
-            <div class="col-md-3" style="display:flex;gap:10px; width:400px;justify-content: center;align-item:center;">
-                <label for="">Plant Name</label>
-                <select class="advance-select-box form-control" id="plantname_id" name="plantname_id">
-                    <option value="" selected disabled>{{ __('Select Plant Name') }}</option>
-                    @foreach ($plantnames as $planttype)
-                        <option value="{{ $planttype->id }}">{{ $planttype->name }}</option>
+            <div class="col-sm-3">
+                <label>Fabric Name</label>
+                <select name="fabric_name" class="form-control select2">
+                    <option value="">Select Fabric Name</option>
+                    @foreach($uniqueFabricNames as $uniqueFabricName)
+                        <option>{{ $uniqueFabricName->fabric_name }}</option>
                     @endforeach
                 </select>
-
             </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary" style="width:200px" type="submit">Show Report</button>
-
+            <div class="col-sm-3">
+                <label for="">Fabric Color</label>
+                <select name="fabric_color" class="form-control select2">
+                    <option value="">Select Fabric Color</option>
+                    @foreach($uniqueFabricColors as $uniqueFabricColor)
+                        <option>{{ $uniqueFabricColor->fabric_color }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <button style="margin-top: 22px;" type="submit" class="btn btn-primary">Filter</button>
             </div>
         </div>
-    </form> --}}
+    </form>
 
     <div class="row">
         <div class="col-md-12">
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table" id="rawMaterialStockTable">
-                    <thead>
-                        <tr>
-                            <th>{{ __('S.No') }}</th>
-                            <th>{{ __('Godam') }}</th>
-                            <th>{{ __('Roll No') }}</th>
-                            <th>{{ __('Fabric Gsm') }}</th>
-                            <th>{{ __('Fabric Name') }}</th>
-                            <th>{{ __('Fabric Color') }}</th>
-                            <th>{{ __('Length') }}</th>
-                            <th>{{ __('Gross Weight') }}</th>
-                            <th>{{ __('Net Weight') }}</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if ($nonwoven_stocks)
-                            @foreach ($nonwoven_stocks as $i => $stock)
-                                <tr>
-                                    <td>{{ ++$i }}</td>
-                                    <td>{{ $stock->getGodam->name }}</td>
-                                    <td>{{ $stock->fabric_roll }}</td>
-                                    <td>{{ $stock->fabric_gsm }}</td>
-                                    <td>{{ $stock->fabric_name }}</td>
-                                    <td>{{ $stock->fabric_color }}</td>
-                                    <td>{{ $stock->length }}</td>
-                                    <td>{{ $stock->gross_weight }}</td>
-                                    <td>{{ $stock->net_weight }}</td>
-                                </tr>
-                            @endforeach
-                        @endif
-                    </tbody>
-
-                </table>
+                <div id="tableContent"></div>
             </div>
-            @if ($nonwoven_stocks)
-                {{ $nonwoven_stocks->links() }}
-            @endif 
         </div>
     </div>
 @endsection
 @section('extra-script')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
+    <script>
+        $('.select2').select2();
+        $('#filterData').on('submit', function(e) {
+            e.preventDefault();
+            let url = $(this).attr('action');
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: url,
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    console.log('ajax fired');
+                },
+                success: function(data) {
+                    if (data.status == true) {
+                        $('#tableContent').html(data.data);
+                        swal.fire("Success!", "Report Generated Successfully!", "success");
+                    } else {
+                        swal.fire("Failed!", "Report Generation failed!", "error");
+                    }
+                },
+                error: function(xhr) {
+                    var i = 0;
+                    $('.help-block').remove();
+                    $('.has-error').removeClass('has-error');
+                    for (var error in xhr.responseJSON.errors) {
+                        $('#add_' + error).removeClass('has-error');
+                        $('#add_' + error).addClass('has-error');
+                        $('#error_' + error).html(
+                            '<span class="help-block ' + error + '">*' + xhr
+                            .responseJSON.errors[
+                                error] + '</span>');
+                        i++;
+                    }
+                }
+            });
+        });
+    </script>
 @endsection

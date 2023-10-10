@@ -1122,7 +1122,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //nonwoven stock
 
     Route::get('nonwovenfabrics-receiveentry/getstock/index', [NonWovenStockController::class, 'index'])->name('nonwovenfabrics-receiveentrystock.index');
-    // Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('tapeentry-stock.filterStock');
+    Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('nonwovenfabrics-receiveentrystock.filterStock');
 
     //
     Route::get('opening/nonwovenfabrics', 'Opening\NonWovenController@index')->name('openingnonwoven.index');
