@@ -267,6 +267,7 @@
                         name: "DT_RowIndex",
                         data: "DT_RowIndex",
                         orderable: false,
+                        searchable:false,
                     },
                     {
                         name: "sauda_no",
