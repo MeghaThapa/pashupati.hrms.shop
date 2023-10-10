@@ -42,32 +42,14 @@ class FabricController extends Controller
 
     public function fixData()
     {
-        // $this->fixStockData();
-        $this->fixDataNotInGodamTransferNotInSingleTripal();
+        $this->fixStockData();
+        dd('done');
+        // $this->fixDataNotInGodamTransferNotInSingleTripal();
     }
 
     private function fixStockData(){
         $items = [
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 104],
-            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 134],
-            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 157],
-            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 178],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 184],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 190],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 39],
-            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 40],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 48],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 57],
-            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 59],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 61],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 78],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 84],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 85],
-            ['name' => '110"HDPE White(4.00-Gram)', 'roll_no' => 90],
-            ['name' => '114"HDPE White(4.00-Gram)', 'roll_no' => 91],
-            ['name' => '24"T Blue Checker Sugar(5.00-Gram)', 'roll_no' => 119],
-            ['name' => '24"T Blue Checker Sugar(5.00-Gram)', 'roll_no' => 130],
-            ['name' => '24"T Blue Sugar(5.00-Gram)', 'roll_no' => 139],
+            ['name' => '26"T White(4.00-Gram)', 'roll_no' => '01-247'],
         ];
 
         foreach($items as $item){
@@ -77,7 +59,7 @@ class FabricController extends Controller
                 if(!$fabricStock){
                     $fabricStock = new FabricStock();
                     $fabricStock->name = $fabric->name;
-                    $fabricStock->status = "active";
+                    $fabricStock->status_type = "active";
                     $fabricStock->slug = $fabric->slug;
                     $fabricStock->fabricgroup_id = $fabric->fabricgroup_id;
                     $fabricStock->godam_id = $fabric->godam_id;
@@ -145,7 +127,7 @@ class FabricController extends Controller
 
     public function fixDataNotInGodamTransferNotInSingleTripal()
     {
-        $fabrics = Fabric::where('godam_id', 2)->orderBy('roll_no', 'ASC')->get();
+        $fabrics = Fabric::orderBy('roll_no', 'ASC')->get();
 
         // Create a temporary associative array to check for unique roll_no values
         $filteredArray = [];

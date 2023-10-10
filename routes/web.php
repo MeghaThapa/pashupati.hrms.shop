@@ -1,69 +1,70 @@
 <?php
 
-use App\Http\Controllers\Admin\TapeProductionController;
-use App\Http\Controllers\CCPlantController;
-use App\Http\Controllers\FabricSendAndReceiveSaleController;
-use App\Http\Controllers\FabricTransferEntryForBagController;
-use App\Http\Controllers\InstallHelperController;
-use App\Http\Controllers\PrintedAndCuttedRollsController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\ThemeSettingsContoller;
-
-use App\Http\Controllers\BagFabricReceiveItemSentStockController;
-use App\Http\Controllers\SetupstoreinController;
-use App\Http\Controllers\SetupstoreoutController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\StoreinController;
-use App\Http\Controllers\StoreoutController;
 use App\Http\Controllers\TaxController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\StoreinDepartmentController;
-use App\Http\Controllers\PlacementController;
-use App\Http\Controllers\StockImportController;
-use App\Http\Controllers\ProcessingCategoryAndSubsController;
-use App\Http\Controllers\ProcessingSubcatController;
-use App\Http\Controllers\RawMaterialStockController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\GodamController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\FabricController;
+use App\Http\Controllers\CCPlantController;
+use App\Http\Controllers\StoreinController;
+use App\Http\Controllers\WastageController;
+
 use App\Http\Controllers\AutoloadController;
+use App\Http\Controllers\BagBrandController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\StoreoutController;
+use App\Http\Controllers\PlacementController;
+use App\Http\Controllers\SaudaItemController;
 use App\Http\Controllers\TapeEntryController;
-use App\Http\Controllers\TapeEntryStockController;
+use App\Http\Controllers\DepartmentController;
+use Symfony\Component\Routing\RouteCollection;
+use App\Http\Controllers\FabricStockController;
+use App\Http\Controllers\StockImportController;
+use App\Http\Controllers\StoreinTypeController;
+use App\Http\Controllers\SetupstoreinController;
+use App\Http\Controllers\ThemeSettingsContoller;
+use App\Http\Controllers\WastageStockController;
 use App\Http\Controllers\AutoloadItemsController;
 use App\Http\Controllers\AutoLoadStockController;
-use App\Http\Controllers\StoreinTypeController;
+use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\InstallHelperController;
+use App\Http\Controllers\NonWovenStockController;
 
-use App\Http\Controllers\FabricSendReceiveController;
-use App\Http\Controllers\StoreinCategoryController;
+use App\Http\Controllers\SetupstoreoutController;
+use App\Http\Controllers\Tripal\TripalController;
+use App\Http\Controllers\BagBundelEntryController;
+
+use App\Http\Controllers\BagSellingItemController;
+use App\Http\Controllers\FabricNonWovenController;
 use App\Http\Controllers\ItemsOfStoreinController;
 
-use App\Http\Controllers\FabricNonWovenController;
-use App\Http\Controllers\NonWovenStockController;
-use App\Http\Controllers\FabricNonWovenReceiveEntryController;
-
-use App\Http\Controllers\FabricStockController;
-
-use App\Http\Controllers\WastageController;
-use App\Http\Controllers\WastageStockController;
-use App\Http\Controllers\GodamController;
-use App\Http\Controllers\StoreoutDepartmentController;
-use App\Http\Controllers\Tripal\TripalController;
-use App\Http\Controllers\Tripal\SingleTripalStockController;
-use App\Http\Controllers\Tripal\DoubleTripalStockController;
-use App\Http\Controllers\Tripal\FinalTripalStockController;
-use App\Http\Controllers\Tripal\FinalTripalController;
-use App\Http\Controllers\Sale\SaleFinalTripalController;
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\BagBrandController;
-use App\Http\Controllers\PrintingAndCuttingBagItemController;
-use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
-use App\Http\Controllers\BagBundelEntryController;
-use App\Http\Controllers\BagSellingItemController;
-use App\Http\Controllers\DeliveryOrderController;
-use App\Http\Controllers\DispatchSaudaItemToPartyController;
-use App\Http\Controllers\FabricController;
-use App\Http\Controllers\RawMaterialReportController;
 use App\Http\Controllers\ReprocessWasteController;
-use App\Http\Controllers\SaudaItemController;
-use Symfony\Component\Routing\RouteCollection;
+
+use App\Http\Controllers\TapeEntryStockController;
+use App\Http\Controllers\StoreinCategoryController;
+use App\Http\Controllers\ProcessingSubcatController;
+use App\Http\Controllers\RawMaterialStockController;
+use App\Http\Controllers\FabricSendReceiveController;
+use App\Http\Controllers\RawMaterialReportController;
+use App\Http\Controllers\StoreinDepartmentController;
+use App\Http\Controllers\StoreoutDepartmentController;
+use App\Http\Controllers\Tripal\FinalTripalController;
+use App\Http\Controllers\Admin\TapeProductionController;
+use App\Http\Controllers\Sale\SaleFinalTripalController;
+use App\Http\Controllers\PrintedAndCuttedRollsController;
+use App\Http\Controllers\Tripal\FinalTripalStockController;
+use App\Http\Controllers\DispatchSaudaItemToPartyController;
+use App\Http\Controllers\FabricSendAndReceiveSaleController;
+use App\Http\Controllers\Tripal\DoubleTripalStockController;
+use App\Http\Controllers\Tripal\SingleTripalStockController;
+use App\Http\Controllers\FabricTransferEntryForBagController;
+use App\Http\Controllers\PrintingAndCuttingBagItemController;
+use App\Http\Controllers\ProcessingCategoryAndSubsController;
+use App\Http\Controllers\FabricNonWovenReceiveEntryController;
+use App\Http\Controllers\Admin\FabricProductionReportController;
+use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
+use App\Http\Controllers\BagFabricReceiveItemSentStockController;
 
 // brandBag.store
 /*
@@ -1304,6 +1305,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
 
     Route::get('tape-production/report', TapeProductionController::class)->name('tape.production.report');
+    Route::get('fabric-production/report', FabricProductionReportController::class)->name('fabric.production.report');
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
