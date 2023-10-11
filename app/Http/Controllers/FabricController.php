@@ -49,7 +49,8 @@ class FabricController extends Controller
 
     private function fixStockData(){
         $items = [
-            ['name' => '26"T White(4.00-Gram)', 'roll_no' => '01-247'],
+            ['name' => '15"T White(2.00-Gram)', 'roll_no' => '01-249'],
+            ['name' => '144"HDPE White(4.00-Gram)', 'roll_no' => '236'],
         ];
 
         foreach($items as $item){

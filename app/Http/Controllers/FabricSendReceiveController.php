@@ -298,6 +298,7 @@ class FabricSendReceiveController extends Controller
         $dana = DanaName::where('status', 'active')->get();
 
         $data = FabricSendAndReceiveEntry::where("id", $id)->first();
+        $sentEntry = $data;
 
         $getAllfabrics = FabricStock::where('status', '1')->where("godam_id", $data->godam_id)->get();
 
@@ -309,7 +310,7 @@ class FabricSendReceiveController extends Controller
 
         $total_consumption = $query->sum("consumption_quantity");
 
-        return view('admin.fabricSendReceive.indexrevised', compact("data", "dana", "uniqueFabrics",'id','consumptions','total_consumption'));
+        return view('admin.fabricSendReceive.indexrevised', compact("data",'sentEntry', "dana", "uniqueFabrics",'id','consumptions','total_consumption'));
     }
 
 

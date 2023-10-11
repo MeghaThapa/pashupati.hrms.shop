@@ -56,8 +56,10 @@ class NonWovenStockController extends Controller
 
         foreach ($nonWovenStocks as $nonWovenStock) {
             $fabricName = $nonWovenStock->fabric_name;
+            $fabricGSM = $nonWovenStock->fabric_gsm;
+            $fabricColor = $nonWovenStock->fabric_color;
 
-            $nonWovenStockArray[$fabricName][] = [
+            $nonWovenStockArray[$fabricName][$fabricGSM][$fabricColor][] = [
                 'godam_id'     => $nonWovenStock->getGodam->name,
                 'fabric_roll'  => $nonWovenStock->fabric_roll,
                 'fabric_gsm'   => $nonWovenStock->fabric_gsm,
@@ -69,33 +71,38 @@ class NonWovenStockController extends Controller
             ];
         }
 
-        $summaryData = [];
+        $summary = [];
 
-        foreach ($nonWovenStockArray as $fabricName => $fabricEntries) {
-            $countFabricRoll = count($fabricEntries);
-            $sumGSM = 0;
-            $sumLength = 0;
-            $sumGrossWeight = 0;
-            $sumNetWeight = 0;
+        foreach ($nonWovenStocks as $nonWovenStock) {
+            $fabricName = $nonWovenStock->fabric_name;
+            $fabricGSM = $nonWovenStock->fabric_gsm;
+            $fabricColor = $nonWovenStock->fabric_color;
 
-            foreach ($fabricEntries as $entry) {
-                $sumGSM += floatval($entry['fabric_gsm']);
-                $sumLength += floatval($entry['length']);
-                $sumGrossWeight += floatval($entry['gross_weight']);
-                $sumNetWeight += floatval($entry['net_weight']);
+            // Create or update summary data for the specific group
+            if (!isset($summary[$fabricName])) {
+                $summary[$fabricName] = [];
+            }
+            if (!isset($summary[$fabricName][$fabricGSM])) {
+                $summary[$fabricName][$fabricGSM] = [];
+            }
+            if (!isset($summary[$fabricName][$fabricGSM][$fabricColor])) {
+                $summary[$fabricName][$fabricGSM][$fabricColor] = [
+                    'godam_id' => $nonWovenStock->getGodam->name,
+                    'fabric_roll_count' => 0,
+                    'length_total' => 0,
+                    'gross_weight_total' => 0,
+                    'net_weight_total' => 0,
+                ];
             }
 
-            $summaryData[] = [
-                'fabric_name' => $fabricName,
-                'count(fabric_roll)' => $countFabricRoll,
-                'sum_gsm' => $sumGSM,
-                'sum(length)' => $sumLength,
-                'sum(gross_weight)' => $sumGrossWeight,
-                'sum(net_weight)' => $sumNetWeight,
-            ];
+            // Update summary data
+            $summary[$fabricName][$fabricGSM][$fabricColor]['fabric_roll_count']++;
+            $summary[$fabricName][$fabricGSM][$fabricColor]['length_total'] += (float)$nonWovenStock->length;
+            $summary[$fabricName][$fabricGSM][$fabricColor]['gross_weight_total'] += (float)$nonWovenStock->gross_weight;
+            $summary[$fabricName][$fabricGSM][$fabricColor]['net_weight_total'] += (float)$nonWovenStock->net_weight;
         }
 
-        $view = view('admin.nonwovenstock.ssr.stock_report_view', compact('nonWovenStockArray','summaryData'))->render();
+        $view = view('admin.nonwovenstock.ssr.stock_report_view', compact('nonWovenStockArray', 'summary'))->render();
         return response(['status' => true, 'data' => $view]);
     }
 
