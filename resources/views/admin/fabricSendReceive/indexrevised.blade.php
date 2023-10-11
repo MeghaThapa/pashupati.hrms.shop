@@ -1473,7 +1473,7 @@
                             data._token = $("meta[name='csrf-token']").attr("content"),
 
                             data.fabric_name_id = fabric_name_id,
-                            data.godam_id = {{ $data->godam_id }}
+                            data.godam_id = {{ $sentEntry->godam_id }}
                         }
 
                     },

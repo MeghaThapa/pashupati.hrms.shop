@@ -1,108 +1,68 @@
-@foreach ($nonWovenStockArray as $nonWovenStock)
-    <table class="table table-bordered table-striped" style="margin-top: 80px;">
-        <thead>
-            <tr>
-                <th>{{ __('S.No') }}</th>
-                <th>{{ __('Godam') }}</th>
-                <th>{{ __('Roll No') }}</th>
-                <th>{{ __('Fabric Gsm') }}</th>
-                <th>{{ __('Fabric Name') }}</th>
-                <th>{{ __('Fabric Color') }}</th>
-                <th>{{ __('Length') }}</th>
-                <th>{{ __('Gross Weight') }}</th>
-                <th>{{ __('Net Weight') }}</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @php
-                $i = 0;
-                $totalGrossWt = 0;
-                $totalNetWt = 0;
-            @endphp
-            @foreach ($nonWovenStock as $item)
-                <tr>
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $item['godam_id'] }}</td>
-                    <td>{{ $item['fabric_roll'] }}</td>
-                    <td>{{ $item['fabric_gsm'] }}</td>
-                    <td>{{ $item['fabric_name'] }}</td>
-                    <td>{{ $item['fabric_color'] }}</td>
-                    <td>{{ $item['length'] }}</td>
-                    <td>
-                        @php $totalGrossWt += (float)$item['gross_weight']; @endphp
-                        {{ $item['gross_weight'] }}
-                    </td>
-                    <td>
-                        @php $totalNetWt += (float)$item['net_weight']; @endphp
-                        {{ $item['net_weight'] }}
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-        <tfoot>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>{{ number_format($totalGrossWt, 2) }}</td>
-                <td>{{ number_format($totalNetWt, 2) }}</td>
-            </tr>
-        </tfoot>
-
-    </table>
+@foreach ($nonWovenStockArray as $fabricName => $fabricGSMs)
+    @foreach ($fabricGSMs as $fabricGSM => $fabricColors)
+        @foreach ($fabricColors as $fabricColor => $data)
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Fabric Name</th>
+                        <th>Fabric GSM</th>
+                        <th>Fabric Color</th>
+                        <th>Godam ID</th>
+                        <th>Fabric Roll</th>
+                        <th>Length</th>
+                        <th>Gross Weight</th>
+                        <th>Net Weight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($data as $row)
+                        <tr>
+                            <td>{{ $fabricName }}</td>
+                            <td>{{ $fabricGSM }}</td>
+                            <td>{{ $fabricColor }}</td>
+                            <td>{{ $row['godam_id'] }}</td>
+                            <td>{{ $row['fabric_roll'] }}</td>
+                            <td>{{ $row['length'] }}</td>
+                            <td>{{ $row['gross_weight'] }}</td>
+                            <td>{{ $row['net_weight'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endforeach
+    @endforeach
 @endforeach
 
-
-<table class="table table-striped table-bordered table-condensed">
+<h3>Summary Report</h3>
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Fabric Name</th>
-            <th>Rolls</th>
-            <th>GSM</th>
-            <th>length</th>
-            <th>Gross Weight</th>
-            <th>Net Weight</th>
+            <th>Fabric GSM</th>
+            <th>Fabric Color</th>
+            <th>Total Godam ID</th>
+            <th>Total Fabric Roll Count</th>
+            <th>Total Length</th>
+            <th>Total Gross Weight</th>
+            <th>Total Net Weight</th>
         </tr>
     </thead>
     <tbody>
-        @php
-            $totalRolls = 0;
-            $totalGSM = 0;
-            $totalLength = 0;
-            $totalGrossWeight = 0;
-            $totalNetWeight = 0;
-        @endphp
-        @foreach ($summaryData as $item)
-            <tr>
-                <td>{{ $item['fabric_name'] }}</td>
-                <td>{{ $item['count(fabric_roll)'] }}</td>
-                <td>{{ $item['sum_gsm'] }}</td>
-                <td>{{ $item['sum(length)'] }}</td>
-                <td>{{ $item['sum(gross_weight)'] }}</td>
-                <td>{{ $item['sum(net_weight)'] }}</td>
-            </tr>
-            @php
-                $totalRolls += $item['count(fabric_roll)'];
-                $totalGSM += $item['sum_gsm'];
-                $totalLength += $item['sum(length)'];
-                $totalGrossWeight += $item['sum(gross_weight)'];
-                $totalNetWeight += $item['sum(net_weight)'];
-            @endphp
+        @foreach ($summary as $fabricName => $fabricGSMs)
+            @foreach ($fabricGSMs as $fabricGSM => $fabricColors)
+                @foreach ($fabricColors as $fabricColor => $summaryData)
+                    <tr>
+                        <td>{{ $fabricName }}</td>
+                        <td>{{ $fabricGSM }}</td>
+                        <td>{{ $fabricColor }}</td>
+                        <td>{{ $summaryData['godam_id'] }}</td>
+                        <td>{{ $summaryData['fabric_roll_count'] }}</td>
+                        <td>{{ $summaryData['length_total'] }}</td>
+                        <td>{{ $summaryData['gross_weight_total'] }}</td>
+                        <td>{{ $summaryData['net_weight_total'] }}</td>
+                    </tr>
+                @endforeach
+            @endforeach
         @endforeach
     </tbody>
-    <tfoot>
-        <tr>
-            <td><strong>Total</strong></td>
-            <td><strong>{{ $totalRolls }}</strong></td>
-            <td><strong>{{ $totalGSM }}</strong></td>
-            <td><strong>{{ $totalLength }}</strong></td>
-            <td><strong>{{ $totalGrossWeight }}</strong></td>
-            <td><strong>{{ $totalNetWeight }}</strong></td>
-        </tr>
-    </tfoot>
 </table>
