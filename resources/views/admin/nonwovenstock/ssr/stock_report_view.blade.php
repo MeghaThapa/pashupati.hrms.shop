@@ -1,7 +1,7 @@
 @foreach ($nonWovenStockArray as $fabricName => $fabricGSMs)
     @foreach ($fabricGSMs as $fabricGSM => $fabricColors)
         @foreach ($fabricColors as $fabricColor => $data)
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped" style="margin-top: 60px;">
                 <thead>
                     <tr>
                         <th>Fabric Name</th>
@@ -33,7 +33,7 @@
     @endforeach
 @endforeach
 
-<h3>Summary Report</h3>
+<h3 style="margin-top: 60px;">Summary Report</h3>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
