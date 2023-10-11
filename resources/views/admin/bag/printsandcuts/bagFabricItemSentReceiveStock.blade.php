@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
         integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
     <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
     <style>
         .update_status {
@@ -84,6 +85,7 @@
         $(document).ready(function() {
 
             let table = $("#myTable").DataTable({
+                style: 'bootstrap',
                 serverSide: true,
                 processing: true,
                 lengthMenu: [
@@ -101,6 +103,7 @@
                         name: "DT_RowIndex",
                         data: "DT_RowIndex",
                         orderable: false,
+                        searchable: false,
                     },
                     {
                         name: "fabric_id",

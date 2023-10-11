@@ -62,7 +62,6 @@
             font-weight: lighter;
             color: rgba(0, 0, 0, 0.8);
         }
-
     </style>
 @endsection
 @section('content')
@@ -146,7 +145,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="Fabric Name">Roll No</label>
-                            <input type="text" class="form-control" name="roll_no" id="roll_no" readonly/>
+                            <input type="text" class="form-control" name="roll_no" id="roll_no" readonly />
                             <input type="hidden" id="entry_id" value="{{ $id }}"
                                 data-id='{{ $id }}'>
                         </div>
@@ -159,36 +158,10 @@
                 </div> --}}
                 </div>
             </form>
-           <div class="card">
-            <div class="card-body">
-                <div class="p-0 table-responsive my-3 table-hover">
-                    <table class="table table-striped table-hover table-bordered" id="DataTable">
-                        <thead>
-                            <tr>
-                                <th>{{ __('SN') }}</th>
-                                <th scope="10">{{ __('Fabric Name') }}</th>
-                                <th>{{ __('Roll No') }}</th>
-                                <th>{{ __('Gross Weight') }}</th>
-                                <th>{{ __('Net Weight') }}</th>
-                                <th>{{ __('Meter') }}</th>
-                                <th>{{ __('Average') }}</th>
-                                <th>{{ __('Gram') }}</th>
-                                <th>{{ __('Action') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-           </div>
-
-           <div class="card">
-            <div class="card-body">
-                <div class="p-0 table-responsive table-custom my-3 table-hover" style="min-height:600px;max-height:900px;overflow-y:scroll">
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-bordered" id="lower_table">
+            <div class="card">
+                <div class="card-body">
+                    <div class="p-0 table-responsive my-3 table-hover">
+                        <table class="table table-striped table-hover table-bordered" id="DataTable">
                             <thead>
                                 <tr>
                                     <th>{{ __('SN') }}</th>
@@ -202,18 +175,45 @@
                                     <th>{{ __('Action') }}</th>
                                 </tr>
                             </thead>
-                            <tbody id="tbody_1">
+                            <tbody id="tbody">
                             </tbody>
                         </table>
                     </div>
-                    <div class="card-footer d-none text-center" id="tfoot">
-                        <button class="btn btn-danger discard">discard</button>
-                        <button class="btn btn-primary finalsave">Save</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="p-0 table-responsive table-custom my-3 table-hover"
+                        style="min-height:600px;max-height:900px;overflow-y:scroll">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-bordered" id="lower_table">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('SN') }}</th>
+                                            <th scope="10">{{ __('Fabric Name') }}</th>
+                                            <th>{{ __('Roll No') }}</th>
+                                            <th>{{ __('Gross Weight') }}</th>
+                                            <th>{{ __('Net Weight') }}</th>
+                                            <th>{{ __('Meter') }}</th>
+                                            <th>{{ __('Average') }}</th>
+                                            <th>{{ __('Gram') }}</th>
+                                            <th>{{ __('Action') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody_1">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer d-none text-center" id="tfoot">
+                                <button class="btn btn-danger discard">discard</button>
+                                <button class="btn btn-primary finalsave">Save</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-           </div>
-        </div>
         </div>
     </div>
 @endsection
@@ -252,29 +252,56 @@
 
             $(document).on("change", "#fabric_name", function(e) {
 
-                if(DataTable != null){
+                if (DataTable != null) {
                     DataTable.destroy()
                 }
                 let fabric_id = $(this).val();
 
                 DataTable = $("#DataTable").DataTable({
-                    serverside : true,
-                    processing : true,
-                    lengthMenu : [
-                        [15,30,60,150,300,500,-1],
-                        [15,30,60,150,300,500,"All"]
+                    serverside: true,
+                    processing: true,
+                    lengthMenu: [
+                        [15, 30, 60, 150, 300, 500, -1],
+                        [15, 30, 60, 150, 300, 500, "All"]
                     ],
-                    ajax : "{{ route('get.specific.fabric.details', ['id' => ':id']) }}".replace(":id",fabric_id),
-                    columns : [
-                        { data : "DT_RowIndex" , name : "DT_RowIndex" },
-                        { data : "name" , name : "name" },
-                        { data : "roll_no" , name : "roll_no" },
-                        { data : "gross_wt" , name : "gross_wt" },
-                        { data : "net_wt" , name : "net_wt" },
-                        { data : "meter" , name : "meter" },
-                        { data : "average_wt" , name : "average_wt" },
-                        { data : "gram_wt" , name : "gram_wt" },
-                        { data : "action" , name : "action" },
+                    ajax: "{{ route('get.specific.fabric.details', ['id' => ':id']) }}".replace(
+                        ":id", fabric_id),
+                    columns: [{
+                            data: "DT_RowIndex",
+                            name: "DT_RowIndex"
+                        },
+                        {
+                            data: "name",
+                            name: "name"
+                        },
+                        {
+                            data: "roll_no",
+                            name: "roll_no"
+                        },
+                        {
+                            data: "gross_wt",
+                            name: "gross_wt"
+                        },
+                        {
+                            data: "net_wt",
+                            name: "net_wt"
+                        },
+                        {
+                            data: "meter",
+                            name: "meter"
+                        },
+                        {
+                            data: "average_wt",
+                            name: "average_wt"
+                        },
+                        {
+                            data: "gram_wt",
+                            name: "gram_wt"
+                        },
+                        {
+                            data: "action",
+                            name: "action"
+                        },
                     ]
                 })
             });
@@ -326,7 +353,8 @@
             $("#fabric_name").empty();
             $("<option disbled>--Select Fabric--</option>").appendTo("#fabric_name")
             data.data.forEach(d => {
-                let option = $(`<option value=${d.fabric_id}>${d.name}(${d.fabricgroup.name})</option>`).appendTo("#fabric_name");
+                let option = $(`<option value=${d.fabric_id}>${d.name}(${d.fabricgroup.name})</option>`).appendTo(
+                    "#fabric_name");
             });
         }
 
@@ -370,7 +398,7 @@
                 let average = parseFloat(d.average)
                 let average_fixed = average.toFixed(2)
                 let size = parseFloat(d.fabric.name)
-                let gram = (average_fixed/size).toFixed(2)
+                let gram = (average_fixed / size).toFixed(2)
 
                 let tr = $("<tr></tr>").appendTo("#tbody_1");
                 tr.append(`<td>#</td>`);

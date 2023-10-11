@@ -184,6 +184,11 @@ class PrintingAndCuttingBagItemController extends Controller
         try {
             DB::beginTransaction();
             $printingAndCuttingEntryItems = PrintingAndCuttingBagItem::where('printAndCutEntry_id', $request->printAndCutEntry_id)->get();
+            if (count($printingAndCuttingEntryItems) == 0) {
+                return response()->json([
+                    'message' => 'At least one entry items required'
+                ], 404);
+            }
             foreach ($printingAndCuttingEntryItems as $item) {
                 //deleting from BagFabricReceiveItemSentStock
                 $item->status = "completed";

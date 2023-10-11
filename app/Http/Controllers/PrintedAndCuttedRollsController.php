@@ -66,10 +66,43 @@ class PrintedAndCuttedRollsController extends Controller
     }
     public function index()
     {
+        $this->copyDataToStockSecond();
         // return $this->changeStatusOfStock();
         $data = PrintedAndCuttedRollsEntry::orderBy('created_at', 'desc')->get();
         return view("admin.bag.printsandcuts.index", compact("data"));
     }
+    private function copyDataToStockSecond()
+    {
+        // Get items from BagFabricReceiveItemSent that do not exist in BagFabricReceiveItemSentStock
+        $items = BagFabricReceiveItemSent::whereNotIn('fabric_id', function ($query) {
+            $query->select('fabric_id')
+                ->from('bag_fabric_receive_item_sent_stock')
+                ->whereColumn('bag_fabric_receive_item_sent_stock.fabric_id', 'bag_fabric_receive_item_sent.fabric_id')
+                ->whereColumn('bag_fabric_receive_item_sent_stock.roll_no', 'bag_fabric_receive_item_sent.roll_no');
+        })->get();
+        // dd($items);
+        foreach ($items as $item) {
+            $fabric = Fabric::find($item->fabric_id);
+            if ($fabric) {
+                // Assuming you have already checked if $fabric exists
+                $bagFabricReceiveItemSentStock = new BagFabricReceiveItemSentStock();
+                $bagFabricReceiveItemSentStock->fabric_bag_entry_id = $item->fabric_bag_entry_id;
+                $bagFabricReceiveItemSentStock->fabric_id = $item->fabric_id;
+                $bagFabricReceiveItemSentStock->gram = $item->gram;
+                $bagFabricReceiveItemSentStock->gross_wt = $item->gross_wt;
+                $bagFabricReceiveItemSentStock->net_wt = $item->net_wt;
+                $bagFabricReceiveItemSentStock->meter = $item->meter;
+                $bagFabricReceiveItemSentStock->roll_no = $item->roll_no;
+                $bagFabricReceiveItemSentStock->loom_no = $item->loom_no;
+                $bagFabricReceiveItemSentStock->average = $fabric->average_wt;
+                $bagFabricReceiveItemSentStock->status = 'Stock';
+                $bagFabricReceiveItemSentStock->save();
+            } else {
+                dd($item);
+            }
+        }
+    }
+
     private function changeStatusOfStock()
     {
         $items = PrintingAndCuttingBagItem::get();
