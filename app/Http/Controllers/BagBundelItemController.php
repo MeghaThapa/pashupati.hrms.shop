@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 use App\Models\BagBundelItem;
 use App\Models\BagBundelEntry;
 use App\Models\GeneralSetting;
+use App\Models\Group;
 use Illuminate\Validation\Rule;
 use App\Libraries\Nepali_Calendar;
 use App\Models\PrintingAndCuttingBagStock;
+use DB;
+use Carbon\Carbon;
 
 class BagBundelItemController extends Controller
 {
@@ -23,9 +25,10 @@ class BagBundelItemController extends Controller
     public function index($bagBundelEntryId)
     {
         $bagBundelEntry = BagBundelEntry::find($bagBundelEntryId);
-        $groups = PrintingAndCuttingBagStock::with(['group:id,name'])
-            ->distinct('group_id')
-            ->get(['group_id']);
+        $groups = Group::where('status', 'active')->get();
+        // $groups = PrintingAndCuttingBagStock::with(['group:id,name'])
+        //     ->distinct('group_id')
+        //     ->get(['group_id']);
         $bundleNo = self::generateBagBundelNumber();
         $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
             ->where('bag_bundel_entry_id', $bagBundelEntry->id)
@@ -172,16 +175,15 @@ class BagBundelItemController extends Controller
             $printingAndCuttingBagStock = PrintingAndCuttingBagStock::where('group_id', $bagBundelItem->group_id)
                 ->where('bag_brand_id', $bagBundelItem->bag_brand_id)
                 ->first();
-            // return $printingAndCuttingBagStock;
-
-
-            $printingAndCuttingBagStock->quantity_piece = $printingAndCuttingBagStock->quantity_piece - $bagBundelItem->qty_pcs;
-            if ($printingAndCuttingBagStock->quantity_piece <= 0) {
-                $printingAndCuttingBagStock->save();
-                $printingAndCuttingBagStock->delete();
+            if ($printingAndCuttingBagStock) {
+                $printingAndCuttingBagStock->quantity_piece = $printingAndCuttingBagStock->quantity_piece - $bagBundelItem->qty_pcs;
             } else {
-                $printingAndCuttingBagStock->save();
+                $printingAndCuttingBagStock = new PrintingAndCuttingBagStock();
+                $printingAndCuttingBagStock->group_id = $request->group_id;
+                $printingAndCuttingBagStock->bag_brand_id = $request->brand_bag_id;
+                $printingAndCuttingBagStock->quantity_piece = 0 - $request->quantity_in_pcs;
             }
+            $printingAndCuttingBagStock->save();
             DB::commit();
             $newNumber = $this->generateBagBundelNumber();
             $availableStock = PrintingAndCuttingBagStock::where('group_id', $request->group_id)

@@ -6,6 +6,7 @@ use App\Models\BagBundelEntry;
 use App\Models\BagBundelItem;
 use App\Models\PrintingAndCuttingBagStock;
 use App\Models\BagBundelStock;
+use App\Models\BagBrand;
 use Illuminate\Http\Request;
 use DB;
 use Exception;
@@ -48,7 +49,6 @@ class BagBundelEntryController extends Controller
      */
     public function createBagBundleEntry()
     {
-
         $receipt_no = self::getLatestReceiptNo();
         $nepaliDate = getNepaliDate(date('Y-m-d'));
         $date = date('Y-m-d');
@@ -77,10 +77,11 @@ class BagBundelEntryController extends Controller
 
     public function getBrandBag(Request $request)
     {
-        $brandBags = PrintingAndCuttingBagStock::with(['bagBrand:id,name'])
-            ->where('group_id', $request->group_id)
-            ->distinct('bag_brand_id')
-            ->get(['bag_brand_id']);
+        $brandBags = BagBrand::where('group_id', $request->group_id)->get(['id', 'name']);
+        // $brandBags = PrintingAndCuttingBagStock::with(['bagBrand:id,name'])
+        //     ->where('group_id', $request->group_id)
+        //     ->distinct('bag_brand_id')
+        //     ->get(['bag_brand_id']);
         return response()->json([
             'brandBags' => $brandBags
         ]);
@@ -96,6 +97,11 @@ class BagBundelEntryController extends Controller
             $bagBundelEntry->save();
 
             $bagBundelItems = BagBundelItem::where('bag_bundel_entry_id', $bagBundelEntry->id)->get();
+            if (count($bagBundelItems) == 0) {
+                return response()->json([
+                    'message' => 'at least one items required to save entry'
+                ], 404);
+            }
             foreach ($bagBundelItems as $item) {
                 //change status to completed
                 $item->status = 'completed';

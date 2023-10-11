@@ -60,8 +60,8 @@
                                 id="groupId" name="group_id" required>
                                 <option value=" " selected disabled>{{ __('Select group') }}</option>
                                 @foreach ($groups as $groupD)
-                                    <option value="{{ $groupD->group->id }}">
-                                        {{ $groupD->group->name }}
+                                    <option value="{{ $groupD->id }}">
+                                        {{ $groupD->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -173,7 +173,7 @@
         refresh();
 
         async function refresh() {
-            await getBagBundellingItemData();
+            // await getBagBundellingItemData();
             deleteEventBtn();
         }
         @if (session()->has('message'))
@@ -191,6 +191,7 @@
         $('#brandBagId').on('select2:select', function(e) {
             let brand_bag_id = e.params.data.id;
             let group_id = document.getElementById('groupId').value
+            $("#availableStock").val("");
             getAvailableStock(brand_bag_id, group_id);
         });
         // calcaulateAvgWeight();
@@ -220,10 +221,12 @@
                     bagBundellingEntry_id: bagBundellingEntry_id,
                 },
                 success: function(response) {
+
                     window.location.href = "{{ route('bagBundelling.index') }}";
                 },
                 error: function(xhr, status, error) {
-                    setErrorMsg(xhr.responseJSON.message);
+                    alert(xhr.responseJSON.message);
+                    // setErrorMsg(xhr.responseJSON.message);
                 }
             });
         });
@@ -388,8 +391,7 @@
                     $('#danaGroupId').prepend(
                         "<option value='' disabled selected>Select required data</option>");
                     response.brandBags.forEach(function(item) {
-                        setOptionInSelect('brandBagId', item.bag_brand.id, item.bag_brand
-                            .name);
+                        setOptionInSelect('brandBagId', item.id, item.name);
                     });
                 },
                 error: function(xhr, status, error) {
