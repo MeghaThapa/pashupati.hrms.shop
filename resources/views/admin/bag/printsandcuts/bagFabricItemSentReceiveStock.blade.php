@@ -103,6 +103,7 @@
                         name: "DT_RowIndex",
                         data: "DT_RowIndex",
                         orderable: false,
+                        searchable: false,
                     },
                     {
                         name: "fabric_id",
