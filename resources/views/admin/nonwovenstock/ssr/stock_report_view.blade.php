@@ -58,46 +58,51 @@
 @endforeach
 
 
-    <table class="table table-striped table-bordered table-condensed">
-        <thead>
+<table class="table table-striped table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th>Fabric Name</th>
+            <th>Rolls</th>
+            <th>GSM</th>
+            <th>length</th>
+            <th>Gross Weight</th>
+            <th>Net Weight</th>
+        </tr>
+    </thead>
+    <tbody>
+        @php
+            $totalRolls = 0;
+            $totalGSM = 0;
+            $totalLength = 0;
+            $totalGrossWeight = 0;
+            $totalNetWeight = 0;
+        @endphp
+        @foreach ($summaryData as $item)
             <tr>
-                <th>Fabric Name</th>
-                <th>Rolls</th>
-                <th>length</th>
-                <th>Gross Weight</th>
-                <th>Net Weight</th>
+                <td>{{ $item['fabric_name'] }}</td>
+                <td>{{ $item['count(fabric_roll)'] }}</td>
+                <td>{{ $item['sum_gsm'] }}</td>
+                <td>{{ $item['sum(length)'] }}</td>
+                <td>{{ $item['sum(gross_weight)'] }}</td>
+                <td>{{ $item['sum(net_weight)'] }}</td>
             </tr>
-        </thead>
-        <tbody>
             @php
-                $totalRolls = 0;
-                $totalLength = 0;
-                $totalGrossWeight = 0;
-                $totalNetWeight = 0;
+                $totalRolls += $item['count(fabric_roll)'];
+                $totalGSM += $item['sum_gsm'];
+                $totalLength += $item['sum(length)'];
+                $totalGrossWeight += $item['sum(gross_weight)'];
+                $totalNetWeight += $item['sum(net_weight)'];
             @endphp
-            @foreach ($summaryData as $item)
-                <tr>
-                    <td>{{ $item['fabric_name'] }}</td>
-                    <td>{{ $item['count(fabric_roll)'] }}</td>
-                    <td>{{ $item['sum(length)'] }}</td>
-                    <td>{{ $item['sum(gross_weight)'] }}</td>
-                    <td>{{ $item['sum(net_weight)'] }}</td>
-                </tr>
-                @php
-                    $totalRolls += $item['count(fabric_roll)'];
-                    $totalLength += $item['sum(length)'];
-                    $totalGrossWeight += $item['sum(gross_weight)'];
-                    $totalNetWeight += $item['sum(net_weight)'];
-                @endphp
-            @endforeach
-        </tbody>
-        <tfoot>
-            <tr>
-                <td><strong>Total</strong></td>
-                <td><strong>{{ $totalRolls }}</strong></td>
-                <td><strong>{{ $totalLength }}</strong></td>
-                <td><strong>{{ $totalGrossWeight }}</strong></td>
-                <td><strong>{{ $totalNetWeight }}</strong></td>
-            </tr>
-        </tfoot>
-    </table>
+        @endforeach
+    </tbody>
+    <tfoot>
+        <tr>
+            <td><strong>Total</strong></td>
+            <td><strong>{{ $totalRolls }}</strong></td>
+            <td><strong>{{ $totalGSM }}</strong></td>
+            <td><strong>{{ $totalLength }}</strong></td>
+            <td><strong>{{ $totalGrossWeight }}</strong></td>
+            <td><strong>{{ $totalNetWeight }}</strong></td>
+        </tr>
+    </tfoot>
+</table>

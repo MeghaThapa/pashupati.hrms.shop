@@ -73,11 +73,13 @@ class NonWovenStockController extends Controller
 
         foreach ($nonWovenStockArray as $fabricName => $fabricEntries) {
             $countFabricRoll = count($fabricEntries);
+            $sumGSM = 0;
             $sumLength = 0;
             $sumGrossWeight = 0;
             $sumNetWeight = 0;
 
             foreach ($fabricEntries as $entry) {
+                $sumGSM += floatval($entry['fabric_gsm']);
                 $sumLength += floatval($entry['length']);
                 $sumGrossWeight += floatval($entry['gross_weight']);
                 $sumNetWeight += floatval($entry['net_weight']);
@@ -86,6 +88,7 @@ class NonWovenStockController extends Controller
             $summaryData[] = [
                 'fabric_name' => $fabricName,
                 'count(fabric_roll)' => $countFabricRoll,
+                'sum_gsm' => $sumGSM,
                 'sum(length)' => $sumLength,
                 'sum(gross_weight)' => $sumGrossWeight,
                 'sum(net_weight)' => $sumNetWeight,
