@@ -20,6 +20,6 @@ class SaleFinalTripal extends Model
 
     public function getSaleList()
     {
-        return $this->belongsTo('App\Models\SaleFinalTripalList','id','salefinal_id');
+        return $this->hasMany('App\Models\SaleFinalTripalList','salefinal_id','id');
     }
 }

@@ -97,14 +97,12 @@
                         "end_date":$('#end_date').val(),
                     },
                     success: function(response) {
-                        $('#reportView').empty();
-                        $('#summaryView').empty();
                         if(response.status==false){
                             alert(response.message);
                             return;
                         }
-                        $('#reportView').append(response.data);
-                        $('#summaryView').append(response.summary);
+                        $('#reportView').html(response.data);
+                        $('#summaryView').html(response.summary);
                         alert('Report Fetched');
                     },
                     error: function(error) {
