@@ -18,6 +18,10 @@ class NonwovenSale extends Model
         return $this->belongsTo('App\Models\Supplier','partyname_id');
     }
 
+    public function nonwovenSaleEntry(){
+        return $this->hasMany('App\Models\NonwovenSaleEntry','bill_id');
+    }
+
     // public function getSaleList()
     // {
     //     return $this->belongsTo('App\Models\SaleFinalTripalList','id','salefinal_id');

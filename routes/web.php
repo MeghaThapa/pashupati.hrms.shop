@@ -902,6 +902,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
         Route::get("viewbill/{bill_id}", 'Sale\NonwovenSaleController@viewbill')->name('nonwovenSale.viewBill');
 
         Route::get('salefinalnonwoven/delete/list', 'Sale\NonwovenSaleController@deleteEntryList')->name('nonwovenSale.deleteFinalSaleEntry');
+
+        Route::get('report','Sale\NonwovenSaleController@report')->name('nonwovenSale.report');
+        Route::post('report','Sale\NonwovenSaleController@generateReport')->name('nonwovenSale.generateReport');
     });
 
     Route::prefix('wastageSale')->group(function () {

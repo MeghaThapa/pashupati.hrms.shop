@@ -94,7 +94,7 @@
                         <div class="col-md-2">
                             <label for="gross_weight">Bundel No</label>
                             <input type="text" class="form-control" id="bundelNo" name="bundel_no"
-                                value="{{ $bundleNo }}" readonly>
+                                value="{{ $bundleNo }}">
                         </div>
                         <div class="col-md-2 mt-4">
                             <button class="btn btn-primary">Add</button>
@@ -266,7 +266,6 @@
                         $('#quantityInPcs').val("");
                         $('#avgWeight').val("");
                         $('#availableStock').val(data.available_stock);
-                        swal.fire("Added!", "Bag Bundle Item Added Successfully!", "success");
                     } else {
                         swal.fire("Failed!", "Bundle item Addition failed!", "error");
                     }

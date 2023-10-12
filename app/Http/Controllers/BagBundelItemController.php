@@ -29,9 +29,10 @@ class BagBundelItemController extends Controller
         // $groups = PrintingAndCuttingBagStock::with(['group:id,name'])
         //     ->distinct('group_id')
         //     ->get(['group_id']);
-        $bundleNo = self::generateBagBundelNumber();
+        $bundleNo = $this->generateBagBundelNumber();
         $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
             ->where('bag_bundel_entry_id', $bagBundelEntry->id)
+            ->orderBy('bag_bundel_items.bundel_no', 'desc')
             ->get();
         return view('admin.bag.bagBundelling.createItem', compact('groups', 'bagBundelEntry', 'bundleNo', 'bagBundelItems'));
     }
@@ -93,7 +94,7 @@ class BagBundelItemController extends Controller
     {
         $setting       = GeneralSetting::where('key', 'bag_bundle_no')->get('value')->first();
         $settingValue  = explode('-', $setting->value);
-        $bagBundelitem = BagBundelItem::where('bundel_prefix', $settingValue[0])->latest()->first();
+        $bagBundelitem = BagBundelItem::where('bundel_prefix', $settingValue[0])->orderBy('bundel_suffix','DESC')->latest()->first();
         if ($bagBundelitem) {
             $currentNumber = intval($bagBundelitem->bundel_suffix);
 
@@ -195,6 +196,7 @@ class BagBundelItemController extends Controller
             //return  $bagBundelentry_id;
             $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
                 ->where('bag_bundel_entry_id', $bagBundelentry_id)
+                ->orderBy('bag_bundel_items.bundel_no', 'desc')
                 ->get();
 
             $view = view('admin.bag.bagBundelling.ssr.tableview', compact('bagBundelItems'))->render();
