@@ -219,13 +219,14 @@
                     data: 'DT_RowIndex'
                 },
                 {
-                    data: 'bill_date',
-                    searchable: true,
-                },
-                {
                     data: 'bill_no',
                     searchable: true,
                 },
+                {
+                    data: 'bill_date',
+                    searchable: true,
+                },
+              
                 {
                     data: 'supplier'
                 },
