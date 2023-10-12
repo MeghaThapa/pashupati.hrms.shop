@@ -851,12 +851,15 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get('salefinaltripal/viewTripal/{id}', 'Sale\SaleFinalTripalController@viewTripal')->name('salefinaltripals.viewTripal');
 
-    Route::get('salefinaltripal/viewTripalBill/{id}', 'Sale\SaleFinalTripalController@viewTripalBill')->name('salefinaltripals.viewTripalBill');
+    Route::get('salefinaltripal/viewTripalBill/{saleFinalTripal}', 'Sale\SaleFinalTripalController@viewTripalBill')->name('salefinaltripals.viewTripalBill');
 
     Route::get("salefinaltripal/getTripalSaleTotal", 'Sale\SaleFinalTripalController@getTripalSaleTotal')->name("getTripalSaleTotal");
 
     Route::get("salefinaltripal/getTripalSale/Pdf/{id}", 'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
     Route::get("salefinaltripal/getTripalSale/excel/{id}", 'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
+
+    Route::get('salefinaltripal/report','Sale\SaleFinalTripalController@report')->name('salefinaltripal.report');
+    Route::post('salefinaltripal/report','Sale\SaleFinalTripalController@reportGenerate')->name('salefinaltripal.report.generate');
 
 
     //salefinaltripal filter
