@@ -15,7 +15,17 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $totalLength = 0;
+                        $totalGrossWeight = 0;
+                        $totalNetWeight = 0;
+                    @endphp
                     @foreach ($data as $row)
+                        @php
+                            $totalLength += (float)$row['length'];
+                            $totalGrossWeight += (float)$row['gross_weight'];
+                            $totalNetWeight += (float)$row['net_weight'];
+                        @endphp
                         <tr>
                             <td>{{ $fabricName }}</td>
                             <td>{{ $fabricGSM }}</td>
@@ -27,6 +37,12 @@
                             <td>{{ $row['net_weight'] }}</td>
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="5">Total</td>
+                        <td>{{ $totalLength }}</td>
+                        <td>{{ $totalGrossWeight }}</td>
+                        <td>{{ $totalNetWeight }}</td>
+                    </tr>
                 </tbody>
             </table>
         @endforeach
@@ -48,9 +64,21 @@
         </tr>
     </thead>
     <tbody>
+        @php
+        $totalFabricRollCount = 0;
+        $totalLengthTotal = 0;
+        $totalGrossWeightTotal = 0;
+        $totalNetWeightTotal = 0;
+        @endphp
         @foreach ($summary as $fabricName => $fabricGSMs)
             @foreach ($fabricGSMs as $fabricGSM => $fabricColors)
                 @foreach ($fabricColors as $fabricColor => $summaryData)
+                    @php
+                        $totalFabricRollCount += (float)$summaryData['fabric_roll_count'];
+                        $totalLengthTotal += (float)$summaryData['length_total'];
+                        $totalGrossWeightTotal += (float)$summaryData['gross_weight_total'];
+                        $totalNetWeightTotal += (float)$summaryData['net_weight_total'];
+                    @endphp
                     <tr>
                         <td>{{ $fabricName }}</td>
                         <td>{{ $fabricGSM }}</td>
@@ -64,5 +92,15 @@
                 @endforeach
             @endforeach
         @endforeach
+        <tr>
+            <td>Total</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{ $totalFabricRollCount }}</td>
+            <td>{{ $totalLengthTotal }}</td>
+            <td>{{ $totalGrossWeightTotal }}</td>
+            <td>{{ $totalNetWeightTotal }}</td>
+        </tr>
     </tbody>
 </table>
