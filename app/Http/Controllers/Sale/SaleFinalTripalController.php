@@ -412,23 +412,25 @@ class SaleFinalTripalController extends Controller
                             ->orderBy('bill_date', 'ASC')
                             ->get();
 
+        $dataView = view('admin.sale.salefinaltripal.ssr.reportview', compact('saleFinalTripals'))->render();
+
         $summaryReport = DB::table('sale_final_tripal_lists')
+        ->leftJoin('sale_final_tripals', 'sale_final_tripal_lists.salefinal_id', '=', 'sale_final_tripals.id')
         ->select(
             'sale_final_tripal_lists.name as fabric_name',
+            DB::raw('COUNT(sale_final_tripal_lists.name) as fabric_count'),
             DB::raw('SUM(sale_final_tripal_lists.gross) as total_gross_wt'),
             DB::raw('SUM(sale_final_tripal_lists.net) as total_net_wt'),
             DB::raw('SUM(sale_final_tripal_lists.meter) as total_meter'),
-            DB::raw('COUNT(sale_final_tripal_lists.name) as fabric_count')
+            DB::raw('SUM(sale_final_tripal_lists.average) as total_average'),
         )
-        ->join('fabrics', 'fabric_sale_items.fabric_id', '=', 'fabrics.id')
-        ->join('fabric_sale_entry', 'fabric_sale_items.sale_entry_id', '=', 'fabric_sale_entry.id')
-        ->where('fabric_sale_entry.bill_date', '>=', $request->start_date)
-        ->where('fabric_sale_entry.bill_date', '<=', $request->end_date)
-        ->where('fabric_sale_entry.bill_for', '=', $request->bill_for)
-        ->groupBy('fabrics.name')
+        ->where('sale_final_tripal_lists.bill_date', '>=', $request->start_date)
+        ->where('sale_final_tripal_lists.bill_date', '<=', $request->end_date)
+        ->where('sale_final_tripals.bill_for', '=', $request->bill_for)
+        ->groupBy('sale_final_tripal_lists.name')
         ->get();
 
-        $view = view('admin.sale.salefinaltripal.ssr.reportview',compact('salefinaltripals'))->render();
-        return response(['status' => true, 'data' => $view]);
+        $summaryView = view('admin.sale.salefinaltripal.ssr.report_summary_view',compact('summaryReport'))->render();
+        return response(['status' => true, 'data' => $dataView,'summary' => $summaryView]);
     }
 }
