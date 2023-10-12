@@ -78,10 +78,10 @@
 @section('content')
 <section class="content">
   <div class="container-fluid">
-    <a href="{{route('tripalsale.pdf',$id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a>
-    <a href="{{route('tripalsale.excel',$id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a>
-   
-    
+    <a href="{{route('tripalsale.pdf',$saleFinalTripal->id)}}"> <button class="btn btn-info btn-sm rounded-0" type="submit" ><i class="fas fa-print"></i> Pdf</button></a>
+    <a href="{{route('tripalsale.excel',$saleFinalTripal->id)}}"> <button class="btn btn-success btn-sm rounded-0"><i class="fas fa-print"></i> Excel</button></a>
+
+
     <div class="row" id="printTable">
       <div class="col-12">
         <div class="invoice p-3 mb-3 card  card-outline">
@@ -97,47 +97,47 @@
               <div><small>PASHUPATI SYNPACK INDUSTRIES PVT. LTD.</small></div>
               {{-- <h3 class="m-0">SONAPUR,SUNSARI</h3> --}}
               <div><small><b>SONAPUR,SUNSARI</b></small> </div>
-             
-            </div> 
+
+            </div>
             <div class="col-sm-6 invoice-col">
-              
+
               <address>
-                <strong> PartyName : {{$findtripal->getParty->name}}</strong><br>
-              
+                <strong> PartyName : {{$saleFinalTripal->getParty->name}}</strong><br>
+
               </address>
             </div>
             <div class="col-sm-12 col-lg-6  text-right">
-              <b>A/C : {{$findtripal->getParty->name}}</b><br>
+              <b>A/C : {{$saleFinalTripal->getParty->name}}</b><br>
               <br>
             </div>
             <div class="row col-lg-12" >
                 <div class="col-sm-6 col-lg-6  text-left">
-                  <b>Invoice Number: {{$findtripal->bill_no}}</b><br>
+                  <b>Invoice Number: {{$saleFinalTripal->bill_no}}</b><br>
                   <br>
                 </div>
 
                 <div class="col-lg-6 text-right">
-                  <b>Gate Pass: {{$findtripal->gp_no}}</b><br>
+                  <b>Gate Pass: {{$saleFinalTripal->gp_no}}</b><br>
                   <br>
                 </div>
-                
+
             </div>
 
             <div class="row">
 
                 <div class="col-sm-12 text-right ml-2">
-                  <b>Date: {{$findtripal->bill_date}}</b><br>
+                  <b>Date: {{$saleFinalTripal->bill_date}}</b><br>
                   <br>
                 </div>
-                
+
             </div>
-            
-            
+
+
           </div>
           <div class="row">
             <div class="col-12 table-responsive">
               <table class="table table-bordered" style="padding: 0 30px; ">
-                
+
 
                 <tr>
                     <th width="10px">{{ __('Sr.No') }}</th>
@@ -164,8 +164,8 @@
                     </tr>
                     @endforeach
                 </tbody>
-             
-             
+
+
               </table>
           </div>
         </div>
@@ -175,7 +175,7 @@
           <div class="row px-4 py-3">
             <div class="col-12 table-responsive">
               <table class="table table-bordered">
-                
+
 
                 <tr>
                     <th width="10px">{{ __('Sr.No') }}</th>
@@ -207,12 +207,12 @@
                         <td>{{$total_meter}}</td>
                     </tr>
                 </tfoot>
-             
-             
+
+
               </table>
           </div>
         </div>
-        
+
         <div class="row no-print">
           <div class="col-12">
             {{-- <span>Bill Printed By : {{$bill_total_student->getUser->name}}</span> --}}
@@ -239,7 +239,7 @@
 <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 <script src="{{ asset('js/storein.js') }}"></script>
 
-    
+
 
 
 
