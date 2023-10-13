@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PrintingAndCuttingBagStock;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class PrintingAndCuttingBagStockController extends Controller
 {
@@ -12,9 +13,24 @@ class PrintingAndCuttingBagStockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+
+        $query = PrintingAndCuttingBagStock::with('group:id,name', 'bagBrand:id,name')->get();
+        return $query;
+        // if ($request->ajax()) {
+        //     $query = PrintingAndCuttingBagStock::with('group:id,name', 'bagBrand:id,name');
+        //     return DataTables::of($query)
+        //         ->addIndexColumn()
+        //         ->editColumn("group_id", function ($row) {
+        //             return $row->group->name;
+        //         })
+        //         ->editColumn("bag_brand_id", function ($row) {
+        //             return $row->bagBrand->name;
+        //         })
+        //         ->make(true);
+        // }
+        // return view('admin.bag.printsandcuts.printingAndCuttingBagStock');
     }
 
     /**

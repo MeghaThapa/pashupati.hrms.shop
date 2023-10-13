@@ -65,6 +65,7 @@ use App\Http\Controllers\FabricNonWovenReceiveEntryController;
 use App\Http\Controllers\Admin\FabricProductionReportController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagFabricReceiveItemSentStockController;
+use App\Http\Controllers\PrintingAndCuttingBagStockController;
 
 // brandBag.store
 /*
@@ -240,6 +241,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('rawMaterial/godamTransferDetail', 'RawMaterialController@godamTransferDetail')->name('rawMaterial.godamTransferDetail');
 
     Route::post('rawMaterial/filterGodamTransferAccGodam', 'RawMaterialController@filterGodamTransferAccGodam')->name('rawMaterial.filterGodamTransferAccGodam');
+
+    //PrintingAndCuttingBagStockController megha
+    Route::get('printingAndCuttingBagStock/index', 'PrintingAndCuttingBagStockController@index')->name('printingAndCuttingBagStock.index');
 
     //for gana name from rawmaterial stock
     Route::get('rawMaterial/getStock', 'RawMaterialController@getStock')->name('rawMaterial.getStock');
@@ -858,8 +862,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get("salefinaltripal/getTripalSale/Pdf/{id}", 'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
     Route::get("salefinaltripal/getTripalSale/excel/{id}", 'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
 
-    Route::get('salefinaltripal/report','Sale\SaleFinalTripalController@report')->name('salefinaltripal.report');
-    Route::post('salefinaltripal/report','Sale\SaleFinalTripalController@reportGenerate')->name('salefinaltripal.report.generate');
+    Route::get('salefinaltripal/report', 'Sale\SaleFinalTripalController@report')->name('salefinaltripal.report');
+    Route::post('salefinaltripal/report', 'Sale\SaleFinalTripalController@reportGenerate')->name('salefinaltripal.report.generate');
 
 
     //salefinaltripal filter
@@ -903,8 +907,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::get('salefinalnonwoven/delete/list', 'Sale\NonwovenSaleController@deleteEntryList')->name('nonwovenSale.deleteFinalSaleEntry');
 
-        Route::get('report','Sale\NonwovenSaleController@report')->name('nonwovenSale.report');
-        Route::post('report','Sale\NonwovenSaleController@generateReport')->name('nonwovenSale.generateReport');
+        Route::get('report', 'Sale\NonwovenSaleController@report')->name('nonwovenSale.report');
+        Route::post('report', 'Sale\NonwovenSaleController@generateReport')->name('nonwovenSale.generateReport');
     });
 
     Route::prefix('wastageSale')->group(function () {
@@ -1128,7 +1132,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //nonwoven stock
 
     Route::get('nonwovenfabrics-receiveentry/getstock/index', [NonWovenStockController::class, 'index'])->name('nonwovenfabrics-receiveentrystock.index');
-    Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('nonwovenfabrics-receiveentrystock.filterStock');
+    Route::post('nonwovenfabrics/getstock/filterStocks', [NonWovenStockController::class, 'filterStock'])->name('nonwovenfabrics-receiveentrystock.filterStock');
 
     //
     Route::get('opening/nonwovenfabrics', 'Opening\NonWovenController@index')->name('openingnonwoven.index');
