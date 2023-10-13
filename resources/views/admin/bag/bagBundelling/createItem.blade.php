@@ -185,6 +185,7 @@
 
         $('#groupId').on('select2:select', function(e) {
             let group_id = e.params.data.id;
+            $('#brandBagId').empty();
             getBagBrand(group_id);
         });
 
@@ -387,8 +388,9 @@
                     group_id: group_id,
                 },
                 success: function(response) {
-                    $('#danaGroupId').prepend(
+                    $('#brandBagId').prepend(
                         "<option value='' disabled selected>Select required data</option>");
+
                     response.brandBags.forEach(function(item) {
                         setOptionInSelect('brandBagId', item.id, item.name);
                     });

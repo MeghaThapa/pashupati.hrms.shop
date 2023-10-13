@@ -65,6 +65,8 @@ class BagBundelItemController extends Controller
             DB::beginTransaction();
 
             $bagBundelItem = BagBundelItem::find($bagBundelItemId);
+            
+            $bagBundelItems = BagBundelItem::where('bag_bundel_entry_id', $bagBundelItem->bag_bundel_entry_id)->get();
             // return $bagBundelItem->qty_pcs;
             $printingAndCuttingBagStock = PrintingAndCuttingBagStock::where('group_id', $bagBundelItem->group_id)
                 ->where('bag_brand_id', $bagBundelItem->bag_brand_id)
@@ -82,6 +84,8 @@ class BagBundelItemController extends Controller
                 $stock->save();
             }
             $bagBundelItem->delete();
+
+            $view = view('admin.bag.bagBundelling.ssr.tableview', compact('bagBundelItems'))->render();
             DB::commit();
         } catch (Exception $ex) {
             DB::rollback();
@@ -94,7 +98,7 @@ class BagBundelItemController extends Controller
     {
         $setting       = GeneralSetting::where('key', 'bag_bundle_no')->get('value')->first();
         $settingValue  = explode('-', $setting->value);
-        $bagBundelitem = BagBundelItem::where('bundel_prefix', $settingValue[0])->orderBy('bundel_suffix','DESC')->latest()->first();
+        $bagBundelitem = BagBundelItem::where('bundel_prefix', $settingValue[0])->orderBy('bundel_suffix', 'DESC')->latest()->first();
         if ($bagBundelitem) {
             $currentNumber = intval($bagBundelitem->bundel_suffix);
 

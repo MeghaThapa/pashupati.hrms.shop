@@ -1532,6 +1532,19 @@
                 </a>
 
             </li>
+            <li class="nav-item">
+
+                <a href="{{ route('printingAndCuttingBagStock.index') }}"
+                    class="nav-link {{ request()->routeIs('printingAndCuttingBagStock.index*') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-chart-area"></i>
+
+                    <p>{{ __('Prints and Cutting Bag Stock') }}</p>
+
+                </a>
+
+            </li>
+
 
             <li class="nav-item">
 
