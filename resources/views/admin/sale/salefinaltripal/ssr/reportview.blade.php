@@ -91,13 +91,13 @@
 
             <!-- Update totals for the current fabric -->
             @php
-                $gross_wt += (float)$fabricSaleItem->gross_wt;
-                $net_wt += (float)$fabricSaleItem->net_wt;
+                $gross_wt += (float)$fabricSaleItem->gross;
+                $net_wt += (float)$fabricSaleItem->net;
                 $meter += (float)$fabricSaleItem->meter;
                 $total_avg += (float)$fabricSaleItem->average_wt;
                 $total_gram_wt += (float)$fabricSaleItem->gram_wt;
-                $billDateTotalGrossWt += (float)$fabricSaleItem->gross_wt;
-                $billDateTotalNetWt += (float)$fabricSaleItem->net_wt;
+                $billDateTotalGrossWt += (float)$fabricSaleItem->gross;
+                $billDateTotalNetWt += (float)$fabricSaleItem->net;
                 $billDateTotalMeter += (float)$fabricSaleItem->meter;
             @endphp
         @endforeach
@@ -109,7 +109,7 @@
                 <td>{{ $gross_wt }}</td>
                 <td>{{ $net_wt }}</td>
                 <td>{{ $meter }}</td>
-                <td> @if($meter != 0) {{ ($net_wt/$meter) * 1000  }} @endif </td>
+                <td></td>
                 <td></td>
             </tr>
         @endif
@@ -124,5 +124,4 @@
     </tfoot>
 </table>
 @endforeach
-
 <br/>

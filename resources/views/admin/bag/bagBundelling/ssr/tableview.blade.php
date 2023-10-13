@@ -13,7 +13,7 @@
         <td class="rowWastage">{{ $item->average_weight }}</td>
         <td class="rowRollno">{{ $item->bundel_no }}</td>
         <td>
-            <button class="btn btn-danger dltBagBundelItem" data-id="{{ $item->id }}">
+            <button class="btn btn-danger dltBagBundelItem" data-url="{{ route('bagBundelItem.deleteBagBundelItem',$item->id) }}" data-id="{{ $item->id }}">
                 <i class="fas fa-trash-alt"></i>
             </button>
         </td>
