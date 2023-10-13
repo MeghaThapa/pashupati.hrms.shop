@@ -64,9 +64,8 @@ class BagBundelItemController extends Controller
         try {
             DB::beginTransaction();
 
-            $bagBundelItem = BagBundelItem::find($bagBundelItemId);
-            
-            $bagBundelItems = BagBundelItem::where('bag_bundel_entry_id', $bagBundelItem->bag_bundel_entry_id)->get();
+            $bagBundelItem = BagBundelItem::findOrFail($bagBundelItemId);
+            $bagBundelEntry = BagBundelEntry::find($bagBundelItem->bag_bundel_entry_id);
             // return $bagBundelItem->qty_pcs;
             $printingAndCuttingBagStock = PrintingAndCuttingBagStock::where('group_id', $bagBundelItem->group_id)
                 ->where('bag_brand_id', $bagBundelItem->bag_brand_id)
@@ -78,15 +77,20 @@ class BagBundelItemController extends Controller
             } else {
                 $stock = new PrintingAndCuttingBagStock();
                 $stock->group_id = $bagBundelItem->group_id;
-                $stock->bag_brand_id = $bagBundelItem->brand_bag_id;
+                $stock->bag_brand_id = $bagBundelItem->bag_brand_id;
                 // $stock->qty_in_kg =$bagBundelItem->qty_kg;
                 $stock->quantity_piece = $bagBundelItem->qty_pcs;
                 $stock->save();
             }
             $bagBundelItem->delete();
+            $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
+            ->where('bag_bundel_entry_id', $bagBundelEntry->id)
+            ->orderBy('bundel_suffix','desc')
+            ->get();
 
             $view = view('admin.bag.bagBundelling.ssr.tableview', compact('bagBundelItems'))->render();
             DB::commit();
+            return response(['status'=>true,'view'=>$view]);
         } catch (Exception $ex) {
             DB::rollback();
         }
