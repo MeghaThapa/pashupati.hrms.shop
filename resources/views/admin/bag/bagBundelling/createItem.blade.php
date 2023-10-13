@@ -133,7 +133,7 @@
                                 <td class="rowWastage">{{ $item->average_weight }}</td>
                                 <td class="rowRollno">{{ $item->bundel_no }}</td>
                                 <td>
-                                    <button class="btn btn-danger dltBagBundelItem" data-id="{{ $item->id }}">
+                                    <button class="btn btn-danger dltBagBundelItem" data-url="{{ route('bagBundelItem.deleteBagBundelItem',$item->id) }}" data-id="{{ $item->id }}">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
@@ -169,13 +169,7 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
 
     <script>
-        //get table data when page refresh
-        refresh();
 
-        async function refresh() {
-            // await getBagBundellingItemData();
-            deleteEventBtn();
-        }
         @if (session()->has('message'))
             toastr.success("{{ session()->get('message') }}");
         @elseif (session()->has('message_err'))
@@ -317,54 +311,29 @@
             });
         }
 
-        //delete bagBundelItem
-        function deleteEventBtn() {
-
-            let deleteButtons = document.getElementsByClassName('dltBagBundelItem');
-            for (let i = 0; i < deleteButtons.length; i++) {
-                deleteButtons[i].addEventListener('click', function(event) {
-                    let bagBundelingItemId = this.getAttribute('data-id');
-
+        $(document).on('click','.dltBagBundelItem',function(){
+            let url = $(this).data('url');
+            $.ajax({
+                url: url,
+                type: "DELETE",
+                data: {
+                    "_method": "DELETE",
+                    "_token": "{{ csrf_token() }}",
+                },
+                success: function(response) {
+                    $('#bagBundellingData').empty();
+                    $('#bagBundellingData').html(response.view);
+                },
+                error: function(result) {
                     new swal({
-                        title: "Are you sure?",
-                        text: "Do you want to delete Item.",
-                        icon: "warning",
-                        buttons: true,
-                        dangerMode: true,
-                        showCancelButton: true,
-                        cancelButtonText: 'Cancel',
-                        closeOnClickOutside: false,
-                    }).then((willDelete) => {
-                        if (willDelete) {
-                            $.ajax({
-                                url: '{{ route('bagBundelItem.deleteBagBundelItem', ['bagBundelItemId' => ':id']) }}'
-                                    .replace(':id', bagBundelingItemId),
-                                type: "DELETE",
-                                data: {
-                                    "_method": "DELETE",
-                                    "_token": "{{ csrf_token() }}",
-                                },
-                                success: function(response) {
-                                    removeAllTableRows('bagBundellingTable');
-                                    refresh();
-                                    // updateBundleNo();
-                                },
-                                error: function(result) {
-                                    new swal({
-                                        title: "Error",
-                                        text: "something went wrong",
-                                        type: 'error',
-                                        timer: '1500'
-                                    });
-                                }
-                            });
-                        }
+                        title: "Error",
+                        text: "something went wrong",
+                        type: 'error',
+                        timer: '1500'
                     });
-
-                });
-
-            }
-        }
+                }
+            });
+        });
 
         function removeAllTableRows(tableId) {
             // Resetting SN
