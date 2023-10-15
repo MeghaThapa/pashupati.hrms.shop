@@ -75,6 +75,7 @@
                                         <td>{{ $data->tape_entry_date }}</span></td>
                                         <td>
                                             <div class="btn-group">
+                                                <a href="{{ route('tape.entry.edit',$data->id) }}" class="btn btn-primary" title="create tape receive entry"><i class='fa fa-edit'></i></a>
                                                 @if($data->status == 'pending')
                                                     <a href="{{ route('tape.entry.receive.create',['id'=>$data->id]) }}" class="btn btn-info" title="create tape receive entry"><i class='fa fa-plus'></i></a>
                                                     <form id="trash" action="{{ route('tape.entry.receive.delete',['id'=>$data->id]) }}">
@@ -98,7 +99,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modal -->
     <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -138,7 +139,7 @@
 <script>
     $(document).ready(function() {
         $(".tape_info_production").click(function(){
-            let url = $(this).data("url") 
+            let url = $(this).data("url")
             $.ajax({
                 url : url,
                 method : "get",

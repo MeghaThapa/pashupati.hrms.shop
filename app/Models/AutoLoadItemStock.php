@@ -13,11 +13,11 @@ class AutoLoadItemStock extends Model
 
 
     protected $fillable = [
-        'quantity'
+        'from_godam_id','plant_type_id','plant_name_id','shift_id','dana_group_id','dana_name_id','quantity'
     ];
 
 
-      public function danaName()
+    public function danaName()
     {
         return $this->belongsTo('App\Models\DanaName', 'dana_name_id', "id");
     }
@@ -25,7 +25,7 @@ class AutoLoadItemStock extends Model
     {
         return $this->belongsTo('App\Models\DanaGroup', 'dana_group_id', "id");
     }
-      public function fromGodam()
+    public function fromGodam()
     {
         return $this->belongsTo('App\Models\Godam', 'from_godam_id', 'id');
     }
@@ -37,11 +37,12 @@ class AutoLoadItemStock extends Model
     {
         return $this->belongsTo('App\Models\ProcessingStep', 'plant_type_id', 'id');
     }
-     public function plantName()
+    public function plantName()
     {
         return $this->belongsTo('App\Models\ProcessingSubcat', 'plant_name_id', 'id');
     }
-    public function autoload(){
-         return $this->belongsTo('App\Models\AutoLoad', 'autoload_id', 'id');
+    public function autoload()
+    {
+        return $this->belongsTo('App\Models\AutoLoad', 'autoload_id', 'id');
     }
 }

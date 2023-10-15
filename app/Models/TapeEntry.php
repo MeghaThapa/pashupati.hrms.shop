@@ -13,4 +13,8 @@ class TapeEntry extends Model
     protected $fillable = [
         'receipt_number','tape_entry_date','status','created_at','updated_at'
     ];
+
+    public function tapeEntryItems(){
+        return $this->hasMany(TapeEntryItemModel::class,'tape_entry_id');
+    }
 }

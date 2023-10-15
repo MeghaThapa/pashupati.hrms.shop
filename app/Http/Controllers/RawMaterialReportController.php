@@ -23,7 +23,7 @@ class RawMaterialReportController extends Controller
 
             if ($request->godam_id == 1) {
                 DB::table('raw_material_dana_date_wise_reports')->where('godam_id', 1)->truncate();
-                $this->generatePsiGodamReport(1);
+                $this->generatePsiGodamReport(1,$request);
 
                 $reports = DB::table('raw_material_dana_date_wise_reports')
                     ->join('dana_names', 'raw_material_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
@@ -64,7 +64,7 @@ class RawMaterialReportController extends Controller
                 $view = view('admin.rawMaterial.ssr.psireportview', compact('formattedReports'))->render();
             } elseif ($request->godam_id == 2) {
                 DB::table('raw_material_new_psi_dana_date_wise_reports')->where('godam_id', 2)->truncate();
-                $this->generateNewPsiGodamReport(2);
+                $this->generateNewPsiGodamReport(2,$request);
 
                 $reports = DB::table('raw_material_new_psi_dana_date_wise_reports')
                     ->join('dana_names', 'raw_material_new_psi_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
@@ -110,7 +110,7 @@ class RawMaterialReportController extends Controller
 
             } else {
                 DB::table('raw_material_bsw_dana_date_wise_reports')->where('godam_id', 3)->truncate();
-                $this->generateBswGodamReport(3);
+                $this->generateBswGodamReport(3,$request);
 
                 $reports = DB::table('raw_material_bsw_dana_date_wise_reports')
                     ->join('dana_names', 'raw_material_bsw_dana_date_wise_reports.dana_name_id', '=', 'dana_names.id')
@@ -160,13 +160,13 @@ class RawMaterialReportController extends Controller
         return view('admin.rawMaterial.psireport', compact('godams'));
     }
 
-    private function generatePsiGodamReport($godam_id)
+    private function generatePsiGodamReport($godam_id,$request)
     {
-        $rawMaterialArray = $this->getRawMaterialArray($godam_id);
+        $rawMaterialArray = $this->getRawMaterialArray($godam_id,$request);
 
         $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
 
-        $autoLoadItemsArray = $this->getAutoLoadItemsArray();
+        $autoLoadItemsArray = $this->getAutoLoadItemsArray($request);
 
         $salesArray = $this->getSalesArray();
 
@@ -177,13 +177,13 @@ class RawMaterialReportController extends Controller
         return $status;
     }
 
-    private function generateNewPsiGodamReport($godam_id)
+    private function generateNewPsiGodamReport($godam_id,$request)
     {
-        $rawMaterialArray = $this->getRawMaterialArray($godam_id);
+        $rawMaterialArray = $this->getRawMaterialArray($godam_id,$request);
 
         $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
 
-        $autoLoadItemsArray = $this->getAutoLoadItemsArray();
+        $autoLoadItemsArray = $this->getAutoLoadItemsArray($request);
 
         $ccPlantArray = $this->getCcPlantArray($godam_id);
 
@@ -193,13 +193,13 @@ class RawMaterialReportController extends Controller
         return $status;
     }
 
-    private function generateBswGodamReport($godam_id)
+    private function generateBswGodamReport($godam_id,$request)
     {
-        $rawMaterialArray = $this->getRawMaterialArray($godam_id);
+        $rawMaterialArray = $this->getRawMaterialArray($godam_id,$request);
 
         $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
 
-        $autoLoadItemsArray = $this->getAutoLoadItemsArray();
+        $autoLoadItemsArray = $this->getAutoLoadItemsArray($request);
 
         $mergedArray = $this->getBswMergedData($rawMaterialArray, $rawMaterialOpeningsArray, $autoLoadItemsArray);
 
@@ -329,7 +329,7 @@ class RawMaterialReportController extends Controller
                         $rawMaterialDanaDateWiseReport->to_godam_quantity = 0;
                     }
 
-                    if(isset($dateData['import_from']) && $dateData['import_from']=="godam" && $dateData['to_godam_id'] = 2 ){
+                    if(isset($dateData['import_from']) && $dateData['import_from']=="godam" && $dateData['to_godam_id'] == 2 ){
                         $rawMaterialDanaDateWiseReport->from_godam = $dateData['total_quantity'];
                     }else{
                         $rawMaterialDanaDateWiseReport->from_godam = 0;
@@ -409,7 +409,7 @@ class RawMaterialReportController extends Controller
                         $rawMaterialDanaDateWiseReport->to_godam_quantity = 0;
                     }
 
-                    if(isset($dateData['import_from']) && $dateData['import_from']=="godam" && $dateData['to_godam_id'] = 3 ){
+                    if(isset($dateData['import_from']) && $dateData['import_from']=="godam" && $dateData['to_godam_id'] == 3 ){
                         $rawMaterialDanaDateWiseReport->from_godam = $dateData['total_quantity'];
                     }else{
                         $rawMaterialDanaDateWiseReport->from_godam = 0;
@@ -636,7 +636,7 @@ class RawMaterialReportController extends Controller
 
 
 
-    private function getRawMaterialArray($godam_id)
+    private function getRawMaterialArray($godam_id,$request)
     {
         $rawMaterialsResults = DB::table('raw_materials')
             ->join('raw_material_items', 'raw_materials.id', '=', 'raw_material_items.raw_material_id')
@@ -651,16 +651,18 @@ class RawMaterialReportController extends Controller
                 DB::raw('SUM(raw_material_items.quantity) as total_quantity'),
                 'storein_types.name as import_from'
             )
-            ->where('raw_materials.to_godam_id', $godam_id)
-            ->orWhere('raw_materials.from_godam_id', $godam_id)
-            ->groupBy('dana_name_id','dana_name', 'raw_materials.date', 'import_from', 'from_godam_id', 'to_godam_id')
+            ->where(function($query) use ($godam_id, $request){
+                $query->where('raw_materials.to_godam_id', $godam_id)
+                ->orWhere('raw_materials.from_godam_id', $godam_id);
+            })
+            ->where('raw_materials.date','>=',$request->start_date)
+            ->where('raw_materials.date','<=',$request->end_date)
+            ->groupBy('dana_names.id','dana_name', 'raw_materials.date', 'import_from', 'from_godam_id', 'to_godam_id')
             ->orderBy('dana_name', 'asc')
             ->orderBy('raw_materials.date', 'asc')
             ->get();
 
         $resultArray = [];
-
-        // dd($rawMaterialsResults);
 
         foreach ($rawMaterialsResults as $resultRawMaterial) {
             $danaName = $resultRawMaterial->dana_name;
@@ -694,7 +696,7 @@ class RawMaterialReportController extends Controller
             ->join('rawmaterial_opening_entries', 'rawmaterial_opening_entries.id', '=', 'rawmaterial_opening_items.rawmaterial_opening_entry_id')
             ->join('dana_names', 'rawmaterial_opening_items.dana_name_id', '=', 'dana_names.id')
             ->select(
-                'dana_names.name as dana_name', // Select dana_names.name
+                'dana_names.name as dana_name',
                 'rawmaterial_opening_entries.opening_date',
                 DB::raw('SUM(rawmaterial_opening_items.qty_in_kg) as total_quantity')
             )
@@ -723,7 +725,7 @@ class RawMaterialReportController extends Controller
         return $openingArray;
     }
 
-    private function getAutoLoadItemsArray()
+    private function getAutoLoadItemsArray($request)
     {
         $autoLoadArray = [];
 
@@ -739,6 +741,8 @@ class RawMaterialReportController extends Controller
                 DB::raw('COUNT(*) as count'),
                 'processing_steps.name as processing_step_name'
             )
+            ->where('al.transfer_date','>=',$request->start_date)
+            ->where('al.transfer_date','<=',$request->end_date)
             ->groupBy('dana_name', 'al.transfer_date', 'processing_step_name')
             ->orderBy('dana_name', 'asc')
             ->orderBy('al.transfer_date', 'asc')
