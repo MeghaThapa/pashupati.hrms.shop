@@ -139,8 +139,8 @@
                                 </td>
                             </tr>
                             @php
-                                $totalKg += $item->qty_in_kg;
-                                $toalPcs += $item->qty_pcs;
+                                $totalKg += (float)$item->qty_in_kg;
+                                $toalPcs += (float)$item->qty_pcs;
                             @endphp
                         @endforeach
                         <tr style="font-weight: 600;">

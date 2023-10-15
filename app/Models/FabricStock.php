@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FabricStock extends Model
 {
-    use HasFactory;
-    use Sluggable;
+    use HasFactory,Sluggable, SoftDeletes;
     protected $table = 'fabric_stock';
     protected $id = 'id';
     // protected $fillable = [
