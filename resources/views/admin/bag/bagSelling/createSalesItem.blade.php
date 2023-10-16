@@ -59,8 +59,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        } */
     </style>
 @endsection
 @section('content')
@@ -233,7 +233,6 @@
             function getBagSellingItemData() {
                 // console.log('mega');
                 let bagSellingEntry_id = {!! json_encode($bagSellingEntry->id) !!}
-                console.log('hello', bagSellingEntry_id);
                 return new Promise(function(resolve, reject) {
                     $.ajax({
                         url: "{{ route('bagSellingItem.getBagSellingItemData') }}",
@@ -372,6 +371,28 @@
                 sn++;
                 // clearInputFields();
             }
+
+            $('body').on('click', '.dltBagBundelItem', function() {
+                var btnId = $(this).attr("data-id");
+                $.ajax({
+                    type: "DELETE",
+                    url: "{{ route('bagSellingItem.delete') }}",
+                    data: {
+                        "_token": $('input[name="_token"]').val(),
+                        "id": btnId,
+                    },
+                    success: function(data) {
+                        new swal({
+                            // position: 'top-end',
+                            icon: 'success',
+                            title: 'Deleted successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        window.location.reload();
+                    }
+                });
+            });
 
             function getPcsWeightAvg(bundel_no) {
                 $.ajax({
