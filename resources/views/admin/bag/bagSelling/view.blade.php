@@ -118,6 +118,8 @@
                                                         <tbody>
                                                             @php
                                                                 $i = 1;
+                                                                $totalPcs = 0;
+                                                                $totalWeight = 0;
                                                             @endphp
                                                             @foreach ($bagSellingEntry->bagSellingItem as $item)
                                                                 <tr>
@@ -129,18 +131,22 @@
                                                                     <td>{{ $item->weight }}</td>
                                                                     <td>{{ $item->average }}</td>
                                                                 </tr>
+                                                                @php
+                                                                    $totalPcs += $item->pcs;
+                                                                    $totalWeight += $item->weight;
+                                                                @endphp
                                                             @endforeach
                                                         </tbody>
-                                                        <tbody>
-                                                            {{-- <tr>
-                                                                <td colspan="6" class="text-right">Total Bundel</td>
-                                                                <td colspan="2">
-                                                                    {{ $data->total_bundle_quantity ? $data->total_bundle_quantity : '0' }}
-                                                                    bundel
+                                                        <tfoot>
+                                                            <tr style="font-weight:bold">
+                                                                <td colspan="4">Total : </td>
+                                                                <td>
+                                                                    {{ $totalPcs }}
                                                                 </td>
-                                                            </tr> --}}
+                                                                <td>{{ $totalWeight }}</td>
 
-                                                        </tbody>
+                                                            </tr>
+                                                        </tfoot>
                                                     </table>
                                                 </div>
                                             </td>

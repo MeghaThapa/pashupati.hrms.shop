@@ -6,7 +6,9 @@ use App\Models\BagSellingItem;
 use App\Models\BagSellingEntry;
 use App\Models\BagBundelStock;
 use App\Models\BagSalesStock;
+use App\Models\BagBrand;
 use Exception;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,9 +19,14 @@ class BagSellingItemController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //
+        $bagSellingEntry = BagSellingEntry::find($id);
+        $groups = BagBundelStock::with('group')
+            ->select('group_id')
+            ->distinct('group_id')
+            ->get();
+        return view('admin.bag.bagSelling.createSalesItem', compact('bagSellingEntry', 'groups'));
     }
 
     /**
@@ -29,7 +36,6 @@ class BagSellingItemController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -41,17 +47,28 @@ class BagSellingItemController extends Controller
     public function store(Request $request)
     {
         try {
+
             DB::beginTransaction();
+            // return $request;
+
             $request->validate([
                 'bag_selling_entry_id' => 'required',
                 'group_id' => 'required',
                 'brand_bag_id' => 'required',
-                'bundel_no' => 'required',
+                // 'bundel_no' => 'required|unique:bag_selling_items,bundel_no',
                 'pcs' => 'required',
                 'weight' => 'required',
                 'average' => 'required',
             ]);
-            $bagBundelStock = BagBundelStock::where('bundle_no', $request->bundel_no)->first();
+
+            $bagBrandGroupCheck = BagBrand::find($request->brand_bag_id)->group_id;
+            // return response()->json($bagBrandGroupCheck);
+            if ($bagBrandGroupCheck != $request->group_id) {
+                return response()->json([
+                    'message' => "Bag brand you enetered doesn't belong to that group.",
+                ], 404);
+            }
+            $bagBundelStock = BagBundelStock::where('bundle_no', $request->bundel_no)->get()->first();
             if (!$bagBundelStock) {
                 return response()->json([
                     'message' => "you don't have stock available.",
@@ -72,12 +89,17 @@ class BagSellingItemController extends Controller
             $bagSellingItem->average = $request->average;
             $bagSellingItem->status = 'sent';
             $bagSellingItem->save();
+            // dd($bagSellingItem);
 
-            $bagBundelStock->delete();
+            $bagBundelStock->status = 'sold';
+            $bagBundelStock->save();
+            // return 'done';
             DB::commit();
         } catch (Exception $ex) {
             DB::rollback();
+            return response()->json($ex, 500);
         }
+
         return $bagSellingItem->with('group:id,name', 'brandBag:id,name')->first();
     }
     public function saveEntireBagSellingEntry(Request $request)
@@ -88,8 +110,13 @@ class BagSellingItemController extends Controller
             $bagSellingEntry->status = 'completed';
             $bagSellingEntry->save();
             $bagSellingItems = BagSellingItem::where('bag_selling_entry_id', $request->bagSellingEntry_id)->get();
+
+
             foreach ($bagSellingItems as $bagSellingItem) {
                 //change status of bag selling items
+                $bagBundelStock = BagBundelStock::where('bundle_no', $bagSellingItem->bundel_no)->first();
+                $bagBundelStock->delete();
+
                 $bagSellingItem->status = 'completed';
                 $bagSellingItem->save();
 

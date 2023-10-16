@@ -59,8 +59,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } */
     </style>
 @endsection
 @section('content')
@@ -145,7 +145,7 @@
                     <div class="col-md-3">
                         <label for="gross_weight">Group</label>
                         <select class="advance-select-box form-control" id="group" name="group_id" required>
-                            <option value=" " selected disabled>{{ __('Select a group') }}</option>
+                            <option value="" selected disabled>{{ __('Select a group') }}</option>
                             @foreach ($groups as $groupData)
                                 <option value="{{ $groupData->group->id }}">{{ $groupData->group->name }}
                                 </option>
@@ -228,11 +228,12 @@
             refresh();
             async function refresh() {
                 await getBagSellingItemData();
-                //deleteEventBtn();
             }
 
             function getBagSellingItemData() {
+                // console.log('mega');
                 let bagSellingEntry_id = {!! json_encode($bagSellingEntry->id) !!}
+                console.log('hello', bagSellingEntry_id);
                 return new Promise(function(resolve, reject) {
                     $.ajax({
                         url: "{{ route('bagSellingItem.getBagSellingItemData') }}",
@@ -243,7 +244,6 @@
                         },
                         success: function(response) {
                             response.forEach(function($item) {
-                                console.log('asdfghjk', $item);
                                 setIntoTable($item)
                             })
                             resolve();
@@ -264,11 +264,20 @@
 
             $('#group').on('select2:select', function(e) {
                 let group_id = e.params.data.id;
+                emptyAllFields();
                 getBagBrand(group_id);
             });
 
+            function emptyAllFields() {
+                $('#brandBag').empty();
+                $('#bundelNo').empty();
+                $('#pcs').val('');
+                $('#weight').val('');
+                $('#average').val('');
+            }
             $('#brandBag').on('select2:select', function(e) {
                 let brandBrandId = e.params.data.id;
+                $('#bundelNo').empty().prepend('<option value="" selected disable>Select Bag No</option>');
                 let groupId = document.getElementById('group').value;
                 getBundelNo(brandBrandId, groupId);
             });
@@ -279,6 +288,12 @@
 
             });
             document.getElementById('updateBagSellingEntry').addEventListener('click', function(e) {
+
+                if ($('#bagBundellingTable').find('tbody tr').length <= 0) {
+                    alert('There is no data in table at least one entry required');
+                    return false;
+                }
+
                 let bagSellingEntry_id = {!! json_encode($bagSellingEntry->id) !!}
                 // let bagSellingEntry_id = {!! json_encode($bagSellingEntry->id) !!}
                 $.ajax({
@@ -289,7 +304,6 @@
                         bagSellingEntry_id: bagSellingEntry_id,
                     },
                     success: function(response) {
-                        console.log('output table data', response);
                         window.location.href = "{{ route('bagSelling.index') }}";
                         //setIntoTable(response);
 
@@ -312,9 +326,8 @@
                 let pcs = form.elements['pcs'].value;
                 let weight = form.elements['weight'].value;
                 let average = form.elements['average'].value;
-                console.log('bundel_data', bundel_no);
+                // console.log('bundel_data', bundel_no);
                 $.ajax({
-
                     url: "{{ route('bagSellingItem.store') }}",
                     method: 'post',
                     data: {
@@ -328,13 +341,15 @@
                         average: average
                     },
                     success: function(response) {
-                        console.log('output table data', response);
+                        $('#group').val('').trigger('change');
+                        emptyAllFields();
                         setIntoTable(response);
+                        // getBagSellingItemData();
 
                     },
                     error: function(xhr, status, error) {
-                        // setMessage
-                        setErrorMsg(xhr.responseJSON.message);
+                        console.log('error:', xhr.responseJSON)
+                        setErrorMsg(xhr.responseJSON.errorInfo[2]);
                     }
                 });
 
@@ -415,7 +430,8 @@
 
                     },
                     success: function(response) {
-                        // console.log('hyyy', response);
+                        $('#brandBag').prepend(
+                            "<option value='' disabled selected>Select required data</option>");
                         response.forEach(function(item) {
                             setOptionInSelect('brandBag', item.bag_brand.id, item
                                 .bag_brand.name);
