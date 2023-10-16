@@ -862,8 +862,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get("salefinaltripal/getTripalSale/Pdf/{id}", 'Sale\SaleFinalTripalController@downloadPdf')->name("tripalsale.pdf");
     Route::get("salefinaltripal/getTripalSale/excel/{id}", 'Sale\SaleFinalTripalController@downloadExcel')->name("tripalsale.excel");
 
-    Route::get('salefinaltripal/report','Sale\SaleFinalTripalController@report')->name('salefinaltripal.report');
-    Route::post('salefinaltripal/report','Sale\SaleFinalTripalController@reportGenerate')->name('salefinaltripal.report.generate');
+    Route::get('salefinaltripal/report', 'Sale\SaleFinalTripalController@report')->name('salefinaltripal.report');
+    Route::post('salefinaltripal/report', 'Sale\SaleFinalTripalController@reportGenerate')->name('salefinaltripal.report.generate');
 
     //salefinaltripal filter
 
@@ -906,8 +906,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
         Route::get('salefinalnonwoven/delete/list', 'Sale\NonwovenSaleController@deleteEntryList')->name('nonwovenSale.deleteFinalSaleEntry');
 
-        Route::get('report','Sale\NonwovenSaleController@report')->name('nonwovenSale.report');
-        Route::post('report','Sale\NonwovenSaleController@generateReport')->name('nonwovenSale.generateReport');
+        Route::get('report', 'Sale\NonwovenSaleController@report')->name('nonwovenSale.report');
+        Route::post('report', 'Sale\NonwovenSaleController@generateReport')->name('nonwovenSale.generateReport');
     });
 
     Route::prefix('wastageSale')->group(function () {
@@ -1131,7 +1131,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     //nonwoven stock
 
     Route::get('nonwovenfabrics-receiveentry/getstock/index', [NonWovenStockController::class, 'index'])->name('nonwovenfabrics-receiveentrystock.index');
-    Route::post('nonwovenfabrics/getstock/filterStocks',[NonWovenStockController::class,'filterStock'])->name('nonwovenfabrics-receiveentrystock.filterStock');
+    Route::post('nonwovenfabrics/getstock/filterStocks', [NonWovenStockController::class, 'filterStock'])->name('nonwovenfabrics-receiveentrystock.filterStock');
 
     //
     Route::get('opening/nonwovenfabrics', 'Opening\NonWovenController@index')->name('openingnonwoven.index');
@@ -1426,8 +1426,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('tape-entry', [TapeEntryController::class, "index"])->name('tape.entry');
     Route::post('tape-entry/store', [TapeEntryController::class, "tapeentrystore"])->name("tape.entry.store");
     Route::get('tape-entry/receive/create/{id}', [TapeEntryController::class, "create"])->name("tape.entry.receive.create");
-    Route::get('tape-entry/{tapeEntry}/edit',[TapeEntryController::class, "edit"])->name("tape.entry.edit");
-    Route::post('tape-entry/restore',[TapeEntryController::class, "restore"])->name("tape.entry.restore");
+    Route::get('tape-entry/{tapeEntry}/edit', [TapeEntryController::class, "edit"])->name("tape.entry.edit");
+    Route::post('tape-entry/restore', [TapeEntryController::class, "restore"])->name("tape.entry.restore");
     Route::get('tape-entry/receive/view/{id}', [TapeEntryController::class, "view"])->name("tape.entry.receive.view");
     Route::post('tape-entry/receive/delete/{id}', [TapeEntryController::class, "deleteTape"])->name("tape.entry.receive.delete");
 
@@ -1657,7 +1657,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             Route::post("update/{bagSellingEntry_id}", "update")->name('bagSellingEntry.update');
         });
 
-
+    Route::controller(BagSellingItemController::class)
+        ->prefix('bagSellingItem')
+        ->group(function () {
+            Route::get("index/{id}", "index")->name('bagSellingItem.index');
+            Route::get("getBagSellingItemData", "getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
+            // Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
+            Route::post("store", "store")->name('bagSellingItem.store');
+        });
     Route::controller(BagSalesStockController::class)
         ->prefix('bagSalesStock')
         ->group(function () {
@@ -1665,15 +1672,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             Route::get("bagSalesStockYajraDatatables", "bagSalesStockYajraDatatables")->name('bagSalesStock.bagSalesStockYajraDatatables');
         });
 
-
-    Route::controller(BagSellingItemController::class)
-        ->prefix('bagSellingItem')
-        ->group(function () {
-
-            Route::get("getBagSellingItemData", "getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
-            // Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
-            Route::post("store", "store")->name('bagSellingItem.store');
-        });
     Route::post("bagSellingItem/saveEntireBagSellingEntry", [BagSellingItemController::class, "saveEntireBagSellingEntry"])->name('bagSellingItem.saveEntireBagSellingEntry');
     Route::controller(PurchaseOrderController::class)
         ->prefix('bagSellingItem')

@@ -10,14 +10,14 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('Prints and Cuts') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('Bag Selling') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
-                    <li class="breadcrumb-item">{{ __('Prints and cuts') }}</li>
+                    <li class="breadcrumb-item">{{ __('Bag Selling') }}</li>
                     <li class="breadcrumb-item active">{{ __('Create Entry') }}</li>
                 </ol>
             </div>
@@ -43,12 +43,12 @@
                                 <input type="text" name="challan_no" class="form-control" id="challanNo"
                                     @if ($bagSellingEntryData) value="{{ $bagSellingEntryData->challan_no }}" @endif>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label for="receipt_number">Date</label>
-                                <input type="text" name="date" class="form-control"
+                                <input type="date" name="date" class="form-control"
                                     @if ($bagSellingEntryData) value="{{ $bagSellingEntryData->date }}" @endif
                                     id="date">
-                            </div>
+                            </div> --}}
                             <div class="col-md-6">
                                 <label for="receipt_number">Date Np</label>
                                 <input type="text" name="date_np" class="form-control"
@@ -65,7 +65,6 @@
                                             {{ $supplier->name }}
                                         </option>
                                     @endforeach
-
                                 </select>
                             </div>
                             <div class="col-md-6">

@@ -166,6 +166,13 @@ class BagBundelItemController extends Controller
                     },
                 ],
             ]);
+            $bagBrandGroupCheck = BagBrand::find($request->brand_bag_id)->group_id;
+            if ($bagBrandGroupCheck != $request->group_id) {
+                return response()->json([
+                    'message' => "Bag brand you enetered doesn't belong to that group.",
+                ], 404);
+            }
+            
             $bunderNumber = explode('-', $request->bundel_no);
             $bagBundelItem = new BagBundelItem();
             $bagBundelItem->bundel_prefix = $bunderNumber[0];

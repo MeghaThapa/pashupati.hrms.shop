@@ -7,15 +7,24 @@ use App\Models\Supplier;
 use App\Models\BagBundelStock;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use App\Services\NepaliConverter;
 use DB;
 
 class BagSellingEntryController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    protected $neDate;
+
+    public function __construct(NepaliConverter $neDate)
+    {
+        $this->neDate = $neDate;
+    }
     public function index()
     {
         //  $bagSellingEntryData=BagSellingEntry::with('supplier')
@@ -52,12 +61,19 @@ class BagSellingEntryController extends Controller
     public function bagSellingYajraDatatables()
     {
         $bagSellingEntryDatas = BagSellingEntry::with('supplier:id,name')
+            ->orderBy('created_at', 'desc')
             ->get(['id', 'challan_no', 'date', 'nepali_date', 'supplier_id', 'gp_no', 'lorry_no', 'do_no', 'rem', 'status']);
 
         return DataTables::of($bagSellingEntryDatas)
             ->addIndexColumn()
             ->addColumn('statusBtn', function ($bagSellingEntryData) {
+                if($bagSellingEntryData->status == 'completed'){
                 return '<span class="badge badge-pill badge-success">' . $bagSellingEntryData->status . '</span>';
+
+                }else{
+                return '<span class="badge badge-pill badge-primary">' . $bagSellingEntryData->status . '</span>';
+
+                }
             })
             ->addColumn('action', function ($bagSellingEntryData) {
                 $actionBtn = '';
@@ -98,17 +114,18 @@ class BagSellingEntryController extends Controller
     {
         $request->validate([
             'challan_no' => 'required',
-            'date' => 'required',
             'date_np' => 'required',
             'supplier_id' => 'required',
             'gp_no' => 'required',
             'lorry_no' => 'required',
             'do_no' => 'required',
             'rem' => 'required',
+
         ]);
+        // return $request->date_np;
         $bagSellingEntry = new BagSellingEntry();
         $bagSellingEntry->challan_no = $request->challan_no;
-        $bagSellingEntry->date = $request->date;
+        $bagSellingEntry->date = self::getEngDate($request->date_np);
         $bagSellingEntry->nepali_date = $request->date_np;
         $bagSellingEntry->supplier_id  = $request->supplier_id;
         $bagSellingEntry->gp_no = $request->gp_no;
@@ -117,13 +134,40 @@ class BagSellingEntryController extends Controller
         $bagSellingEntry->rem = $request->rem;
         $bagSellingEntry->save();
         $bagSellingEntry->load('supplier:id,name');
-        $groups = BagBundelStock::with('group')
-            ->select('group_id')
-            ->distinct('group_id')
-            ->get();
 
-        return view('admin.bag.bagSelling.createSalesItem', compact('bagSellingEntry', 'groups'));
+        return redirect()->route('bagSellingItem.index', ['id' => $bagSellingEntry->id]);
+
+        // return view('admin.bag.bagSelling.createSalesItem', compact('bagSellingEntry', 'groups'));
     }
+    private function getEngDate($npDate)
+    {
+        $explodedStartDate = explode('-', $npDate);
+        $date = $this->neDate->nep_to_eng($explodedStartDate[0], $explodedStartDate[1], $explodedStartDate[2]);
+
+        if ($date['month'] < 10) {
+            $month = '0' . $date['month'];
+        } else {
+            $month = $date['month'];
+        }
+
+        return $date['year'] . '-' . $month . '-' . $date['date'];
+    }
+
+    // public function convertNepaliDateToEnglishDate($nepaliDate)
+    // {
+    //     // Split the Nepali date into year, month, and day
+    //     list($nepaliYear, $nepaliMonth, $nepaliDay) = explode('-', $nepaliDate);
+
+    //     // Create a NepaliDate instance
+
+    //     // Convert the Nepali date to an English (Gregorian) date
+    //     $englishDate = $nepaliDateInstance->convertBsToAd($nepaliYear, $nepaliMonth, $nepaliDay);
+
+    //     // Format the English date as "YYYY-MM-DD"
+    //     $englishDateStr = sprintf('%04d-%02d-%02d', $englishDate['year'], $englishDate['month'], $englishDate['date']);
+
+    //     return $englishDateStr;
+    // }
 
     public function getBagBrand(Request $request)
     {
@@ -139,6 +183,7 @@ class BagSellingEntryController extends Controller
     {
         $bundleNos = BagBundelStock::where('group_id', $request->group_id)
             ->where('bag_brand_id', $request->brandBrandId)
+            ->where('status', 'stock')
             ->get(['id', 'bundle_no']);
         return $bundleNos;
     }
