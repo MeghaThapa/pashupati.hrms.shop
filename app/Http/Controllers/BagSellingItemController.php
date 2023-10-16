@@ -134,6 +134,8 @@ class BagSellingItemController extends Controller
             DB::rollback();
         }
     }
+
+
     /**
      * Display the specified resource.
      *
@@ -192,8 +194,15 @@ class BagSellingItemController extends Controller
      * @param  \App\Models\bagSellingItem  $bagSellingItem
      * @return \Illuminate\Http\Response
      */
-    public function destroy(bagSellingItem $bagSellingItem)
+    public function delete(Request $request)
     {
-        //
+        if (!$request->id) {
+            return response()->json('Id required', 400);
+        }
+        $bagSellingItem = BagSellingItem::find($request->id);
+        $bagBundelStock = BagBundelStock::where('bundle_no', $bagSellingItem->bundel_no)->get()->first();
+        $bagBundelStock->status = 'stock';
+        $bagBundelStock->save();
+        $bagSellingItem->delete();
     }
 }
