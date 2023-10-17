@@ -8,6 +8,7 @@ use App\Models\BagBundelItem;
 use App\Models\BagBundelEntry;
 use App\Models\GeneralSetting;
 use App\Models\Group;
+use App\Models\BagBrand;
 use Illuminate\Validation\Rule;
 use App\Libraries\Nepali_Calendar;
 use App\Models\PrintingAndCuttingBagStock;
@@ -84,13 +85,13 @@ class BagBundelItemController extends Controller
             }
             $bagBundelItem->delete();
             $bagBundelItems = BagBundelItem::with('group:id,name', 'bagBrand:id,name')
-            ->where('bag_bundel_entry_id', $bagBundelEntry->id)
-            ->orderBy('bundel_suffix','desc')
-            ->get();
+                ->where('bag_bundel_entry_id', $bagBundelEntry->id)
+                ->orderBy('bundel_suffix', 'desc')
+                ->get();
 
             $view = view('admin.bag.bagBundelling.ssr.tableview', compact('bagBundelItems'))->render();
             DB::commit();
-            return response(['status'=>true,'view'=>$view]);
+            return response(['status' => true, 'view' => $view]);
         } catch (Exception $ex) {
             DB::rollback();
         }
@@ -172,7 +173,7 @@ class BagBundelItemController extends Controller
                     'message' => "Bag brand you enetered doesn't belong to that group.",
                 ], 404);
             }
-            
+
             $bunderNumber = explode('-', $request->bundel_no);
             $bagBundelItem = new BagBundelItem();
             $bagBundelItem->bundel_prefix = $bunderNumber[0];
