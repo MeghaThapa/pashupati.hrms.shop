@@ -164,7 +164,7 @@ class RawMaterialReportController extends Controller
     {
         $rawMaterialArray = $this->getRawMaterialArray($godam_id,$request);
 
-        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
+        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray($godam_id);
 
         $autoLoadItemsArray = $this->getAutoLoadItemsArray($request);
 
@@ -181,7 +181,7 @@ class RawMaterialReportController extends Controller
     {
         $rawMaterialArray = $this->getRawMaterialArray($godam_id,$request);
 
-        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
+        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray($godam_id);
 
         $autoLoadItemsArray = $this->getAutoLoadItemsArray($request);
 
@@ -197,7 +197,7 @@ class RawMaterialReportController extends Controller
     {
         $rawMaterialArray = $this->getRawMaterialArray($godam_id,$request);
 
-        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray();
+        $rawMaterialOpeningsArray = $this->getRawMaterialOpeningArray($godam_id);
 
         $autoLoadItemsArray = $this->getAutoLoadItemsArray($request);
 
@@ -361,7 +361,7 @@ class RawMaterialReportController extends Controller
                     $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
                     $rawMaterialDanaDateWiseReport->cc_plant_quantity = $dateData['cc_plant_quantity'] ?? 0;
 
-                    $closing = $rawMaterialDanaDateWiseReport->opening_amount + $rawMaterialDanaDateWiseReport->import + $rawMaterialDanaDateWiseReport->local + $rawMaterialDanaDateWiseReport->from_godam - $rawMaterialDanaDateWiseReport->tape - $rawMaterialDanaDateWiseReport->lam  - $rawMaterialDanaDateWiseReport->cc_plant_quantity - $rawMaterialDanaDateWiseReport->to_godam_quantity;
+                    $closing = $rawMaterialDanaDateWiseReport->opening_amount + $rawMaterialDanaDateWiseReport->import + $rawMaterialDanaDateWiseReport->local + $rawMaterialDanaDateWiseReport->cc_plant_quantity + $rawMaterialDanaDateWiseReport->from_godam - $rawMaterialDanaDateWiseReport->tape - $rawMaterialDanaDateWiseReport->lam - $rawMaterialDanaDateWiseReport->to_godam_quantity;
                     $rawMaterialDanaDateWiseReport->closing = $closing;
 
                     // Save the record
@@ -689,7 +689,7 @@ class RawMaterialReportController extends Controller
         return $resultArray;
     }
 
-    private function getRawMaterialOpeningArray()
+    private function getRawMaterialOpeningArray($godam_id)
     {
         $openingArray = [];
         $resultOpenings = DB::table('rawmaterial_opening_items')
@@ -700,6 +700,7 @@ class RawMaterialReportController extends Controller
                 'rawmaterial_opening_entries.opening_date',
                 DB::raw('SUM(rawmaterial_opening_items.qty_in_kg) as total_quantity')
             )
+            ->where('rawmaterial_opening_entries.to_godam',$godam_id)
             ->groupBy('dana_name', 'rawmaterial_opening_entries.opening_date') // Group by dana_name
             ->orderBy('dana_name', 'asc')
             ->orderBy('rawmaterial_opening_entries.opening_date', 'asc')

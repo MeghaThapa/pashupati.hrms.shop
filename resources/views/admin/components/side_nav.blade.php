@@ -1377,8 +1377,8 @@
 
             <li class="nav-item">
 
-                <a href="{{ route('purchaseOrder.index') }}"
-                    class="nav-link {{ request()->is('purchaseOrder.index*') ? 'active' : '' }}">
+                <a href="{{ route('purchase-order.index') }}"
+                    class="nav-link {{ request()->is('purchase-order/*') ? 'active' : '' }}">
 
                     <i class="nav-icon fas fa-shopping-basket"></i>
 
