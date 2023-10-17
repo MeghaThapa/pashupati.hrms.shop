@@ -15,16 +15,10 @@ return new class extends Migration
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('category_id')->unsigned()->index();
-            $table->foreign('category_id')->references('id')->on('storein_categories');
-            $table->bigInteger('items_of_storein_id')->unsigned()->index();
-            $table->foreign('items_of_storein_id')->references('id')->on('items_of_storeins');
-            $table->string('required_quantity');
-            $table->string('reorder_label');
-            $table->string('current_stock');
-            $table->string('latest_purchase_rate');
-            $table->bigInteger('supplier_id')->unsigned()->index();
-            $table->foreign('supplier_id')->references('id')->on('suppliers');
+            $table->bigInteger('indent_no')->unique();
+            $table->date('date');
+            $table->unsignedBigInteger('prepared_by');
+            $table->enum('status',['Pending','Complete'])->default('Pending');
             $table->timestamps();
         });
     }

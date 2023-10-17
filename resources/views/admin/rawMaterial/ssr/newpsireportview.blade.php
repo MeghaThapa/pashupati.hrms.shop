@@ -4,7 +4,7 @@
         <thead>
             <tr>
                 <th></th>
-                <th colspan="4">Received</th>
+                <th colspan="5">Received</th>
                 <th colspan="4">Issue</th>
                 <th></th>
             </tr>
@@ -15,10 +15,10 @@
                 <th>Opening</th>
                 <th>Import</th>
                 <th>Local</th>
+                <th>CC Plant</th>
                 <th>From Godam</th>
                 <th>Tape</th>
                 <th>Lam</th>
-                <th>CC Plant</th>
                 <th>PSI Godam</th>
                 <th>BSW Godam</th>
                 <th>Closing</th>
@@ -31,10 +31,10 @@
                     <td> {{ $reportRow['opening_amount'] }} </td>
                     <td> {{ $reportRow['import'] }} </td>
                     <td> {{ $reportRow['local'] }} </td>
+                    <td> {{ $reportRow['cc_plant_quantity'] }}</td>
                     <td> {{ $reportRow['from_godam'] }} </td>
                     <td> {{ $reportRow['tape'] }} </td>
                     <td> {{ $reportRow['lam'] }} </td>
-                    <td> {{ $reportRow['cc_plant_quantity'] }}</td>
                     <td> @if($reportRow['to_godam']==1) {{ $reportRow['to_godam_quantity'] }} @else 0 @endif </td>
                     <td> @if($reportRow['to_godam']==3) {{ $reportRow['to_godam_quantity'] }} @else 0 @endif </td>
                     <td> {{ $reportRow['closing'] }} </td>

@@ -10,6 +10,10 @@ class StoreinItem extends Model
     use HasFactory;
     protected $table = 'storein_item';
 
+    public function storeIn(){
+        return $this->belongsTo('App\Models\Storein', 'storein_id', "id");
+    }
+
     public function storeinCategory()
     {
         return $this->belongsTo('App\Models\StoreinCategory', 'storein_category_id', "id");
