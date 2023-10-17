@@ -59,8 +59,8 @@
         }
 
         /* .select2-selection {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            width:150px !important;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        } */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                width:150px !important;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } */
     </style>
 @endsection
 @section('content')
@@ -155,7 +155,7 @@
                     <div class="col-md-2">
                         <label for="gross_weight">Brand Bag</label>
                         <select class="advance-select-box form-control" id="brandBag" name="brand_bag_id" required>
-                            <option value=" " selected disabled>{{ __('Select bag brand') }}</option>
+                            {{-- <option value=" " selected disabled>{{ __('Select bag brand') }}</option> --}}
                             {{-- @foreach ($categories as $key => $category)
                                 <option value="{{ $category->id }}"
                                     {{ old('categoryName') == $category->id ? 'selected' : '' }}>{{ $category->name }}
@@ -268,8 +268,7 @@
             });
 
             function emptyAllFields() {
-                $('#brandBag').empty();
-                $('#bundelNo').empty();
+                // $('#bundelNo').empty();
                 $('#pcs').val('');
                 $('#weight').val('');
                 $('#average').val('');
@@ -340,10 +339,12 @@
                         average: average
                     },
                     success: function(response) {
-                        $('#group').val('').trigger('change');
+                        // $('#group').val('').trigger('change');
                         emptyAllFields();
-                        setIntoTable(response);
-                        // getBagSellingItemData();
+                        // setIntoTable(response);
+                        $("#bagBundellingData").empty();
+                        getBagSellingItemData();
+                        sn = 1;
 
                     },
                     error: function(xhr, status, error) {
