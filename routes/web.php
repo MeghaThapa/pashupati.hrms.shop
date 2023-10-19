@@ -1664,6 +1664,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             Route::get("getBagSellingItemData", "getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
             // Route::get("getBagSellingItemData","getBagSellingItemData")->name('bagSellingItem.getBagSellingItemData');
             Route::post("store", "store")->name('bagSellingItem.store');
+            Route::delete("delete", "delete")->name('bagSellingItem.delete');
         });
     Route::controller(BagSalesStockController::class)
         ->prefix('bagSalesStock')
