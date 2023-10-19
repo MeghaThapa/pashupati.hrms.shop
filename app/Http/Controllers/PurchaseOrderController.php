@@ -189,7 +189,7 @@ class PurchaseOrderController extends Controller
     }
 
     public function getStoreInItems(Request $request){
-        $itemOfStoreIns = ItemsOfStorein::where('department_id',$request->id)->get();
+        $itemOfStoreIns = ItemsOfStorein::with('size')->where('department_id',$request->id)->get();
         return response(['status'=>true,'data'=>$itemOfStoreIns]);
     }
 

@@ -71,8 +71,34 @@ class FabricTransferEntryForBagController extends Controller
     {
         // return BagFabricReceiveItemSent::where('fabric_bag_entry_id',$id)->get();
 
-        $data = BagFabricReceiveItemSent::where('fabric_bag_entry_id', $id)->get();
-        return view("admin.bag.fabricTransferForBag.viewBill", compact("data"));
+        $bagFabricSentItems = BagFabricReceiveItemSent::where('fabric_bag_entry_id', $id)->get();
+        $dataArray = $bagFabricSentItems->groupBy(function ($item) {
+            return $item->fabric->name;
+        })->map(function ($groupedItems) {
+            return $groupedItems->map(function ($item) {
+                return [
+                    'fabric_name' => $item->fabric->name,
+                    'roll_no' => $item->roll_no,
+                    'net_wt' => $item->net_wt,
+                    'meter' => $item->meter,
+                    'gross_wt' => $item->gross_wt,
+                ];
+            })->all();
+        })->all();
+
+        $summaryArray = $bagFabricSentItems->groupBy(function ($item) {
+            return $item->fabric->name;
+        })->map(function ($groupedItems) {
+            return [
+                'fabric_name' => $groupedItems->first()->fabric->name,
+                'roll_no_count' => $groupedItems->count(),
+                'net_wt_sum' => $groupedItems->sum('net_wt'),
+                'meter_sum' => $groupedItems->sum('meter'),
+                'gross_wt_sum' => $groupedItems->sum('gross_wt'),
+            ];
+        })->values()->all();
+
+        return view("admin.bag.fabricTransferForBag.viewBill", compact("dataArray",'summaryArray'));
     }
     /********* For Revewing what was sent --report end*********/
 
@@ -293,21 +319,21 @@ class FabricTransferEntryForBagController extends Controller
         foreach ($nepaliDates as $nepaliDate) {
 
             $fabrics = DB::table('bag_fabric_receive_item_sent')
-                            ->join('bag_fabric_entry', 'bag_fabric_receive_item_sent.fabric_bag_entry_id', '=', 'bag_fabric_entry.id')
-                            ->join('fabrics', 'bag_fabric_receive_item_sent.fabric_id', '=', 'fabrics.id')
-                            ->join('godam', 'fabrics.godam_id', '=', 'godam.id')
-                            ->select(
-                                'bag_fabric_receive_item_sent.*',
-                                'fabrics.name as fabric_name',
-                                'bag_fabric_entry.receipt_date_np',
-                                'godam.name as godam_name',
-                                'fabrics.godam_id',
-                            )
-                            ->where('bag_fabric_entry.receipt_date_np', $nepaliDate);
+                ->join('bag_fabric_entry', 'bag_fabric_receive_item_sent.fabric_bag_entry_id', '=', 'bag_fabric_entry.id')
+                ->join('fabrics', 'bag_fabric_receive_item_sent.fabric_id', '=', 'fabrics.id')
+                ->join('godam', 'fabrics.godam_id', '=', 'godam.id')
+                ->select(
+                    'bag_fabric_receive_item_sent.*',
+                    'fabrics.name as fabric_name',
+                    'bag_fabric_entry.receipt_date_np',
+                    'godam.name as godam_name',
+                    'fabrics.godam_id',
+                )
+                ->where('bag_fabric_entry.receipt_date_np', $nepaliDate);
 
-                    if($request->godam_id){
-                        $fabrics = $fabrics->where('fabrics.godam_id',$request->godam_id);
-                    }
+            if ($request->godam_id) {
+                $fabrics = $fabrics->where('fabrics.godam_id', $request->godam_id);
+            }
 
             $fabrics = $fabrics->get();
             if (!$fabrics->isEmpty()) {
@@ -337,8 +363,8 @@ class FabricTransferEntryForBagController extends Controller
             $summaryFabrics = $summaryFabrics->where('bag_fabric_entry.receipt_date_np', '>=', $request->start_date)->where('bag_fabric_entry.receipt_date_np', '<=', $request->end_date);
         }
 
-        if($request->godam_id){
-            $summaryFabrics = $summaryFabrics->where('fabrics.godam_id',$request->godam_id);
+        if ($request->godam_id) {
+            $summaryFabrics = $summaryFabrics->where('fabrics.godam_id', $request->godam_id);
         }
 
         $summaryFabrics = $summaryFabrics->get();

@@ -319,7 +319,7 @@
                             $('#itemName').empty();
                             $("#itemName").append('<option value="" selected="selected">Select Item</option>');
                             $.each(data.data, function (key, value) {
-                                $("#itemName").append('<option value="' + value.id + '">' + value.name + '</option>');
+                                $("#itemName").append('<option value="' + value.id + '">' + value.name+ ' - '+ value.size.name + '</option>');
                             });
                             $('.select2').select2();
                     },
