@@ -42,6 +42,7 @@
                             <th>{{ __('Item Name') }}</th>
                             <th>{{ __('Parts No.') }}</th>
                             <th>{{ __('Item Category') }}</th>
+                            <th>{{ __('Size') }}</th>
                             <th>{{ __('Qty in Stock') }}</th>
                             <th>{{ __('Req. Qty') }}</th>
                             <th>{{ __('Last Purchase From') }}</th>
@@ -59,6 +60,7 @@
                             <td>{{ $purchaseOrderItem->item_name }}</td>
                             <td>{{ $purchaseOrderItem->itemsOfStoreins->pnumber }}</td>
                             <td>{{ $purchaseOrderItem->itemsOfStoreins->storeinCategory->name }}</td>
+                            <td>{{ $purchaseOrderItem->itemsOfStoreins->size->name }}</td>
                             <td>{{ $purchaseOrderItem->stock_quantity }}</td>
                             <td>{{ $purchaseOrderItem->req_quantity }}</td>
                             <td>{{ $purchaseOrderItem->last_purchase_from }}</td>
