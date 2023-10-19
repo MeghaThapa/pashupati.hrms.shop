@@ -75,11 +75,15 @@
                                 <label for="">Purchase Rate</label>
                                 <span id="purchaseRate" class="form-control">-</span>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <label for="">Quantity In Stock</label>
                                 <span id="quantityInStock" class="form-control">-</span>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
+                                <label for="">Size</label>
+                                <span id="size" class="form-control">-</span>
+                            </div>
+                            <div class="col-sm-2">
                                 <label for="">Req Qty</label>
                                 <input class="form-control" type="text" name="req_quantity" />
                             </div>
@@ -95,7 +99,7 @@
                 </div>
             </div>
 
-            <div class="p-3 card card-body">
+            <div class="p-3 card card-body table-responsive">
                 <table class="table table-bordered" id="primaryTable">
                     <thead>
                         <tr>
@@ -104,6 +108,7 @@
                             <th>{{ __('Department Name') }}</th>
                             <th>{{ __('Parts No') }}</th>
                             <th>{{ __('Category') }}</th>
+                            <th>{{ __('Size') }}</th>
                             <th>{{ __('Stock Quantity') }}</th>
                             <th>{{ __('Req Quantity') }}</th>
                             <th>{{ __('Last Purchase From') }}</th>
@@ -141,8 +146,16 @@
 
             $('.select2').select2();
 
+            function clearAutoData(){
+                $('#pNumber').html('-');
+                $('#lastPurchaseFrom').html('-');
+                $('#purchaseRate').html('-');
+                $('#quantityInStock').html('-');
+                $('#size').html('-');
+            }
+
             let table = $("#primaryTable").DataTable({
-                serverside: true,
+                serverSide: false,
                 processing: true,
                 ajax: {
                     url: "{{ route('purchase-order.item.index',$purchaseOrder->id) }}",
@@ -171,6 +184,10 @@
                     {
                         name: "category",
                         data: "category"
+                    },
+                    {
+                        name: "size",
+                        data: "size"
                     },
                     {
                         name: "stock_quantity",
@@ -298,6 +315,7 @@
                         console.log('ajax fired');
                     },
                     success: function (data) {
+                            clearAutoData();
                             $('#itemName').empty();
                             $("#itemName").append('<option value="" selected="selected">Select Item</option>');
                             $.each(data.data, function (key, value) {
@@ -328,6 +346,7 @@
                         console.log('ajax fired');
                     },
                     success: function (data) {
+                            clearAutoData();
                             $('#itemName').empty();
                             $("#itemName").append('<option value="" selected="selected">Select Item</option>');
                             $('#StoreInDepartment').empty();
@@ -364,6 +383,12 @@
                                 $('#pNumber').html(data.data.pnumber)
                             }else{
                                 $('#pNumber').html('-')
+                            }
+
+                            if(data.data.size.name){
+                                $('#size').html(data.data.size.name)
+                            }else{
+                                $('#size').html('-')
                             }
 
                             if(data.stock){

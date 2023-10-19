@@ -72,8 +72,14 @@ class PurchaseOrderController extends Controller
                 ->editColumn('storein_department_id',function($row){
                     return $row->storeinDepartment->name;
                 })
+                ->editColumn('purchase_rate',function($row){
+                    return $row->purchase_rate?$row->purchase_rate:'-';
+                })
                 ->addColumn('parts_number',function($row){
                     return $row->itemsOfStoreins->pnumber;
+                })
+                ->addColumn('size',function($row){
+                    return $row->itemsOfStoreins->size->name;
                 })
                 ->addColumn('category',function($row){
                     return $row->itemsOfStoreins->storeinCategory->name;
@@ -121,6 +127,7 @@ class PurchaseOrderController extends Controller
     {
         $purchaseOrder->load('preparedBy');
         $purchaseOrder->load('purchaseOrderItems.itemsOfStoreins.storeinCategory');
+        $purchaseOrder->load('purchaseOrderItems.itemsOfStoreins.size');
         $purchaseOrder->load('purchaseOrderItems.storeinDepartment');
         return view('admin.purchase_order.show',compact('purchaseOrder'));
     }
@@ -159,7 +166,7 @@ class PurchaseOrderController extends Controller
             'stock_quantity' => $stock? $stock->quantity:0,
             'req_quantity' => $request->req_quantity,
             'last_purchase_from' => $latestPurchaseStoreInItem?$latestPurchaseStoreInItem->storeIn->supplier->name:'-',
-            'purchase_rate' => $latestPurchaseStoreInItem?$latestPurchaseStoreInItem->price:'-',
+            'purchase_rate' => $latestPurchaseStoreInItem?$latestPurchaseStoreInItem->price:null,
             'remarks' => $request->remarks,
             'status' =>'Pending',
         ]);
@@ -187,7 +194,7 @@ class PurchaseOrderController extends Controller
     }
 
     public function getItemDetails(Request $request){
-        $itemOfStoreIn = ItemsOfStorein::where('id',$request->id)->firstOrFail();
+        $itemOfStoreIn = ItemsOfStorein::with('size')->where('id',$request->id)->firstOrFail();
         $stock = Stock::where('category_id',$itemOfStoreIn->category_id)->where('department_id',$itemOfStoreIn->department_id)->where('item_id',$itemOfStoreIn->id)->first();
         $latestPurchaseStoreInItem = StoreinItem::with('storeIn.supplier')->where('storein_item_id',$itemOfStoreIn->id)->latest()->first();
         return response(['status'=>true,'data'=>$itemOfStoreIn,'lastPurchaseItem'=>$latestPurchaseStoreInItem,'stock'=>$stock]);
