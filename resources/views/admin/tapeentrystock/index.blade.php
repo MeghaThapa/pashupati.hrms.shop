@@ -41,31 +41,130 @@
                 <table class="table" id="rawMaterialStockTable">
                     <thead>
                         <tr>
-                            <th>{{ __('S.No') }}</th>
-                            <th>{{ __('Godam') }}</th>
+                            {{-- <th>{{ __('S.No') }}</th> --}}
+                              {{-- <th>{{ __('Godam') }}</th>
                             <th>{{ __('Tape Quantity') }}</th>
-                            <th>{{ __('Total') }}</th>
+                            <th>{{ __('Total') }}</th> --}}
+                            <th>{{ __('Tape Stock')}}</th>
+                            <th>{{__('Opening')}}</th>
+                            <th>{{__('Production')}}</th>
+                            <th>{{__('RollDown')}}</th>
+                            <th>{{__('Loom Wast')}}</th>
+                            <th>{{__('Sales')}}</th>
+                            <th>{{__('Closing')}}</th>
+                          
                         </tr>
                     </thead>
 
-                    <tbody>
-                        @if ($tapeststocks)
-                            @foreach ($tapeststocks as $i => $stock)
+                    {{-- <tbody>
+                        @if ($tableDatas)
+                        @php
+
+                        $totalOpening =0;
+                        $total_production_total =0;
+                        $total_rolldown_total =0;
+                        $totalof_wastage_sum  =0;
+                        $total_closing_sum =0;
+                        @endphp
+                            @foreach ($tableDatas  as $tableData)
+                            @php
+                                $closing =0 ;
+                                $closing =$tableData->opening +$tableData->production_total- $tableData->rolldown_total - $tableData->total_wastage_sum;
+                                $total_closing_sum += $closing;
+                           @endphp
                                 <tr>
-                                    <td>{{ ++$i }}</td>
-                                    <td>{{ $stock->getGodam->name }}</td>
-                                    <td>{{ $stock->tape_qty_in_kg }}</td>
-                                    <td>{{ $stock->total_in_kg }}</td>
+                                    <td>{{ $tableData->name }}</td>
+                                    <td>{{ $tableData->opening }}</td>
+                                    <td>{{ $tableData->production_total }}</td>
+                                    <td>{{ $tableData->rolldown_total }}</td>
+                                    <td>{{ $tableData->total_wastage_sum }}</td>
+                                    <td>00</td>
+                                    <td>{{$closing}}</td>
                                 </tr>
+                                @php
+
+                                $total_closing_sum = $closing;
+                                $totalOpening += $tableData->opening;
+                                $total_production_total += $tableData->production_total;
+                                $total_rolldown_total += $tableData->rolldown_total;
+                                $totalof_wastage_sum += $tableData->total_wastage_sum;
+                               
+
+                            @endphp
+                          
                             @endforeach
+                           
+
                         @endif
                     </tbody>
-
+                    <tfoot>
+                        <tr>
+                            <td>Total</td>
+                            <td> {{$totalOpening}} </td>
+                            <td>{{$total_production_total}}</td>
+                            <td> {{$total_rolldown_total}}</td>
+                            <td>{{ $totalof_wastage_sum}}</td>
+                            <td>00</td>
+                            <td>{{$total_closing_sum}}</td>
+                        </tr>
+                    </tfoot> --}}
+                    <tbody>
+                        @if ($tableDatas)
+                            @php
+                            $totalOpening = 0;
+                            $total_production_total = 0;
+                            $total_rolldown_total = 0;
+                            $totalof_wastage_sum = 0;
+                            $total_closing_sum = 0;
+                            @endphp
+                            @foreach ($tableDatas as $tableData)
+                                @php
+                                $closing = $tableData->opening + $tableData->production_total - $tableData->rolldown_total - $tableData->total_wastage_sum;
+                    
+                                // Rest of your code remains the same
+                    
+                                @endphp
+                                <tr>
+                                    <td>{{ $tableData->name }}</td>
+                                    <td>{{ $tableData->opening }}</td>
+                                    <td>{{ $tableData->production_total }}</td>
+                                    <td>{{ $tableData->rolldown_total }}</td>
+                                    <td>{{ $tableData->total_wastage_sum }}</td>
+                                    <td>00</td>
+                                    <td>{{$closing}}</td>
+                                </tr>
+                                @php
+                                $totalOpening += $tableData->opening;
+                                $total_production_total += $tableData->production_total;
+                                $total_rolldown_total += $tableData->rolldown_total;
+                                $totalof_wastage_sum += $tableData->total_wastage_sum;
+                                @endphp
+                                 @php
+                                 // Update the total_closing_sum outside of the loop to calculate the sum of closing values
+                                 $total_closing_sum = $total_closing_sum + $closing;
+                                 @endphp
+                            @endforeach
+                    
+                           
+                        @endif
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Total</td>
+                            <td> {{$totalOpening}} </td>
+                            <td>{{$total_production_total}}</td>
+                            <td> {{$total_rolldown_total}}</td>
+                            <td>{{ $totalof_wastage_sum}}</td>
+                            <td>00</td>
+                            <td>{{$total_closing_sum}}</td>
+                        </tr>
+                    </tfoot>
+                    
                 </table>
             </div>
-            @if ($tapeststocks)
+            {{-- @if ($tapeststocks)
                 {{ $tapeststocks->links() }}
-            @endif 
+            @endif  --}}
         </div>
     </div>
 @endsection
