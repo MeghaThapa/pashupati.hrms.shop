@@ -18,10 +18,24 @@ class TapeEntryStockController extends Controller
 {
     public function index()
     {
+    $tableDatas = DB::table('tape_entry_openings')
+    ->select(
+        'tape_entry_openings.qty as opening',
+        'godam.id',
+        'godam.name',
+        DB::raw('(SELECT SUM(total_weightinkg) FROM fabric_details WHERE fabric_details.godam_id = tape_entry_openings.godam_id) AS rolldown_total'),
+        DB::raw('(SELECT SUM(total_wastage) FROM fabric_details WHERE fabric_details.godam_id = tape_entry_openings.godam_id) AS total_wastage_sum'),
+        DB::raw('(SELECT SUM(total_in_kg) FROM tape_entry_items WHERE tape_entry_items.toGodam_id = tape_entry_openings.godam_id) AS production_total')
+    )
+    ->join('godam', 'godam.id', '=', 'tape_entry_openings.godam_id')
+    ->groupBy('tape_entry_openings.qty', 'godam.id', 'godam.name','tape_entry_openings.godam_id')
+    ->get();
+
+    // return $tableDatas;
        $helper= new AppHelper();
        $settings= $helper->getGeneralSettigns();
 
-       $tapeststocks = TapeEntryStockModel::paginate(35);
+    //    $tapeststocks = TapeEntryStockModel::paginate(35);
 
         $godams=Godam::where('status','active')->get(['id','name']);
         $planttypes=ProcessingStep::where('status','1')->get(['id','name']);
@@ -30,7 +44,7 @@ class TapeEntryStockController extends Controller
         // dd($tapeststocks);
 
         return view('admin.tapeentrystock.index',
-        compact('settings','tapeststocks','godams','planttypes','plantnames'));
+        compact('settings','tableDatas','godams','planttypes','plantnames'));
     }
 
     public function filterStock(Request $request){
