@@ -27,8 +27,9 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
     {
         try{
         DB::beginTransaction();
+       
         foreach ($rows as $row) {
-           // dd($row);
+           
             $trimDepartment = trim($row['department']);
             $trimCategory = trim($row['category']);
             $trimItem = trim($row['item_name']);
@@ -135,7 +136,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     Stock::where('id',$exists->id)->update([
                         "total_amount" => $total_amount,
                         "quantity"=>$total_quantity,
-                        "avg_price" => $total_amount/$total_quantity
+                        "avg_price" => ($total_quantity == 0) ? $total_amount : ($total_amount / $total_quantity)
                     ]);
 
                 }else{
@@ -166,7 +167,7 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
                     $total_quantity =$openingStockReport->quantity + $trimQuantity;
                     $openingStockReport->quantity =$total_quantity;
                     $openingStockReport->total =$total_amount ;
-                    $openingStockReport->rate= $total_amount /$total_quantity;
+                    $openingStockReport->rate= ($total_quantity == 0) ? $total_amount : ($total_amount / $total_quantity);
                     $openingStockReport->save();
                 }else{
                     $stockReport= new OpeningStoreinReport();
