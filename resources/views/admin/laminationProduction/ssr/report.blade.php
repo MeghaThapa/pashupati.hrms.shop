@@ -83,7 +83,7 @@
                 $subTotalbswProdMeter= 0;
                 $subTotalbswWaste = 0;
                 $subTotalbswPerc = 0;
-            
+
                 @endphp
 
                 <td>{{ ++$i }}</td>
@@ -94,7 +94,7 @@
                     $subTotalsundarUnlam += $item['sundar_total_unlam'];
                     $totalsundarUnlam += $item['sundar_total_unlam'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['sundar_total_lam']))
@@ -103,7 +103,7 @@
                     $subTotalsundarLam += $item['sundar_total_lam'];
                     $totalsundarLam += $item['sundar_total_lam'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['sundar_total_meter']))
@@ -112,7 +112,7 @@
                     $subTotalsundarProdMeter += $item['sundar_total_meter'];
                     $totalsundarProdMeter += $item['sundar_total_meter'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['sundar_total_waste']))
@@ -121,17 +121,18 @@
                     $subTotalsundarWaste += $item['sundar_total_waste'];
                     $totalsundarWaste += $item['sundar_total_waste'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>
                     @if( isset($item['sundar_waste_perc']))
                     {{ $item['sundar_waste_perc'] }}
                     @php
-                    $subTotalSundarPerc  += $item['sundar_waste_perc'];
-                    $totalSundarPerc += $item['sundar_waste_perc'];
+                    $percentage = $item['sundar_total_lam'] > 0 ? $item['sundar_total_waste'] / $item['sundar_total_lam'] * 100 : 0;
+                    $subTotalSundarPerc  += $percentage;
+                    $totalSundarPerc += $percentage;
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 {{-- JP Lamination Plant --}}
@@ -141,7 +142,7 @@
                     $subTotaljpUnlam += $item['jp_total_unlam'];
                     $totaljpUnlam += $item['jp_total_unlam'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['jp_total_lam']))
@@ -150,7 +151,7 @@
                     $subTotaljpLam += $item['jp_total_lam'];
                     $totaljpLam += $item['jp_total_lam'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['jp_total_meter']))
@@ -159,7 +160,7 @@
                     $subTotaljpProdMeter += $item['jp_total_meter'];
                     $totaljpProdMeter += $item['jp_total_meter'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['jp_total_waste']))
@@ -168,20 +169,21 @@
                     $subTotaljpWaste += $item['jp_total_waste'];
                     $totaljpWaste += $item['jp_total_waste'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>
                     @if( isset($item['jp_waste_perc']))
                     {{ $item['jp_waste_perc'] }}
                     @php
-                    $subTotaljpPerc += $item['jp_waste_perc'];
-                    $totaljpPerc += $item['jp_waste_perc'];
+                    $percentage = $item['jp_total_lam'] > 0 ? $item['jp_total_waste'] / $item['jp_total_lam'] * 100 : 0;
+                    $subTotaljpPerc += $percentage;
+                    $totaljpPerc += $percentage;
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
-{{--                 
+{{--
                 <td>
                     @if($subTotalGodamTwoRunDown>0)
                     @php $subTotalGodamTwoPercentage = $subTotalGodamTwoWastage/ $subTotalGodamTwoRunDown * 100; @endphp
@@ -197,7 +199,7 @@
                     $subTotalbswUnlam += $item['bsw_total_unlam'];
                     $totalbswUnlam += $item['bsw_total_unlam'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['bsw_total_lam']))
@@ -206,7 +208,7 @@
                     $subTotalbswLam += $item['bsw_total_lam'];
                     $totalbswLam += $item['bsw_total_lam'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['bsw_total_meter']))
@@ -215,7 +217,7 @@
                     $subTotalbswProdMeter += $item['bsw_total_meter'];
                     $totalbswProdMeter += $item['bsw_total_meter'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>@if( isset($item['bsw_total_waste']))
@@ -224,17 +226,19 @@
                     $subTotalbswWaste += $item['bsw_total_waste'];
                     $totalbswWaste += $item['bsw_total_waste'];
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 <td>
                     @if( isset($item['bsw_waste_perc']))
                     {{ $item['bsw_waste_perc'] }}
+
                     @php
-                    $subTotalbswPerc += $item['bsw_waste_perc'];
-                    $totalbswPerc += $item['bsw_waste_perc'];
+                    $percentage = $item['bsw_total_lam'] > 0 ? $item['bsw_total_waste'] / $item['bsw_total_lam'] * 100 : 0;
+                    $subTotalbswPerc += $percentage;
+                    $totalbswPerc += $percentage;
                     @endphp
-                    @else 0 
+                    @else 0
                     @endif
                 </td>
                 {{-- <td>
@@ -289,13 +293,13 @@
                 <td>{{ $totalsundarLam }}</td>
                 <td>{{ $totalsundarProdMeter }}</td>
                 <td>{{ $totalsundarWaste }}</td>
-                <td>{{ $totalSundarPerc }}</td>              
+                <td>{{ $totalSundarPerc }}</td>
 
                 <td>{{ $totaljpUnlam }}</td>
                 <td>{{ $totaljpLam }}</td>
                 <td>{{ $totaljpProdMeter }}</td>
                 <td>{{ $totaljpWaste }}</td>
-                <td>{{ $totaljpPerc }}</td>             
+                <td>{{ $totaljpPerc }}</td>
 
                 <td>{{ $totalbswUnlam }}</td>
                 <td>{{ $totalbswLam }}</td>
