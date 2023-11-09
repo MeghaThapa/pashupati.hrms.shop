@@ -43,6 +43,20 @@
                         </div>
                     </div>
                     <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="end_date">End Date:</label>
+                            <select class="advance-select-box form-control @error('type') is-invalid @enderror"
+                            id="godamID" name="godam_id" required focus>
+                            <option value="" selected disabled>{{ __('Select a godam') }}
+                            </option>
+                            @foreach ($godams as $godam)
+                                <option
+                                    value="{{ $godam->id }}">{{ $godam->name }}</option>
+                            @endforeach
+                        </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
                         <div class="form-group mt-4">
                             <button id="generateReport" class="btn btn-primary">Generate</button>
                         </div>
@@ -64,7 +78,7 @@
                     url: "{{ route('lamination.production.report') }}",
                     method: "GET",
                     data: {
-                        // "godam_id": $('#godamID').val(),
+                        "godam_id": $('#godamID').val(),
                         "start_date":$('#start_date').val(),
                         "end_date":$('#end_date').val(),
                     },

@@ -20,10 +20,10 @@ class FabricSendAndReceiveLaminatedSent extends Model
         return $this->belongsTo(Fabric::class,'fabid');
     }
 
-
     public function fsrentry(){
-        return $this->belongsTo(FabricSendAndReceiveEntry::class);
+        return $this->belongsTo(FabricSendAndReceiveEntry::class,"fsr_entry_id","id");
     }
+
     public function fabrigroup(){
         return $this->belongsTo(FabricGroup::class);
     }
