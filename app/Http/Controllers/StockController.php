@@ -10,6 +10,8 @@ use App\Models\Storein;
 use App\Models\StoreinItem;
 use App\Models\StoreinDepartment;
 use App\Models\StoreinCategory;
+use App\Models\FabricSendAndReceiveEntry;
+use App\Models\WasteStock;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,15 +25,81 @@ class StockController extends Controller
      */
     public function index()
     {
-
-
-
-
-
-        // return $data;
         $departments=StoreinDepartment::where('status','active')->get();
         $categories =StoreinCategory::where('status','active')->get();
         return view('admin.Stock.itemStock', compact('departments','categories'));
+    }
+    private function insertData()
+    {
+                DB::statement('
+            CREATE TEMPORARY TABLE temp_wastages AS
+            SELECT godam_id, waste_id, SUM(quantity_in_kg) AS total_quantity_in_kg
+            FROM wastages_stock
+            GROUP BY godam_id, waste_id
+        ');
+
+        // Delete all rows from the original table
+        WasteStock::query()->delete();
+
+        // Insert the consolidated rows back into the original table
+        DB::statement('
+            INSERT INTO wastages_stock (godam_id, waste_id, quantity_in_kg)
+            SELECT godam_id, waste_id, total_quantity_in_kg
+            FROM temp_wastages
+        ');
+
+        // Drop the temporary table
+        DB::statement('DROP TEMPORARY TABLE temp_wastages');
+        // // Retrieve the data from FabricSendAndReceiveEntry where either polo_waste or fabric_waste is not null
+        // $entries = FabricSendAndReceiveEntry::where(function ($query) {
+        //     $query->whereNotNull('polo_waste')->orWhereNotNull('fabric_waste');
+        // })->get();
+
+        // // Iterate over the data and insert or update the WastagesStock table
+        // foreach ($entries as $entry) {
+        //     if (!is_null($entry->polo_waste)) {
+        //         $this->updateOrCreateWastagesStock($entry->godam_id, 33, $entry->polo_waste);
+        //     }
+
+        //     if (!is_null($entry->fabric_waste)) {
+        //         $this->updateOrCreateWastagesStock($entry->godam_id, 24, $entry->fabric_waste);
+        //     }
+        // }
+
+        // return "Data inserted or updated successfully.";
+    }
+
+    private function updateOrCreateWastagesStock($godamId, $wasteId, $quantity)
+    {
+        WasteStock::insert([
+            'godam_id' => $godamId,
+            'waste_id' => $wasteId,
+            'quantity_in_kg' => $quantity,
+        ]);
+    }
+
+    private function updateWasteEntries()
+    {
+        // Retrieve the data from both tables
+        $lamWasteData = DB::table('lam_waste_recover')->get();
+        $fabricData = DB::table('fabric_send_and_receive_entry')->get();
+
+        // Iterate over the records and update when dates match
+        foreach ($lamWasteData as $lamRow) {
+            foreach ($fabricData as $fabricRow) {
+                if ($lamRow->date == $fabricRow->bill_date_np) {
+                    DB::table('fabric_send_and_receive_entry')
+                        ->where('id', $fabricRow->id) // Replace with the actual primary key of your table
+                        ->update([
+                            'polo_waste' => $lamRow->polo_waste,
+                            'fabric_waste' => $lamRow->fabric_waste,
+                            'total_waste' => $lamRow->total_waste,
+                        ]);
+                }
+            }
+        }
+
+        return "Waste entries updated successfully.";
     }
     public function filterStockAccCategory($category_id)
     {

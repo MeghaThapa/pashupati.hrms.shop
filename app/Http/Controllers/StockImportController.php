@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Imports\StockImport;
+use App\Imports\LamWstRecoverImport;
 use App\Imports\OpeningRawmaterialImport;
 use App\Imports\OpeningWastageImport;
 
@@ -17,6 +18,19 @@ class StockImportController extends Controller
         ]);
         $file = $request->file('file');
         $import = Excel::import(new StockImport, $file );
+        if($import){
+            return back()->with(["message"=>"Data imported successfully!"]);
+        }else{
+            return "Unsuccessful";
+        }
+    }
+
+    public function lamwasteImport(Request $request){
+        $request->validate([
+            "file" => "required|mimes:csv,xlsx,xls,xltx,xltm",
+        ]);
+        $file = $request->file('file');
+        $import = Excel::import(new LamWstRecoverImport, $file );
         if($import){
             return back()->with(["message"=>"Data imported successfully!"]);
         }else{

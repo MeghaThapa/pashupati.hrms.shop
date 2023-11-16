@@ -12,6 +12,10 @@
         <button class="btn btn-primary" data-toggle="modal" data-target="#importstock">
             Import Stock
         </button>
+
+        {{-- <button class="btn btn-primary" data-toggle="modal" data-target="#importLam">
+            Lam wastage 
+        </button> --}}
     </a>
 
     <a href="{{ route('closingStoreinReport.closing') }}">
@@ -121,7 +125,31 @@
             </div>
         </div>
     </div>
-
+  
+    
+    <div class="modal fade" id="importLam" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Import Lam Stock Here</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('lamwaste.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input class="form-control form-input" name="file" id="file" type="file" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenteredPopUpMesage" data-bs-backdrop="static" data-bs-keyboard="false"

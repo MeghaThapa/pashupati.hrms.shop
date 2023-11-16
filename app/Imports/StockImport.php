@@ -27,7 +27,6 @@ class StockImport implements ToCollection,WithHeadingRow,WithCalculatedFormulas
     {
         try{
         DB::beginTransaction();
-       
         foreach ($rows as $row) {
            
             $trimDepartment = trim($row['department']);

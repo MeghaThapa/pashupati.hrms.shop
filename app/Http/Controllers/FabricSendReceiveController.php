@@ -116,7 +116,6 @@ class FabricSendReceiveController extends Controller
             if (!isset($unLams[$name])) {
                 $unLams[$name] = [];
             }
-
             $unLams[$name][] = [
                 'name' => $fabric->name,
                 'roll_no' => $fabric->roll_no,
@@ -1253,7 +1252,7 @@ class FabricSendReceiveController extends Controller
 
     public function finalsubmitfsrrevised(Request $request)
     { //latest
-
+       
         if ($request->ajax()) {
 
             $consumption = $request->consumption;
@@ -1284,77 +1283,9 @@ class FabricSendReceiveController extends Controller
 
             // return $lam = FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric.getfabric.getfabric')->get(); //for nested relation
 
-
-
             try {
 
                 DB::beginTransaction();
-
-                // $tempconsumptionfsr = FabricSendAndReceiveDanaConsumption::where("fsr_entry_id", $fsr_entry_id)->get();
-
-                // foreach ($tempconsumptionfsr as $data) {
-
-                //     // $stock = AutoLoadItemStock::where('dana_name_id',$data->dana_name_id)
-
-                //     //         ->where("from_godam_id",$godam)
-
-                //     //         ->first();
-
-
-
-                //     $stock = AutoLoadItemStock::where('id', $data->autoloader_id)
-
-                //         ->first();
-
-
-
-                //     $autoloaderDanaData['dana_name_id'] = $stock->dana_name_id;
-
-                //     $autoloaderDanaData["id"] = $stock->id;
-
-                //     $autoloaderDanaData['dana_group_id'] = $stock->dana_group_id;
-
-                //     $autoloaderDanaData['consumption_quantity'] = $data->consumption_quantity;
-
-                //     $autoloaderDanaData['total_consumption'] = $consumption;
-
-
-
-                //     $presentQuantity = $stock->quantity;
-
-
-
-                //     $deduction = $presentQuantity - $autoloaderDanaData['consumption_quantity'];
-
-
-
-                //     if ($deduction == 0) {
-
-                //         $stock->delete();
-                //     } elseif ($deduction < 0) {
-
-                //         DB::rollBack();
-
-                //         return response([
-
-                //             "message" => "amount exceeded for dana consumption",
-
-                //             "status" => "403"
-
-                //         ]);
-                //     } else {
-
-                //         $stock->update([
-
-                //             "quantity" => $deduction
-
-                //         ]);
-                //     }
-                // }
-
-
-
-                //fabric stock creation
 
                 $lam = FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
 
@@ -1446,51 +1377,25 @@ class FabricSendReceiveController extends Controller
 
 
                     $letlaminatedsentfsr = FabricSendAndReceiveLaminatedSent::create([
-
-
-
-                        // "fsr_entry_id", "fabric_name" , "slug" , "net_wt" , "average_wt" ,"gross_wt", "gram_wt" , "meter" ,"fabricgroup_id" , 'standard_wt' ,"loom_no" , "roll_no"
-
-
-
                         'fabricgroup_id'  => $data->fbgrp_id,
-
                         'roll_no' => $data->roll_no,
-
                         "loom_no" => $data->loom_no,
-
                         'gross_wt' => $data->gross_wt,
-
                         'net_wt' => $data->net_wt,
-
                         'meter' => $data->meter,
-
                         'average_wt' => $data->average_wt,
-
                         'gram' => $data->gram_wt,
-
                         'plantname_id' => $data->plantname_id,
-
                         'department_id' => $data->department_id,
-
                         'planttype_id' => $data->planttype_id,
-
                         'bill_number' => $data->bill_number,
-
                         'bill_date' => $data->bill_date,
-
                         "fsr_entry_id" => $fsr_entry_id,
-
                         'fabric_name' => $data->temporarylamfabric->fabric_name,
-
                         "slug" => $data->temporarylamfabric->slug,
-
                         "gram_wt"  => $data->gram_wt,
-
                         'standard_wt' => $data->standard_wt,
-
                         "fabid" => $data->temporarylamfabric->getfabric->fabric_id
-
                     ]);
 
 
@@ -1498,58 +1403,61 @@ class FabricSendReceiveController extends Controller
                     FabricStock::where("fabric_id", $fabric_id_on_stock)->delete();
                 }
 
-
-
-                // foreach ($tempconsumptionfsr as $data) {
-
-                //     $fsrconsumption = FabricSendAndReceiveDanaConsumptionList::where("dana_name", $data->dana_name_id)
-
-                //         ->where("dana_group", $data->dana_group_id)
-
-                //         ->where("consumption_quantity", $data->consumption_quantity)
-
-                //         ->first();
-
-                //     if (is_null($fsrconsumption)) {
-
-                //         $consumption =  new FabricSendAndReceiveDanaConsumptionList;
-
-                //         $consumption->consumption_quantity = $data->consumption_quantity;
-                //     } else {
-
-                //         $consumption = $fsrconsumption;
-
-                //         $consumption->consumption_quantity = $fsrconsumption->consumption_quantity  + $data->consumption_quantity;
-                //     }
-
-                //     $consumption->fsr_entry =  $fsr_entry_id;
-
-                //     $consumption->dana_name =  $data->dana_name_id;
-
-                //     $consumption->dana_group =  $data->dana_group_id;
-
-                //     $consumption->godam_id =  FabricSendAndReceiveEntry::where("id", $fsr_entry_id)->value("godam_id");
-
-                //     $consumption->save();
                 // }
-
-
-
-
-
-                if ($total_waste > 0) {
-
-                    WasteStock::create([
-
-                        'godam_id' => '1',
-
-                        'waste_id' => '1',
-
-                        'quantity_in_kg' => $total_waste,
-
-                    ]);
+                //polo waste is lumps & fabric is rafia
+                if ($request->polo_waste && $request->polo_waste != null) {
+                   
+                    $waste_id = Wastages::where('name', 'lumps')->first()->id;
+                    $godam_id = $fabric_entry->godam_id;
+                    $polo_waste = $request->polo_waste;
+                
+                    $existingWasteStock = WasteStock::where('godam_id', $godam_id)
+                        ->where('waste_id', $waste_id)
+                        ->first();
+                    
+                    if ($existingWasteStock) {
+                        // If a record with the same godam_id and waste_id exists, update the quantity_in_kg
+                        $existingWasteStock->quantity_in_kg += $polo_waste;
+                        $existingWasteStock->save();
+                        
+                        // dd($existingWasteStock->quantity_in_kg);    
+                    } else {
+                         dd('laxmi');
+                        // If no matching record exists, create a new row
+                        WasteStock::create([
+                            'godam_id' => $godam_id,
+                            'waste_id' => $waste_id,
+                            'quantity_in_kg' => $polo_waste,
+                        ]);
+                    }
                 }
+                
+                if ($request->fabric_waste && $request->fabric_waste !=null){
+                    // dd($request->fabric_waste);
+                    $waste_id = Wastages::where('name', 'rafia')->first()->id;
+                    $godam_id = $fabric_entry->godam_id;
+                    $fabric_waste = $request->fabric_waste;
+                
+                    $existingWasteStock = WasteStock::where('godam_id', $godam_id)
+                        ->where('waste_id', $waste_id)
+                        ->first();
+                
+                    if ($existingWasteStock) {
+                        // If a record with the same godam_id and waste_id exists, update the quantity_in_kg
+                        $existingWasteStock->quantity_in_kg += $fabric_waste;
+                        $existingWasteStock->save();
 
+                    } else {
+                        dd();
+                        // If no matching record exists, create a new row
+                        WasteStock::create([
+                            'godam_id' => $godam_id,
+                            'waste_id' => $waste_id,
+                            'quantity_in_kg' => $fabric_waste,
+                        ]);
+                    }
+                }           
+                                      
                 FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
 
                     ->whereHas('temporarylamfabric', function ($query) use ($fsr_entry_id) {
@@ -1561,18 +1469,15 @@ class FabricSendReceiveController extends Controller
 
                 FabricSendAndReceiveUnlaminatedFabric::where('status', 'sent')->where("fsr_entry_id", $fsr_entry_id)->delete();
 
-
-
                 FabricSendAndReceiveEntry::where("id", $fsr_entry_id)->update([
-
+                    "polo_waste"=> $request->polo_waste? $request->polo_waste:0,
+                    "fabric_waste"=>  $request->fabric_waste? $request->fabric_waste:0,
+                    "total_waste"=> $request->total_waste ? $request->total_waste:0,
                     "status" => "completed"
 
                 ]);
 
                 DB::commit();
-
-
-
                 return response(200);
             } catch (Throwable $e) {
 

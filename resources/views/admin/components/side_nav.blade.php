@@ -928,6 +928,18 @@
 
             </li>
 
+            <li class="nav-item">
+
+                <a href="{{ route('lamination.production.report') }}"
+                    class="nav-link {{ request()->routeIs('lamination-production/report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Lamination Production Report</p>
+
+                </a>
+
+            </li>
 
             <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
 

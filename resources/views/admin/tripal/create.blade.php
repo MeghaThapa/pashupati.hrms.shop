@@ -1196,8 +1196,8 @@
         data.response.forEach(d => {
             console.log(d.name);
             let title = d.name;
-            let group = d.average_wt.split('-')[0];
-            let result = parseFloat(title) * parseFloat(group);
+            // let group = d.average_wt.split('-')[0];
+            // let result = parseFloat(title) * parseFloat(group);
 
             let tr = $("<tr></tr>").appendTo('#rawMaterialItemTbody');
 

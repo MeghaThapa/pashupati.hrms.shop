@@ -42,7 +42,6 @@ class FabricProductionReportController extends Controller
             ->where('bill_date', '>=', $request->start_date)
             ->where('bill_date', '<=', $request->end_date)
             ->groupBy('bill_date', 'godam_id')->get();
-
         $resultArray = [];
 
         foreach ($fabricItems as $item) {

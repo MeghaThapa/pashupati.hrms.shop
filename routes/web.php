@@ -67,7 +67,7 @@ use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagFabricReceiveItemSentStockController;
 use App\Http\Controllers\PrintingAndCuttingBagStockController;
 use App\Http\Controllers\PurchaseOrderController;
-
+use App\Http\Controllers\LaminationProductionController;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -1317,6 +1317,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('tape-production/report', TapeProductionController::class)->name('tape.production.report');
     Route::get('fabric-production/report', FabricProductionReportController::class)->name('fabric.production.report');
 
+    //lamination production report
+    Route::get('lamination-production/report', LaminationProductionController::class)->name('lamination.production.report');
+
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
 
@@ -1416,6 +1419,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::get('storeinStock/getCategoryDepartment/{category_id}', 'StockController@getCategoryDepartment')->name('storeinStock.getCategoryDepartment');
     //import stock
     Route::post('import/stock', [StockImportController::class, "import"])->name('import.stock');
+
+    //lam wastage sund
+    Route::post('lamWasteImport/stock', [StockImportController::class, "lamwasteImport"])->name('lamwaste.import');
+
     //import fabric
     Route::post('import/fabric', 'FabricController@import')->name('import.fabric');
 

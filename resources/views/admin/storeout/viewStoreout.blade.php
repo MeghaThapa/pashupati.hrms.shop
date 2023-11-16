@@ -10,7 +10,7 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('View Store In') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('View Store Out') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -18,9 +18,9 @@
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('storeout.index') }}">{{ __('Storein') }}</a>
+                        <a href="{{ route('storeout.index') }}">{{ __('Storeout') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('View Store In') }}</li>
+                    <li class="breadcrumb-item active">{{ __('View Store Out') }}</li>
                 </ol>
             </div>
         </div>
@@ -88,6 +88,7 @@
                                                         <tbody>
                                                             @php
                                                                 $i = 1;
+                                                                $total=0;
                                                             @endphp
                                                             @foreach ($storeout->storeoutItems as $items)
                                                                 <tr>
@@ -98,13 +99,16 @@
                                                                     <td>{{ $items->rate * $items->quantity }}</td>
                                                                     {{-- <td>{{ $items->total_amount }}</td> --}}
                                                                 </tr>
+                                                                @php
+                                                                     $total += $items->rate * $items->quantity;
+                                                                @endphp
                                                             @endforeach
                                                         </tbody>
                                                         <tbody>
                                                             <tr>
                                                                 <td colspan="4" class="text-right">Total</td>
                                                                 <td colspan="2">
-                                                                    Rs.{{ $storeout->total_amount ? $storeout->total_amount : '0' }}
+                                                                    Rs.{{ $total }}
                                                                 </td>
                                                             </tr>
                                                             {{-- <tr>
