@@ -78,6 +78,7 @@ class PrintsAndCutsDanaConsumptionController extends Controller
                 $printsCutsDanaConsumption->quantity = $request->quantity;
                 $printsCutsDanaConsumption->save();
         }
+        // dd($printsCutsDanaConsumption);
         DB::commit();
         return $printsCutsDanaConsumption->load(['godam:id,name','danaName:id,name']);
         }catch(Exception $ex){

@@ -10,14 +10,14 @@
     <div class="content-header mb-4">
         <div class="row align-items-center">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ __('Lamination Production Report') }}</h1>
+                <h1 class="m-0 text-dark">{{ __('Printing And Cutting Report') }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ __('Lamination Production Report') }}</li>
+                    <li class="breadcrumb-item active">{{ __('Printing Cutting Report') }}</li>
                 </ol>
             </div>
         </div>
@@ -27,7 +27,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <h3>Lamination Production Report</h3>
+                    <h3>Printing Cutting Report</h3>
                 </div>
                 <div class="row container">
                     <div class="col-sm-3">
@@ -42,9 +42,9 @@
                             <input type="date" class="form-control" id="end_date" name="end_date" value="">
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                <div class="col-sm-3">
                         <div class="form-group">
-                            <label for="end_date">Godam:</label>
+                            <label for="end_date">End Date:</label>
                             <select class="advance-select-box form-control @error('type') is-invalid @enderror"
                             id="godamID" name="godam_id" required focus>
                             <option value="" selected disabled>{{ __('Select a godam') }}
@@ -55,7 +55,8 @@
                             @endforeach
                         </select>
                         </div>
-                    </div>
+                        
+                    </div> 
                     <div class="col-sm-3">
                         <div class="form-group mt-4">
                             <button id="generateReport" class="btn btn-primary">Generate</button>
@@ -75,7 +76,7 @@
             $("#generateReport").click(function(e) {
                 e.preventDefault()
                 $.ajax({
-                    url: "{{ route('lamination.production.report') }}",
+                    url: "{{ route('printing.finishing.report') }}",
                     method: "GET",
                     data: {
                         "godam_id": $('#godamID').val(),

@@ -16,17 +16,17 @@ return new class extends Migration
         Schema::create('printing_and_cutting_bag_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("printAndCutEntry_id");
-            $table-> foreign("printAndCutEntry_id")->references("id")->on('printed_and_cutted_rolls_entry')->onDelete('cascade');
+            $table-> foreign("printAndCutEntry_id")->references("id")->on('printed_and_cutted_rolls_entry');
             $table->unsignedBigInteger("group_id");
-            $table-> foreign("group_id")->references("id")->on('groups')->onDelete('cascade');
+            $table-> foreign("group_id")->references("id")->on('groups');
             $table->unsignedBigInteger("bag_brand_id");
-            $table-> foreign("bag_brand_id")->references("id")->on('bag_brands')->onDelete('cascade');
+            $table-> foreign("bag_brand_id")->references("id")->on('bag_brands');
             $table->string('quantity_piece');
             $table->string('average');
             $table->string('wastage');
             $table->string('roll_no');
             $table->unsignedBigInteger("fabric_id");
-            $table-> foreign("fabric_id")->references("id")->on('fabrics')->onDelete('cascade');
+            $table-> foreign("fabric_id")->references("id")->on('fabrics');
             $table->string('net_weight');
             $table->string('cut_length');
             $table->string('gross_weight');
@@ -34,9 +34,9 @@ return new class extends Migration
             $table->string('avg');
             $table->string('req_bag');
             $table->unsignedBigInteger("godam_id");
-            $table-> foreign("godam_id")->references("id")->on('godam')->onDelete('cascade');
+            $table-> foreign("godam_id")->references("id")->on('godam');
             $table->unsignedBigInteger("wastage_id");
-            $table-> foreign("wastage_id")->references("id")->on('wastages')->onDelete('cascade');
+            $table-> foreign("wastage_id")->references("id")->on('wastages');
             $table->timestamps();
         });
     }

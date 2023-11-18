@@ -53,8 +53,10 @@
                                                 <a class="btn btn-primary"
                                                     href="{{ route('prints.and.cuts.createPrintedRolls', ['id' => $d->id]) }}">
                                                     <i class="fas fa-edit"></i> </a>
-                                                <a class="btn btn-danger" href="javascript:void(0)"> <i
-                                                        class="fas fa-trash    "></i> </a>
+                                                    @if($d->printing_and_cutting_bag_items_count ==0)
+                                                        <a class="btn btn-danger deleteBtn" data-id="{{$d->id}}"> <i
+                                                                class="fas fa-trash"></i> </a>
+                                                    @endif
                                             </div>
                                         @elseif($d->status == 'completed')
                                             <a class="btn btn-success"
@@ -75,6 +77,50 @@
     $(".table").dataTable();
 </script>
 @section('extra-script')
+<script>
+$('body').on('click', '.deleteBtn', function() {
+                let id = this.getAttribute('data-id');
+                // let id = $(this).attr('data-id').val();
+                console.log(id);
+                new swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, data will deleted completely!!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, cancel!',
+                        reverseButtons: true
+
+                    })
+                    .then((willDelete) => {
+                        if (willDelete.isConfirmed) {
+
+                            $.ajax({
+                                type: "DELETE",
+                                url: "{{ route('prints.and.cuts.delete', ['id' => ':id']) }}"
+                                    .replace(':id', id),
+                                data: {
+                                    '_token': $('meta[name=csrf-token]').attr("content"),
+                                },
+                                success: function(data) {
+                                    new swal
+                                        ({
+                                            text: "Poof! Your data has been deleted!",
+                                            title: "Deleted",
+                                            icon: "success",
+                                        });
+                                    location.reload();
+                                },
+                                error: function(xhr) {
+                                    console.log(xhr.responseJSON.message);
+                                }
+                            })
+
+                        }
+                    })
+            })
+</script>
+
     @if (session()->has('message'))
         <script>
             toastr.success("{{ session()->get('message') }}");
@@ -84,4 +130,5 @@
             toastr.error("{{ session()->get('message_err') }}");
         </script>
     @endif
+    
 @endsection

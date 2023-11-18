@@ -892,6 +892,7 @@
                             quantity: quantity.value
                         },
                         success: function(response) {
+                            dd('hyy',response);
                             removeAllTableRows('danaConsumption');
                             getdanaConsumptionData();
                             // setIntoConsumptionTable(response);
@@ -992,6 +993,7 @@
                             waste_type_id: waste_type_id.value
                         },
                         success: function(response) {
+                            console.log('megha',response);
                             setSuccessMessage(response.message);
                             setIntoTable(response.printingAndCuttingBagItem);
                             deleteEventBtn();
