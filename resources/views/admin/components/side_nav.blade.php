@@ -940,7 +940,6 @@
                 </a>
 
             </li>
-
             <li class="nav-item">
 
                 <a href="{{ route('tripal.production.report') }}"
