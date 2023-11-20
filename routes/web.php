@@ -69,6 +69,7 @@ use App\Http\Controllers\BagFabricReceiveItemSentStockController;
 use App\Http\Controllers\PrintingAndCuttingBagStockController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\LaminationProductionController;
+use App\Http\Controllers\PrintingAndFinishingController;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -1323,6 +1324,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 //tripal-production report
     Route::get('tripal-production/report', TripalProductionReportController::class)->name('tripal.production.report');
 
+    //printing and cutting 
+    Route::get('printing-cutting/report', PrintingAndFinishingController::class)->name('printing.finishing.report');
+
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');
 
@@ -1566,6 +1570,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
     Route::post("prints/and/cuts/store/entry", [PrintedAndCuttedRollsController::class, "storeEntry"])->name('prints.and.cuts.store.entry');
 
     Route::get("prints/and/cuts/createPrintedRolls/{id}", [PrintedAndCuttedRollsController::class, "createPrintedRolls"])->name('prints.and.cuts.createPrintedRolls');
+    //delete
+    Route::delete("prints/and/cuts/delete/{id}", [PrintedAndCuttedRollsController::class, "delete"])->name('prints.and.cuts.delete');
 
     Route::post("printsAndCuts/getFabric", [PrintedAndCuttedRollsController::class, "getFabric"])->name('printsAndCuts.getFabric');
     Route::post("printsAndCuts/getDanaGroup", [PrintedAndCuttedRollsController::class, "getDanaGroup"])->name('printsAndCuts.getDanaGroup');
