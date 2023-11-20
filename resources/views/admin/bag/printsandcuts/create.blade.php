@@ -892,7 +892,6 @@
                             quantity: quantity.value
                         },
                         success: function(response) {
-                            dd('hyy',response);
                             removeAllTableRows('danaConsumption');
                             getdanaConsumptionData();
                             // setIntoConsumptionTable(response);
@@ -1097,7 +1096,6 @@
                                         "_token": "{{ csrf_token() }}",
                                     },
                                     success: function(response) {
-                                        console.log('mgh delete', response);
                                         removeAllTableRows(
                                             'printsAndCutsItem');
                                         //   checkRowInTable();
