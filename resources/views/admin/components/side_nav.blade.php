@@ -941,6 +941,7 @@
 
             </li>
 
+
             <li class="nav-item">
 
                 <a href="{{ route('tripal.production.report') }}"
@@ -949,6 +950,15 @@
                     <i class="nav-icon fas fa-tags"></i>
 
                     <p>Tripal Production Report</p>
+                        <li class="nav-item">
+
+                <a href="{{ route('printing.finishing.report') }}"
+                    class="nav-link {{ request()->routeIs('printing-cutting/report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Prinitng Cutting Report</p>
+
 
                 </a>
 

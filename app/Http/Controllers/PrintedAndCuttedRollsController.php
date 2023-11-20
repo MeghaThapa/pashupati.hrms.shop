@@ -64,11 +64,16 @@ class PrintedAndCuttedRollsController extends Controller
         //     }
 
     }
+    public function delete($id){
+        $printedAndCuttedRollsEntry=PrintedAndCuttedRollsEntry::find($id)->delete();
+        return response()->json(['status'=>true,'message'=>'deleted'],200);
+    }
     public function index()
     {
-        $this->copyDataToStockSecond();
-        // return $this->changeStatusOfStock();
-        $data = PrintedAndCuttedRollsEntry::orderBy('created_at', 'desc')->get();
+ 
+        $data = PrintedAndCuttedRollsEntry::withCount('printingAndCuttingBagItems')->orderBy('created_at', 'desc')->get();
+        // return $data;
+
         return view("admin.bag.printsandcuts.index", compact("data"));
     }
     private function copyDataToStockSecond()
@@ -265,7 +270,7 @@ class PrintedAndCuttedRollsController extends Controller
             "date_np" => $request->date_np
 
         ]);
-        return $this->index();
+        return redirect()->route('prints.and.cuts.index');
     }
 
     /*************** For Entry *********/
