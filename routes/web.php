@@ -63,6 +63,7 @@ use App\Http\Controllers\PrintingAndCuttingBagItemController;
 use App\Http\Controllers\ProcessingCategoryAndSubsController;
 use App\Http\Controllers\FabricNonWovenReceiveEntryController;
 use App\Http\Controllers\Admin\FabricProductionReportController;
+use App\Http\Controllers\Admin\TripalProductionReportController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagFabricReceiveItemSentStockController;
 use App\Http\Controllers\PrintingAndCuttingBagStockController;
@@ -1319,6 +1320,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     //lamination production report
     Route::get('lamination-production/report', LaminationProductionController::class)->name('lamination.production.report');
+//tripal-production report
+    Route::get('tripal-production/report', TripalProductionReportController::class)->name('tripal.production.report');
 
     // lang change
     Route::get('lang/change', [LanguageController::class, 'change'])->name('changeLang');

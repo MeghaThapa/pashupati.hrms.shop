@@ -33,4 +33,14 @@ class SingleTripalBill extends Model
     {
         return $this->belongsTo('App\Models\Shift','shift_id');
     }
+
+    public function getUnlamData()
+    {
+        return $this->hasMany('App\Models\Unlaminatedfabrictripal','bill_id');
+    }
+
+    public function getSingleSideData()
+    {
+        return $this->hasMany('App\Models\Singlesidelaminatedfabric','bill_id');
+    }
 }

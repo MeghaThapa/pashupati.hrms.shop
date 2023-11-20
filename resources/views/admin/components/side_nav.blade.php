@@ -941,6 +941,19 @@
 
             </li>
 
+            <li class="nav-item">
+
+                <a href="{{ route('tripal.production.report') }}"
+                    class="nav-link {{ request()->routeIs('tripal-production/report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Tripal Production Report</p>
+
+                </a>
+
+            </li>
+
             <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
 
             <li class="nav-item">
