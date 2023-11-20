@@ -1,69 +1,43 @@
-<h3>hello of Tape Production Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3>
+<h3>Printing and Fininshing Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3>
 <table class="table table-bordered table-responsive">
     <thead class="text-bold">
         <tr>
-            <th colspan="2" style="text-align: center;border: 2px solid black;"></th>
-            <th colspan="5" style="text-align: center;border: 2px solid black;">Sunder Lamination Plant</th>
-            <th colspan="5" style="text-align: center;border: 2px solid black;">JP Lamination Plant</th>
-            <th colspan="5" style="text-align: center;border: 2px solid black;">BSW Lamination Plant</th>
-            <th colspan="5" style="text-align: center;border: 2px solid black;">Total All </th>
+            <th colspan="4" style="text-align: center;border: 2px solid black;"></th>
+            <th colspan="7" style="text-align: center;border: 2px solid black;">Ink</th>
+            <th colspan="6" style="text-align: center;border: 2px solid black;"></th>
+            {{-- <th colspan="5" style="text-align: center;border: 2px solid black;">BSW Lamination Plant</th>
+            <th colspan="5" style="text-align: center;border: 2px solid black;">Total All </th>  --}}
         </tr>
         <tr>
             <th style="border: 1px solid black;"> Sr </th>
             <th style="min-width: 120px;border: 1px solid black;">Date</th>
-            <th style="border: 1px solid black;">Unlam</th>
-            <th style="border: 1px solid black;">Prod. In Kg.</th>
-            <th style="border: 1px solid black;">Prod. In Mtr</th>
-            <th style="border: 1px solid black;">Wast.</th>
-            <th style="border: 1px solid black;">%</th>
-            <th style="border: 1px solid black;">Unlam</th>
-            <th style="border: 1px solid black;">Prod. In Kg.</th>
-            <th style="border: 1px solid black;">Prod. In Mtr</th>
-            <th style="border: 1px solid black;">Wast.</th>
-            <th style="border: 1px solid black;">%</th>
-            <th style="border: 1px solid black;">Unlam</th>
-            <th style="border: 1px solid black;">Prod. In Kg.</th>
-            <th style="border: 1px solid black;">Prod. In Mtr</th>
-            <th style="border: 1px solid black;">Wast.</th>
-            <th style="border: 1px solid black;">%</th>
-            <th style="border: 1px solid black;">Unlam</th>
-            <th style="border: 1px solid black;">Prod. In Kg.</th>
-            <th style="border: 1px solid black;">Prod. In Mtr</th>
-            <th style="border: 1px solid black;">Wast.</th>
-            <th style="border: 1px solid black;">%</th>
-
+            <th style="border: 1px solid black;">Roll Isuue</th>
+            <th style="border: 1px solid black;">Cutting Bags</th>
+            <th style="border: 1px solid black;">Black</th>
+            <th style="border: 1px solid black;">Red.</th>
+            <th style="border: 1px solid black;">Green</th>
+            <th style="border: 1px solid black;">Blue</th>
+            <th style="border: 1px solid black;">Orange</th>
+            <th style="border: 1px solid black;">Yellow</th>
+            <th style="border: 1px solid black;">Total Ink</th>
+            <th style="border: 1px solid black;">Diesel</th>
+            <th style="border: 1px solid black;">Tape</th>
+            <th style="border: 1px solid black;">NBA</th>
+            <th style="border: 1px solid black;">PP Yarn</th>
+            <th style="border: 1px solid black;">Issue to finishing</th>
+            <th style="border: 1px solid black;">Wastage</th>
         </tr>
     </thead>
     <tbody>
         @php
         $i = 0;
-        $totalsundarUnlam = 0;
-        $totalsundarLam = 0;
-        $totalsundarProdMeter = 0;
-        $totalsundarWaste = 0;
-        $totalSundarPerc = 0;
-
-        $totaljpUnlam = 0;
-        $totaljpLam = 0;
-        $totaljpProdMeter = 0;
-        $totaljpWaste = 0;
-        $totaljpPerc = 0;
-
-        $totalbswUnlam = 0;
-        $totalbswLam = 0;
-        $totalbswProdMeter = 0;
-        $totalbswWaste = 0;
-        $totalbswPerc = 0;
-
-        $finalTotalunlam = 0;
-        $finalTotallam = 0;
-        $finalTotalmeter = 0;
-        $finalTotalwaste = 0;
-        $finalTotalwastePerc = 0;
-
+        $totalRollIssue = 0;
+        $totalCuttingBag = 0;
+        $totalIssueToFinishing = 0;
+        $totalwaste = 0;
         @endphp
 
-        @foreach ($plantArray as $date => $item)
+        @foreach ($datas as $date => $item)
             <tr>
                 @php
                 $subTotalsundarUnlam = 0;
@@ -88,43 +62,26 @@
 
                 <td>{{ ++$i }}</td>
                 <td>{{ $item['date'] }}</td>
-                <td>@if( isset($item['sundar_total_unlam']))
-                    {{ $item['sundar_total_unlam'] }}
+                
+                <td>@if( isset($item['rollIssue_total_net_wt']))
+                    {{ $item['rollIssue_total_net_wt'] }}
                     @php
-                    $subTotalsundarUnlam += $item['sundar_total_unlam'];
-                    $totalsundarUnlam += $item['sundar_total_unlam'];
+                    $totalRollIssue += $item['rollIssue_total_net_wt'];
                     @endphp
                     @else 0 
                     @endif
                 </td>
-                <td>@if( isset($item['sundar_total_lam']))
-                    {{ $item['sundar_total_lam'] }}
+               
+                <td>@if( isset($item['cuttingBag_total_quantity_piece']))
+                    {{ $item['cuttingBag_total_quantity_piece'] }}
                     @php
-                    $subTotalsundarLam += $item['sundar_total_lam'];
-                    $totalsundarLam += $item['sundar_total_lam'];
+                    $totalCuttingBag += $item['cuttingBag_total_quantity_piece'];
                     @endphp
                     @else 0 
                     @endif
                 </td>
-                <td>@if( isset($item['sundar_total_meter']))
-                    {{ $item['sundar_total_meter'] }}
-                    @php
-                    $subTotalsundarProdMeter += $item['sundar_total_meter'];
-                    $totalsundarProdMeter += $item['sundar_total_meter'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>@if( isset($item['sundar_total_waste']))
-                    {{ $item['sundar_total_waste'] }}
-                    @php
-                    $subTotalsundarWaste += $item['sundar_total_waste'];
-                    $totalsundarWaste += $item['sundar_total_waste'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>
+                <td colspan="11"></td>
+                {{-- <td>
                     @if( isset($item['sundar_waste_perc']))
                     {{ $item['sundar_waste_perc'] }}
                     @php
@@ -134,7 +91,6 @@
                     @else 0 
                     @endif
                 </td>
-                {{-- JP Lamination Plant --}}
                 <td>@if( isset($item['jp_total_unlam']))
                     {{ $item['jp_total_unlam'] }}
                     @php
@@ -180,18 +136,9 @@
                     @endphp
                     @else 0 
                     @endif
-                </td>
-{{--                 
-                <td>
-                    @if($subTotalGodamTwoRunDown>0)
-                    @php $subTotalGodamTwoPercentage = $subTotalGodamTwoWastage/ $subTotalGodamTwoRunDown * 100; @endphp
-                    @else
-                    @php $subTotalGodamTwoPercentage=0; @endphp
-                    @endif
-                    {{ $subTotalGodamTwoPercentage }}
                 </td> --}}
-                {{-- BSW Lamination Plant --}}
-                <td>@if( isset($item['bsw_total_unlam']))
+
+                {{-- <td>@if( isset($item['bsw_total_unlam']))
                     {{ $item['bsw_total_unlam'] }}
                     @php
                     $subTotalbswUnlam += $item['bsw_total_unlam'];
@@ -208,43 +155,25 @@
                     @endphp
                     @else 0 
                     @endif
-                </td>
-                <td>@if( isset($item['bsw_total_meter']))
-                    {{ $item['bsw_total_meter'] }}
-                    @php
-                    $subTotalbswProdMeter += $item['bsw_total_meter'];
-                    $totalbswProdMeter += $item['bsw_total_meter'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>@if( isset($item['bsw_total_waste']))
-                    {{ $item['bsw_total_waste'] }}
-                    @php
-                    $subTotalbswWaste += $item['bsw_total_waste'];
-                    $totalbswWaste += $item['bsw_total_waste'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>
-                    @if( isset($item['bsw_waste_perc']))
-                    {{ $item['bsw_waste_perc'] }}
-                    @php
-                    $subTotalbswPerc += $item['bsw_waste_perc'];
-                    $totalbswPerc += $item['bsw_waste_perc'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                {{-- <td>
-                    @if($subTotalGodamThreeRunDown>0)
-                    @php $subTotalGodamThreePercentage = $subTotalGodamThreeWastage/ $subTotalGodamThreeRunDown * 100; @endphp
-                    @endif
-                    {{ $subTotalGodamThreePercentage }}
                 </td> --}}
-                {{-- All Total --}}
-                <td>
+                <td>@if( isset($item['tot_total_quantity']))
+                    {{ $item['tot_total_quantity'] }}
+                    @php
+                    $totalIssueToFinishing += $item['tot_total_quantity'];
+                    @endphp
+                    @else 0 
+                    @endif
+                </td>
+                <td>@if( isset($item['tot_total_wastage']))
+                    {{ $item['tot_total_wastage'] }}
+                    @php
+                    $totalwaste += $item['tot_total_wastage'];
+                    @endphp
+                    @else 0 
+                    @endif
+                </td>
+             
+                {{-- <td>
                     @php
                     $totalunlam = $subTotalsundarUnlam + $subTotaljpUnlam + $subTotalbswUnlam;
                     $finalTotalunlam += $totalunlam;
@@ -278,42 +207,28 @@
                     $finalTotalwastePerc +=  $totalwastepercent;
                     @endphp
                     {{ $totalwastepercent }}
-                </td>
+                </td> --}}
             </tr>
         @endforeach
         <tfoot>
             <tr>
                 <td></td>
                 <td>Total</td>
-                <td>{{ $totalsundarUnlam }}</td>
-                <td>{{ $totalsundarLam }}</td>
-                <td>{{ $totalsundarProdMeter }}</td>
-                <td>{{ $totalsundarWaste }}</td>
-                <td>{{ $totalSundarPerc }}</td>              
-
-                <td>{{ $totaljpUnlam }}</td>
-                <td>{{ $totaljpLam }}</td>
-                <td>{{ $totaljpProdMeter }}</td>
-                <td>{{ $totaljpWaste }}</td>
-                <td>{{ $totaljpPerc }}</td>             
-
-                <td>{{ $totalbswUnlam }}</td>
-                <td>{{ $totalbswLam }}</td>
-                <td>{{ $totalbswProdMeter }}</td>
-                <td>{{ $totalbswWaste }}</td>
-                <td>{{ $totalbswPerc }}</td>
-
-                <td>
-                    {{ $finalTotalunlam }}
-                </td>
-                <td>
-                    {{ $finalTotallam }}
-                </td>
-                <td>
-                    {{ $finalTotalmeter }}
-                </td>
-                <td>{{$finalTotalwaste}}</td>
-                <td>{{$finalTotalwastePerc}}</td>
+                <td>{{ $totalRollIssue }}</td>
+                <td>{{ $totalCuttingBag}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ $totalIssueToFinishing }}</td>
+                <td>{{ $totalwaste }}</td>
             </tr>
         </tfoot>
     </tbody>

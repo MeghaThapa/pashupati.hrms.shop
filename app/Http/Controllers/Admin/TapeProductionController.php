@@ -40,7 +40,7 @@ class TapeProductionController extends Controller
             ->groupBy('tape_entry.tape_entry_date', 'tape_entry_items.plantName_id', 'tape_entry_items.plantName_id','tape_entry_items.toGodam_id')
             ->orderBy('tape_entry.tape_entry_date', 'asc')
             ->get();    
-
+            
         $resultArray = [];
 
         foreach ($tapEntryItems as $item) {
@@ -54,6 +54,7 @@ class TapeProductionController extends Controller
                 'total_bypass_wastage' => $item->total_bypass_wastage
             ];
         }
+        dd($resultArray);
         $rowData = [];
         foreach ($resultArray as $date => $data) {
             $rowData[$date]['date'] = $date;

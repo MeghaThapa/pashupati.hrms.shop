@@ -130,6 +130,7 @@ class PrintingAndCuttingBagItemController extends Controller
             return response()->json([
                 'status'=>false,
                 'message' => $e,
+                'error_line'=> $e->getLine(),
             ],500);
         }
     }
