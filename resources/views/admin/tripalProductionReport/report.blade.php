@@ -33,13 +33,20 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
-                            <input type="date" class="form-control" id="start_date" name="start_date" value="">
+                            <input type="text" class="form-control nepali-date-picker" id="start_date" name="start_date"
+                                value="">
                         </div>
                     </div>
+                    {{-- <div class="col-md-12 form-group">
+                                <label for="size" class="col-form-label">{{ __('Neapli Date') }}
+                                </label>
+                                <input type="text" class="form-control" name="nepali_date" id="nepali-date-picker">
+                            </div> --}}
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="date" class="form-control" id="end_date" name="end_date" value="">
+                            <input type="text" class="form-control nepali-date-picker" id="end_date" name="end_date"
+                                value="">
                         </div>
                     </div>
                     <div class="col-sm-3">
@@ -55,8 +62,16 @@
     </div>
 @endsection
 @section('extra-script')
+    <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
     <script>
-        $(function(){
+        $(document).ready(function() {
+            $(".nepali-date-picker").nepaliDatePicker({});
+            let todayNepaliDate = {!! isset($nepaliDate) ? json_encode($nepaliDate) : 'null' !!};
+            $(".nepali-date-picker").val(todayNepaliDate);
+        })
+    </script>
+    <script>
+        $(function() {
 
             $("#generateReport").click(function(e) {
                 e.preventDefault()
@@ -64,13 +79,12 @@
                     url: "{{ route('tripal.production.report') }}",
                     method: "GET",
                     data: {
-                        "godam_id": $('#godamID').val(),
-                        "start_date":$('#start_date').val(),
-                        "end_date":$('#end_date').val(),
+                        "start_date": $('#start_date').val(),
+                        "end_date": $('#end_date').val(),
                     },
                     success: function(response) {
                         $('#reportView').empty();
-                        if(response.status==false){
+                        if (response.status == false) {
                             alert(response.message);
                             return;
                         }
