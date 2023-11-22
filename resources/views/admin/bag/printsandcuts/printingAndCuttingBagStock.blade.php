@@ -3,145 +3,227 @@
 @section('extra-style')
     <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
-        integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
-    <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
     <style>
-        .update_status {
-            cursor: pointer;
+        .col-form-label {
+            font-size: 12px !important;
+
         }
 
-        .invalid {
-            border-color: red;
+        .dynamic-btn {
+            height: 18px;
+            width: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .valid {
-            border-color: green;
+        #storeinSubmitBtn {
+            height: 25px;
+            width: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px !important;
+        }
+
+        .fa-plus {
+            font-size: 10px;
+        }
+
+        .form-control {
+            font-size: 12px !important;
+
+        }
+
+        .select2-selection__rendered,
+        .select2-container--bootstrap4 .select2-selection {
+            font-size: 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            height: calc(1.6em + 0.75rem + 2px) !important;
+        }
+
+        .select2-container {
+            height: calc(1.6em + 0.75rem + 2px) !important;
+        }
+
+        .taxStyle .select2-selection {
+            width: 200px !important;
+        }
+
+        .form-group {
+            margin-bottom: 0px !important;
+        }
+
+        .content-wrapper {
+            padding-top: 0px !important;
+        }
+
+        .card-body {
+            padding: 0px 5px !important;
+        }
+
+        .card {
+            padding: 0px 5px !important;
+        }
+
+        .col-md-6 {
+            padding: 0px 2px !important;
         }
     </style>
 @endsection
 
 @section('content')
-    <!-- Content Header (Page header) -->
-    <div class="content-header mb-4">
-        <div class="row align-items-center">
-            <div class="col-sm-6 mt-2">
-                <h4><strong>Printing And Cutting Bag Stock</strong></h4>
-            </div>
-
-        </div>
-    </div>
-    <!-- /.content-header -->
-    <div class="content">
+    <section class="content">
         <div class="container-fluid">
+          
+            <div class="content-header mb-4">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 mt-2">
+                     <h4><strong>Printing And Cutting Bag Stock</strong></h4>
+                    </div>
+        
+                </div>
+            </div>
+          
+           
+            <div class="row" id="printTable">
+                <div class="col-12">
+                    <div class="invoice p-3 mb-3 card  card-outline">
 
 
-            <div class="card">
+                        <div class="row">
+                            <div class="col-12 table-responsive">
+                                @foreach ($formattedDatas as $name => $formattedData)
+                                    <table class="table table-bordered" style="padding: 0 30px;">
+                                        <tr>
+                                            <th width="10px">{{ __('Sr.No') }}</th>
+                                            <th width="10px">{{ __('Group') }}</th>
+                                            <th width="10px">{{ __('Bag Brand') }}</th>
+                                            <th width="10px">{{ __('Quantity Pieces') }}</th>
+                                        </tr>
+                                        <tbody>
+                                            @php
+                                                $totals = [
+                                                    'qty_pieces' => 0,
+                                                ]
+                                            @endphp
+                                            @foreach ($formattedData as $key => $data)
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $data['group'] }}</td>
+                                                    <td>{{ $data['bag_brand'] }}</td>
+                                                    <td>{{ $data['quantity_piece'] }}</td>
+                                                </tr>
+                                                @php
+                                                    $totals['qty_pieces'] += $data['quantity_piece'];
+                                                @endphp
+                                            @endforeach
+                                            <tr style="font-weight:bold">
+                                                <td>Total</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>{{ $totals['qty_pieces'] }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                @endforeach
+                        
+                                <!-- Grand Total row outside the loop -->
+                                <table class="table table-bordered" style="padding: 0 30px;">
+                                    <tbody>
+                                        <tr style="font-weight:bold">
+                                            <td colspan="3">Grand Total</td>
+                                            <td>{{ $totalQuantity }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
 
-                <div class="card-body table-responsive">
-                    <table class="table table-bordered table-hover table-striped" id="myTable">
-                        <thead>
-                            <tr>
-                                <th>SN</th>
-                                <th>Group</th>
-                                <th>Bag Brand</th>
-                                <th>Quantity Pieces</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                        {{-- <h3 class="m-0 text-center mt-4">SUMMARY</h3>
+
+                        <div class="row px-4 py-3">
+                            <div class="col-12 table-responsive">
+                                <table class="table table-bordered">
+
+
+                                    <tr>
+                                        <th width="10px">{{ __('Sr.No') }}</th>
+                                        <th width="10px">{{ __('Fabric Name') }}</th>
+                                        <th width="10px">{{ __('Roll No') }}</th>
+                                        <th width="10px">{{ __('Gross Wght') }}</th>
+                                        <th width="10px">{{ __('Net Wght') }}</th>
+                                        <th width="10px">{{ __('Meter') }}</th>
+                                    </tr>
+
+                                    <tbody>
+                                        @foreach ($totalstocks as $key => $stock)
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $stock->name }}</td>
+                                                <td>{{ $stock->total_count }}</td>
+                                                <td>{{ $stock->total_gross }}</td>
+                                                <td>{{ $stock->total_net }}</td>
+                                                <td>{{ $stock->total_meter }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>{{ $total_gross }}</td>
+                                            <td>{{ $total_net }}</td>
+                                            <td>{{ $total_meter }}</td>
+                                        </tr>
+                                    </tfoot>
+
+
+                                </table>
+                            </div>
+                        </div> --}}
+
+                        <div class="row no-print">
+                            <div class="col-12">
+                                {{-- <span>Bill Printed By : {{$bill_total_student->getUser->name}}</span> --}}
+                                {{-- <span class="float-right">Bill Date: {{$bill_total_student->created_at_np}}</span> --}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+    </section>
 
+
+
+
+
+
+    <!-- /.card-body -->
+
+    <!-- pagination start -->
+@endsection
 @section('extra-script')
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
-        integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
-    <script>
-        $(".select2").select2()
-    </script>
-    @if (session()->has('message'))
-        <script>
-            toastr.success('{{ session()->get('message') }}');
-        </script>
-    @endif
+    <script src="{{ asset('js/storein.js') }}"></script>
+
     <script>
         $(document).ready(function() {
-
-            let table = $("#myTable").DataTable({
-                style: 'bootstrap',
-                serverSide: true,
-                processing: true,
-                lengthMenu: [
-                    [10, 25, 50, 100, 250, 500],
-                    [10, 25, 50, 100, 250, 500]
-                ],
-                ajax: {
-                    url: "{{ route('printingAndCuttingBagStock.index') }}",
-                    data: function(data) {
-                        // data.start_date = $('#start_date').val();
-                        // data.end_date = $('#end_date').val();
-                    },
-                },
-                columns: [{
-                        name: "DT_RowIndex",
-                        data: "DT_RowIndex",
-                        orderable: false,
-                        searchable: false,
-                    },
-                    {
-                        name: "group_id",
-                        data: "group_id"
-                    },
-                    {
-                        name: "bag_brand_id",
-                        data: "bag_brand_id"
-                    },
-                    {
-                        name: "quantity_piece",
-                        data: "quantity_piece"
-                    },
-                ]
+            // Attach a click event to the export button
+            $("#exportExcelButton").click(function() {
+                // Specify the table to be exported (use an appropriate selector)
+                $("#printTable").table2excel({
+                    filename: "exported-table.xls" // Specify the file name
+                });
             });
+        });
 
-            // $(document).ready(function() {
-            //     $('#delivery_order_for_item_id').on('change', function() {
-            //         var selectedOptionText = $(this).find('option:selected').text().trim();
-            //         var unitNameInput = $('#unit_name');
-
-            //         if (['PP Woven', 'PP Non Woven', 'PP/HDPE Tripal', 'RP Granuels',
-            //                 'PP/CC/Other Granuels', 'Wastage'
-            //             ].includes(selectedOptionText)) {
-            //             unitNameInput.val('Kgs');
-            //         } else if (['PP Bags (Unlam)', 'PP Bags (Lam)'].includes(selectedOptionText)) {
-            //             unitNameInput.val('Pcs');
-            //         }
-            //     });
-            // });
-
-        })
-        // function isValidDecimal(input) {
-        //     const decimalPattern = /^\d+(\.\d+)?$/;
-        //     return decimalPattern.test(input);
-        // }
-
-        // $(document).on('keyup', '.decimal_number', function() {
-        //     const inputValue = $(this).val();
-        //     if (isValidDecimal(inputValue)) {
-        //         $(this).removeClass('invalid').addClass('valid');
-        //     } else {
-        //         $(this).removeClass('valid').addClass('invalid');
-        //     }
-        // });
     </script>
 @endsection

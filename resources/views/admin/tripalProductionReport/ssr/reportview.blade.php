@@ -33,16 +33,19 @@
             $col_total_singleLam_net_wt_sum_singleside = 0;
             $col_total_singleLam_meter_sum = 0;
             $col_total_singleSide_total_waste_sum = 0;
+            $col_total_singleSide_total_waste_perc_sum = 0;
 
             $col_total_double_unlam_net_wt_sum = 0;
             $col_total_doubleLam_net_wt_sum = 0;
             $col_total_doubleLam_meter_sum = 0;
             $col_total_doubleSide_total_waste_sum = 0;
+            $col_total_doubleSide_total_waste_perc_sum = 0;
 
             $col_total_tripal_net_wt_sum = 0;
             $col_total_finalTripal_net_wt_sum = 0;
             $col_total_finalTripal_meter_sum = 0;
             $col_total_triple_total_waste_sum = 0;
+            $col_total_triple_total_waste_perc_sum = 0;
 
         @endphp
 
@@ -115,7 +118,18 @@
                         0
                     @endif
                 </td>
-                <td>0</td>
+                <td>
+                    @if (isset($item['total_singleSide_total_waste_sum']))
+                        {{ $item['total_singleSide_total_waste_sum'] / 100 }}
+
+                        @php
+                            $col_total_singleSide_total_waste_perc_sum += $item['total_singleSide_total_waste_sum'] / 100;
+                        @endphp
+                    @else
+                        0
+                    @endif
+
+                </td>
 
                 {{-- double side --}}
                 <td>
@@ -159,7 +173,18 @@
                         0
                     @endif
                 </td>
-                <td>0</td>
+                <td>
+                    @if (isset($item['total_doubleSide_total_waste_sum']))
+                        {{ $item['total_doubleSide_total_waste_sum'] / 100 }}
+
+                        @php
+                            $col_total_doubleSide_total_waste_perc_sum += $item['total_doubleSide_total_waste_sum'] / 100;
+                        @endphp
+                    @else
+                        0
+                    @endif
+
+                </td>
 
                 {{-- tripal --}}
                 <td>
@@ -202,7 +227,18 @@
                         0
                     @endif
                 </td>
-                <td>0</td>
+                <td>
+                    @if (isset($item['total_triple_total_waste_sum']))
+                        {{ $item['total_triple_total_waste_sum'] / 100 }}
+                        <!-- Divide by 100 and display as a percentage -->
+                        @php
+                            $col_total_triple_total_waste_perc_sum += $item['total_triple_total_waste_sum'] / 100;
+                        @endphp
+                    @else
+                        0%
+                    @endif
+
+                </td>
 
             </tr>
         @endforeach
@@ -213,17 +249,19 @@
             <td>{{ $col_total_singleLam_net_wt_sum_singleside }}</td>
             <td>{{ $col_total_singleLam_meter_sum }}</td>
             <td>{{ $col_total_singleSide_total_waste_sum }}</td>
-            <td></td>
+            <td>{{ $col_total_singleSide_total_waste_perc_sum }}</td>
+
             <td>{{ $col_total_double_unlam_net_wt_sum }}</td>
             <td>{{ $col_total_doubleLam_net_wt_sum }}</td>
             <td>{{ $col_total_doubleLam_meter_sum }}</td>
             <td>{{ $col_total_doubleSide_total_waste_sum }}</td>
-            <td>0</td>
+            <td>{{ $col_total_doubleSide_total_waste_perc_sum }}</td>
+
             <td>{{ $col_total_tripal_net_wt_sum }}</td>
             <td>{{ $col_total_finalTripal_net_wt_sum }}</td>
             <td>{{ $col_total_finalTripal_meter_sum }}</td>
             <td>{{ $col_total_triple_total_waste_sum }}</td>
-            <td>0</td>
+            <td>{{ $col_total_triple_total_waste_perc_sum }}</td>
 
         </tr>
     </tfoot>
