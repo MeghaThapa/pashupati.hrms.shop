@@ -86,16 +86,17 @@ class TripalProductionReportController extends Controller
         ->get()
         ->toArray();
         $array = self::mergeArraysByBillDate($mergedArray, $tripalProd);
-        dd($array);
+
           $resultArray = [];
         foreach ($array as $item) {
             $bill_date = $item['bill_date'];
             $resultArray[$bill_date][] = [
                 'bill_date' => $item['bill_date'],
                 'singleSide_total_waste_sum' => $item['singleSide_total_waste_sum'],
-                'unlam_net_wt_sum' => $item['unlam_net_wt_sum'],
+                'single_unlam_net_wt_sum' => $item['single_unlam_net_wt_sum'],
                 'singleLam_net_wt_sum_singleside' => $item['singleLam_net_wt_sum_singleside'],
                 'singleLam_meter_sum' => $item['singleLam_meter_sum'],
+                'double_unlam_net_wt_sum' => $item['double_unlam_net_wt_sum'],
                 'doubleSide_total_waste_sum' => $item['doubleSide_total_waste_sum'],
                 'doubleLam_net_wt_sum' => $item['doubleLam_net_wt_sum'],
                 'doubleLam_meter_sum' => $item['doubleLam_meter_sum'],
@@ -109,10 +110,11 @@ class TripalProductionReportController extends Controller
         foreach ($resultArray as $date => $data) {
             $rowData[$date]['bill_date'] = $date;
             $rowData[$date]['total_singleSide_total_waste_sum'] = 0;
-            $rowData[$date]['total_unlam_net_wt_sum'] = 0;
+            $rowData[$date]['total_single_unlam_net_wt_sum'] = 0;
             $rowData[$date]['total_singleLam_net_wt_sum_singleside'] = 0;
             $rowData[$date]['total_singleLam_meter_sum'] = 0;
             $rowData[$date]['total_doubleSide_total_waste_sum'] = 0;
+            $rowData[$date]['total_double_unlam_net_wt_sum'] = 0;
             $rowData[$date]['total_doubleLam_net_wt_sum'] = 0;
             $rowData[$date]['total_doubleLam_meter_sum'] = 0;
             $rowData[$date]['total_triple_total_waste_sum'] = 0;
@@ -121,23 +123,27 @@ class TripalProductionReportController extends Controller
             $rowData[$date]['total_finalTripal_meter_sum'] = 0;
 
             foreach ($data as $item) {
-                $rowData[$date]['total_singleSide_total_waste_sum'] += $item['singleSide_total_waste_sum'];
-                $rowData[$date]['total_unlam_net_wt_sum'] += $item['unlam_net_wt_sum'];
+
+                $rowData[$date]['total_single_unlam_net_wt_sum'] += $item['single_unlam_net_wt_sum'];
                 $rowData[$date]['total_singleLam_net_wt_sum_singleside'] += $item['singleLam_net_wt_sum_singleside'];
                 $rowData[$date]['total_singleLam_meter_sum'] += $item['singleLam_meter_sum'];
+                 $rowData[$date]['total_singleSide_total_waste_sum'] += $item['singleSide_total_waste_sum'];
 
-                $rowData[$date]['total_doubleSide_total_waste_sum'] += $item['doubleSide_total_waste_sum'];
+                $rowData[$date]['total_double_unlam_net_wt_sum'] += $item['double_unlam_net_wt_sum'];
                 $rowData[$date]['total_doubleLam_net_wt_sum'] += $item['doubleLam_net_wt_sum'];
                 $rowData[$date]['total_doubleLam_meter_sum'] += $item['doubleLam_meter_sum'];
-                $rowData[$date]['total_triple_total_waste_sum'] += $item['triple_total_waste_sum'];
+                $rowData[$date]['total_doubleSide_total_waste_sum'] += $item['doubleSide_total_waste_sum'];
+
                 $rowData[$date]['total_tripal_net_wt_sum'] += $item['tripal_net_wt_sum'];
                 $rowData[$date]['total_finalTripal_net_wt_sum'] += $item['finalTripal_net_wt_sum'];
                 $rowData[$date]['total_finalTripal_meter_sum'] += $item['finalTripal_meter_sum'];
+                $rowData[$date]['total_triple_total_waste_sum'] += $item['triple_total_waste_sum'];
+
             }
 
 
         }
- dd($rowData);
+//  dd($rowData);
         return $rowData;
     }
 

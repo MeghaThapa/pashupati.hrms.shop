@@ -28,17 +28,21 @@
     </thead>
     <tbody>
         @php
-            $col_total_singleSide_total_waste_sum = 0;
-            $col_total_unlam_net_wt_sum = 0;
+
+            $col_total_single_unlam_net_wt_sum = 0;
             $col_total_singleLam_net_wt_sum_singleside = 0;
             $col_total_singleLam_meter_sum = 0;
-            $col_total_doubleSide_total_waste_sum = 0;
+            $col_total_singleSide_total_waste_sum = 0;
+
+            $col_total_double_unlam_net_wt_sum = 0;
             $col_total_doubleLam_net_wt_sum = 0;
             $col_total_doubleLam_meter_sum = 0;
-            $col_total_triple_total_waste_sum = 0;
+            $col_total_doubleSide_total_waste_sum = 0;
+
             $col_total_tripal_net_wt_sum = 0;
             $col_total_finalTripal_net_wt_sum = 0;
             $col_total_finalTripal_meter_sum = 0;
+            $col_total_triple_total_waste_sum = 0;
 
         @endphp
 
@@ -69,10 +73,10 @@
                 <td>{{ $item['bill_date'] }}</td>
 
                 <td>
-                    @if (isset($item['total_unlam_net_wt_sum']))
-                        {{ $item['total_unlam_net_wt_sum'] }}
+                    @if (isset($item['total_single_unlam_net_wt_sum']))
+                        {{ $item['total_single_unlam_net_wt_sum'] }}
                         @php
-                            $col_total_unlam_net_wt_sum += $item['total_unlam_net_wt_sum'];
+                            $col_total_single_unlam_net_wt_sum += $item['total_single_unlam_net_wt_sum'];
                         @endphp
                     @else
                         0
@@ -80,10 +84,21 @@
                 </td>
 
                 <td>
+                    @if (isset($item['total_singleLam_net_wt_sum_singleside']))
+                        {{ $item['total_singleLam_net_wt_sum_singleside'] }}
+                        @php
+                            $col_total_singleLam_net_wt_sum_singleside += $item['total_singleLam_net_wt_sum_singleside'];
+                        @endphp
+                    @else
+                        0
+                    @endif
+                </td>
+                <td>
                     @if (isset($item['total_singleLam_meter_sum']))
                         {{ $item['total_singleLam_meter_sum'] }}
                         @php
-                            $col_total_singleLam_net_wt_sum_singleside += $item['total_singleLam_meter_sum'];
+                            // $subTotalbswUnlam += $item['bsw_total_unlam'];
+                            $col_total_singleLam_meter_sum += $item['total_singleLam_meter_sum'];
                         @endphp
                     @else
                         0
@@ -100,34 +115,15 @@
                         0
                     @endif
                 </td>
+                <td>0</td>
+
+                {{-- double side --}}
                 <td>
-                    0
-                    {{-- @if (isset($item['total_singleSide_total_waste_sum']))
-                        {{ $item['total_singleSide_total_waste_sum'] }}
-                        @php
-                            // $subTotalbswUnlam += $item['bsw_total_unlam'];
-                            $col_total_singleSide_total_waste_sum += $item['total_singleSide_total_waste_sum'];
-                        @endphp
-                    @else
-                        0
-                    @endif --}}
-                </td>
-                <td>
-                    @if (isset($item['total_doubleLam_net_wt_sum']))
-                        {{ $item['total_doubleLam_net_wt_sum'] }}
+                    @if (isset($item['total_double_unlam_net_wt_sum']))
+                        {{ $item['total_double_unlam_net_wt_sum'] }}
                         @php
                             // $subTotalbswLam += $item['bsw_total_lam'];
-                            $col_total_doubleLam_net_wt_sum += $item['total_doubleLam_net_wt_sum'];
-                        @endphp
-                    @else
-                        0
-                    @endif
-                </td>
-                <td>
-                    @if (isset($item['total_doubleSide_total_waste_sum']))
-                        {{ $item['total_doubleSide_total_waste_sum'] }}
-                        @php
-                            $col_total_doubleSide_total_waste_sum += $item['total_doubleSide_total_waste_sum'];
+                            $col_total_double_unlam_net_wt_sum += $item['total_double_unlam_net_wt_sum'];
                         @endphp
                     @else
                         0
@@ -154,15 +150,18 @@
                     @endif
                 </td>
                 <td>
-                    @if (isset($item['total_triple_total_waste_sum']))
-                        {{ $item['total_triple_total_waste_sum'] }}
+                    @if (isset($item['total_doubleSide_total_waste_sum']))
+                        {{ $item['total_doubleSide_total_waste_sum'] }}
                         @php
-                            $col_total_triple_total_waste_sum += $item['total_triple_total_waste_sum'];
+                            $col_total_doubleSide_total_waste_sum += $item['total_doubleSide_total_waste_sum'];
                         @endphp
                     @else
                         0
                     @endif
                 </td>
+                <td>0</td>
+
+                {{-- tripal --}}
                 <td>
                     @if (isset($item['total_tripal_net_wt_sum']))
                         {{ $item['total_tripal_net_wt_sum'] }}
@@ -193,30 +192,41 @@
                         0
                     @endif
                 </td>
+                <td>
+                    @if (isset($item['total_triple_total_waste_sum']))
+                        {{ $item['total_triple_total_waste_sum'] }}
+                        @php
+                            $col_total_triple_total_waste_sum += $item['total_triple_total_waste_sum'];
+                        @endphp
+                    @else
+                        0
+                    @endif
+                </td>
+                <td>0</td>
 
             </tr>
         @endforeach
-        {{-- <tfoot>
-            <tr>
-                <td></td>
-                <td>Total</td>
-                <td>{{ $totalRollIssue }}</td>
-                <td>{{ $totalCuttingBag}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>{{ $totalIssueToFinishing }}</td>
-                <td>{{ $totalwaste }}</td>
-            </tr>
-        </tfoot> --}}
+    <tfoot>
+        <tr>
+            <td>Total</td>
+            <td>{{ $col_total_single_unlam_net_wt_sum }}</td>
+            <td>{{ $col_total_singleLam_net_wt_sum_singleside }}</td>
+            <td>{{ $col_total_singleLam_meter_sum }}</td>
+            <td>{{ $col_total_singleSide_total_waste_sum }}</td>
+            <td></td>
+            <td>{{ $col_total_double_unlam_net_wt_sum }}</td>
+            <td>{{ $col_total_doubleLam_net_wt_sum }}</td>
+            <td>{{ $col_total_doubleLam_meter_sum }}</td>
+            <td>{{ $col_total_doubleSide_total_waste_sum }}</td>
+            <td>0</td>
+            <td>{{ $col_total_tripal_net_wt_sum }}</td>
+            <td>{{ $col_total_finalTripal_net_wt_sum }}</td>
+            <td>{{ $col_total_finalTripal_meter_sum }}</td>
+            <td>{{ $col_total_triple_total_waste_sum }}</td>
+            <td>0</td>
+
+        </tr>
+    </tfoot>
     </tbody>
 
 </table>
