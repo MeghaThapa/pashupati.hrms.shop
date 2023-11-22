@@ -39,10 +39,10 @@ class TripalProductionReportController extends Controller
             DB::raw('(SELECT SUM(meter) FROM singlesidelaminatedfabrics WHERE bill_date = single_tripal_bills.bill_date) as singleLam_meter_sum')
         )
         ->groupBy('single_tripal_bills.bill_date')
-        ->whereNotNull('single_tripal_bills.total_waste')
-        ->orWhereNotNull('unlaminatedfabrictripals.net_wt')
-        ->orWhereNotNull('singlesidelaminatedfabrics.net_wt')
-        ->orWhereNotNull('singlesidelaminatedfabrics.meter')
+        // ->whereNotNull('single_tripal_bills.total_waste')
+        // ->orWhereNotNull('unlaminatedfabrictripals.net_wt')
+        // ->orWhereNotNull('singlesidelaminatedfabrics.net_wt')
+        // ->orWhereNotNull('singlesidelaminatedfabrics.meter')
         ->get()
         ->toArray();
         // dd($singleSideProd);
@@ -58,10 +58,10 @@ class TripalProductionReportController extends Controller
             DB::raw('(SELECT SUM(meter) FROM double_side_laminated_fabrics WHERE bill_date = double_tripal_bills.bill_date) as doubleLam_meter_sum')
         )
         ->groupBy('double_tripal_bills.bill_date')
-        ->whereNotNull('double_tripal_bills.total_waste')
-        ->orWhereNotNull('single_sideunlaminated_fabrics.net_wt')
-        ->orWhereNotNull('double_side_laminated_fabrics.net_wt')
-        ->orWhereNotNull('double_side_laminated_fabrics.meter')
+        // ->whereNotNull('double_tripal_bills.total_waste')
+        // ->orWhereNotNull('single_sideunlaminated_fabrics.net_wt')
+        // ->orWhereNotNull('double_side_laminated_fabrics.net_wt')
+        // ->orWhereNotNull('double_side_laminated_fabrics.meter')
         ->get()
         ->toArray();
 
@@ -79,10 +79,10 @@ class TripalProductionReportController extends Controller
             DB::raw('(SELECT SUM(meter) FROM final_tripals WHERE bill_date = final_tripal_bills.bill_date) as finalTripal_meter_sum')
         )
         ->groupBy('final_tripal_bills.bill_date')
-        ->whereNotNull('final_tripal_bills.total_waste')
-        ->orWhereNotNull('tripal_entries.net_wt')
-        ->orWhereNotNull('final_tripals.net_wt')
-        ->orWhereNotNull('final_tripals.meter')
+        // ->whereNotNull('final_tripal_bills.total_waste')
+        // ->orWhereNotNull('tripal_entries.net_wt')
+        // ->orWhereNotNull('final_tripals.net_wt')
+        // ->orWhereNotNull('final_tripals.meter')
         ->get()
         ->toArray();
         $array = self::mergeArraysByBillDate($mergedArray, $tripalProd);
