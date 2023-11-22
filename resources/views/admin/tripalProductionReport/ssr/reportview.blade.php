@@ -83,29 +83,41 @@
                     @if (isset($item['total_singleLam_meter_sum']))
                         {{ $item['total_singleLam_meter_sum'] }}
                         @php
-                            $col_total_unlam_net_wt_sum += $item['total_singleLam_meter_sum'];
+                            $col_total_singleLam_net_wt_sum_singleside += $item['total_singleLam_meter_sum'];
                         @endphp
                     @else
                         0
                     @endif
                 </td>
                 <td>
-                    @if (isset($item['total_singleLam_net_wt_sum_singleside']))
-                        {{ $item['total_singleLam_net_wt_sum_singleside'] }}
+                    @if (isset($item['total_singleSide_total_waste_sum']))
+                        {{ $item['total_singleSide_total_waste_sum'] }}
                         @php
                             // $subTotalbswUnlam += $item['bsw_total_unlam'];
-                            $col_total_singleLam_net_wt_sum_singleside += $item['total_singleLam_net_wt_sum_singleside'];
+                            $col_total_singleSide_total_waste_sum += $item['total_singleSide_total_waste_sum'];
                         @endphp
                     @else
                         0
                     @endif
                 </td>
                 <td>
-                    @if (isset($item['total_singleLam_meter_sum']))
-                        {{ $item['total_singleLam_meter_sum'] }}
+                    0
+                    {{-- @if (isset($item['total_singleSide_total_waste_sum']))
+                        {{ $item['total_singleSide_total_waste_sum'] }}
+                        @php
+                            // $subTotalbswUnlam += $item['bsw_total_unlam'];
+                            $col_total_singleSide_total_waste_sum += $item['total_singleSide_total_waste_sum'];
+                        @endphp
+                    @else
+                        0
+                    @endif --}}
+                </td>
+                <td>
+                    @if (isset($item['total_doubleLam_net_wt_sum']))
+                        {{ $item['total_doubleLam_net_wt_sum'] }}
                         @php
                             // $subTotalbswLam += $item['bsw_total_lam'];
-                            $col_total_singleLam_meter_sum += $item['total_singleLam_meter_sum'];
+                            $col_total_doubleLam_net_wt_sum += $item['total_doubleLam_net_wt_sum'];
                         @endphp
                     @else
                         0

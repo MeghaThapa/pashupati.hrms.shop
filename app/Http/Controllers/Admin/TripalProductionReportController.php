@@ -34,7 +34,7 @@ class TripalProductionReportController extends Controller
         ->whereBetween('single_tripal_bills.bill_date', [$request->start_date, $request->end_date])
         ->select('single_tripal_bills.bill_date',
             DB::raw('SUM(single_tripal_bills.total_waste) as singleSide_total_waste_sum'),
-            DB::raw('(SELECT SUM(net_wt) FROM unlaminatedfabrictripals WHERE bill_date = single_tripal_bills.bill_date) as unlam_net_wt_sum'),
+            DB::raw('(SELECT SUM(net_wt) FROM unlaminatedfabrictripals WHERE bill_date = single_tripal_bills.bill_date) as single_unlam_net_wt_sum'),
             DB::raw('(SELECT SUM(net_wt) FROM singlesidelaminatedfabrics WHERE bill_date = single_tripal_bills.bill_date) as singleLam_net_wt_sum_singleside'),
             DB::raw('(SELECT SUM(meter) FROM singlesidelaminatedfabrics WHERE bill_date = single_tripal_bills.bill_date) as singleLam_meter_sum')
         )
@@ -53,7 +53,7 @@ class TripalProductionReportController extends Controller
         ->whereBetween('double_tripal_bills.bill_date', [$request->start_date, $request->end_date])
         ->select('double_tripal_bills.bill_date',
             DB::raw('SUM(double_tripal_bills.total_waste) as doubleSide_total_waste_sum'),
-            DB::raw('(SELECT SUM(net_wt) FROM single_sideunlaminated_fabrics WHERE bill_date = double_tripal_bills.bill_date) as unlam_net_wt_sum'),
+            DB::raw('(SELECT SUM(net_wt) FROM single_sideunlaminated_fabrics WHERE bill_date = double_tripal_bills.bill_date) as double_unlam_net_wt_sum'),
             DB::raw('(SELECT SUM(net_wt) FROM double_side_laminated_fabrics WHERE bill_date = double_tripal_bills.bill_date) as doubleLam_net_wt_sum'),
             DB::raw('(SELECT SUM(meter) FROM double_side_laminated_fabrics WHERE bill_date = double_tripal_bills.bill_date) as doubleLam_meter_sum')
         )
@@ -66,8 +66,8 @@ class TripalProductionReportController extends Controller
         ->toArray();
 
         $mergedArray = self::mergeArraysByBillDate1($singleSideProd, $doubleSideProd);
-
         // dd($mergedArray);
+
         $tripalProd = DB::table('final_tripal_bills')
         ->leftJoin('tripal_entries', 'final_tripal_bills.bill_date', '=', 'tripal_entries.bill_date')
         ->leftJoin('final_tripals', 'final_tripal_bills.bill_date', '=', 'final_tripals.bill_date')
@@ -86,7 +86,7 @@ class TripalProductionReportController extends Controller
         ->get()
         ->toArray();
         $array = self::mergeArraysByBillDate($mergedArray, $tripalProd);
-
+        dd($array);
           $resultArray = [];
         foreach ($array as $item) {
             $bill_date = $item['bill_date'];
@@ -125,6 +125,7 @@ class TripalProductionReportController extends Controller
                 $rowData[$date]['total_unlam_net_wt_sum'] += $item['unlam_net_wt_sum'];
                 $rowData[$date]['total_singleLam_net_wt_sum_singleside'] += $item['singleLam_net_wt_sum_singleside'];
                 $rowData[$date]['total_singleLam_meter_sum'] += $item['singleLam_meter_sum'];
+
                 $rowData[$date]['total_doubleSide_total_waste_sum'] += $item['doubleSide_total_waste_sum'];
                 $rowData[$date]['total_doubleLam_net_wt_sum'] += $item['doubleLam_net_wt_sum'];
                 $rowData[$date]['total_doubleLam_meter_sum'] += $item['doubleLam_meter_sum'];
@@ -170,9 +171,10 @@ public function mergeArraysByBillDate1($arrayOne, $arrayTwo)
         $mergedData = [
             'bill_date' => $date,
             'singleSide_total_waste_sum' => $dataOne['singleSide_total_waste_sum'] ?? null,
-            'unlam_net_wt_sum' => $dataOne['unlam_net_wt_sum'] ?? null,
+            'single_unlam_net_wt_sum' => $dataOne['single_unlam_net_wt_sum'] ?? null,
             'singleLam_net_wt_sum_singleside' => $dataOne['singleLam_net_wt_sum_singleside'] ?? null,
             'singleLam_meter_sum' => $dataOne['singleLam_meter_sum'] ?? null,
+             'double_unlam_net_wt_sum' => $dataOne['double_unlam_net_wt_sum'] ?? null,
             'doubleSide_total_waste_sum' => $dataTwo['doubleSide_total_waste_sum'] ?? null,
             'doubleLam_net_wt_sum' => $dataTwo['doubleLam_net_wt_sum'] ?? null,
             'doubleLam_meter_sum' => $dataTwo['doubleLam_meter_sum'] ?? null,
@@ -212,9 +214,11 @@ public function mergeArraysByBillDate($arrayOne, $arrayTwo)
         $mergedData = [
             'bill_date' => $date,
             'singleSide_total_waste_sum' => $dataOne['singleSide_total_waste_sum'] ?? null,
-            'unlam_net_wt_sum' => $dataOne['unlam_net_wt_sum'] ?? null,
+            'single_unlam_net_wt_sum' => $dataOne['single_unlam_net_wt_sum'] ?? null,
             'singleLam_net_wt_sum_singleside' => $dataOne['singleLam_net_wt_sum_singleside'] ?? null,
             'singleLam_meter_sum' => $dataOne['singleLam_meter_sum'] ?? null,
+
+            'double_unlam_net_wt_sum' => $dataOne['double_unlam_net_wt_sum'] ?? null,
             'doubleSide_total_waste_sum' => $dataOne['doubleSide_total_waste_sum'] ?? null,
             'doubleLam_net_wt_sum' => $dataOne['doubleLam_net_wt_sum'] ?? null,
             'doubleLam_meter_sum' => $dataOne['doubleLam_meter_sum'] ?? null,
