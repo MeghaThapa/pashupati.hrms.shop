@@ -1606,7 +1606,18 @@
                 </a>
 
             </li>
+                        <li class="nav-item">
 
+                <a href="{{ route('bagBundelling.index') }}"
+                    class="nav-link {{ request()->routeIs('bagBundelling.index') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-chart-area"></i>
+
+                    <p>{{ __('Bag Production Report') }}</p>
+
+                </a>
+
+            </li>
 
 
             <li class="nav-item">

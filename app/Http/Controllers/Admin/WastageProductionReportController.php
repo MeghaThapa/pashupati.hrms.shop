@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\FabricDetail;
+use App\Models\TapeEntryItemModel;
 use App\Models\ProcessingSubcat;
 use App\Models\SingleTripalBill;
 
@@ -26,20 +27,16 @@ class WastageProductionReportController extends Controller
 
     private function getPlantArray($request)
     {
+     $sumByPlantType = TapeEntryItemModel::join('tape_entry', 'tape_entry_items.tape_entry_id', '=', 'tape_entry.id')
+    ->select(DB::raw('SUM(tape_qty_in_kg) as total_qty'), 'plantType_id','tape_entry.tape_entry_date')
+    ->groupBy('plantType_id', 'tape_entry.tape_entry_date')
+    ->whereBetween('tape_entry.tape_entry_date', [$request->start_date, $request->end_date])
+    ->get()
+    ->toArray();
 
-        $tapePlantProduction = DB::table('tape_entry')
-        ->leftJoin('tape_entry_items', 'tape_entry.id', '=', 'tape_entry_items.tape_entry_id')
-        // ->whereBetween('tape_entry.tape_entry_date', [$request->start_date, $request->end_date])
-        ->select('tape_entry.tape_entry_date',
 
-            DB::raw('(SELECT SUM(tape_qty_in_kg) FROM tape_entry_items WHERE plantType_id = 1) as total_tape1'),
-            DB::raw('(SELECT SUM(tape_qty_in_kg) FROM tape_entry_items WHERE plantType_id = 5) as total_tape2'),
+    dd($sumByPlantType);
 
-        )
-        ->groupBy('tape_entry.tape_entry_date')
-        ->get()
-        ->toArray();
-        dd($tapePlantProduction);
 
         $fabricDetailProduction = FabricDetail::
             select('fabric_details.bill_date',

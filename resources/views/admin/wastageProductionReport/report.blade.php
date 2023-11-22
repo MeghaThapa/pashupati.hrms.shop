@@ -1,10 +1,8 @@
 @extends('layouts.admin')
 @section('extra-style')
-    <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/nepaliDatePicker/nepali.datepicker.v4.0.1.min.css') }}" rel="stylesheet" type="text/css" />
-
 @endsection
 @section('content')
     <!-- Content Header (Page header) -->
@@ -34,13 +32,13 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
-                            <input type="text" class="form-control ndp-nepali-calendar" id="start_date" name="start_date" value="">
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="text" class="form-control ndp-nepali-calendar" id="end_date" name="end_date" value="">
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="">
                         </div>
                     </div>
                     <div class="col-sm-3">
@@ -56,9 +54,8 @@
     </div>
 @endsection
 @section('extra-script')
-<script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
     <script>
-        $(function(){
+        $(function() {
             // console.log(currentDate);
 
             $("#generateReport").click(function(e) {
@@ -68,12 +65,12 @@
                     method: "GET",
                     data: {
                         "godam_id": $('#godamID').val(),
-                        "start_date":$('#start_date').val(),
-                        "end_date":$('#end_date').val(),
+                        "start_date": $('#start_date').val(),
+                        "end_date": $('#end_date').val(),
                     },
                     success: function(response) {
                         $('#reportView').empty();
-                        if(response.status==false){
+                        if (response.status == false) {
                             alert(response.message);
                             return;
                         }
@@ -91,24 +88,24 @@
         var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
 
 
-            $('#start_date').val(currentDate);
-            $('#start_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-                // onChange() {
-                //     table.draw();
-                // }
-            });
+        $('#start_date').val(currentDate);
+        $('#start_date').nepaliDatePicker({
+            ndpYear: true,
+            ndpMonth: true,
+            disableAfter: currentDate,
+            // onChange() {
+            //     table.draw();
+            // }
+        });
 
-            $('#end_date').val(currentDate);
-            $('#end_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-                // onChange() {
-                //     table.draw();
-                // }
-            });
+        $('#end_date').val(currentDate);
+        $('#end_date').nepaliDatePicker({
+            ndpYear: true,
+            ndpMonth: true,
+            disableAfter: currentDate,
+            // onChange() {
+            //     table.draw();
+            // }
+        });
     </script>
 @endsection
