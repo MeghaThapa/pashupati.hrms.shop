@@ -64,6 +64,7 @@ use App\Http\Controllers\ProcessingCategoryAndSubsController;
 use App\Http\Controllers\FabricNonWovenReceiveEntryController;
 use App\Http\Controllers\Admin\FabricProductionReportController;
 use App\Http\Controllers\Admin\TripalProductionReportController;
+use App\Http\Controllers\Admin\WastageProductionReportController;
 use App\Http\Controllers\PrintsAndCutsDanaConsumptionController;
 use App\Http\Controllers\BagFabricReceiveItemSentStockController;
 use App\Http\Controllers\PrintingAndCuttingBagStockController;
@@ -1324,7 +1325,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 //tripal-production report
     Route::get('tripal-production/report', TripalProductionReportController::class)->name('tripal.production.report');
 
-    //printing and cutting 
+    //wastage report
+    Route::get('wastage-production/report', WastageProductionReportController::class)->name('wastage.production.report');
+
+    //printing and cutting
     Route::get('printing-cutting/report', PrintingAndFinishingController::class)->name('printing.finishing.report');
 
     // lang change

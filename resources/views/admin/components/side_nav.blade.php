@@ -949,7 +949,21 @@
                     <i class="nav-icon fas fa-tags"></i>
 
                     <p>Tripal Production Report</p>
-                        <li class="nav-item">
+                </a>
+            </li>
+
+            <li class="nav-item">
+
+                <a href="{{ route('wastage.production.report') }}"
+                    class="nav-link {{ request()->routeIs('wastage-production/report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-tags"></i>
+
+                    <p>Wastage Production Report</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
 
                 <a href="{{ route('printing.finishing.report') }}"
                     class="nav-link {{ request()->routeIs('printing-cutting/report') ? 'active' : '' }}">
