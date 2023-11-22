@@ -13,24 +13,24 @@ class PrintingAndCuttingBagStockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+     public function index(Request $request)
     {
-
-        $query = PrintingAndCuttingBagStock::with('group:id,name', 'bagBrand:id,name')->get();
-        return $query;
-        // if ($request->ajax()) {
-        //     $query = PrintingAndCuttingBagStock::with('group:id,name', 'bagBrand:id,name');
-        //     return DataTables::of($query)
-        //         ->addIndexColumn()
-        //         ->editColumn("group_id", function ($row) {
-        //             return $row->group->name;
-        //         })
-        //         ->editColumn("bag_brand_id", function ($row) {
-        //             return $row->bagBrand->name;
-        //         })
-        //         ->make(true);
-        // }
-        // return view('admin.bag.printsandcuts.printingAndCuttingBagStock');
+        $printingAndCuttingBagStock=PrintingAndCuttingBagStock::with('group:id,name','bagBrand:id,name')->get();
+        $groupedDatas = $printingAndCuttingBagStock->groupBy('group_id');
+        $formattedDatas = [];
+        foreach ($groupedDatas as $groupId => $group) {
+            $totalQuantity = 0;
+            foreach ($group as $groupedData) {
+                $totalQuantity += $groupedData->quantity_piece;
+                $formattedDatas[$groupedData->group->name][] = [
+                    'group' => $groupedData->group->name,
+                    'bag_brand' => $groupedData->bagBrand->name,
+                    'quantity_piece' => $groupedData->quantity_piece,
+                ];
+            }
+        }
+        $totalQuantity = PrintingAndCuttingBagStock::sum('quantity_piece');
+        return view('admin.bag.printsandcuts.printingAndCuttingBagStock',compact('formattedDatas','totalQuantity'));
     }
 
     /**
