@@ -134,6 +134,13 @@
             <th width="10px">{{ __('Kgs') }}</th>
             <th width="10px">{{ __('Gram Per Bag') }}</th>
         </tr>
+        @php
+            $totalsAll = [
+                'allTotalPcs' => 0,
+                'allTotalKgs' => 0,
+                'allTotalGramPerBag' => 0,
+            ];
+        @endphp
         @foreach ($datas as $name => $formattedData)
             <tbody>
                 @php
@@ -164,7 +171,25 @@
                     <td>{{ $totals['totalKgs'] }}</td>
                     <td>{{ $totals['totalGramPerBag'] }}</td>
                 </tr>
+
+
+
             </tbody>
+            @php
+                $totalsAll['allTotalPcs'] += $totals['totalPcs'];
+                $totalsAll['allTotalKgs'] += $totals['totalKgs'];
+                $totalsAll['allTotalGramPerBag'] += $totals['totalGramPerBag'];
+
+            @endphp
         @endforeach
+        <tfoot>
+            <tr>
+                <td style="font-weight:bold">Total 6666</td>
+                <td></td>
+                <td>{{ $totalsAll['allTotalPcs'] }}</td>
+                <td>{{ $totalsAll['allTotalKgs'] }}</td>
+                <td>{{ $totalsAll['allTotalGramPerBag'] }}</td>
+            </tr>
+        </tfoot>
 
     </table>
