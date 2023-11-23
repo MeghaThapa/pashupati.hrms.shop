@@ -32,19 +32,19 @@ class BagProductionReportController extends Controller
 
     private function data($request)
         {
-            $results1 =  DB::table('bag_bundel_entries')
+           $results1 = DB::table('bag_bundel_entries')
             ->select(
-            'bag_bundel_entries.receipt_date',
-            'bag_bundel_items.bag_brand_id',
-            'bag_brands.name as brand_name',
-            DB::raw('SUM(bag_bundel_items.qty_in_kg) as total_qty_in_kg'),
-            DB::raw('SUM(bag_bundel_items.qty_pcs) as total_qty_pcs')
+                'bag_bundel_entries.receipt_date',
+                'bag_brands.name as brand_name',
+                DB::raw('SUM(bag_bundel_items.qty_in_kg) as total_qty_in_kg'),
+                DB::raw('SUM(bag_bundel_items.qty_pcs) as total_qty_pcs')
             )
             ->join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
             ->join('bag_brands', 'bag_bundel_items.bag_brand_id', '=', 'bag_brands.id')
             ->whereBetween('bag_bundel_entries.receipt_date', [$request->start_date, $request->end_date])
-            ->groupBy('bag_bundel_entries.receipt_date', 'bag_bundel_items.bag_brand_id', 'bag_brands.name')
+            ->groupBy('bag_bundel_entries.receipt_date', 'bag_brands.name')
             ->get();
+
             // dd($results1);
 
             //for summary
@@ -61,7 +61,7 @@ class BagProductionReportController extends Controller
              $formattedDatas = [];
              foreach ($groupedDatas as $groupId => $group) {
                     foreach ($group as $groupedData) {
-                        $formattedDatas[$groupedData->brand_name][] = [
+                        $formattedDatas[$groupedData->receipt_date][] = [
                             'receipt_date' =>$groupedData->receipt_date,
                             'bag_brand' => $groupedData->brand_name,
                             'qty_pcs' => $groupedData->total_qty_pcs,
@@ -80,3 +80,17 @@ class BagProductionReportController extends Controller
 
         }
 }
+//original query
+//  $results1 =  DB::table('bag_bundel_entries')
+//             ->select(
+//             'bag_bundel_entries.receipt_date',
+//             'bag_bundel_items.bag_brand_id',
+//             'bag_brands.name as brand_name',
+//             DB::raw('SUM(bag_bundel_items.qty_in_kg) as total_qty_in_kg'),
+//             DB::raw('SUM(bag_bundel_items.qty_pcs) as total_qty_pcs')
+//             )
+//             ->join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
+//             ->join('bag_brands', 'bag_bundel_items.bag_brand_id', '=', 'bag_brands.id')
+//             ->whereBetween('bag_bundel_entries.receipt_date', [$request->start_date, $request->end_date])
+//             ->groupBy('bag_bundel_entries.receipt_date', 'bag_bundel_items.bag_brand_id', 'bag_brands.name')
+//             ->get();
