@@ -17,6 +17,7 @@ class PrintingAndCuttingBagStockController extends Controller
     {
         $printingAndCuttingBagStock=PrintingAndCuttingBagStock::with('group:id,name','bagBrand:id,name')->get();
         $groupedDatas = $printingAndCuttingBagStock->groupBy('group_id');
+        // return($groupedDatas);
         $formattedDatas = [];
         foreach ($groupedDatas as $groupId => $group) {
             $totalQuantity = 0;

@@ -28,38 +28,60 @@ class BagProductionReportController extends Controller
             //  ->get();
             //  $groupedDatas = $bagBundelStock->groupBy('bag_brand_id');
             //     $formattedDatas = [];
-            //     foreach ($groupedDatas as $groupId => $group) {
-            //         $totalPcs = 0;
-            //         $totalKgs = 0;
-            //         $totalGramPerBag = 0;
-            //         foreach ($group as $groupedData) {
-            //             $totalPcs += $groupedData->qty_pcs;
-            //             $totalKgs += $groupedData->qty_in_kg;
-            //             $totalGramPerBag += $groupedData->qty_pcs/$groupedData->qty_in_kg;
+                // foreach ($groupedDatas as $groupId => $group) {
+                //     $totalPcs = 0;
+                //     $totalKgs = 0;
+                //     $totalGramPerBag = 0;
+                //     foreach ($group as $groupedData) {
+                //         $totalPcs += $groupedData->qty_pcs;
+                //         $totalKgs += $groupedData->qty_in_kg;
+                //         $totalGramPerBag += $groupedData->qty_pcs/$groupedData->qty_in_kg;
 
-            //             $formattedDatas[$groupedData->bagBrand->name][] = [
-            //                 'bag_brand' => $groupedData->bagBrand->name,
-            //                 'qty_pcs' => $groupedData->qty_pcs,
-            //                 'qty_in_kg'=> $groupedData->qty_in_kg,
-            //                 'gram_per_bag' => $groupedData->qty_in_kg/$groupedData->qty_pcs,
-            //             ];
-            //         }
-            //     }
+                //         $formattedDatas[$groupedData->bagBrand->name][] = [
+                //             'bag_brand' => $groupedData->bagBrand->name,
+                //             'qty_pcs' => $groupedData->qty_pcs,
+                //             'qty_in_kg'=> $groupedData->qty_in_kg,
+                //             'gram_per_bag' => $groupedData->qty_in_kg/$groupedData->qty_pcs,
+                //         ];
+                //     }
+                // }
             //     return $formattedDatas;
-            $results = DB::table('bag_bundel_entries')
+           $results = DB::table('bag_bundel_entries as bb')
             ->select(
-                'bag_brands.name as bag_brand_name',
-                'bag_bundel_items.bag_brand_id',
-                'bag_bundel_entries.receipt_date',
-                DB::raw('SUM(bag_bundel_items.qty_in_kg) as total_qty_in_kg'),
-                DB::raw('SUM(bag_bundel_items.qty_pcs) as total_qty_pcs')
+                'bb.receipt_date',
+                'bi.bag_bundel_entry_id',
+                'bi.bag_brand_id',
+                'bi.qty_in_kg',
+                'bi.qty_pcs',
+                'br.name as brand_name'
             )
-            ->join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
-            ->join('bag_brands', 'bag_bundel_items.bag_brand_id', '=', 'bag_brands.id')
-             ->whereBetween('bag_bundel_entries.receipt_date', ['2023-07-22','2023-09-28',])
-            ->groupBy('bag_brands.name', 'bag_bundel_items.bag_brand_id', 'bag_bundel_entries.receipt_date')
+            ->join('bag_bundel_items as bi', 'bb.id', '=', 'bi.bag_bundel_entry_id')
+            ->join('bag_brands as br', 'bi.bag_brand_id', '=', 'br.id')
+            ->orderBy('bb.receipt_date')
             ->get();
-            return $results;
+            $groupedDatas = $results->groupBy('bag_brand_id');
+            // return ($groupedDatas);
+             $formattedDatas = [];
+              foreach ($groupedDatas as $groupId => $group) {
+                    $totalPcs = 0;
+                    $totalKgs = 0;
+                    $totalGramPerBag = 0;
+                    foreach ($group as $groupedData) {
+                        $totalPcs += $groupedData->qty_pcs;
+                        $totalKgs += $groupedData->qty_in_kg;
+                        $totalGramPerBag += $groupedData->qty_pcs/$groupedData->qty_in_kg;
+
+                        $formattedDatas[$groupedData->brand_name][] = [
+                            'receipt_date' =>$groupedData->receipt_date,
+                            'bag_brand' => $groupedData->brand_name,
+                            'qty_pcs' => $groupedData->qty_pcs,
+                            'qty_in_kg'=> $groupedData->qty_in_kg,
+                            'gram_per_bag' => $groupedData->qty_in_kg/$groupedData->qty_pcs,
+                        ];
+                    }
+                }
+
+            return $formattedDatas;
 
 
             return view('admin.bag.bagBundelling.report');
