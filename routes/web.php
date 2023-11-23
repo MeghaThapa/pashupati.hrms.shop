@@ -71,6 +71,7 @@ use App\Http\Controllers\PrintingAndCuttingBagStockController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\LaminationProductionController;
 use App\Http\Controllers\PrintingAndFinishingController;
+use App\Http\Controllers\BagProductionReportController;
 // brandBag.store
 /*
 |--------------------------------------------------------------------------
@@ -1327,6 +1328,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     //wastage report
     Route::get('wastage-production/report', WastageProductionReportController::class)->name('wastage.production.report');
+
+    //BagProductionReportController report
+    Route::get('bag-production/report', BagProductionReportController::class)->name('bag.production.report');
+
 
     //printing and cutting
     Route::get('printing-cutting/report', PrintingAndFinishingController::class)->name('printing.finishing.report');
