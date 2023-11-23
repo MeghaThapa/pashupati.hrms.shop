@@ -61,7 +61,7 @@
             $("#generateReport").click(function(e) {
                 e.preventDefault()
                 $.ajax({
-                    url: "{{ route('printing.finishing.report') }}",
+                    url: "{{ route('bag.production.report') }}",
                     method: "GET",
                     data: {
                         "start_date": $('#start_date').val(),
