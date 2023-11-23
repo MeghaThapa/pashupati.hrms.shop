@@ -1,228 +1,170 @@
-@extends('layouts.admin')
+<h3>Printing and Fininshing Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3>
+<table class="table table-bordered table-responsive">
+    {{-- <thead class="text-bold">
+        <tr>
+            <th colspan="4" style="text-align: center;border: 2px solid black;"></th>
+            <th colspan="7" style="text-align: center;border: 2px solid black;">Ink</th>
+            <th colspan="6" style="text-align: center;border: 2px solid black;"></th> --}}
+    {{-- <th colspan="5" style="text-align: center;border: 2px solid black;">BSW Lamination Plant</th>
+            <th colspan="5" style="text-align: center;border: 2px solid black;">Total All </th>  --}}
+    {{-- </tr>
+        <tr>
+            <th style="border: 1px solid black;"> Sr </th>
+            <th style="min-width: 120px;border: 1px solid black;">Date</th>
+            <th style="border: 1px solid black;">Roll Isuue</th>
+            <th style="border: 1px solid black;">Cutting Bags</th>
+            <th style="border: 1px solid black;">Black</th>
+            <th style="border: 1px solid black;">Red.</th>
+            <th style="border: 1px solid black;">Green</th>
+            <th style="border: 1px solid black;">Blue</th>
+            <th style="border: 1px solid black;">Orange</th>
+            <th style="border: 1px solid black;">Yellow</th>
+            <th style="border: 1px solid black;">Total Ink</th>
+            <th style="border: 1px solid black;">Diesel</th>
+            <th style="border: 1px solid black;">Tape</th>
+            <th style="border: 1px solid black;">NBA</th>
+            <th style="border: 1px solid black;">PP Yarn</th>
+            <th style="border: 1px solid black;">Issue to finishing</th>
+            <th style="border: 1px solid black;">Wastage</th>
+        </tr>
+    </thead> --}}
+    {{-- <tbody>
+        @php
+        $i = 0;
+        $totalRollIssue = 0;
+        $totalCuttingBag = 0;
+        $totalIssueToFinishing = 0;
+        $totalwaste = 0;
+        @endphp
 
-@section('extra-style')
-    <link href="{{ asset('css/select2/select2.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/select2/select2-bootstrap4.css') }}" rel="stylesheet" />
-    <style>
-        .col-form-label {
-            font-size: 12px !important;
+        @foreach ($datas as $date => $item)
+            <tr>
+                @php
+                $subTotalsundarUnlam = 0;
+                $subTotalsundarLam = 0;
+                $subTotalsundarProdMeter= 0;
+                $subTotalsundarWaste = 0;
+                $subTotalSundarPerc = 0;
 
-        }
+                $subTotaljpUnlam = 0;
+                $subTotaljpLam = 0;
+                $subTotaljpProdMeter= 0;
+                $subTotaljpWaste = 0;
+                $subTotaljpPerc = 0;
 
-        .dynamic-btn {
-            height: 18px;
-            width: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+                $subTotalbswUnlam = 0;
+                $subTotalbswLam = 0;
+                $subTotalbswProdMeter= 0;
+                $subTotalbswWaste = 0;
+                $subTotalbswPerc = 0;
 
-        #storeinSubmitBtn {
-            height: 25px;
-            width: 70px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 5px !important;
-        }
+                @endphp
 
-        .fa-plus {
-            font-size: 10px;
-        }
+                <td>{{ ++$i }}</td>
+                <td>{{ $item['date'] }}</td>
 
-        .form-control {
-            font-size: 12px !important;
+                <td>@if (isset($item['rollIssue_total_net_wt']))
+                    {{ $item['rollIssue_total_net_wt'] }}
+                    @php
+                    $totalRollIssue += $item['rollIssue_total_net_wt'];
+                    @endphp
+                    @else 0
+                    @endif
+                </td>
 
-        }
+                <td>@if (isset($item['cuttingBag_total_quantity_piece']))
+                    {{ $item['cuttingBag_total_quantity_piece'] }}
+                    @php
+                    $totalCuttingBag += $item['cuttingBag_total_quantity_piece'];
+                    @endphp
+                    @else 0
+                    @endif
+                </td>
+                <td colspan="11"></td>
 
-        .select2-selection__rendered,
-        .select2-container--bootstrap4 .select2-selection {
-            font-size: 12px !important;
-            display: flex !important;
-            align-items: center !important;
-            height: calc(1.6em + 0.75rem + 2px) !important;
-        }
+                <td>@if (isset($item['tot_total_quantity']))
+                    {{ $item['tot_total_quantity'] }}
+                    @php
+                    $totalIssueToFinishing += $item['tot_total_quantity'];
+                    @endphp
+                    @else 0
+                    @endif
+                </td>
+                <td>@if (isset($item['tot_total_wastage']))
+                    {{ $item['tot_total_wastage'] }}
+                    @php
+                    $totalwaste += $item['tot_total_wastage'];
+                    @endphp
+                    @else 0
+                    @endif
+                </td>
 
-        .select2-container {
-            height: calc(1.6em + 0.75rem + 2px) !important;
-        }
+            </tr>
+        @endforeach
+        <tfoot>
+            <tr>
+                <td></td>
+                <td>Total</td>
+                <td>{{ $totalRollIssue }}</td>
+                <td>{{ $totalCuttingBag}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ $totalIssueToFinishing }}</td>
+                <td>{{ $totalwaste }}</td>
+            </tr>
+        </tfoot>
+    </tbody> --}}
+    {{-- <thead>
+        <tr></tr>
+    </thead> --}}
+    @foreach ($datas as $name => $formattedData)
+        <table class="table table-bordered" style="padding: 0 30px;">
+            <tr>
+                <th width="10px">{{ __('Date') }}</th>
+                <th width="10px">{{ __('Bag Brand') }}</th>
+                <th width="10px">{{ __('Pcs') }}</th>
+                <th width="10px">{{ __('Kgs') }}</th>
+                <th width="10px">{{ __('Gram Per Bag') }}</th>
+            </tr>
+            <tbody>
+                @php
+                    $totals = [
+                        'totalPcs' => 0,
+                        'totalKgs' => 0,
+                        'totalGramPerBag' => 0,
+                    ];
+                @endphp
+                @foreach ($formattedData as $key => $data)
+                    <tr>
+                        <td>{{ $data['receipt_date'] }}</td>
+                        <td>{{ $data['bag_brand'] }}</td>
+                        <td>{{ $data['qty_pcs'] }}</td>
+                        <td>{{ $data['qty_in_kg'] }}</td>
+                        <td>{{ $data['gram_per_bag'] }}</td>
+                    </tr>
+                    @php
+                        $totals['totalPcs'] += $data['qty_pcs'];
+                        $totals['totalKgs'] += $data['qty_in_kg'];
+                        $totals['totalGramPerBag'] += $data['gram_per_bag'];
+                    @endphp
+                @endforeach
+                <tr style="font-weight:bold">
+                    <td>Total</td>
+                    <td></td>
+                    <td>{{ $totals['totalPcs'] }}</td>
+                    <td>{{ $totals['totalKgs'] }}</td>
+                    <td>{{ $totals['totalGramPerBag'] }}</td>
+                </tr>
+            </tbody>
+    @endforeach
 
-        .taxStyle .select2-selection {
-            width: 200px !important;
-        }
-
-        .form-group {
-            margin-bottom: 0px !important;
-        }
-
-        .content-wrapper {
-            padding-top: 0px !important;
-        }
-
-        .card-body {
-            padding: 0px 5px !important;
-        }
-
-        .card {
-            padding: 0px 5px !important;
-        }
-
-        .col-md-6 {
-            padding: 0px 2px !important;
-        }
-    </style>
-@endsection
-
-@section('content')
-    <section class="content">
-        <div class="container-fluid">
-
-            <div class="content-header mb-4">
-                <div class="row align-items-center">
-                    <div class="col-sm-6 mt-2">
-                        <h4><strong>Bag Bundelling Report </strong></h4>
-                    </div>
-
-                </div>
-            </div>
-
-
-            <div class="row" id="printTable">
-                <div class="col-12">
-                    <div class="invoice p-3 mb-3 card  card-outline">
-                        {{--
-
-                        <div class="row">
-                            <div class="col-12 table-responsive">
-                                @foreach ($formattedDatas as $name => $formattedData)
-                                    <table class="table table-bordered" style="padding: 0 30px;">
-                                        <tr>
-                                            <th width="10px">{{ __('Sr.No') }}</th>
-                                            <th width="10px">{{ __('Group') }}</th>
-                                            <th width="10px">{{ __('Bag Brand') }}</th>
-                                            <th width="10px">{{ __('Quantity Pieces') }}</th>
-                                        </tr>
-                                        <tbody>
-                                            @php
-                                                $totals = [
-                                                    'qty_pieces' => 0,
-                                                ]
-                                            @endphp
-                                            @foreach ($formattedData as $key => $data)
-                                                <tr>
-                                                    <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $data['group'] }}</td>
-                                                    <td>{{ $data['bag_brand'] }}</td>
-                                                    <td>{{ $data['quantity_piece'] }}</td>
-                                                </tr>
-                                                @php
-                                                    $totals['qty_pieces'] += $data['quantity_piece'];
-                                                @endphp
-                                            @endforeach
-                                            <tr style="font-weight:bold">
-                                                <td>Total</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>{{ $totals['qty_pieces'] }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                @endforeach
-
-                                <!-- Grand Total row outside the loop -->
-                                <table class="table table-bordered" style="padding: 0 30px;">
-                                    <tbody>
-                                        <tr style="font-weight:bold">
-                                            <td colspan="3">Grand Total</td>
-                                            <td>{{ $totalQuantity }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> --}}
-
-
-                        {{-- <h3 class="m-0 text-center mt-4">SUMMARY</h3>
-
-                        <div class="row px-4 py-3">
-                            <div class="col-12 table-responsive">
-                                <table class="table table-bordered">
-
-
-                                    <tr>
-                                        <th width="10px">{{ __('Sr.No') }}</th>
-                                        <th width="10px">{{ __('Fabric Name') }}</th>
-                                        <th width="10px">{{ __('Roll No') }}</th>
-                                        <th width="10px">{{ __('Gross Wght') }}</th>
-                                        <th width="10px">{{ __('Net Wght') }}</th>
-                                        <th width="10px">{{ __('Meter') }}</th>
-                                    </tr>
-
-                                    <tbody>
-                                        @foreach ($totalstocks as $key => $stock)
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $stock->name }}</td>
-                                                <td>{{ $stock->total_count }}</td>
-                                                <td>{{ $stock->total_gross }}</td>
-                                                <td>{{ $stock->total_net }}</td>
-                                                <td>{{ $stock->total_meter }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-
-                                    <tfoot>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>{{ $total_gross }}</td>
-                                            <td>{{ $total_net }}</td>
-                                            <td>{{ $total_meter }}</td>
-                                        </tr>
-                                    </tfoot>
-
-
-                                </table>
-                            </div>
-                        </div> --}}
-
-                        <div class="row no-print">
-                            <div class="col-12">
-                                {{-- <span>Bill Printed By : {{$bill_total_student->getUser->name}}</span> --}}
-                                {{-- <span class="float-right">Bill Date: {{$bill_total_student->created_at_np}}</span> --}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-
-
-
-
-    <!-- /.card-body -->
-
-    <!-- pagination start -->
-@endsection
-@section('extra-script')
-    <script src="https://cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
-
-    <script src="{{ asset('js/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('js/storein.js') }}"></script>
-
-    <script>
-        $(document).ready(function() {
-            // Attach a click event to the export button
-            $("#exportExcelButton").click(function() {
-                // Specify the table to be exported (use an appropriate selector)
-                $("#printTable").table2excel({
-                    filename: "exported-table.xls" // Specify the file name
-                });
-            });
-        });
-    </script>
-@endsection
+</table>
