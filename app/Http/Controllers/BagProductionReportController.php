@@ -11,11 +11,19 @@ class BagProductionReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+   
+     public function __invoke(Request $request)
     {
-        //
-    }
+        // $godams = Godam::get(['id', 'name']);
+        // if ($request->ajax()) {
 
+        //     $datas = $this->data($request);
+
+        //     $view = view('admin.printingAndFinishing.ssr.report', compact('datas', 'request'))->render();
+        //     return response(['status' => true, 'data' => $view]);
+        // }
+        return view('admin.bag.bagBundelling.report');
+    }
     /**
      * Show the form for creating a new resource.
      *
