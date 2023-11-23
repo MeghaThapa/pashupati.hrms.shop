@@ -126,15 +126,15 @@
     {{-- <thead>
         <tr></tr>
     </thead> --}}
-    @foreach ($datas as $name => $formattedData)
-        <table class="table table-bordered" style="padding: 0 30px;">
-            <tr>
-                <th width="10px">{{ __('Date') }}</th>
-                <th width="10px">{{ __('Bag Brand') }}</th>
-                <th width="10px">{{ __('Pcs') }}</th>
-                <th width="10px">{{ __('Kgs') }}</th>
-                <th width="10px">{{ __('Gram Per Bag') }}</th>
-            </tr>
+    <table class="table table-bordered" style="padding: 0 30px;">
+        <tr>
+            <th width="10px">{{ __('Date') }}</th>
+            <th width="10px">{{ __('Bag Brand') }}</th>
+            <th width="10px">{{ __('Pcs') }}</th>
+            <th width="10px">{{ __('Kgs') }}</th>
+            <th width="10px">{{ __('Gram Per Bag') }}</th>
+        </tr>
+        @foreach ($datas as $name => $formattedData)
             <tbody>
                 @php
                     $totals = [
@@ -165,6 +165,6 @@
                     <td>{{ $totals['totalGramPerBag'] }}</td>
                 </tr>
             </tbody>
-    @endforeach
+        @endforeach
 
-</table>
+    </table>
