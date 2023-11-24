@@ -43,97 +43,11 @@ class BagProductionReportController extends Controller
         ->groupBy('bag_bundel_entries.receipt_date')
         ->get()
         ;
-        // dd($results);
         $mergedArray = self::mergeCollectionsByDate($wastageResults, $results);
        
-        // $resultArray = [];
-        // foreach ($mergedArray as $item) {
-        //     $bill_date = $item['date'];
-        //     $resultArray[$bill_date][] = [
-        //         'date' => $item['date'],
-        //         'total_wastage' => $item['total_wastage'],
-        //         'receipt_date' => $item['receipt_date'],
-        //         'total_qty_in_kg' => $item['total_qty_in_kg'],
-        //         'total_qty_pcs' => $item['total_qty_pcs'],
-        //     ];
-        // }
-        //  dd($mergedArray);
         return $mergedArray; 
        
     }
-
-    // private function mergeCollectionsByDate($collectionOne, $collectionTwo)
-    // {
-    //     $dateKey = 'date'; // Replace 'date' with the actual key you want to use
-    //     $receiptDateKey = 'receipt_date'; // Replace 'receipt_date' with the actual key you want to use
-    
-    //     $datesArrayOne = $collectionOne->pluck($dateKey)->toArray();
-    //     $datesArrayTwo = $collectionTwo->pluck($receiptDateKey)->toArray();
-    
-    //     $commonDates = array_intersect($datesArrayOne, $datesArrayTwo);
-    //     $uniqueDatesOne = array_diff($datesArrayOne, $commonDates);
-    //     $uniqueDatesTwo = array_diff($datesArrayTwo, $commonDates);
-    
-    //     $mergedArray = [];
-    
-    //     // Process common dates
-    //     foreach ($commonDates as $date) {
-    //         $dataOne = $collectionOne->where($dateKey, $date)->first();
-    //         $dataTwo = $collectionTwo->where($receiptDateKey, $date)->first();
-    
-    //         // Convert objects to arrays
-    //         $dataOneArray = $dataOne ? (array) $dataOne : [];
-    //         $dataTwoArray = $dataTwo ? (array) $dataTwo : [];
-    
-    //         // Merge data from $dataOneArray and $dataTwoArray, keeping specific keys
-    //         $mergedData = [
-    //             'date' => $date,
-    //             'total_wastage' => $dataOneArray['total_wastage'] ?? null,
-    //             'receipt_date' => $dataTwoArray['receipt_date'] ?? null,
-    //             'total_qty_in_kg' => $dataTwoArray['total_qty_in_kg'] ?? null,
-    //             'total_qty_pcs' => $dataTwoArray['total_qty_pcs'] ?? null,
-    //         ];
-    
-    //         $mergedArray[] = $mergedData;
-    //     }
-    
-    //     // Process unique dates from $collectionOne
-    //     foreach ($uniqueDatesOne as $date) {
-    //         $dataOne = $collectionOne->where($dateKey, $date)->first();
-    
-    //         // Convert object to array
-    //         $dataOneArray = $dataOne ? (array) $dataOne : [];
-    
-    //         // Add data to the result array
-    //         $mergedArray[] = [
-    //             'date' => $date,
-    //             'total_wastage' => $dataOneArray['total_wastage'] ?? null,
-    //             'receipt_date' => null,
-    //             'total_qty_in_kg' => null,
-    //             'total_qty_pcs' => null,
-    //         ];
-    //     }
-    
-    //     // Process unique dates from $collectionTwo
-    //     foreach ($uniqueDatesTwo as $date) {
-    //         $dataTwo = $collectionTwo->where($receiptDateKey, $date)->first();
-    
-    //         // Convert object to array
-    //         $dataTwoArray = $dataTwo ? (array) $dataTwo : [];
-    
-    //         // Add data to the result array
-    //         $mergedArray[] = [
-    //             'date' => null,
-    //             'total_wastage' => null,
-    //             'receipt_date' => $dataTwoArray['receipt_date'] ?? null,
-    //             'total_qty_in_kg' => $dataTwoArray['total_qty_in_kg'] ?? null,
-    //             'total_qty_pcs' => $dataTwoArray['total_qty_pcs'] ?? null,
-    //         ];
-    //     }
-    
-    //     return $mergedArray;
-    // }
-    
     private function mergeCollectionsByDate($collectionOne, $collectionTwo)
 {
     $dateKey = 'date'; // Replace 'date' with the actual key you want to use
@@ -260,7 +174,7 @@ class BagProductionReportController extends Controller
                             'bag_brand' => $groupedData->brand_name,
                             'qty_pcs' => $groupedData->total_qty_pcs,
                             'qty_in_kg'=> $groupedData->total_qty_in_kg,
-                            'gram_per_bag' => number_format($groupedData->total_qty_in_kg/$groupedData->total_qty_pcs,3),
+                            'gram_per_bag' => number_format($groupedData->total_qty_in_kg/$groupedData->total_qty_pcs *1000,2),
                         ];
                     }
                 }

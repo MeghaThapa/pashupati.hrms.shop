@@ -72,7 +72,7 @@
 
     <div class="row px-4 py-3">
         <div class="col-12 table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered">p
 
 
                 <tr>
@@ -96,12 +96,12 @@
                             <td>{{ $resultData->name }}</td>
                             <td>{{ $resultData->total_qty_in_kg }}</td>
                             <td>{{ $resultData->total_qty_pcs }}</td>
-                            <td>{{ number_format($resultData->total_qty_in_kg / $resultData->total_qty_pcs, 3) }}</td>
+                            <td>{{ number_format(($resultData->total_qty_in_kg / $resultData->total_qty_pcs *1000), 2) }}</td>
                         </tr>
                         @php
                             $totalOf_total_qty_in_kg += $resultData->total_qty_in_kg;
                             $totalOf_total_qty_pcs += $resultData->total_qty_pcs;
-                            $totalOf_gram_per_bag += number_format($resultData->total_qty_in_kg / $resultData->total_qty_pcs, 3);
+                            $totalOf_gram_per_bag += number_format(($resultData->total_qty_in_kg / $resultData->total_qty_pcs *1000), 2);
                         @endphp
                     @endforeach
                 </tbody>
