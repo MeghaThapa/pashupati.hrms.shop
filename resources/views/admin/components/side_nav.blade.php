@@ -994,8 +994,8 @@
                 {{-- <a href="{{ route('fabric-groups.index') }}"
                     class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}"> --}}
 
-                <a href="{{ route('bag.production.report') }}"
-                    class="nav-link {{ request()->is('bag.production.report') ? 'active' : '' }}">
+                <a href="{{ route('bag.prodAccDate.report') }}"
+                    class="nav-link {{ request()->is('bag.prodAccDate.report') ? 'active' : '' }}">
 
                     <i class="nav-icon fas fa-chart-area"></i>
 

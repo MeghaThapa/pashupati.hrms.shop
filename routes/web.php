@@ -1331,7 +1331,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     //BagProductionReportController report
     Route::get('bag-production/report', BagProductionReportController::class)->name('bag.production.report');
-
+    Route::get('bag-prodAccDate/report', [BagProductionReportController::class,'prodAccDate'])->name('bag.prodAccDate.report');
 
     //printing and cutting
     Route::get('printing-cutting/report', PrintingAndFinishingController::class)->name('printing.finishing.report');
