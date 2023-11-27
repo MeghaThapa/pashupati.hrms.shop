@@ -12,6 +12,8 @@ use App\Models\RawMaterialItemsSale;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use DB;
+use PDF;
+
 
 class RawMaterialSalesEntryController extends Controller
 {
@@ -71,6 +73,7 @@ class RawMaterialSalesEntryController extends Controller
             ->addColumn('statusBtn', function ($rawMaterialSalesEntryData) {
                 return '<span class="badge badge-pill badge-success">' . $rawMaterialSalesEntryData->status . '</span>';
             })
+
             ->addColumn('action', function ($rawMaterialSalesEntryData) {
                 $actionBtn = '';
                 if ($rawMaterialSalesEntryData->status == 'running') {
@@ -83,14 +86,17 @@ class RawMaterialSalesEntryController extends Controller
 
                 <button class="btn btn-danger" id="dltBagSellingEntry" data-id="' . $rawMaterialSalesEntryData->id . '">
                 <i class="fas fa-trash-alt"></i>
-            </button>
+                </button>
 
                 ';
                 } else {
                     $actionBtn .= '
-                <button class="btn btn-info" id="dltBagSellingEntry" data-id="' . $rawMaterialSalesEntryData->id . '">
-                    <i class="fas fa-eye"></i>
-                </button>
+                    <a class="btnEdit" href="' . route('rawMaterialSalesEntry.viewbill', ['id' => $rawMaterialSalesEntryData->id]) . '" >
+                      <button class="btn btn-primary">
+                        <i class="fas fa-eye fa-lg"></i>
+                      </button>
+                    </a>
+
                 ';
                 }
 
@@ -100,4 +106,49 @@ class RawMaterialSalesEntryController extends Controller
             ->rawColumns(['action', 'statusBtn'])
             ->make(true);
     }
+
+    public function viewBill($id)
+    {
+        $sales = RawMaterialItemsSale::where('raw_material_sales_entry_id',$id)->get();
+        $saleentry = RawMaterialSalesEntry::find($id);
+        $total = RawMaterialItemsSale::where('raw_material_sales_entry_id',$id)->sum('qty_in_kg');
+
+        return view('admin.rawMaterialSales.viewbill', compact('sales','saleentry','total'));
+    }
+
+
+    // public function downloadPdf(Request $request, $id)
+    // {
+
+    //     // $findtripal = SaleFinalTripal::find($id);
+    //     // $data = SaleFinalTripalList::where('salefinal_id', $id)->orderBy('name')->get();
+
+    //     // $total_gross = SaleFinalTripalList::where('salefinal_id', $id)->sum('gross');
+    //     // $total_net = SaleFinalTripalList::where('salefinal_id', $id)->sum('net');
+    //     // $total_meter = SaleFinalTripalList::where('salefinal_id', $id)->sum('meter');
+
+    //     $totaltripals = SaleFinalTripalList::where('salefinal_id', $id)->select('name', DB::raw('SUM(gross) as total_gross'), DB::raw('SUM(net) as total_net'), DB::raw('SUM(meter) as total_meter'), DB::raw('COUNT(name) as total_count'))
+    //         ->groupBy('name')
+    //         ->get();
+
+
+    //     $pdf = PDF::loadView('admin.sale.salefinaltripal.pdf', [
+    //         'data' => $data,
+    //         'findtripal' => $findtripal,
+    //         'total_gross' => $total_gross,
+    //         'total_net' => $total_net,
+    //         'total_meter' => $total_meter,
+    //         'totaltripals' => $totaltripals,
+    //     ]);
+
+    //     return $pdf->download('rawmaterial_sale.pdf');
+    // }
+
+    // public function downloadExcel(Request $request, $id)
+    // {
+
+    //     return Excel::download(new TripalSale($id), 'tripalsale.xlsx');
+    // }
+
+
 }

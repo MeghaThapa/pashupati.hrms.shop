@@ -1897,6 +1897,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
             Route::post("store", "store")->name('rawMaterialSalesEntry.store');
             Route::get("yajraDatatables", "yajraDatatables")->name('rawMaterialSalesEntry.yajraDatatables');
             Route::get("edit/{id}", "edit")->name('rawMaterialSalesEntry.edit');
+            Route::get("viewbill/{id}", "viewbill")->name('rawMaterialSalesEntry.viewbill');
+            Route::get("pdf/{id}", "pdf")->name('rawMaterialSalesEntry.pdf');
+            Route::get("excel/{id}", "excel")->name('rawMaterialSalesEntry.excel');
+
             Route::post("saveEntire", "saveEntire")->name('rawMaterialSalesEntry.saveEntire');
         });
     /**************************************RawMaterialSalesController End**************************************/
