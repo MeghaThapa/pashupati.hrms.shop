@@ -185,10 +185,10 @@
                     <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
                         Add
                     </button>
-                </div> 
+                </div>
 
             </div>
-         
+
         </form>
     </div>
     <!-- /.content-header -->
@@ -199,30 +199,7 @@
             <div class="col-md-12">
                 @include('admin.includes.alert')
             </div>
-            <div class="row">
-                <div class="col-lg-3 col-md-5 col-6 mb-2">
-                    {{-- <form action="{{ route('fabric-groups.index') }}" method="GET" role="search">
-                        <div class="input-group">
-                            <input type="text" name="term" placeholder="{{ __('Type name or code...') }}"
-                                    class="form-control" autocomplete="off"
-                                    value="{{ request('term') ? request('term') : '' }}" required>
-                            <span class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
-                                </span>
-                        </div>
-                    </form> --}}
-                </div>
-                <div class="col-lg-9 col-md-7 col-6">
-                    <div class="card-tools text-md-right">
-                        <a class="btn btn-secondary" href="{{ route('fabric-groups.pdf') }}">
-                            <i class="fas fa-download"></i> @lang('Export')
-                        </a>
-                        <a href="{{ route('nonwovenfabrics-receiveentry.create') }}" class="btn btn-primary">
-                            {{ __('Add NonWoven Recive Entry') }} <i class="fas fa-plus-circle"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+
 
             <div class="p-0 table-responsive table-custom my-3">
                 <table class="table">
@@ -257,14 +234,14 @@
                                     {{-- <a href="{{ route('addsingletripal.edit', $data->id) }}"
                                             class="btn btn-primary" target="_blank"><i class="fas fa-edit"></i>
                                     </a> --}}
-                                    
+
                                 </div>
                             </td>
-                            
+
                         </tr>
                         @endforeach
                     </tbody>
-              
+
                 </table>
             </div>
             <!-- /.card-body -->
@@ -290,7 +267,7 @@ $(document).ready(function(){
     ndpMonth: true,
     disableAfter: currentDate,
     });
-  
+
   });
 </script>
 
@@ -347,7 +324,7 @@ $(document).ready(function(){
                 }
             });
         });
-  
+
     });
 
     function addplanttype(data){
@@ -369,4 +346,4 @@ $(document).ready(function(){
     }
 
 </script>
-@endsection 
+@endsection

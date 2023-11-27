@@ -32,7 +32,7 @@ class TripalController extends Controller
 {
     public function index()
     {
-        
+
         $bill_no = AppHelper::getSingleTripalReceiptNo();
         $bill_date = date('Y-m-d');
         $shifts = Shift::where('status','active')->get();
@@ -100,14 +100,14 @@ class TripalController extends Controller
         $unlam_datas = Unlaminatedfabrictripal::where('bill_id',$bill_id)->get();
         $stocks = SinglesidelaminatedfabricStock::where('bill_id',$bill_id)->get();
         // dd($stocks);
-          
+
         return view('admin.tripal.viewBill',compact('unlam_datas','stocks','bill_id','find_data'));
 
     }
 
     public function createSingletripal($id)
     {
-        
+
         $find_data = SingleTripalBill::find($id);
         $bill_date = $find_data->bill_date;
         $bill_no = $find_data->bill_no;
@@ -181,9 +181,9 @@ class TripalController extends Controller
             if($request->roll){
                 $fabrics = FabricStock::where('roll_no' , $roll)->with('fabricgroup')->get();
             }
-            
+
             return response(['response'=>$fabrics]);
-          
+
         }
     }
 
@@ -208,7 +208,7 @@ class TripalController extends Controller
             $roll_number = $fabricDetails->roll_no;
             $gross_weight = $fabricDetails->gross_wt;
             $net_wt = $fabricDetails->net_wt;
-            $meter = $fabricDetails->meter; 
+            $meter = $fabricDetails->meter;
             // $gram = $fabricDetails->fabricgroup->name;
             $gram = $fabricDetails->gram;
             $avg = ($net_wt + $gross_weight)/2;
@@ -235,7 +235,7 @@ class TripalController extends Controller
             }catch(Exception $e){
                 DB::rollBack();
                 return response([
-                    "message" => "Something went wrong!{$e->getMessage()}" 
+                    "message" => "Something went wrong!{$e->getMessage()}"
                 ]);
             }
         }
@@ -247,17 +247,17 @@ class TripalController extends Controller
             return response(['response'=>$data]);
         }else{
             return response(['response'=> '404']);
-        }   
+        }
     }
 
-   
+
     public function store(Request $request){
         try{
 
             $data = [];
             parse_str($request->data,$data);
-            
-            
+
+
             $fabricstock_id = $data['fabricsid'];
             $bill_id = $data['bill_id'];
             $fabric_data = FabricStock::find($fabricstock_id);
@@ -284,36 +284,36 @@ class TripalController extends Controller
             ]);
 
 
-          
+
             $fabric_id = $fabric_id;
             $department_id = $data['godam_id'];
             $planttype_id = $data['planttype_id'];
             $plantname_id = $data['plantname_id'];
             $bill_number = $data['bill_no'];
-            $bill_date = $data['bill_date']; 
+            $bill_date = $data['bill_date'];
             // $fabricgroup_id = $fabricstock->fabric->id;
 
             $lamimated_roll_no = $data['laminated_roll_no'];
             $lamimated_roll_no_2 = $data['laminated_roll_no_2'];
             $lamimated_roll_no_3 = $data['laminated_roll_no_3'];
-    
+
 
             $laminated_gross_weight = $data['laminated_gross_weight'];
             $laminated_gross_weight_2 = $data['laminated_gross_weight_2'];
             $laminated_gross_weight_3 = $data['laminated_gross_weight_3'];
-           
-    
+
+
 
             $laminated_net_weight = $data['laminated_net_weight'];
             $laminated_net_weight_2 = $data['laminated_net_weight_2'];
             $laminated_net_weight_3 = $data['laminated_net_weight_3'];
-       
+
 
 
             $laminated_avg_weight = $data['laminated_avg_weight'];
             $laminated_avg_weight_2 = $data['laminated_avg_weight_2'];
             $laminated_avg_weight_3 = $data['laminated_avg_weight_3'];
-       
+
 
             $laminated_gram = $data['laminated_gram'];
             $laminated_gram_2 = $data['laminated_gram_2'];
@@ -323,11 +323,11 @@ class TripalController extends Controller
             $laminated_meter = $data['laminated_meter'];
             $laminated_meter_2 = $data['laminated_meter_2'];
             $laminated_meter_3 = $data['laminated_meter_3'];
-        
+
 
             $fabricmodelquery = Fabric::find($fabric_id);
 
-                
+
              if($lamimated_roll_no != null && $laminated_gross_weight != null && $laminated_net_weight != null && $laminated_avg_weight != null && $laminated_gram != null && $laminated_meter != null){
 
                     $single_lamfabric = Singlesidelaminatedfabric::create([
@@ -357,7 +357,7 @@ class TripalController extends Controller
                         "singlelamfabric_id" => $singlelamfabric_id,
                         "name" => $data['laminated_fabric_name'],
                         "slug" => Str::slug($data["laminated_fabric_name"]),
-                        "roll_no" => $lamimated_roll_no, 
+                        "roll_no" => $lamimated_roll_no,
                         "department_id" => $data['godam_id'],
                         "gram" =>  $laminated_gram,
                         "loom_no" => $fabricmodelquery->loom_no,
@@ -376,7 +376,7 @@ class TripalController extends Controller
                     ]);
 
 
-             
+
             }
 
             if($lamimated_roll_no_2 != null && $laminated_gross_weight_2 != null && $laminated_net_weight_2 != null && $laminated_avg_weight_2 != null && $laminated_gram_2 != null && $laminated_meter_2 != null){
@@ -410,7 +410,7 @@ class TripalController extends Controller
                    "singlelamfabric_id" => $singlelamfabric_id,
                    "name" => $data['laminated_fabric_name'],
                    "slug" => Str::slug($data["laminated_fabric_name"]),
-                   "roll_no" => $lamimated_roll_no_2, 
+                   "roll_no" => $lamimated_roll_no_2,
                    "department_id" => $data['godam_id'],
                    "gram" =>  $laminated_gram_2,
                    "loom_no" => $fabricmodelquery->loom_no,
@@ -428,7 +428,7 @@ class TripalController extends Controller
 
                 ]);
 
-              
+
             }
 
             if($lamimated_roll_no_3 != null && $laminated_gross_weight_3 != null && $laminated_net_weight_3 != null && $laminated_avg_weight_3 != null && $laminated_gram_3 != null && $laminated_meter_3 != null){
@@ -447,7 +447,7 @@ class TripalController extends Controller
                     "meter" => $laminated_meter_3,
                     "bill_number" => $bill_number,
                     'bill_date' => $bill_date,
-                    "department_id" => $data['godam_id'],                     
+                    "department_id" => $data['godam_id'],
                     "planttype_id" => $planttype_id,
                     "plantname_id" => $plantname_id,
                     'bill_id' =>  $bill_id,
@@ -460,7 +460,7 @@ class TripalController extends Controller
                     "singlelamfabric_id" => $singlelamfabric_id,
                     "name" => $data['laminated_fabric_name'],
                     "slug" => Str::slug($data["laminated_fabric_name"]),
-                    "roll_no" => $lamimated_roll_no_3, 
+                    "roll_no" => $lamimated_roll_no_3,
                     "department_id" => $data['godam_id'],
                     "gram" =>  $laminated_gram_3,
                     "loom_no" => $fabricmodelquery->loom_no,
@@ -491,7 +491,7 @@ class TripalController extends Controller
 
             FabricStock::where('id',$fabricstock_id)->delete();
 
-                
+
            DB::commit();
            return "Done";
         }
@@ -501,7 +501,7 @@ class TripalController extends Controller
             return "exception".$e->getMessage();
         }
     }
-    
+
     public function getUnlamSingleLam(Request $request){
         if($request->ajax()){
             $unlam = Unlaminatedfabrictripal::where('bill_id',$request->bill_id)->where('status',"sent")->with('fabric')->get();
@@ -510,14 +510,14 @@ class TripalController extends Controller
 
             $unlamnet_wt = Unlaminatedfabrictripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
             $unlamnet_meter = Unlaminatedfabrictripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
-         
+
             $lam = Singlesidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->get();
             // dd($lam);
 
             $lam_mtr_total = Singlesidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
             $lam_net_wt_total = Singlesidelaminatedfabricstock::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
 
-       
+
             return response([
                 "unlam" => $unlam,
                 "lam" => $lam,
@@ -577,20 +577,20 @@ class TripalController extends Controller
                 // dd($request);
 
                 $getFabricLastId = Singlesidelaminatedfabric::where('bill_number',$request->bill)->where('status','sent')->latest()->first();
-                
+
 
                 $department_id = Singlesidelaminatedfabric::value('department_id');
-                
-           
 
-                $getSinglesidelaminatedfabric = Singlesidelaminatedfabric::where('bill_number',$request->bill)->update(['status' => 'completed']); 
 
-                $getSinglesidelaminatedfabricstock = Singlesidelaminatedfabricstock::where('bill_number',$request->bill)->update(['status' => 'completed']); 
+
+                $getSinglesidelaminatedfabric = Singlesidelaminatedfabric::where('bill_number',$request->bill)->update(['status' => 'completed']);
+
+                $getSinglesidelaminatedfabricstock = Singlesidelaminatedfabricstock::where('bill_number',$request->bill)->update(['status' => 'completed']);
 
                 $unlaminatedfabrictripal = Unlaminatedfabrictripal::where('bill_number',$request->bill)->update(['status' => 'completed']);
 
                 $find_godam = Singlesidelaminatedfabricstock::where('bill_number',$request->bill)->latest()->first();
-                    
+
 
 
 
@@ -613,7 +613,7 @@ class TripalController extends Controller
 
                         $getStock = WasteStock::where('godam_id', $find_godam->department_id)
                         ->where('waste_id', $wastage->id)->first();
-                        
+
 
                         if ($stock == 1) {
                             $getStock->quantity_in_kg += $polowaste;
@@ -650,7 +650,7 @@ class TripalController extends Controller
 
                         $getStock = WasteStock::where('godam_id', $find_godam->department_id)
                         ->where('waste_id', $wastage->id)->first();
-                        
+
 
                         if ($stock == 1) {
                             $getStock->quantity_in_kg += $fabricwaste;
@@ -666,7 +666,15 @@ class TripalController extends Controller
 
                     }
 
-                    $singlebill = SingleTripalBill::where('id',$request->bill_id)->update(['status' => 'completed']);
+                    $total_waste = $polowaste + $fabric_waste;
+
+                    $singlebill = SingleTripalBill::where('id',$request->bill_id)
+                    ->update([
+                        'status' => 'completed',
+                        'polo_waste' => $polowaste,
+                        'fabric_waste' => $fabric_waste,
+                        'total_waste' => $total_waste
+                    ]);
 
 
                 DB::commit();
@@ -720,22 +728,22 @@ class TripalController extends Controller
         ]);
          return back();
 
-    
+
     }
 
     //singlefilterdata
 
     public function getSingleFilterData(Request $request){
-        
+
         $tripal_id = $request->singletripal;
         $find_data = Singletripalname::find($tripal_id);
-        
+
         $input = $find_data->name;
         $parts = explode(' ', $input);
-        $firstString = $parts[0];   
-                
+        $firstString = $parts[0];
+
         $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-        
+
         return response([
             'name' => $find_name,
         ]);
@@ -746,16 +754,16 @@ class TripalController extends Controller
     //singlefilterdata for single
 
     public function getSingleFabricFilterData(Request $request){
-        
+
         $tripal_id = $request->ids;
         $find_data = FabricStock::find($tripal_id);
-        
+
         $input = $find_data->name;
         $parts = explode(' ', $input);
-        $firstString = $parts[0];   
-                
+        $firstString = $parts[0];
+
         $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-        
+
         return response([
             'name' => $find_name,
         ]);
