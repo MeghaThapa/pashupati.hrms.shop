@@ -86,7 +86,25 @@ class AppHelper
             return $receipt;
         }
     }
-    
+    public static function convertNepaliToEnglishDate($nepaliDate)
+    {
+
+            list($year, $month, $day) = explode('-', $nepaliDate);
+
+            $nepaliCalendar = new Nepali_Calendar();
+
+            $cal = $nepaliCalendar->nep_to_eng($year, $month, $day);
+
+            if(strlen($cal['month']) == '1'){
+              $cal['month'] = '0'.$cal['month'];
+            }
+            if(strlen($cal['date']) == '1'){
+              $cal['date'] = '0'.$cal['date'];
+            }
+
+           return $cal['year'] . '-' . $cal['month'] . '-' . $cal['date'];
+
+    }
     public static function getNepaliDate($date)
     {
         $splitDate = explode("-", $date);

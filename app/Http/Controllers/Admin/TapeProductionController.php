@@ -54,7 +54,7 @@ class TapeProductionController extends Controller
                 'total_bypass_wastage' => $item->total_bypass_wastage
             ];
         }
-        dd($resultArray);
+        // dd($resultArray);
         $rowData = [];
         foreach ($resultArray as $date => $data) {
             $rowData[$date]['date'] = $date;
@@ -69,13 +69,11 @@ class TapeProductionController extends Controller
 
             $rowData[$date]['godam_three_total_loading'] = 0;
             $rowData[$date]['godam_three_total_running'] = 0;
-            $rowData[$date]['godam_three_total_bypass_wastage'] = 0;
-         
+            $rowData[$date]['godam_three_total_bypass_wastage'] = 0;     
             foreach ($data as $item) {
                 $plantName = ProcessingSubcat::whereId($item['plantName_id'])->first()->name;
                 $rowData[$date][$plantName] = $item['tape_qty_in_kg'];
-                //for me 
-               
+                //for me              
                 if($item['toGodam_id'] == 1){
                     $rowData[$date]['godam_one_total_loading'] = $rowData[$date]['godam_one_total_loading']+$item['total_loading'];
                     $rowData[$date]['godam_one_total_running'] = $rowData[$date]['godam_one_total_running']+$item['total_running'];
@@ -96,7 +94,7 @@ class TapeProductionController extends Controller
 
             }
         }
-        dd($rowData);
+        // dd($rowData);
         return $rowData;
     }
 }
