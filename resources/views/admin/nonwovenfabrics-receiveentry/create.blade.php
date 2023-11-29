@@ -92,14 +92,14 @@
                     name="receive_no" class="form-control" readonly />
             </div>
 
-            
+
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('To Godam') }}
                 </label>
                 <input type="text" value="{{$find_data->getGodam->name}}" id="godams"
                     name="receive_no" class="form-control" readonly />
-                
-              
+
+
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Plant Type') }}
@@ -112,7 +112,7 @@
                 </label>
                 <input type="text" value="{{$find_data->getPlantName->name}}" id="godams"
                     name="receive_no" class="form-control" readonly />
-             
+
             </div>
             <div class="col-md-2 form-group">
                 <label for="size" class="col-form-label">{{ __('Shift') }}
@@ -120,7 +120,7 @@
                 <input type="text" value="{{$find_data->getShift->name}}" id="godams"
                     name="receive_no" class="form-control" readonly />
             </div>
-        
+
 
         </div>
         <div class="row">
@@ -138,20 +138,20 @@
                       <option value="0">Select</option>
                       @foreach($nonwovenfabrics as $data)
                       <option value="{{ $data->gsm }}">{{ $data->gsm }}</option>
-                      @endforeach 
+                      @endforeach
                 </select>
             </div>
 
             <div class="col-md-3 form-group">
                 <label for="fabric_name">Fabric  Name</label>
                 <select class="form-control select2 advance-select-box" name="fabric_name" id="fabric_name" required>
-                   
+
                 </select>
             </div>
             <div class="col-md-3 form-group">
                 <label for="fabric_color">Fabric Color</label>
                 <select class="form-control select2 advance-select-box" name="fabric_color" id="fabric_color" required>
-                   
+
                 </select>
             </div>
 
@@ -168,7 +168,7 @@
                 <input type="text" class="form-control" name="net_weight" id="net_weight">
             </div>
 
-            
+
             <div>
                 <button id="getfabricsrelated" class="btn btn-primary mt-4">
                     Add
@@ -235,7 +235,7 @@
                         <button class="btn btn-primary ">Add</button>
                     </div>
                 </div>
-                
+
             </div>
         </form>
     </div>
@@ -277,7 +277,7 @@
     {{-- <div class="col-md-5">
         <div class="card mt-2 p-5">
             <div class="card-body">
-                
+
                 <div class="row p-2">
                     <div class="col-md-6">
                         <label for="size" class="col-form-label">{{ __('Dana:') }}<span class="required-field">*</span>
@@ -312,7 +312,7 @@
                         </button>
                     </div>
                 </div>
-            
+
 
             </div>
         </div>
@@ -372,9 +372,9 @@
                             </span>
                             @enderror
                         </div>
-        
+
                     </div>
-        
+
                     <div class="col-md-4 form-group">
                         <div>
                             <label for="size" class="col-form-label">{{ __('Dana Quantity:') }}<span
@@ -412,9 +412,9 @@
                             </span>
                             @enderror
                         </div>
-                        
+
                     </div>
-        
+
                 </div>
             </div>
         </div>
@@ -438,21 +438,21 @@
                         </tr>
                     </thead>
                     <tbody id="dana_list"></tbody>
-                    
+
                 </table>
-                
-                
-                
-                
+
+
+
+
 
             </div>
 
-            
+
         </div>
     </div> --}}
 </div>
 
-  
+
   <!-- Modal -->
  {{--  <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -476,7 +476,7 @@
                                </tr>
                            </thead>
                            <tbody id="dana_list"></tbody>
-                           
+
                        </table>
                         <div class="row d-flex justify-content-center text-center mb-2-">
                             <div class="col-md-6">
@@ -543,7 +543,7 @@
 
 
     $("#danaNameId").on("change",function(e){
-        var danaid = $(this).val(); 
+        var danaid = $(this).val();
         $("#add_dana_consumption_quantity").prop("disabled",false);
     });
 
@@ -561,7 +561,7 @@
         let dana = $("#danaNameId").val();
         let consumption = $("#add_dana_consumption_quantity").val();
         $("#dana_quanity").val(consumption);
-    
+
         $.ajax({
             url:"{{ route('dana.autoload.checkAutoloadQuantity') }}",
             method : 'post',
@@ -573,15 +573,15 @@
                 console.log('Getting Plant type');
             },
             success:function(response){
-             
+
                 if (consumption.trim() === '') {
                     alert("add quantity");
                 }else{
                     $("#totl_dana").val(consumption);
 
                     $("#selectedDanaID").val(dana);
-                }   
-             
+                }
+
             },
             error:function(error){
                 console.log(error);
@@ -601,7 +601,7 @@
         // var nettotal = total_fee - amount_received - parseInt(discount) + parseInt(fine);
 
         $("#wastage").val(filter);
-       
+
       }
     });
 
@@ -616,7 +616,7 @@
         var nettotal = parseInt(filter) + parseInt(filament);
 
         $("#wastage").val(nettotal);
-       
+
       }
     });
 
@@ -631,7 +631,7 @@
         var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast);
 
         $("#wastage").val(nettotal);
-       
+
       }
     });
 
@@ -646,55 +646,15 @@
         var nettotal = parseInt(filter) + parseInt(filament) + parseInt(roalcoast) + parseInt(strip);
 
         $("#wastage").val(nettotal);
-       
+
       }
     });
 </script>
 <script type="text/javascript">
-  // $('.add_wastage').click(function(event){
-  //   var wastage = $("#wastage").val(),
-  //       netweight = $("#netweight").val(),
-  //       danaquantity = $("#dana_quanity").val(),
-  //       dana = $("#dana").val();
-  //   debugger;
-  //   var  token = $('meta[name="csrf-token"]').attr('content');
-  //   $.ajax({
-  //     type:"POST",
-  //     dataType:"html",
-  //     url:"{{route('storeWastage')}}",
-  //     data:{
-  //       _token:token,
-  //       wastage: wastage,
-  //       netweight: netweight,
-  //       godam_id: '1',
-  //       danaquantity: danaquantity,
-  //       dana: dana,
-  //     },
-  //     success: function(response){
-  //       $('#dana_list').append(response);
-  //       $('table').on('click','#cross',function(e){
-  //         e.preventDefault();
-  //         $(this).closest('tr').remove();
-  //       });
-  //       $("#dana_quanity").val(quantity);
 
-        
-
-  //       // $("#submit").addClass('d-none');
-  //       // $("#calculate").removeClass('d-none');
-  //       // $('#fee,#discount-tr,#fine-tr,#net-total-tr').remove();
-  //     },
-  //     error:function(event){
-  //       alert('Error');
-  //       return false;
-  //     }
-  //   })
-  // })
 
     $('#danaNameId').on('select2:select', function(e) {
-        // console.log('df');
-        // debugger;
-        // let godam_id = document.getElementById('godamId').value;
+
         let autoloader_id = e.params.data.id;
         $('#avilableStock').empty();
         getStockQuantity(autoloader_id);
@@ -735,19 +695,17 @@
       let strip = $("#strip").val();
       let godam_id = $("#toGodam").val();
       let bill = $("#bill_id").val();
-      // console.log(godam_id);
-      // debugger;
+
 
       trimmedFilter = filter.trim();
       // trimmedFabricWaste = fabric_waste.trim();
       trimmedTotalWaste = wastage.trim();
 
-      // debugger;
 
       if(trimmedFilter == '' || trimmedTotalWaste == ''){
           alert('Waste and Consumption cannot be null');
       }else{
-      // subtractformautolad(danaNameId,consumption);
+
           $.ajax({
               url : "{{ route('storeWastage') }}",
               method: "post",
@@ -755,6 +713,10 @@
                   "_token" : $('meta[name="csrf-token"]').attr('content'),
                   "danaNameID" : danaNameId,
                   "total_waste" : trimmedTotalWaste,
+                  "filter" : filter,
+                  "filament" : filament,
+                  "roal_coast" : roalcoast,
+                  "strip" : strip,
                   "selectedDanaID" : selectedDanaID,
                   "bill" : bill
               },
@@ -772,7 +734,7 @@
               error:function(error){
                   console.log(error);
               }
-          }); 
+          });
       }
   });
 </script>
@@ -918,7 +880,7 @@
                 }else{
                     console.log(response.response);
                 }
-                
+
             },error:function(error){
                 console.log(error);
             }
@@ -988,7 +950,7 @@
     $("#plantName").change(function(e){
         $('#shiftName').prop('disabled',false);
         $('#createRawMaterial').attr({
-           
+
         });
         $("#rollnumberfabric").prop('disabled',false);
     });
@@ -1039,7 +1001,7 @@
             tr.append(`<td>${d.length}</td>`);
             tr.append(`<td>${d.gross_weight}</td>`);
             tr.append(`<td>${d.net_weight}</td>`);
-           
+
         });
     }
 
@@ -1047,7 +1009,7 @@
         $("#createRawMaterial")[0].reset();
     }
 
-   
+
     $(document).ready(function(){
         $(document).on('click',"#sendforlamination",function(e){
             e.preventDefault();
@@ -1062,13 +1024,13 @@
             $("#standard_weight_gram").val(standard_weight_gram);
             $('#staticBackdropLabel').text(title+" -> id = "+id);
             $("#idoffabricforsendtolamination").val(id);
-            
+
         });
     });
-   
+
         $('#staticBackdrop1').on('hidden.bs.modal',function(e) {
         $(this).removeAttr('action');
     });
-  
+
 </script>
-@endsection 
+@endsection

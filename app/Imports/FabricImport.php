@@ -16,6 +16,8 @@ use App\Models\WasteStock;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Helpers\AppHelper;
+
 use Illuminate\Support\Facades\Log;
 
 class FabricImport implements ToCollection, WithHeadingRow, WithCalculatedFormulas
@@ -55,11 +57,15 @@ class FabricImport implements ToCollection, WithHeadingRow, WithCalculatedFormul
                 $findTape->update();
             }
 
+            $bill_date_en = AppHelper::convertNepaliToEnglishDate($this->date_np);
+
+
             // store subcategory
             $wasteagepercent = (($totalwastage) / $rows[0]['totalweightkg']) * 100;
             $detail = FabricDetail::create([
                 'bill_number' => $bill_no,
                 'bill_date' => $this->date_np,
+                'bill_date_en' => $bill_date_en,
                 'godam_id' => $this->godam_id,
                 'pipe_cutting' => $rows[0]['pipecutting'],
                 'bd_wastage' => $rows[0]['bdwastage'],

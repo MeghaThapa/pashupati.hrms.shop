@@ -10,8 +10,8 @@ class NonwovenBill extends Model
     use HasFactory;
 
     protected $fillable = [
-        'plantname_id','godam_id','planttype_id','shift_id','bill_no','bill_date',
-        'created_at','updated_at',
+        'plantname_id','godam_id','planttype_id','shift_id','bill_no','bill_date','bill_date_en',
+        'created_at','updated_at','status'
     ];
 
     public function getGodam()

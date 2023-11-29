@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Fabric;
-use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
 use App\Models\FabricNonWovenReciveEntry;
 use App\Models\FabricNonWovenReceiveEntryStock;
@@ -22,6 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Response;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\AppHelper;
+use Yajra\DataTables\DataTables;
 
 class NonwovenReceiveEntryController extends Controller
 {
@@ -40,14 +39,59 @@ class NonwovenReceiveEntryController extends Controller
 
         $bill_no = AppHelper::getNonWovenReceiveEntryReceiptNo();
 
-        $datas = NonwovenBill::get();
 
-        return view('admin.nonwovenfabrics-receiveentry.index', compact('nonwovenfabrics','bill_no','godams','shifts','datas'));
+        return view('admin.nonwovenfabrics-receiveentry.index', compact('nonwovenfabrics','bill_no','godams','shifts'));
+    }
+
+    public function dataTable()
+    {
+        $nonwoven = NonwovenBill::orderBy('created_at','DESC')
+                       ->get();
+
+        return DataTables::of($nonwoven)
+            ->addIndexColumn()
+            ->addColumn('planttype', function ($row) {
+                return $row->getPlantType->name;
+            })
+            ->addColumn('plantname', function ($row) {
+                return $row->getPlantName->name;
+            })
+            ->addColumn('shift', function ($row) {
+                return $row->getShift->name;
+            })
+            ->addColumn('godam', function ($row) {
+                return $row->getGodam->name;
+            })
+            ->addColumn('action', function ($row) {
+
+                if($row->status == "pending"){
+
+                    return '<a href="' . route('nonwovenentry.create', ['bill_id' => $row->id]) . '" class="btn btn-info"><i class="fas fa-plus"></i></a>';
+
+                }
+                else{
+
+                    return '<a href="' . route('nonWovenEntry.viewBill', ['bill_id' => $row->id]) . '" class="btn btn-primary" ><i class="fas fa-print"></i></a>';
+
+                }
+
+            })
+            ->rawColumns(['fromgodam','togodam','action'])
+            ->make(true);
+    }
+
+    public  function viewBill($bill_id){
+
+        $find_data = NonwovenBill::find($bill_id);
+        $stocks = FabricNonWovenReciveEntry::where('bill_id',$bill_id)->get();
+        $total = FabricNonWovenReciveEntry::where('bill_id',$bill_id)->sum('net_weight');
+
+        return view('admin.nonwovenfabrics-receiveentry.viewbill',compact('stocks','bill_id','find_data','total'));
+
     }
 
     public function create($bill_id)
     {
-        // dd($bill_id);
         $find_data = NonwovenBill::find($bill_id);
         $bill_date = $find_data->bill_date;
         $bill_no = $find_data->bill_no;
@@ -55,40 +99,35 @@ class NonwovenReceiveEntryController extends Controller
         $plantname_id = $find_data->plantname_id;
         $shift_id = $find_data->shift_id;
         $godam_id = $find_data->godam_id;
-       
+
         $nonwovenfabrics = NonWovenFabric::distinct()->get(['gsm']);
 
         $getnetweight = FabricNonWovenReciveEntry::where('status','sent')->sum('net_weight');
         $receipt_no = AppHelper::getNonWovenReceiveEntryReceiptNo();
-        // $danas = AutoLoadItemStock::where('plant_type_id',$planttype_id)
-        //                        ->where('plant_name_id',$plantname_id)
-        //                        ->where('shift_id',$shift_id)
-        //                        ->where('from_godam_id',$godam_id)
-        //                        ->get();
-                               // dd($danas);
+        $danas = AutoLoadItemStock::where('plant_type_id',$planttype_id)
+                               ->where('plant_name_id',$plantname_id)
+                               ->where('shift_id',$shift_id)
+                               ->where('from_godam_id',$godam_id)
+                               ->get();
 
-        $danas = AutoLoadItemStock::get();
 
         $danalist = NonwovenDanaConsumption::where('bill_id',$bill_id)->get();
 
         $sumdana = NonwovenDanaConsumption::where('bill_id',$bill_id)->sum('quantity');
-                               
+
         return view('admin.nonwovenfabrics-receiveentry.create',compact('nonwovenfabrics','receipt_no','getnetweight','danas','find_data','bill_id','danalist','sumdana'));
     }
 
     public function store(Request $request)
     {
         if($request->ajax()){
-            // return $request->data;
             $data = [];
             parse_str($request->data,$data);
-            // dd($data);
             $findbill = NonwovenBill::find($data['bill_id']);
             $nonfabric_id = NonWovenFabric::where('gsm',$data['fabric_gsm'])
                                           ->where('slug',$data['fabric_name'])
                                           ->where('color',$data['fabric_color'])
                                           ->value('id');
-                                          // dd($nonfabric_id);
 
                $fabricreceiveenty = FabricNonWovenReciveEntry::create([
                 'receive_date' => $data['receive_date'],
@@ -118,7 +157,7 @@ class NonwovenReceiveEntryController extends Controller
                 'gross_weight' => $data['gross_weight'],
                 'net_weight' => $data['net_weight'],
             ]);
-    
+
         }
 
 
@@ -129,24 +168,24 @@ class NonwovenReceiveEntryController extends Controller
     {
 
         if($request->ajax()){
-            // dd($request);
-            // dd('kk');
+
             $consumption = $request->consumption;
             $danaNameID = $request->danaNameID;
             $fabric_waste = $request->fabric_waste;
-            $polo_waste = $request->polo_waste;
             $total_waste  = $request->total_waste;
+            $filter = $request->filter;
+            $filament = $request->filament;
+            $roal_coast = $request->roal_coast;
+            $strip = $request->strip;
+
             $lamFabricToDelete = [];
             $lamFabricTempToDelete = [];
             $department = [];
 
-            // dd($department);
-            // dd($request);
-
             try{
                 DB::beginTransaction();
                 $find_godam = NonwovenBill::where('id',$request->bill)->latest()->first();
-                // dd($find_godam);
+
 
                 if($total_waste != null){
 
@@ -164,11 +203,10 @@ class NonwovenReceiveEntryController extends Controller
 
                     $stock = WasteStock::where('godam_id', $find_godam->department_id)
                     ->where('waste_id', $wastage->id)->count();
-                    // dd($stock);
 
                     $getStock = WasteStock::where('godam_id', $find_godam->department_id)
                     ->where('waste_id', $wastage->id)->first();
-                    
+
 
                     if ($stock == 1) {
                         $getStock->quantity_in_kg += $fabric_waste;
@@ -183,11 +221,21 @@ class NonwovenReceiveEntryController extends Controller
 
 
                 }
-  
 
-                 $getsinglesidelaminatedfabric = FabricNonWovenReciveEntry::where('receive_no',$request->bill)->update(['status' => 'completed']); 
+                $nonwovenbill = NonwovenBill::where('id',$request->bill)
+                ->update([
+                    'status' => 'completed',
+                    'filter' => $filter,
+                    'filament' => $filament,
+                    'roal_coast' => $roal_coast,
+                    'strip' => $strip,
+                    'total_waste' => $total_waste
+                ]);
 
-                 $getdoublesidelaminatedfabric = FabricNonWovenReceiveEntryStock::where('receive_no',$request->bill)->update(['status' => 'completed']); 
+
+                 $getsinglesidelaminatedfabric = FabricNonWovenReciveEntry::where('bill_id',$request->bill)->update(['status' => 'completed']);
+
+                 $getdoublesidelaminatedfabric = FabricNonWovenReceiveEntryStock::where('bill_id',$request->bill)->update(['status' => 'completed']);
 
 
                 DB::commit();
@@ -200,21 +248,18 @@ class NonwovenReceiveEntryController extends Controller
                 ]);
             }
         }
- 
+
 
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
 
     public function getnonwovenentries(Request $request){
-        // dd($request);
-        // return response(['response'=> '404']);
         $data = FabricNonWovenReciveEntry::where('bill_id',$request->bill_id)->with('nonfabric')->where('status','sent')->get();
-        // dd($data);
         if(count($data) != 0){
             return response(['response'=>$data]);
         }else{
             return response(['response'=> '404']);
-        }   
+        }
     }
 
     public function edit($slug)
@@ -323,7 +368,7 @@ class NonwovenReceiveEntryController extends Controller
     }
 
     public function getFabricNameColorList(Request $request){
-       
+
       $fabric_gsm = $request->fabric_gsm;
       $fabric_name = $request->fabric_name;
       // dd($request);

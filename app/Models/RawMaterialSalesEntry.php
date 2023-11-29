@@ -16,4 +16,9 @@ class RawMaterialSalesEntry extends Model
     {
         return $this->belongsTo('App\Models\Supplier', 'supplier_id', "id");
     }
+
+    public function getSalesData()
+    {
+        return $this->hasMany('App\Models\RawMaterialItemsSale', 'raw_material_sales_entry_id', "id");
+    }
 }
