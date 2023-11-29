@@ -185,10 +185,10 @@
                     <button type="submit" class="btn btn-sm btn-primary" style="margin-top:35px;">
                         Add
                     </button>
-                </div> 
+                </div>
 
             </div>
-         
+
         </form>
     </div>
     <!-- /.content-header -->
@@ -199,33 +199,10 @@
             <div class="col-md-12">
                 @include('admin.includes.alert')
             </div>
-            <div class="row">
-                <div class="col-lg-3 col-md-5 col-6 mb-2">
-                    {{-- <form action="{{ route('fabric-groups.index') }}" method="GET" role="search">
-                        <div class="input-group">
-                            <input type="text" name="term" placeholder="{{ __('Type name or code...') }}"
-                                    class="form-control" autocomplete="off"
-                                    value="{{ request('term') ? request('term') : '' }}" required>
-                            <span class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
-                                </span>
-                        </div>
-                    </form> --}}
-                </div>
-                <div class="col-lg-9 col-md-7 col-6">
-                    <div class="card-tools text-md-right">
-                        <a class="btn btn-secondary" href="{{ route('fabric-groups.pdf') }}">
-                            <i class="fas fa-download"></i> @lang('Export')
-                        </a>
-                        <a href="{{ route('nonwovenfabrics-receiveentry.create') }}" class="btn btn-primary">
-                            {{ __('Add NonWoven Recive Entry') }} <i class="fas fa-plus-circle"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+
 
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table">
+                <table class="table" id="nonwovenListTable">
                     <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -239,32 +216,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                        @foreach($datas as $data)
-                        <tr>
-                            <td>#</td>
-                            <td>{{$data->bill_no}}</td>
-                            <td>{{$data->bill_date}}</td>
-                            <td>{{$data->getPlantType->name}}</td>
-                            <td>{{$data->getPlantName->name}}</td>
-                            <td>{{$data->getShift->name}}</td>
-                            <td>{{$data->getGodam->name}}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{{ route('nonwovenentry.create', $data->id) }}"
-                                        class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>
-                                    </a>
 
-                                    {{-- <a href="{{ route('addsingletripal.edit', $data->id) }}"
-                                            class="btn btn-primary" target="_blank"><i class="fas fa-edit"></i>
-                                    </a> --}}
-                                    
-                                </div>
-                            </td>
-                            
-                        </tr>
-                        @endforeach
                     </tbody>
-              
+
                 </table>
             </div>
             <!-- /.card-body -->
@@ -290,7 +244,7 @@ $(document).ready(function(){
     ndpMonth: true,
     disableAfter: currentDate,
     });
-  
+
   });
 </script>
 
@@ -347,7 +301,7 @@ $(document).ready(function(){
                 }
             });
         });
-  
+
     });
 
     function addplanttype(data){
@@ -369,4 +323,50 @@ $(document).ready(function(){
     }
 
 </script>
-@endsection 
+<script>
+    $('document').ready(function() {
+        var table = $('#nonwovenListTable').DataTable({
+            lengthMenu: [
+                [30, 40, 50, -1],
+                ['30 rows', '40 rows', '50 rows', 'Show all']
+            ],
+            style: 'bootstrap4',
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('nonWovenEntry.dataTable') }}",
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'bill_no'
+                },
+                {
+                    data: 'bill_date'
+                },
+                {
+                    data: 'planttype'
+                },
+                {
+                    data: 'plantname'
+                },
+                {
+                    data: 'shift'
+                },
+                {
+                    data: 'godam'
+                },
+
+                {
+                    data: 'action',
+                    orderable: true,
+                    searchable: true,
+                },
+            ]
+        });
+
+
+
+
+    });
+</script>
+@endsection

@@ -100,16 +100,16 @@ class FinalTripalController extends Controller
 
         return DataTables::of($tripalGodam)
             ->addIndexColumn()
-            
+
             ->addColumn('action', function ($row) {
 
                 return "
-                <a class='btn btn-danger deleteTripalEntryList'  
-                         data-id='{$row->id}' 
+                <a class='btn btn-danger deleteTripalEntryList'
+                         data-id='{$row->id}'
                          href='{$row->id}'>Delete</a>";
 
                // return '<a href="' . route('finaltripal.deleteTripalEntryLists', ['id' => $row->id]) . '" class="btn btn-danger"><i class="fas fa-trash"></i></a>';
-              
+
 
             })
             ->rawColumns(['fromgodam','togodam','action'])
@@ -126,7 +126,7 @@ class FinalTripalController extends Controller
         $plantname_id = $find_data->plantname_id;
         $shift_id = $find_data->shift_id;
         $godam_id = $find_data->godam_id;
-        
+
         $godam= Godam::where('status','active')->get();
         $shifts = Shift::where('status','active')->get();
         $danas = AutoLoadItemStock::where('plant_type_id',$planttype_id)
@@ -153,16 +153,16 @@ class FinalTripalController extends Controller
     }
 
     public function getfilter(Request $request){
-        
+
         $tripal_id = $request->tripal;
         $find_data = FinalTripalName::find($tripal_id);
-        
+
         $input = $find_data->name;
         $parts = explode(' ', $input);
-        $firstString = $parts[0];   
-                
+        $firstString = $parts[0];
+
         $find_name = filter_var($firstString, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-        
+
         return response([
             'name' => $find_name,
         ]);
@@ -171,7 +171,7 @@ class FinalTripalController extends Controller
     }
 
     public function getDoubleFabricStockList(Request $request){
-        
+
         if($request->ajax()){
             if($request->fabric_id != null){
               $fabric_name = DoubleSideLaminatedFabricStock::where('id',$request->fabric_id)->value('name');
@@ -181,7 +181,7 @@ class FinalTripalController extends Controller
             if($request->roll){
                 $fabrics = DoubleSideLaminatedFabricStock::where('roll_no' , $roll)->get();
             }
-            
+
             return response([
                 'response'=>$fabrics,
                 'bill_number' => $request->bill_number,
@@ -191,7 +191,7 @@ class FinalTripalController extends Controller
                 'plantype_id' => $request->plantype_id,
                 'shift_id' => $request->shift_id
             ]);
-          
+
         }
     }
 
@@ -236,7 +236,7 @@ class FinalTripalController extends Controller
         }catch(Exception $e){
             DB::rollBack();
             return response([
-                "message" => "Something went wrong!{$e->getMessage()}" 
+                "message" => "Something went wrong!{$e->getMessage()}"
             ]);
         }
 
@@ -245,7 +245,7 @@ class FinalTripalController extends Controller
     public function getTripalFabricEntry(Request $request){
         // dd($request);
         if($request->ajax()){
-          
+
             $tripalentry = TripalEntry::where('bill_id',$request->bill_id)->where("status",'sent')->get();
             $finaltripal = FinalTripal::where('bill_id',$request->bill_id)->where("status",'sent')->get();
 
@@ -255,12 +255,12 @@ class FinalTripalController extends Controller
 
             $unlamnet_wt = TripalEntry::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
             $unlamnet_meter = TripalEntry::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
-            
+
             $lam = FinalTripal::where('bill_id',$request->bill_id)->where('status','sent')->get();
 
             $lam_mtr_total = FinalTripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('net_wt');
             $lam_net_wt_total = FinalTripal::where('bill_id',$request->bill_id)->where('status',"sent")->sum('meter');
-            
+
             return response([
                 'tripalentry'=>$tripalentry,
                 'finaltripal'=>$finaltripal,
@@ -268,9 +268,9 @@ class FinalTripalController extends Controller
                 "ul_net_wt_total" => $unlamnet_wt,
                 "lam_mtr_total" => $lam_mtr_total,
                 "lam_net_wt_total" => $lam_net_wt_total
-              
+
             ]);
-          
+
         }
     }
 
@@ -305,12 +305,12 @@ class FinalTripalController extends Controller
 
            DB::beginTransaction();
 
-          
+
            $bill_id = $request->bill_id;
-           
+
            $find_bill = FinalTripalBill::find($bill_id);
            $findtripalname = FinalTripalName::where('id',$request->tripal)->value('name');
-         
+
 
            $todayEnglishDate = Carbon::now()->format('Y-n-j');
 
@@ -360,10 +360,10 @@ class FinalTripalController extends Controller
                "status" => "sent"
            ]);
 
-                
+
            DB::commit();
             return response([
-            "message" => "Added Successfully" 
+            "message" => "Added Successfully"
         ]);
            // return back();
         }
@@ -373,7 +373,7 @@ class FinalTripalController extends Controller
             return "exception".$e->getMessage();
         }
 
-       
+
 
         return back();
     }
@@ -381,7 +381,7 @@ class FinalTripalController extends Controller
     public function getWastageStore(Request $request){
 
         if($request->ajax()){
-       
+
             $consumption = $request->consumption;
             $danaNameID = $request->danaNameID;
             $fabric_waste = $request->fabric_waste;
@@ -398,15 +398,15 @@ class FinalTripalController extends Controller
 
                   $getFabricLastId = FinalTripalStock::where('status','sent')->where('bill_number',$request->bill)->latest()->first();
 
-                 
-                    $getsinglesidelaminatedfabric = TripalEntry::where('bill_id',$request->bill_id)->update(['status' => 'completed']); 
+
+                    $getsinglesidelaminatedfabric = TripalEntry::where('bill_id',$request->bill_id)->update(['status' => 'completed']);
 
 
-                    $getdoublesidelaminatedfabric = FinalTripal::where('bill_id',$request->bill_id)->update(['status' => 'completed']); 
+                    $getdoublesidelaminatedfabric = FinalTripal::where('bill_id',$request->bill_id)->update(['status' => 'completed']);
 
-                    $getdoublesidelaminatedfabricstock = FinalTripalStock::where('bill_id',$request->bill_id)->update(['status' => 'completed']); 
+                    $getdoublesidelaminatedfabricstock = FinalTripalStock::where('bill_id',$request->bill_id)->update(['status' => 'completed']);
 
-                    $finalbill = FinalTripalBill::where('id',$request->bill_id)->update(['status' => 'completed']); 
+
 
                     $find_godam = FinalTripalStock::where('bill_id',$request->bill_id)->latest()->first();
 
@@ -444,7 +444,13 @@ class FinalTripalController extends Controller
 
                     }
 
-                   
+                    $finaltripal = FinalTripalBill::where('id',$request->bill_id)
+                    ->update([
+                        'status' => 'completed',
+
+                        'fabric_waste' => $fabric_waste,
+                        'total_waste' => $fabric_waste
+                    ]);
 
 
                 DB::commit();
@@ -472,16 +478,16 @@ class FinalTripalController extends Controller
              $unit = FinalTripal::find($request->id);
              $daata = FinalTripalStock::where('finaltripal_id',$request->id)->value('id');
              $find_value = FinalTripalStock::find($daata);
-             
+
              $find_value->delete();
 
              $unit->delete();
-         
+
 
             DB::commit();
             // return back();
             return response([
-                "message" => "Deleted Successfully" 
+                "message" => "Deleted Successfully"
             ]);
             // return response(200);
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 	namespace App\Libraries;
 
 	class Nepali_Calendar {
@@ -37,7 +37,7 @@
 			31=>array(2031,30,32,31,32,31,30,30,30,29,30,29,31),
 			32=>array(2032,31,31,32,31,31,31,30,29,30,29,30,30),
 			33=>array(2033,31,31,32,32,31,30,30,29,30,29,30,30),
-			34=>array(2034,31,32,31,32,31,30,30,30,29,29,30,31), 
+			34=>array(2034,31,32,31,32,31,30,30,30,29,29,30,31),
 			35=>array(2035,30,32,31,32,31,31,29,30,30,29,29,31),
 			36=>array(2036,31,31,32,31,31,31,30,29,30,29,30,30),
 			37=>array(2037,31,31,32,32,31,30,30,29,30,29,30,30),
@@ -95,12 +95,12 @@
 			89=>array(2089, 30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30),
 			90=>array(2090, 30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30)
 			);
-	 	
+
 	 	private $nep_date = array('year'=>'', 'month'=>'', 'date'=>'', 'day'=>'','nmonth'=>'','num_day'=>'');
 	 	private $eng_date = array('year'=>'', 'month'=>'', 'date'=>'', 'day'=>'','emonth'=>'','num_day'=>'');
 	 	public $debug_info = "";
-	
-	
+
+
 		/**
 		 * Calculates wheather english year is leap year or not
 		 *
@@ -118,8 +118,8 @@
 			 } else {
 			 	return false;
 			 }
-				
-			} else { 
+
+			} else {
 				if ($a%4==0)
 				{
 					return true;
@@ -128,62 +128,62 @@
 				}
 			}
 		}
-	
+
 		private function get_nepali_month($m){
 			$n_month = false;
-			
+
 			switch($m){
 				case 1:
 					$n_month = "Baishak";
 					break;
-					
+
 				case 2:
 					$n_month = "Jestha";
 					break;
-					
+
 				case 3:
 					$n_month = "Ashad";
 					break;
-					
+
 				case 4:
 					$n_month = "Shrawn";
 					break;
-					
+
 				case 5:
 					$n_month = "Bhadra";
 					break;
-				
+
 				case 6:
 					$n_month = "Ashwin";
 					break;
-				
+
 				case 7:
 					$n_month = "kartik";
 					break;
-				
+
 				case 8:
 					$n_month = "Mangshir";
 					break;
-				
+
 				case 9:
 					$n_month = "Poush";
 					break;
-				
+
 				case 10:
 					$n_month = "Magh";
 					break;
-				
+
 				case 11:
 					$n_month = "Falgun";
 					break;
-				
+
 				case 12:
 					$n_month = "Chaitra";
 					break;
-			}	
+			}
 			return  $n_month;
 		}
-	
+
 		private function get_english_month($m){
 			$eMonth = false;
 			switch($m){
@@ -223,82 +223,82 @@
 				case 12:
 					$eMonth = "December";
 			}
-			return $eMonth;	
+			return $eMonth;
 		}
-	
-		private function get_day_of_week($day){		
+
+		private function get_day_of_week($day){
 			switch($day){
 				case 1:
 					$day = "Sunday";
 					break;
-					
+
 				case 2:
 					$day = "Monday";
 					break;
-					
+
 				case 3:
 					$day = "Tuesday";
 					break;
-				
+
 				case 4:
 					$day = "Wednesday";
 					break;
-				
+
 				case 5:
 					$day = "Thursday";
 					break;
-				
+
 				case 6:
 					$day = "Friday";
 					break;
-				
+
 				case 7:
 					$day = "Saturday";
 					break;
 			}
 			return $day;
 		}
-	
-	
+
+
 		private function is_range_eng($yy, $mm, $dd){
 			if($yy<1944 || $yy>2033){
 				$this->debug_info = "Supported only between 1944-2022";
 				return false;
 			}
-				
+
 			if($mm<1 || $mm >12){
 				$this->debug_info = "Error! value 1-12 only";
 				return false;
 			}
-				
+
 			if($dd<1 || $dd >31){
-				$this->debug_info = "Error! value 1-31 only";			
+				$this->debug_info = "Error! value 1-31 only";
 				return false;
-			}	
-			
+			}
+
 			return true;
 		}
-	
-		private function is_range_nep($yy, $mm, $dd){		
+
+		private function is_range_nep($yy, $mm, $dd){
 			if($yy<2000 || $yy>2089){
 				$this->debug_info="Supported only between 2000-2089";
 				return false;
 			}
-			
+
 			if($mm<1 || $mm >12) {
 				$this->debug_info="Error! value 1-12 only";
 				return false;
 			}
-			
+
 			if($dd<1 || $dd >32){
-				$this->debug_info="Error! value 1-31 only";	
+				$this->debug_info="Error! value 1-31 only";
 				return false;
-			}		
-			
+			}
+
 			return true;
-		}	
-		
-		
+		}
+
+
 		/**
 		 * currently can only calculate the date between AD 1944-2033...
 		 *
@@ -307,22 +307,22 @@
 		 * @param unknown_type $dd
 		 * @return unknown
 		 */
-		
+
 		public function eng_to_nep($yy,$mm,$dd){
 			if ($this->is_range_eng($yy, $mm, $dd) == false){
 				return false;
-			} else {			
-				
+			} else {
+
 				// english month data.
 			 	$month = array(31,28,31,30,31,30,31,31,30,31,30,31);
 			 	$lmonth = array(31,29,31,30,31,30,31,31,30,31,30,31);
-				
+
 				$def_eyy = 1944;									//spear head english date...
 				$def_nyy = 2000; $def_nmm = 9; $def_ndd = 17-1;		//spear head nepali date...
 				$total_eDays=0; $total_nDays=0; $a=0; $day=7-1;		//all the initializations...
 				$m = 0; $y = 0; $i =0; $j = 0;
 				$numDay=0;
-				
+
 				// count total no. of days in-terms of year
 				for($i=0; $i<($yy-$def_eyy); $i++){	//total days for month calculation...(english)
 					if($this->is_leap_year($def_eyy+$i)==1)
@@ -332,24 +332,24 @@
 						for($j=0; $j<12; $j++)
 							$total_eDays += $month[$j];
 				}
-				
-				// count total no. of days in-terms of month					
-				for($i=0; $i<($mm-1); $i++){		
+
+				// count total no. of days in-terms of month
+				for($i=0; $i<($mm-1); $i++){
 					if($this->is_leap_year($yy)==1)
 						$total_eDays += $lmonth[$i];
 					else
 						$total_eDays += $month[$i];
 				}
-				
+
 				// count total no. of days in-terms of date
 				$total_eDays += $dd;
-				
-				
-				$i = 0; $j = $def_nmm;					
+
+
+				$i = 0; $j = $def_nmm;
 				$total_nDays = $def_ndd;
 				$m = $def_nmm;
 				$y = $def_nyy;
-				
+
 				// count nepali date from array
 				while($total_eDays != 0) {
 			        $a = $this->bs[$i][$j];
@@ -371,9 +371,9 @@
 					}
 					$total_eDays--;
 				}
-				
+
 				$numDay=$day;
-				
+
 				$this->nep_date["year"] = $y;
 				$this->nep_date["month"] = $m;
 				$this->nep_date["date"] = $total_nDays;
@@ -383,8 +383,8 @@
 				return $this->nep_date;
 			}
 		}
-		
-		
+
+
 		/**
 		 * currently can only calculate the date between BS 2000-2089
 		 *
@@ -394,37 +394,37 @@
 		 * @return unknown
 		 */
 		public function nep_to_eng($yy,$mm,$dd){
-			
+
 			$def_eyy = 1943	; $def_emm=4 ; $def_edd=14-1;		// init english date.
 			$def_nyy = 2000; $def_nmm = 1; $def_ndd = 1;		// equivalent nepali date.
 			$total_eDays=0; $total_nDays=0; $a=0; $day=4-1;		// initializations...
 			$m = 0; $y = 0; $i=0;
 			$k = 0;	$numDay = 0;
-			
+
 			$month = array(0,31,28,31,30,31,30,31,31,30,31,30,31);
  			$lmonth = array(0,31,29,31,30,31,30,31,31,30,31,30,31);
-			
+
 			if($this->is_range_nep($yy, $mm, $dd)===false){
 				return false;
-				
+
 			} else {
-				
+
 				// count total days in-terms of year
-				for($i=0; $i<($yy-$def_nyy); $i++){	
+				for($i=0; $i<($yy-$def_nyy); $i++){
 					for($j=1; $j<=12; $j++){
 						$total_nDays += $this->bs[$k][$j];
 					}
 					$k++;
 				}
-				
-				// count total days in-terms of month			
+
+				// count total days in-terms of month
 				for($j=1; $j<$mm; $j++){
 					$total_nDays += $this->bs[$k][$j];
 				}
-				
+
 				// count total days in-terms of dat
-				$total_nDays += $dd;			
-				
+				$total_nDays += $dd;
+
 				//calculation of equivalent english date...
 				$total_eDays = $def_edd;
 				$m = $def_emm;
@@ -446,23 +446,23 @@
 						if($m > 12){
 							$y++;
 							$m = 1;
-						}	
+						}
 					}
 					if($day > 7)
 						$day = 1;
-					$total_nDays--;	
+					$total_nDays--;
 				}
 				$numDay = $day;
-				
-				$this->eng_date["year"] = $y;					
-				$this->eng_date["month"] = $m;					
-				$this->eng_date["date"] = $total_eDays;		
-				$this->eng_date["day"] = $this->get_day_of_week($day);					
-				$this->eng_date["emonth"] = $this->get_english_month($m);  			
-				$this->eng_date["num_day"] = $numDay;			
-				
-				return $this->eng_date;			
+
+				$this->eng_date["year"] = $y;
+				$this->eng_date["month"] = $m;
+				$this->eng_date["date"] = $total_eDays;
+				$this->eng_date["day"] = $this->get_day_of_week($day);
+				$this->eng_date["emonth"] = $this->get_english_month($m);
+				$this->eng_date["num_day"] = $numDay;
+
+				return $this->eng_date;
 			}
 		}
-	
+
 	};
