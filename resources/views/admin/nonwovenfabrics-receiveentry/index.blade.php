@@ -202,7 +202,7 @@
 
 
             <div class="p-0 table-responsive table-custom my-3">
-                <table class="table">
+                <table class="table" id="nonwovenListTable">
                     <thead>
                     <tr>
                         <th>{{ __('Sr.No') }}</th>
@@ -216,30 +216,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        @foreach($datas as $data)
-                        <tr>
-                            <td>#</td>
-                            <td>{{$data->bill_no}}</td>
-                            <td>{{$data->bill_date}}</td>
-                            <td>{{$data->getPlantType->name}}</td>
-                            <td>{{$data->getPlantName->name}}</td>
-                            <td>{{$data->getShift->name}}</td>
-                            <td>{{$data->getGodam->name}}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{{ route('nonwovenentry.create', $data->id) }}"
-                                        class="btn btn-info" target="_blank"><i class="fas fa-plus"></i>
-                                    </a>
 
-                                    {{-- <a href="{{ route('addsingletripal.edit', $data->id) }}"
-                                            class="btn btn-primary" target="_blank"><i class="fas fa-edit"></i>
-                                    </a> --}}
-
-                                </div>
-                            </td>
-
-                        </tr>
-                        @endforeach
                     </tbody>
 
                 </table>
@@ -345,5 +322,51 @@ $(document).ready(function(){
         });
     }
 
+</script>
+<script>
+    $('document').ready(function() {
+        var table = $('#nonwovenListTable').DataTable({
+            lengthMenu: [
+                [30, 40, 50, -1],
+                ['30 rows', '40 rows', '50 rows', 'Show all']
+            ],
+            style: 'bootstrap4',
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('nonWovenEntry.dataTable') }}",
+            columns: [{
+                    data: 'DT_RowIndex'
+                },
+                {
+                    data: 'bill_no'
+                },
+                {
+                    data: 'bill_date'
+                },
+                {
+                    data: 'planttype'
+                },
+                {
+                    data: 'plantname'
+                },
+                {
+                    data: 'shift'
+                },
+                {
+                    data: 'godam'
+                },
+
+                {
+                    data: 'action',
+                    orderable: true,
+                    searchable: true,
+                },
+            ]
+        });
+
+
+
+
+    });
 </script>
 @endsection

@@ -372,6 +372,19 @@
 
                         </li>
 
+                        <li class="nav-item">
+
+                            <a href="{{ route('wastageStock.index') }}"
+                                class="nav-link {{ request()->routeIs('bagSalesStock.index') ? 'active' : '' }}">
+
+                                <i class="nav-icon fas fa-chart-area"></i>
+
+                                <p>{{ __('wastage Stock') }}</p>
+
+                            </a>
+
+                        </li>
+
 
 
 
