@@ -44,7 +44,7 @@ class WastageProductionReportController extends Controller
 
     $tapePLantProduction = TapeEntryItemModel::join('tape_entry', 'tape_entry_items.tape_entry_id', '=', 'tape_entry.id')
                 ->select(
-                    DB::raw('SUM(tape_qty_in_kg)  as total_qty '),
+                    DB::raw('SUM(loading+running+bypass_wast)  as total_qty '),
                    'plantName_id','tape_entry.tape_entry_date')
                 ->groupBy('plantName_id', 'tape_entry.tape_entry_date')
                 ->whereIn('tape_entry_items.plantName_id',['1','2','3','4','9','13'])

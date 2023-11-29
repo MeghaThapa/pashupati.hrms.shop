@@ -10,7 +10,7 @@ use App\Models\Storeout;
 use App\Models\Singlesidelaminatedfabric;
 use App\Models\DoubleSideLaminatedFabricStock;
 use App\Models\FinalTripalStock;
-use App\Models\FabricNonWovenReceiveEntryStock;
+use App\Models\FabricNonWovenReciveEntry;
 use Carbon\Carbon;
 
 class AppHelper
@@ -239,7 +239,7 @@ class AppHelper
         $date = self::getNepaliDate($todayEnglishDate);
         // dd($todayEnglishDate,$date);
 
-        $singletripal = FabricNonWovenReceiveEntryStock::where('status','completed')->latest()->first();
+        $singletripal = FabricNonWovenReciveEntry::where('status','completed')->latest()->first();
         $receipt = "";
         if (!$singletripal) {
             $receipt = 'NFRE'.'-'.$date . '-' . '1';

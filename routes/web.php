@@ -888,6 +888,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth']], function () {
 
     Route::get("restock", 'Sale\SaleFinalTripalController@restock')->name("admin.restock");
 
+    Route::get('nonWovenEntry/dataTable', 'NonwovenReceiveEntryController@dataTable')->name('nonWovenEntry.dataTable');
+    Route::get('nonWovenEntry/viewBill/{bill_id}', 'NonwovenReceiveEntryController@viewBill')->name('nonWovenEntry.viewBill');
+
     Route::prefix('nonwovenSale')->group(function () {
         // Define routes here
         Route::get('index', 'Sale\NonwovenSaleController@index')->name('nonwovenSale.index');
