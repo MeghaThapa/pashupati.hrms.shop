@@ -128,15 +128,17 @@ class NonwovenReceiveEntryController extends Controller
                                           ->where('slug',$data['fabric_name'])
                                           ->where('color',$data['fabric_color'])
                                           ->value('id');
+             $find_data =   NonWovenFabric::findOrFail($nonfabric_id);
+
 
                $fabricreceiveenty = FabricNonWovenReciveEntry::create([
                 'receive_date' => $data['receive_date'],
                 'receive_no' => $data['bill_no'],
                 'fabric_roll' => $data['fabric_roll'],
-                'fabric_gsm' => $data['fabric_gsm'],
+                'fabric_gsm' => $find_data->gsm,
                 'bill_id' => $data['bill_id'],
-                'fabric_name' => $data['fabric_name'],
-                'fabric_color' => $data['fabric_color'],
+                'fabric_name' => $find_data->name,
+                'fabric_color' => $find_data->color,
                 'length' => $data['fabric_length'],
                 'gross_weight' => $data['gross_weight'],
                 'net_weight' => $data['net_weight'],
@@ -150,9 +152,9 @@ class NonwovenReceiveEntryController extends Controller
                 'receive_date' => $data['receive_date'],
                 'receive_no' => $data['bill_no'],
                 'fabric_roll' => $data['fabric_roll'],
-                'fabric_gsm' => $data['fabric_gsm'],
-                'fabric_name' => $data['fabric_name'],
-                'fabric_color' => $data['fabric_color'],
+                'fabric_gsm' => $find_data->gsm,
+                'fabric_name' => $find_data->name,
+                'fabric_color' => $find_data->color,
                 'length' => $data['fabric_length'],
                 'gross_weight' => $data['gross_weight'],
                 'net_weight' => $data['net_weight'],

@@ -7,6 +7,8 @@ use App\Models\Fabric;
 use App\Models\FabricStock;
 use App\Models\FabricGroup;
 use App\Models\NonWovenFabric;
+use App\Models\FabricNonWovenReciveEntry;
+use App\Models\FabricNonWovenReceiveEntryStock;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 
@@ -47,27 +49,27 @@ class FabricNonWovenController extends Controller
     public function store(Request $request)
     {
 
+
         $validator = $request->validate([
             'name' => 'required|string|max:60',
             'gsm' => 'required|numeric',
             'color' => 'required',
         ]);
+
         $slug = Str::slug($request['name']);
+        $color = str_replace(' ', '', $request['color']);
 
         $count =  NonWovenFabric::where('slug',$slug)->where('gsm',$request->gsm)->where('color',$request->color)->count();
-        // dd($count);
 
         if($count == 0){
             $fabric = NonWovenFabric::create([
                 'name' => $request['name'],
                 'slug' => Str::slug($request['name']),
                 'gsm' => $request['gsm'],
-                'color' => $request['color'],
+                'color' => $color,
             ]);
 
-
         }
-
 
         return redirect()->back()->withSuccess('NonWoven created successfully!');
     }
@@ -95,13 +97,15 @@ class FabricNonWovenController extends Controller
             'gsm' => 'required|numeric',
             'color' => 'required',
         ]);
+        $color = str_replace(' ', '', $request['color']);
+
 
         // update fabric
         $fabric->update([
-            'name' => $request->name,
+            'name' => $request['name'],
             'slug' => Str::slug($request['name']),
             'gsm' => $request['gsm'],
-            'color' => $request['color'],
+            'color' => $color,
         ]);
 
 
@@ -147,5 +151,5 @@ class FabricNonWovenController extends Controller
         return redirect()->route('nonwovenfabrics.index')->withSuccess('Fabric status changed successfully!');
     }
 
-   
+
 }

@@ -64,6 +64,7 @@ class TripalProductionReportController extends Controller
         // ->orWhereNotNull('double_side_laminated_fabrics.meter')
         ->get()
         ->toArray();
+        // dd($doubleSideProd);
 
         $mergedArray = self::mergeArraysByBillDate1($singleSideProd, $doubleSideProd);
         // dd($mergedArray);
@@ -180,13 +181,14 @@ public function mergeArraysByBillDate1($arrayOne, $arrayTwo)
             'single_unlam_net_wt_sum' => $dataOne['single_unlam_net_wt_sum'] ?? null,
             'singleLam_net_wt_sum_singleside' => $dataOne['singleLam_net_wt_sum_singleside'] ?? null,
             'singleLam_meter_sum' => $dataOne['singleLam_meter_sum'] ?? null,
-             'double_unlam_net_wt_sum' => $dataOne['double_unlam_net_wt_sum'] ?? null,
+             'double_unlam_net_wt_sum' => $dataTwo['double_unlam_net_wt_sum'] ?? null,
             'doubleSide_total_waste_sum' => $dataTwo['doubleSide_total_waste_sum'] ?? null,
             'doubleLam_net_wt_sum' => $dataTwo['doubleLam_net_wt_sum'] ?? null,
             'doubleLam_meter_sum' => $dataTwo['doubleLam_meter_sum'] ?? null,
         ];
 
         $mergedArray[] = $mergedData;
+
     }
 
     return $mergedArray;
