@@ -116,7 +116,7 @@
                 </label>
                 <input value="{{ $find_data->getPlantType->name }}" class="form-control" readonly>
                 <input type="hidden" name="plant_type_id" value="{{$find_data->planttype_id}}" id="plantType">
-                
+
                 @error('plant_type_id')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -129,7 +129,7 @@
                 <input type="hidden" name="plant_name_id" value="{{$find_data->plantname_id}}" id="plantName">
 
                 <input value="{{ $find_data->getPlantName->name }}" class="form-control" readonly>
-                
+
                 @error('gp_no')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -256,13 +256,13 @@
                             <th>{{ __('N.W') }}</th>
                             <th>{{ __('Meter') }}</th>
                             <th>{{ __('Avg') }}</th>
-                            
+
                         </tr>
                     </thead>
 
                     <tbody id="compareunlamtbody">
                     </tbody>
-                  
+
 
                 </table>
             </div>
@@ -274,14 +274,14 @@
                 <p style="font-weight: bold;"></p>
             </div>
             <div class="card-body table-responsive">
-                
-                    
+
+
                     <input type="hidden" name="bill_id" value="{{$id}}" id="bill_id">
                   <div class="row p-2">
                     <div class="col-md-3">
                         <label for="size" class="col-form-label">{{ __('Tripal:') }}<span class="required-field">*</span>
                         </label>
-                      
+
                         <a href="#" class="col-md-1 btn btn-primary dynamic-btn" data-toggle="modal"
                             tabindex="-1" data-target="#groupModel"
                             style="margin-top:0 !important; top:8px;float:right;">
@@ -325,7 +325,7 @@
                         @enderror
                     </div>
 
-                    
+
 
                     <div class="col-md-3">
                         <label for="size" class="col-form-label">{{ __('Net Weight:') }}<span class="required-field">*</span>
@@ -373,10 +373,10 @@
                             <strong>{{ $message }}</strong>
                         </span>
                         @enderror
-                        <input type="hidden" name="tripal_decimalname" id="tripal_decimalname"> 
+                        <input type="hidden" name="tripal_decimalname" id="tripal_decimalname">
                     </div>
 
-                    
+
 
                     <div class="col-md-3">
                         <button class=" form-control btn btn-primary" id='finaltripalStore'>
@@ -387,7 +387,7 @@
                   <input type="hidden" name="bill_no" id="bill_nos" value="{{$bill_no}}">
                   <input type="hidden" name="bill_date" id="bill_dates" value="{{$bill_date}}">
 
-                
+
             </div>
         </div>
     </div>
@@ -415,7 +415,7 @@
 
                     <tbody id="finalTripalListTable">
                     </tbody>
-                  
+
 
                 </table>
             </div>
@@ -432,8 +432,8 @@
         <form id="addFinalTripalDanaConsumption">
             <div class="card p-2">
                 <div class="row">
-                    
-               
+
+
 
                     <div class="col-md-4">
                         <label for="cut_length">Dana Name</label>
@@ -448,7 +448,7 @@
                                 </option>
                             @endforeach
                         </select>
-                        
+
                     </div>
                     <div class="col-md-4">
                         <label for="cut_length">Available</label>
@@ -500,12 +500,12 @@
                 </tr>
                 @endforeach
             </tbody>
-            
+
         </table>
     </div>
 </div>
 <div class="row">
-    
+
     <div id="success_msg" class="alert alert-success mt-2" hidden>
 
     </div>
@@ -563,9 +563,9 @@
                             @enderror
                         </div>
                         <input type="hidden" name="bill" id="bill" value="{{$bill_no}}">
-        
+
                     </div>
-        
+
                     <div class="col-md-4 form-group">
                         <div>
                             <label for="size" class="col-form-label">{{ __('Total Tripal Mtr:') }}<span
@@ -615,7 +615,7 @@
                             @enderror
                         </div>
                     </div>
-        
+
                     <div class="col-md-4" style="margin-top:70px;">
                         <div>
                             <label for="size" class="col-form-label">{{ __('Diff DS-Tripal Meter :') }}<span
@@ -639,7 +639,7 @@
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
-                            @enderror 
+                            @enderror
                             <input type="hidden" name="godam_id" id="godam_id"  value="{{$find_data->godam_id}}">
                     <input type="hidden" name="planttype_id" id="planttype_id"  value="{{$find_data->planttype_id}}">
                     <input type="hidden" name="plantname_id" id="plantname_id"  value="{{$find_data->plantname_id}}">
@@ -671,7 +671,7 @@
             <div id="error_msg" class="alert alert-danger mt-2" hidden>
 
             </div>
-           
+
             <form action="{{ route('finaltripal.storeName') }}" method="post" id="tripal_form">
                 @csrf
                 <div class="modal-body">
@@ -691,9 +691,9 @@
                                     </span>
                                 @enderror
                             </div>
-                            
+
                         </div>
-                        
+
                     </div>
                     <!-- /.card-body -->
 
@@ -791,13 +791,13 @@
 
     $(document).on("keyup","#meter",function(e){
 
-        let net_wt = parseInt($("#net_wt").val());
-        let meter = parseInt($("#meter").val());
+        let net_wt = parseFloat($("#net_wt").val());
+        let meter = parseFloat($("#meter").val());
         let test = (net_wt / meter) * 1000;
         let average = Math.round(test);
         $("#average").val(average);
 
-        let tripal_decimalname = parseInt($("#tripal_decimalname").val());
+        let tripal_decimalname = parseFloat($("#tripal_decimalname").val());
 
         let data = tripal_decimalname / 39.37;
         let datas = data.toFixed(2);
@@ -812,9 +812,10 @@
 
     $(document).on("keyup","#net_wt",function(e){
 
-        let net_wt = parseInt($("#net_wt").val());
-        let meter = parseInt($("#meter").val());
+        let net_wt = parseFloat($("#net_wt").val());
+        let meter = parseFloat($("#meter").val());
         let average = (net_wt / meter) * 1000;
+        console.log(net_wt,meter,average);
         $("#average").val(average);
 
     });
@@ -1091,10 +1092,10 @@
         }
 
         $('#tripal_form').on('submit', function () {
-           $('#register').attr('disabled', 'true'); 
+           $('#register').attr('disabled', 'true');
         });
 
-       
+
 
         $("body").on("submit","#wastesubmit", function(event){
             // Pace.start();
@@ -1137,7 +1138,7 @@
                 },
                 success:function(response){
                     addplanttype(response);
-                
+
                 },
                 error:function(error){
                     console.log(error);
@@ -1168,13 +1169,13 @@
         $("#plantName").change(function(e){
             let department_id =  $(this).val();
             $("#plantname_data").val(department_id);
-        
+
         });
 
         $("#shiftName").change(function(e){
             let shift_id =  $(this).val();
             $("#shift_data").val(shift_id);
-        
+
         });
 
 
@@ -1185,7 +1186,7 @@
 
     /**************************** Ajax functions **************************/
 
- 
+
 
     function addplanttype(data){
         $("#plantType").empty();
@@ -1268,13 +1269,13 @@
         });
     })
 
-  
+
     /************************* Form Submission *************************/
 
     /************************* Other Functionalities ***********************/
     $("#plantName").change(function(e){
         $('#shiftName').prop('disabled',false);
-        
+
         $("#rollnumberfabric").prop('disabled',false);
     });
 
@@ -1312,7 +1313,7 @@
         data.response.forEach(d => {
             console.log(data,d,'hey');
         // console.log(d.godam_id,d.plantype_id,data.shift_id,'hey');
-            
+
             let title = d.name;
             let group = d.average_wt.split('-')[0];
             let result = parseFloat(title) * parseFloat(group);
@@ -1339,7 +1340,7 @@
 
 
 
-   
+
 
     $(".discard").click(function(e){
         $.ajax({
@@ -1363,7 +1364,7 @@
     /************************* Send for lamination **************************/
 
      // $('#tripal_form').on('submit', function () {
-     //       $('#register').attr('disabled', 'true'); 
+     //       $('#register').attr('disabled', 'true');
      //    });
     $(document).ready(function(){
         $(document).on('click',"#sendforlamination",function(e){
@@ -1376,7 +1377,7 @@
                let plantname_id =  $("#plantname_id").val();
                let shift_id =  $("#shift_id").val();
                let bill_id = $("#bill_id").val();
-            
+
                // console.log(data);
 
             debugger;
@@ -1400,7 +1401,7 @@
                 },
                 success:function(response){
                     location.reload();
-                    $('#sendforlamination').attr('disabled', 'true'); 
+                    $('#sendforlamination').attr('disabled', 'true');
                     console.log(response);
                     if(response == '200'){
                         location.reload();
@@ -1411,9 +1412,9 @@
                 error:function(error){
                     console.log(error);
                 }
-            }); 
-            
-          
+            });
+
+
         });
     });
     // $(document).on('hidden.bs.modal', '#staticBackdrop1', function(e) {
@@ -1489,10 +1490,10 @@
         $("#compareunlamtbody").empty();
     }
 
- 
+
 
     function putonlamtbody(response){
-      
+
 
         response.tripalentry.forEach(element => {
             let tr = $("<tr></tr>").appendTo("#compareunlamtbody");
@@ -1503,12 +1504,12 @@
             tr.append(`<td>${element.net_wt}</td>`);
             tr.append(`<td>${element.meter}</td>`);
             tr.append(`<td>${element.average_wt}</td>`);
-         
-            
+
+
         });
 
         weightdiffs(response);
-        
+
     }
     /********** put on tbodys *********************/
 
@@ -1555,7 +1556,7 @@
     $(document).on("click","#add_dana_consumption",function(e){
         let dana = $("#danaNameId").val();
         let consumption = $("#add_dana_consumption_quantity").val();
-   
+
         $.ajax({
             url:"{{ route('dana.autoload.checkAutoloadQuantity') }}",
             method : 'post',
@@ -1580,15 +1581,15 @@
                 // if(response.itemquantity > consumption ? 'hi' : 'ok'){
                 //     alert('stock exceeded');
                 // }
-             
+
                 if (consumption.trim() === '') {
                     // alert("add quantity");
                 }else{
                     $("#totl_dana").val(consumption);
 
                     $("#selectedDanaID").val(dana);
-                }   
-             
+                }
+
             },
             error:function(error){
                 console.log(error);
@@ -1597,8 +1598,8 @@
 
         });
 
-      
-       
+
+
 
 
     });
@@ -1640,7 +1641,7 @@
             if(trimmedConsumption == '' || trimmedFabricWaste == ''){
                 alert('Waste and Consumption cannot be null');
             }else{
-            
+
                 $.ajax({
                     url : "{{ route('finaltripal.wastage.submit') }}",
                     method: "post",
@@ -1666,7 +1667,7 @@
                     error:function(error){
                         console.log(error);
                     }
-                }); 
+                });
             }
         });
 
@@ -1724,7 +1725,7 @@
                 },
             ]
         });
-   
+
 
     });
 </script>

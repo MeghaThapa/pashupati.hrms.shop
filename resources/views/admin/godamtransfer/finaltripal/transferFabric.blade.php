@@ -85,7 +85,7 @@
             <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
-                <input type="text" class="form-control" id="bill_number" name="bill_number" value="{{$find_data->bill_no}}" 
+                <input type="text" class="form-control" id="bill_number" name="bill_number" value="{{$find_data->bill_no}}"
                     readonly /> {{-- value="FSR-{{ getNepalidate(date('Y-m-d')).'-'.rand(0,9999)}}" --}}
                     <input type="hidden" name="tripalgodam_id" value="{{$tripalgodam_id}}" id="tripalgodam_id">
             </div>
@@ -102,26 +102,26 @@
                 </span>
                 @enderror
             </div>
-            
+
             <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('Remarks') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="remarks" name="remarks"
-                    value="{{$find_data->remarks}}" readonly/> 
+                    value="{{$find_data->remarks}}" readonly/>
             </div>
             <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('From') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="remarks" name="remarks"
-                    value="{{$find_data->getFromGodam->name}}" readonly/> 
+                    value="{{$find_data->getFromGodam->name}}" readonly/>
             </div>
             <div class="col-md-3 form-group">
                 <label for="size" class="col-form-label">{{ __('To') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" class="form-control" id="remarks" name="remarks"
-                    value="{{$find_data->getToGodam->name}}" readonly/> 
+                    value="{{$find_data->getToGodam->name}}" readonly/>
             </div>
-            
+
 
             <div class="col-md-3 form-group">
                 <label for="stock">{{ __('FinalTripalStock') }}<span class="required-field">*</span></label>
@@ -138,11 +138,11 @@
                 @enderror
             </div>
 
-            
-             
+
+
 
         </div>
-        
+
     </form>
 </div>
 <div class="row">
@@ -199,7 +199,7 @@
 <div class="card-footer">
     {{-- <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly> --}}
     <button type="submit" class="btn btn-info" id="finalUpdate">Update</button>
-  
+
 </div>
 
 
@@ -216,7 +216,7 @@
 <script>
 
     $(document).ready(function(){
-      
+
         let salesTripalTable = null;
         getTripalListData();
 
@@ -225,7 +225,7 @@
         $("body").on("click","#finalUpdate", function(event){
             var tripalgodam_id = $('#tripalgodam_id').val(),
             token = $('meta[name="csrf-token"]').attr('content');
-              
+
             $.ajax({
               type:"POST",
               dataType:"JSON",
@@ -236,7 +236,7 @@
             },
             success: function(response){
                 location.href = '{{route('tripalGodamTransfer.index')}}';
-              
+
             },
             error: function(event){
                 alert("Sorry");
@@ -248,7 +248,7 @@
         function getTripalListData(){
             if (salesTripalTable !== null) {
                 salesTripalTable.destroy();
-            } 
+            }
             // debugger;
              let tripal_id = $('#tripalgodam_id').val();
 
@@ -281,7 +281,7 @@
                 ]
             });
         }
-    
+
 
         $(document).on('click','.deleteTripalEntry',function(e){
             e.preventDefault();
@@ -302,13 +302,16 @@
            },
            success: function(response){
               $('#getSaleTripalList').DataTable().ajax.reload();
+              $('#sameFabricsTable').DataTable().ajax.reload();
+
+
            },
            error: function(event){
                alert("Sorry");
            }
            });
 
-         
+
         }
 
 
@@ -375,6 +378,7 @@
             },
             success: function(response){
                 $('#getSaleTripalList').DataTable().ajax.reload();
+                $('#sameFabricsTable').DataTable().ajax.reload();
 
             },
             error: function(event){
