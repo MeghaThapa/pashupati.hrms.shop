@@ -85,7 +85,7 @@
                 <label for="size" class="col-form-label">{{ __('Invoice No') }}<span class="required-field">*</span>
                 </label>
                 <input type="text" id="bill_no" class="form-control" value="{{ $findtripal->bill_no }}"
-                    readonly /> 
+                    readonly />
                 <input type="hidden" name="salefinal_id" id="salefinal_id" value="{{$id}}">
             </div>
 
@@ -131,11 +131,11 @@
                 </label>
                 <input type="text" value="{{ $findtripal->remarks }}" class="form-control calculator" readonly>
 
-            </div>            
+            </div>
             <div class="col-md-4 form-group">
                 <label for="size" class="col-form-label">{{ __('Fabric Name') }}<span class="required-field">*</span>
                 </label>
-                
+
                 <select class="advance-select-box form-control" id="finaltripalstock_id" name="finaltripalstock_id"
                     required>
                     <option value="">{{ __('Select Tripal Name') }}</option>
@@ -164,7 +164,7 @@
             </div>
 
         </div>
-        
+
     </form>
 </div>
 <div class="row">
@@ -218,14 +218,14 @@
                 </tr>
             </tfoot>
         </table>
-        
+
     </div>
 </div>
 
 <div class="card-footer">
     {{-- <input type="hidden" name="selectedDanaID" class="form-control" id="selectedDanaID" readonly> --}}
     <button type="submit" class="btn btn-info" id="finalUpdate">Update</button>
- 
+
 
 </div>
 
@@ -254,7 +254,7 @@
               // debugger;
               var salefinal_id = $('#salefinal_id').val(),
               token = $('meta[name="csrf-token"]').attr('content');
-                
+
               $.ajax({
                 type:"POST",
                 dataType:"JSON",
@@ -266,7 +266,7 @@
               success: function(response){
                   // location.reload();
                 location.href = '{{route('salefinaltripal.index')}}';
-                
+
               },
               error: function(event){
                   alert("Sorry");
@@ -332,7 +332,7 @@
                  tr.append(`<td><div class="btn-group"><a id="deletelist" href="${element.id}" data-id="${element.id}" class="btn btn-danger">Delete</a></div></td>`);
              });
 
-             
+
          }
 
          $(document).on("click",".deleteTripalEntry",function(e){
@@ -341,20 +341,20 @@
 
              let data_id = $(this).attr('data-id')
 
-           
+
              $.ajax({
                  url  : "{{ route('finalsaletripal.deleteFinalSaleEntry') }}",
                  method : "get",
                  data:{
                      "_token" : $("meta[name='csrf-token']").attr("content"),
                      "data_id" : data_id,
-                  
+
                  },
                  beforeSend:function(){
                      console.log("sending")
                  },
                  success:function(response){
-                    
+
                     $('#getSaleTripalList').DataTable().ajax.reload();
                     $('#sameFabricsTable').DataTable().ajax.reload();
                  },
@@ -385,13 +385,13 @@
             }
             });
 
-          
+
          }
 
          function getTripalSalesData(){
              if (salesTripalTable !== null) {
                  salesTripalTable.destroy();
-             } 
+             }
              // debugger;
               let sale_id = $('#salefinal_id').val();
 
@@ -425,7 +425,7 @@
              });
          }
 
-   
+
 
          $("#finaltripalstock_id").change(function(e){
              if (fabricTable !== null) {
@@ -461,7 +461,7 @@
          /**************************** Ajax Calls End **************************/
      });
 
-   
+
      $(document).on("click",".send_to_lower",function(e){
          // debugger;
          e.preventDefault()
@@ -472,7 +472,7 @@
          let salefinal_id = $("#salefinal_id").val()
          // debugger;
 
-       
+
          $.ajax({
              url  : "{{ route('finalsaletripal.storeEntryList') }}",
              method : "post",
@@ -482,7 +482,7 @@
                  "bill_no" : bill_no,
                  "bill_date" : billDate,
                  "salefinal_id" : salefinal_id,
-              
+
              },
              beforeSend:function(){
                  console.log("sending")
@@ -497,9 +497,9 @@
          })
      })
 
- </script>   
+ </script>
 
- 
+
 
 
 

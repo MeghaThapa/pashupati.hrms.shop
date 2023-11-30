@@ -133,6 +133,7 @@
 
                 {{-- double side --}}
                 <td>
+
                     @if (isset($item['total_double_unlam_net_wt_sum']))
                         {{ $item['total_double_unlam_net_wt_sum'] }}
                         @php

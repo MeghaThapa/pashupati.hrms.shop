@@ -16,7 +16,7 @@ class FinalTripalGodamController extends Controller
 {
     public function index(Request $request)
     {
-       
+
         return view('admin.godamtransfer.finaltripal.index');
     }
 
@@ -88,21 +88,21 @@ class FinalTripalGodamController extends Controller
             $find_bill = TripalGodam::find($request->bill_id);
             // dd($find_bill);
             $fabric_name = FinalTripalStock::where('department_id',$find_bill->fromgodam_id)->where("id",$stock_id)->value("name");
-            $fabrics = FinalTripalStock::where('department_id',$find_bill->fromgodam_id)->where("name",$fabric_name)->get();
+            $fabrics = FinalTripalStock::where('status_type','active')->where('department_id',$find_bill->fromgodam_id)->where("name",$fabric_name)->get();
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
-                   
+
                     ->addColumn("action",function($row,Request $request){
                         return "
-                        <a class='btn btn-primary sendforentry'  
-                                 data-id='{$row->id}' 
+                        <a class='btn btn-primary sendforentry'
+                                 data-id='{$row->id}'
                                  href='{$row->id}'>Send</a>";
                     })
                     ->rawColumns(["action"])
                     ->make(true);
 
-           
+
         }
     }
 
@@ -116,7 +116,7 @@ class FinalTripalGodamController extends Controller
         $total_gross = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('gross');
         $total_meter = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('meter');
         $total_roll = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->count();
-       
+
         return view('admin.godamtransfer.finaltripal.transferFabric',compact('stocks','tripalgodam_id','find_data','total_net','total_gross','total_meter','total_roll'));
     }
 
@@ -140,12 +140,12 @@ class FinalTripalGodamController extends Controller
         // delete unit
         $unit->delete();
         return response([
-            "message" => "Deleted Successfully" 
+            "message" => "Deleted Successfully"
         ]);
 
     }
 
-   
+
 
     public function getTripalGodamStore(Request $request)
     {
@@ -171,7 +171,9 @@ class FinalTripalGodamController extends Controller
                     'tripalgodam_id' => $request->tripalgodam_id,
                     'stock_id' => $request->data_id,
                 ]);
-          
+                $find_name->status_type = 'inactive';
+                $find_name->update();
+
 
         return response(['message'=>'Godam Transferred Successfully']);
         }
@@ -181,7 +183,7 @@ class FinalTripalGodamController extends Controller
     }
 
     public function getTripalGodamList(Request $request){
-        // dd($request);
+
 
         if($request->ajax()){
             $tripal_id = $request->tripal_id;
@@ -189,29 +191,33 @@ class FinalTripalGodamController extends Controller
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
-                   
+
                     ->addColumn("action",function($row){
                         return "
-                        <a class='btn btn-danger deleteTripalEntry'  
-                                 data-id='{$row->id}' 
+                        <a class='btn btn-danger deleteTripalEntry'
+                                 data-id='{$row->id}'
                                  href='{$row->id}'>Delete</a>";
                     })
                     ->rawColumns(["action"])
                     ->make(true);
 
         }
-      
+
     }
 
     public function deleteList(Request $request)
     {
 
         $unit = TripalGodamEntry::find($request->data_id);
+        $find_name = FinalTripalStock::find($unit->stock_id);
+
+        $find_name->status_type = 'active';
+        $find_name->update();
 
         // delete unit
         $unit->delete();
         return response([
-            "message" => "Deleted Successfully" 
+            "message" => "Deleted Successfully"
         ]);
 
     }
@@ -223,7 +229,7 @@ class FinalTripalGodamController extends Controller
             $godamlist = TripalGodamList::where('status','sent')->with('getFromGodam','getToGodam')->get();
             // dd($godamlist);
 
-       
+
             return response([
                 "godamlist" => $godamlist,
             ]);
@@ -263,7 +269,7 @@ class FinalTripalGodamController extends Controller
                           "status" => "sent"
                       ]);
 
-                
+
 
                 if($finaltripalstock){
 
@@ -273,8 +279,8 @@ class FinalTripalGodamController extends Controller
 
             }
 
-            $getupdate = TripalGodamEntry::where('tripalgodam_id',$request->tripalgodam_id)->update(['status' => 'completed']); 
-            $getupdates = TripalGodam::where('id',$request->tripalgodam_id)->update(['status' => 'completed']); 
+            $getupdate = TripalGodamEntry::where('tripalgodam_id',$request->tripalgodam_id)->update(['status' => 'completed']);
+            $getupdates = TripalGodam::where('id',$request->tripalgodam_id)->update(['status' => 'completed']);
 
             DB::commit();
 
@@ -296,11 +302,11 @@ class FinalTripalGodamController extends Controller
         $total_gross = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('gross');
         $total_meter = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->sum('meter');
         $total_roll = TripalGodamEntry::where('tripalgodam_id',$tripalgodam_id)->count();
-          
-        return view('admin.godamtransfer.finaltripal.viewBill',compact('stocks','tripalgodam_id','find_data','id','total_net','total_gross','total_meter','total_roll'));
+
+        return view('admin.godamtransfer.finaltripal.viewbill',compact('stocks','tripalgodam_id','find_data','id','total_net','total_gross','total_meter','total_roll'));
 
     }
 
-  
+
 
 }
