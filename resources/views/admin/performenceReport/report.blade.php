@@ -55,6 +55,16 @@
                 </div>
                 <div class="table-custom card-body table-responsive" id="reportViewtwo">
                 </div>
+                <div class="table-custom card-body table-responsive" id="reportViewthree">
+                </div>
+                <div class="table-custom card-body table-responsive" id="reportViewnonwoven">
+                </div>
+                <div class="table-custom card-body table-responsive" id="reportViewerimaPlantProd">
+                </div>
+                <div class="table-custom card-body table-responsive" id="reportViewccplant">
+                </div>
+                
+                
             </div>
         </div>
     </div>
@@ -74,6 +84,12 @@
                     success: function(response) {
                         $('#reportView').empty();
                         $('#reportViewone').empty();
+                        $('#reportViewtwo').empty();
+                        $('#reportViewthree').empty();
+                        $('#reportViewnonwoven').empty();
+                        $('#reportViewerimaPlantProd').empty();
+                        $('#reportViewccplant').empty();
+                        
                         if (response.status == false) {
                             alert(response.message);
                             return;
@@ -81,6 +97,11 @@
                         $('#reportView').append(response.data);
                         $('#reportViewone').append(response.loomRollDown);
                         $('#reportViewtwo').append(response.loomAvgMeter);  
+                        $('#reportViewthree').append(response.laminationProdReport);  
+                        $('#reportViewnonwoven').append(response.nonWovenProduction);  
+                        $('#reportViewerimaPlantProd').append(response.erimaPlantProd);  
+                        $('#reportViewccplant').append(response.ccplant);  
+                        
                         alert('Report Fetched');
                     },
                     error: function(error) {

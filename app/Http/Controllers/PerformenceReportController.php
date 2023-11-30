@@ -10,6 +10,7 @@ use App\Models\NonwovenBill;
 use App\Models\PrintedAndCuttedRollsEntry;
 use App\Models\Godam;
 use App\Models\BagBundelEntry;
+use App\Models\DanaGroup;
 use DB;
 
 class PerformenceReportController extends Controller
@@ -19,24 +20,36 @@ class PerformenceReportController extends Controller
     {
         if ($request->ajax()) {
 
-            // $datas = $this->data($request);
-            // $laminationProdReport= $this->data3($request);
+           
 
-            // $loomAvgMeter =$this->data2($request);
-
-
-            // $loomRollDown =$this->data1($request);
-            // $nonWovenProduction = $this->data4($request);
+            $datas = $this->data($request);
+            $loomRollDown =$this->data1($request);
+            $loomAvgMeter =$this->data2($request);
+            $laminationProdReport= $this->data3($request);  
+            $nonWovenProduction = $this->data4($request);
           
             // $ppBags=$this->data5($request);
 
             $erimaPlantProd =$this->data6($request);
+             $ccplant = $this->data7($request);
 
             $view = view('admin.performenceReport.ssr.report', compact('datas', 'request'))->render();
             $view1 = view('admin.performenceReport.ssr.loomRollDown', compact('loomRollDown', 'request'))->render();
             $view2 = view('admin.performenceReport.ssr.lommAvgMeter', compact('loomAvgMeter', 'request'))->render();
+            $view3 = view('admin.performenceReport.ssr.lam', compact('laminationProdReport', 'request'))->render();
+            $view4 = view('admin.performenceReport.ssr.nonwoven', compact('nonWovenProduction', 'request'))->render();
+            $view5 = view('admin.performenceReport.ssr.eremaPlant', compact('erimaPlantProd', 'request'))->render();
+            $view6 = view('admin.performenceReport.ssr.ccprod', compact('ccplant', 'request'))->render();
 
-            return response(['status' => true, 'data'=>$view, 'loomRollDown'=> $view1, 'loomAvgMeter'=> $view2]);
+            return response(['status' => true,
+             'data'=>$view, 
+             'loomRollDown'=> $view1, 
+             'loomAvgMeter'=> $view2,
+             'laminationProdReport' =>$view3,
+             'nonWovenProduction' =>$view4,
+             'erimaPlantProd' => $view5,
+             'ccplant' =>$view6,
+            ]);
         }
         return view('admin.performenceReport.report');
     }
@@ -105,7 +118,7 @@ class PerformenceReportController extends Controller
                 foreach($result1 as $monthly){
                     if( $monthly->plantName_id == $plant_id){
                     $mergeData[$processingSubcat->name]['monthly_tape_quantity'] =  $monthly->monthly_total_tape_qty;
-                    $mergeData[$processingSubcat->name]['monthly_total_waste'] =  $monthly->monthly_total_bypass_wast;
+                    $mergeData[$processingSubcat->name]['monthly_total_wastages'] =  $monthly->monthly_total_bypass_wast;
                  }   
                 }
 
@@ -537,7 +550,7 @@ class PerformenceReportController extends Controller
             ->get()
             ->toArray();
         
-            dd($result);
+            // dd($result);
         
             $result1 = DB::table('nonwoven_bills')
             ->join('fabric_non_woven_recive_entries', 'nonwoven_bills.id', '=', 'fabric_non_woven_recive_entries.bill_id')
@@ -850,121 +863,296 @@ class PerformenceReportController extends Controller
         ];
     } 
     private function data6($request){
-            $result = DB::table('reprocess_wastes')
-            ->whereDate('reprocess_wastes.date_en', '=', $request->given_date)
-            ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
-            ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
-            ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
-            ->select(
-                'reprocess_wastes.date_en',
-                'processing_subcats.name as plant_name',
-                DB::raw('SUM(wastage_danas.quantity) as today_total_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.dye_quantity) as today_total_dye_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as today_total_cutter_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.melt_quantity) as today_total_melt_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as today_total_waste')
-            )
-            ->groupBy('reprocess_wastes.date_en', 'plant_name')
-            ->get()
-            ->toArray();
-        
-            $result1 = DB::table('reprocess_wastes')
-            ->whereBetween('reprocess_wastes.date_en', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
-            ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
-            ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
-            ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
-            ->select(
-                'processing_subcats.id as plantName_id',
-                DB::raw('MONTH(reprocess_wastes.date_en) as month'),
-                DB::raw('SUM(wastage_danas.quantity) as monthly_total_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.dye_quantity) as monthly_total_dye_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as monthly_total_cutter_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.melt_quantity) as monthly_total_melt_quantity'),
-                DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as monthly_total_waste')
-            )
-            ->groupBy('processing_subcats.id', 'month') // Include processing_subcats.id in GROUP BY
-            ->get()
-            ->toArray();
-        // dd($result1);
+        $result = DB::table('reprocess_wastes')
+        ->whereDate('reprocess_wastes.date_en', '=', $request->given_date)
+        ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
+        ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
+        ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
+        ->join('dana_names', 'wastage_danas.dana_id', '=', 'dana_names.id') // Add this join
+        ->whereIn('wastage_danas.dana_id', [97, 59, 66, 67, 62, 60, 64, 57, 68, 56, 91, 89, 65, 63, 61, 96, 88, 55])
+        ->select(
+            'reprocess_wastes.date_en',
+            'dana_names.name as dana_name', // Include dana_name
+            'wastage_danas.dana_id as danaName_id',
+            DB::raw('SUM(wastage_danas.quantity) as today_total_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.dye_quantity) as today_total_dye_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as today_total_cutter_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.melt_quantity) as today_total_melt_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as today_total_waste')
+        )
+        ->groupBy('reprocess_wastes.date_en', 'wastage_danas.dana_id', 'dana_names.name') // Group by dana_name
+        ->get()
+        ->toArray();
+        // dd($result);
 
+        $result1 = DB::table('reprocess_wastes')
+        ->whereBetween('reprocess_wastes.date_en', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
+        ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
+        ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
+        ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
+        ->join('dana_names', 'wastage_danas.dana_id', '=', 'dana_names.id') // Add this join
+        ->whereIn('wastage_danas.dana_id', [97, 59, 66, 67, 62, 60, 64, 57, 68, 56, 91, 89, 65, 63, 61, 96, 88, 55])
+        ->select(
+            'dana_names.name as dana_name', // Include dana_name
+            'wastage_danas.dana_id as danaName_id',
+            DB::raw('MONTH(reprocess_wastes.date_en) as month'),
+            DB::raw('SUM(wastage_danas.quantity) as monthly_total_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.dye_quantity) as monthly_total_dye_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as monthly_total_cutter_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.melt_quantity) as monthly_total_melt_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as monthly_total_waste')
+        )
+        ->groupBy('month', 'wastage_danas.dana_id', 'dana_names.name') // Group by dana_name
+        ->get()
+        ->toArray();
+        // dd($result1);
         
-        $godams=[1,2,3];
-        $mergeData=[];       
-        foreach ($godams as $godamId) {
-            $godam = Godam::find($godamId);
-            $mergeData[$godam->name]['name'] = $godam->name;
+        $result2 = DB::table('reprocess_wastes')
+        ->whereBetween('reprocess_wastes.date_en', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+        ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
+        ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
+        ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
+        ->join('dana_names', 'wastage_danas.dana_id', '=', 'dana_names.id') // Add this join
+        ->whereIn('wastage_danas.dana_id', [97, 59, 66, 67, 62, 60, 64, 57, 68, 56, 91, 89, 65, 63, 61, 96, 88, 55])
+        ->select(
+            'dana_names.name as dana_name', // Include dana_name
+            'wastage_danas.dana_id as danaName_id',
+            DB::raw('YEAR(reprocess_wastes.date_en) as year'),
+            DB::raw('SUM(wastage_danas.quantity) as yearly_total_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.dye_quantity) as yearly_total_dye_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as yearly_total_cutter_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.melt_quantity) as yearly_total_melt_quantity'),
+            DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as yearly_total_waste')
+        )
+        ->groupBy('year', 'wastage_danas.dana_id', 'dana_names.name') // Group by dana_name
+        ->get()
+        ->toArray();
+        // dd($result2 );
         
-            foreach ($todayResult as $todayData) {
-                if ($todayData['godam_id'] ==$godamId) {
-                    $mergeData[$godam->name]['today_run_loom_sum'] = $todayData['today_run_loom_sum'];
-                    $mergeData[$godam->name]['today_total_meter'] = $todayData['today_total_meter'];
+        $wasteKeysMapping = [
+            'rafia' => [97, 59, 66, 67, 62, 60, 64, 57, 68, 56],
+            'nw' => [91, 89],
+            'Ld' => [65, 63],
+            'hm' => [61, 96],
+            'tripal' => [88, 55],
+        ];
+        
+        $mergeData = [];
+        
+        foreach ($wasteKeysMapping as $key => $processingStepIds) {
+            $mergeData[$key] = [
+                'wastage_key' => $key,
+                'today_total_quantity' => null,
+                'today_total_waste' => null,
+                'monthly_total_quantity' => null,
+                'monthly_total_waste' => null,
+                'yearly_total_quantity' => null,
+                'yearly_total_waste' => null,
+            ];
+        
+            foreach ($result as $todayData) {
+                if (in_array($todayData->danaName_id, $processingStepIds)) {
+                    $mergeData[$key]['today_total_quantity'] += $todayData->today_total_quantity;
+                    $mergeData[$key]['today_total_waste'] += $todayData->today_total_waste;
                 }
             }
         
-            foreach ($monthlyResult as $monthly) {
-                if ($monthly['godam_id'] ==$godamId) {
-                    $mergeData[$godam->name]['monthly_run_loom_sum'] = $monthly['monthly_run_loom_sum'];
-                    $mergeData[$godam->name]['monthly_total_meter_sum'] = $monthly['monthly_total_meter_sum'];
+            foreach ($result1 as $monthly) {
+                if (in_array($monthly->danaName_id, $processingStepIds)) {
+                    $mergeData[$key]['monthly_total_quantity'] += $monthly->monthly_total_quantity;
+                    $mergeData[$key]['monthly_total_waste'] += $monthly->monthly_total_waste;
                 }
             }
         
-            foreach ($yearlyResult as $yearly) {
-                if ($yearly['godam_id'] ==$godamId) {
-                    $mergeData[$godam->name]['yearly_run_loom_sum'] = $yearly['yearly_run_loom_sum'];
-                    $mergeData[$godam->name]['yearly_total_meter_sum'] = $yearly['yearly_total_meter_sum'];
+            foreach ($result2 as $yearly) {
+                if (in_array($yearly->danaName_id, $processingStepIds)) {
+                    $mergeData[$key]['yearly_total_quantity'] += $yearly->yearly_total_quantity;
+                    $mergeData[$key]['yearly_total_waste'] += $yearly->yearly_total_waste;
                 }
             }
         }
         
+        
+        
+        // dd($mergeData);
+        
+        // $resultData=[];
+        // foreach($mergeData as $data){
+        //     $resultData[$data['name']]['name'] = $data['name'];
+        //     $resultData[$data['name']]['today_run_loom_sum'] = isset($data['today_run_loom_sum']) ? $data['today_run_loom_sum']:0;
+        //     $resultData[$data['name']]['today_total_meter'] = isset($data['today_total_meter']) ? $data['today_total_meter']:0;
+        //     $resultData[$data['name']]['monthly_run_loom_sum'] = isset($data['monthly_run_loom_sum']) ? $data['monthly_run_loom_sum']:0;
+        //     $resultData[$data['name']]['monthly_total_meter_sum'] = isset($data['monthly_total_meter_sum']) ? $data['monthly_total_meter_sum']:0;
+        //     $resultData[$data['name']]['yearly_run_loom_sum'] = isset($data['yearly_run_loom_sum']) ? $data['yearly_run_loom_sum']:0;
+        //     $resultData[$data['name']]['yearly_total_meter_sum'] = isset($data['yearly_total_meter_sum']) ? $data['yearly_total_meter_sum']:0;
+
+        // }
+        // dd($resultData);
+        $resultData = [];
+
+        foreach ($mergeData as $key => $data) {
+            $resultData[$key]['wastage_key'] = $data['wastage_key'];
+            $resultData[$key]['today_total_quantity'] = isset($data['today_total_quantity']) ? $data['today_total_quantity'] : 0;
+            $resultData[$key]['today_total_waste'] = isset($data['today_total_waste']) ? $data['today_total_waste'] : 0;
+        
+            $today_total_waste = isset($data['today_total_waste']) ? $data['today_total_waste'] : 0;
+            $today_total_quantity = isset($data['today_total_quantity']) ? $data['today_total_quantity'] : 1;
+            $resultData[$key]['today_waste_perc'] = $today_total_quantity != 0
+                ? ($today_total_waste / $today_total_quantity) * 100
+                : 0;
+        
+            $resultData[$key]['monthly_total_quantity'] = isset($data['monthly_total_quantity']) ? $data['monthly_total_quantity'] : 0;
+            $resultData[$key]['monthly_total_waste'] = isset($data['monthly_total_waste']) ? $data['monthly_total_waste'] : 0;
+        
+            $monthly_total_waste = isset($data['monthly_total_waste']) ? $data['monthly_total_waste'] : 0;
+            $monthly_total_quantity = isset($data['monthly_total_quantity']) ? $data['monthly_total_quantity'] : 1;
+            $resultData[$key]['monthly_waste_perc'] = $monthly_total_quantity != 0
+                ? ($monthly_total_waste / $monthly_total_quantity) * 100
+                : 0;
+        
+            $resultData[$key]['yearly_total_quantity'] = isset($data['yearly_total_quantity']) ? $data['yearly_total_quantity'] : 0;
+            $resultData[$key]['yearly_total_waste'] = isset($data['yearly_total_waste']) ? $data['yearly_total_waste'] : 0;
+        
+            $yearly_total_waste = isset($data['yearly_total_waste']) ? $data['yearly_total_waste'] : 0;
+            $yearly_total_quantity = isset($data['yearly_total_quantity']) ? $data['yearly_total_quantity'] : 1;
+            $resultData[$key]['yearly_waste_perc'] = $yearly_total_quantity != 0
+                ? (($yearly_total_waste / $yearly_total_quantity)) * 100
+                : 0;
+        }
+        
+        // dd($resultData);
+    return ($resultData);            
+    } 
+
+    private function data7(Request $request){
+
+        $result = DB::table('ccplantentry')
+        ->whereDate('ccplantentry.date', '=', $request->given_date)
+        ->leftJoin('cc_plant_dana_creation', 'ccplantentry.id', '=', 'cc_plant_dana_creation.cc_plant_entry_id')
+        ->leftJoin('cc_plant_wastages', 'ccplantentry.id', '=', 'cc_plant_wastages.ccplantentry_id')
+        ->leftJoin('dana_groups', 'cc_plant_dana_creation.dana_group_id', '=', 'dana_groups.id')
+        ->whereIn('cc_plant_dana_creation.dana_group_id', [2, 5, 6])
+        ->select(
+            'ccplantentry.date',
+            'cc_plant_dana_creation.dana_group_id',
+            'dana_groups.name as group_name', // Include the group name from dana_groups
+            DB::raw('SUM(cc_plant_dana_creation.quantity) as today_total_quantity'),
+            DB::raw('SUM(cc_plant_wastages.quantity) as today_total_wastages')
+        )
+        ->groupBy('ccplantentry.date', 'cc_plant_dana_creation.dana_group_id', 'dana_groups.name')
+        ->get()
+        ->toArray();
+        // dd($result);
+
+        $result1 = DB::table('ccplantentry')
+        ->whereBetween('ccplantentry.date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
+        ->leftJoin('cc_plant_dana_creation', 'ccplantentry.id', '=', 'cc_plant_dana_creation.cc_plant_entry_id')
+        ->leftJoin('cc_plant_wastages', 'ccplantentry.id', '=', 'cc_plant_wastages.ccplantentry_id')
+        ->leftJoin('dana_groups', 'cc_plant_dana_creation.dana_group_id', '=', 'dana_groups.id')
+        ->whereIn('cc_plant_dana_creation.dana_group_id', [2, 5, 6])
+        ->select(
+            'cc_plant_dana_creation.dana_group_id',
+            'dana_groups.name as group_name', // Include the group name from dana_groups
+            DB::raw('MONTH(ccplantentry.date) as month'),
+            DB::raw('SUM(cc_plant_dana_creation.quantity) as monthly_total_quantity'),
+            DB::raw('SUM(cc_plant_wastages.quantity) as monthly_total_wastages')
+        )
+        ->groupBy('month', 'cc_plant_dana_creation.dana_group_id', 'dana_groups.name')
+        ->get()
+        ->toArray();
+        // dd($result1);
+
+        $result2 = DB::table('ccplantentry')
+        ->whereBetween('ccplantentry.date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+        ->leftJoin('cc_plant_dana_creation', 'ccplantentry.id', '=', 'cc_plant_dana_creation.cc_plant_entry_id')
+        ->leftJoin('cc_plant_wastages', 'ccplantentry.id', '=', 'cc_plant_wastages.ccplantentry_id')
+        ->leftJoin('dana_groups', 'cc_plant_dana_creation.dana_group_id', '=', 'dana_groups.id')
+        ->whereIn('cc_plant_dana_creation.dana_group_id', [2, 5, 6])
+        ->select(
+            'cc_plant_dana_creation.dana_group_id',
+            'dana_groups.name as group_name', // Include the group name from dana_groups
+            DB::raw('YEAR(ccplantentry.date) as year'),
+            DB::raw('SUM(cc_plant_dana_creation.quantity) as yearly_total_quantity'),
+            DB::raw('SUM(cc_plant_wastages.quantity) as yearly_total_wastages')
+        )
+        ->groupBy('year', 'cc_plant_dana_creation.dana_group_id', 'dana_groups.name')
+        ->get()
+        ->toArray();
+        // dd($result2);
+        $dana_groups=[2,5,6];
+            $mergeData=[];       
+            foreach ($dana_groups as $danaGroupId) {
+                // dd($danaGroupId);
+                $danaGroup = DanaGroup::find($danaGroupId);
+                $mergeData[$danaGroup->name]['name'] = $danaGroup->name;
+            
+                foreach ($result as $todayData) {
+                    if ($todayData->dana_group_id == $danaGroupId) {
+                        $mergeData[$danaGroup->name]['today_total_quantity'] = $todayData->today_total_quantity;
+                        $mergeData[$danaGroup->name]['today_total_wastages'] = $todayData->today_total_wastages;
+                    }
+                }
+                
+                foreach ($result1 as $monthly) {
+                    if ($monthly->dana_group_id == $danaGroupId) {
+                        $mergeData[$danaGroup->name]['monthly_total_quantity'] = $monthly->monthly_total_quantity;
+                        $mergeData[$danaGroup->name]['monthly_total_wastages'] = $monthly->monthly_total_wastages;
+                    }
+                }
+                
+                foreach ($result2 as $yearly) {
+                    if ($yearly->dana_group_id == $danaGroupId) {
+                        $mergeData[$danaGroup->name]['yearly_total_quantity'] = $yearly->yearly_total_quantity;
+                        $mergeData[$danaGroup->name]['yearly_total_wastages'] = $yearly->yearly_total_wastages;
+                    }
+                }
+                
+            }
         // dd($mergeData);
         $resultData=[];
         foreach($mergeData as $data){
             $resultData[$data['name']]['name'] = $data['name'];
-            $resultData[$data['name']]['today_run_loom_sum'] = isset($data['today_run_loom_sum']) ? $data['today_run_loom_sum']:0;
-            $resultData[$data['name']]['today_total_meter'] = isset($data['today_total_meter']) ? $data['today_total_meter']:0;
-            $resultData[$data['name']]['monthly_run_loom_sum'] = isset($data['monthly_run_loom_sum']) ? $data['monthly_run_loom_sum']:0;
-            $resultData[$data['name']]['monthly_total_meter_sum'] = isset($data['monthly_total_meter_sum']) ? $data['monthly_total_meter_sum']:0;
-            $resultData[$data['name']]['yearly_run_loom_sum'] = isset($data['yearly_run_loom_sum']) ? $data['yearly_run_loom_sum']:0;
-            $resultData[$data['name']]['yearly_total_meter_sum'] = isset($data['yearly_total_meter_sum']) ? $data['yearly_total_meter_sum']:0;
+            $resultData[$data['name']]['today_total_quantity'] = isset($data['today_total_quantity']) ? $data['today_total_quantity']:0;
+            $resultData[$data['name']]['today_total_wastages'] = isset($data['today_total_wastages']) ? $data['today_total_wastages']:0;
+            $resultData[$data['name']]['monthly_total_quantity'] = isset($data['monthly_total_quantity']) ? $data['monthly_total_quantity']:0;
+            $resultData[$data['name']]['monthly_total_wastages'] = isset($data['monthly_total_wastages']) ? $data['monthly_total_wastages']:0;
+            $resultData[$data['name']]['yearly_total_quantity'] = isset($data['yearly_total_quantity']) ? $data['yearly_total_quantity']:0;
+            $resultData[$data['name']]['yearly_total_wastages'] = isset($data['yearly_total_wastages']) ? $data['yearly_total_wastages']:0;
 
         }
         // dd($resultData);
-        $loomAvgMeter = [];
+        $danaGroupData=[];
         foreach($resultData as $data){
-            $loomAvgMeter[$data['name']]['name'] = $data['name'];
-            $loomAvgMeter[$data['name']]['today_run_loom_sum'] = isset($data['today_run_loom_sum']) ? $data['today_run_loom_sum']:0;
-            $loomAvgMeter[$data['name']]['today_total_meter'] = isset($data['today_total_meter']) ? $data['today_total_meter']:0;
+            $danaGroupData[$data['name']]['name'] = $data['name'];
+            $danaGroupData[$data['name']]['today_total_quantity'] = isset($data['today_total_quantity']) ? $data['today_total_quantity']:0;
+            $danaGroupData[$data['name']]['today_total_wastages'] = isset($data['today_total_wastages']) ? $data['today_total_wastages']:0;
 
-            $today_total_meter = isset($data['today_total_meter']) ? $data['today_total_meter'] : 0;
-            $today_run_loom_sum = isset($data['today_run_loom_sum']) ? $data['today_run_loom_sum'] : 1; // Use 1 as a default value to avoid division by zero
-            $loomAvgMeter[$data['name']]['today_loomAvg_meter'] = $today_run_loom_sum != 0
-                ? ($today_total_meter /  $today_run_loom_sum)
+            $today_total_wastages = isset($data['today_total_wastages']) ? $data['today_total_wastages'] : 0;
+            $today_total_quantity = isset($data['today_total_quantity']) ? $data['today_total_quantity'] : 1; // Use 1 as a default value to avoid division by zero
+            $danaGroupData[$data['name']]['today_wastage_perc'] = $today_total_quantity != 0
+                ? ($today_total_wastages / $today_total_quantity * 100)
                 : 0;
-
-            $loomAvgMeter[$data['name']]['monthly_run_loom_sum'] = isset($data['monthly_run_loom_sum']) ? $data['monthly_run_loom_sum']:0;
-            $loomAvgMeter[$data['name']]['monthly_total_meter_sum'] = isset($data['monthly_total_meter_sum']) ? $data['monthly_total_meter_sum']:0;
-
-            $monthly_total_meter_sum = isset($data['monthly_total_meter_sum']) ? $data['monthly_total_meter_sum'] : 0;
-            $monthly_run_loom_sum = isset($data['monthly_run_loom_sum']) ? $data['monthly_run_loom_sum'] : 1;
-            $loomAvgMeter[$data['name']]['monthly_loomAvg_meter'] =  $monthly_run_loom_sum !=0?
-            ($monthly_total_meter_sum /  $monthly_run_loom_sum)
+            
+            $danaGroupData[$data['name']]['monthly_total_quantity'] = isset($data['monthly_total_quantity']) ? $data['monthly_total_quantity']:0;
+            $danaGroupData[$data['name']]['monthly_total_wastages'] = isset($data['monthly_total_wastages']) ? $data['monthly_total_wastages']:0;
+            $monthly_total_wastages = isset($data['monthly_total_wastages']) ? $data['monthly_total_wastages'] : 0;
+            $monthly_total_quantity = isset($data['monthly_total_quantity']) ? $data['monthly_total_quantity'] : 1; // Use 1 as a default value to avoid division by zero
+            
+            $danaGroupData[$data['name']]['monthly_wastage_perc'] = $monthly_total_quantity != 0
+                ? ($monthly_total_wastages / $monthly_total_quantity * 100)
                 : 0;
-
-            $loomAvgMeter[$data['name']]['yearly_run_loom_sum'] = isset($data['yearly_run_loom_sum']) ? $data['yearly_run_loom_sum']:0;
-            $loomAvgMeter[$data['name']]['yearly_total_meter_sum'] = isset($data['yearly_total_meter_sum']) ? $data['yearly_total_meter_sum']:0;
-           
-            $yearly_total_meter_sum = isset($data['yearly_total_meter_sum']) ? $data['yearly_total_meter_sum'] : 0;
-            $yearly_run_loom_sum = isset($data['yearly_run_loom_sum']) ? $data['yearly_run_loom_sum'] : 1;
-            $loomAvgMeter[$data['name']]['yearly_loomAvg_meter'] = $yearly_run_loom_sum != 0
-            ? (($yearly_total_meter_sum / $yearly_run_loom_sum))
-            : 0;
-           
-        
-
-
-        } 
-        // dd($loomAvgMeter);
-    return ($loomAvgMeter);            
-    } 
-
+            
+            $danaGroupData[$data['name']]['yearly_total_quantity'] = isset($data['yearly_total_quantity']) ? $data['yearly_total_quantity']:0;
+            $danaGroupData[$data['name']]['yearly_total_wastages'] = isset($data['yearly_total_wastages']) ? $data['yearly_total_wastages']:0;
+            $yearly_total_wastages = isset($data['yearly_total_wastages']) ? $data['yearly_total_wastages'] : 0;
+            $yearly_total_quantity = isset($data['yearly_total_quantity']) ? $data['yearly_total_quantity'] : 1; // Use 1 as a default value to avoid division by zero
+            
+            $danaGroupData[$data['name']]['yearly_wastage_perc'] = $yearly_total_quantity != 0
+                ? ($yearly_total_wastages / $yearly_total_quantity * 100)
+                : 0;
+            
+        }
+        // dd($danaGroupData);
+        return  $danaGroupData;
+    }
 }
