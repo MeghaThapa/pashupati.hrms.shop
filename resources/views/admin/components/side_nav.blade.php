@@ -989,6 +989,43 @@
                 </a>
 
             </li>
+            <li class="nav-item">
+                {{-- <a href="{{ route('fabric-groups.index') }}"
+                    class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}"> --}}
+
+                <a href="{{ route('bag.production.report') }}"
+                    class="nav-link {{ request()->is('bag.production.report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-chart-area"></i>
+
+                    <p>{{ __('Bag Production Report') }}</p>
+
+                </a>
+
+            </li>
+             <li class="nav-item">
+                    <a href="{{ route('bag.prodAccDate.report') }}"
+                    class="nav-link {{ request()->is('bag.prodAccDate.report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-chart-area"></i>
+
+                    <p>{{ __('Bag Report Acc Date') }}</p>
+
+                </a>
+
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('performence.report') }}"
+                    class="nav-link {{ request()->is('performence.report') ? 'active' : '' }}">
+
+                    <i class="nav-icon fas fa-chart-area"></i>
+
+                    <p>{{ __('Performence Report') }}</p>
+
+                </a>
+
+            </li>
 
             <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
 
@@ -1619,18 +1656,7 @@
                 </a>
 
             </li>
-            <li class="nav-item">
 
-                <a href="{{ route('bag.production.report') }}"
-                    class="nav-link {{ request()->routeIs('bag-production/report') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-chart-area"></i>
-
-                    <p>{{ __('Bag Production Report') }}</p>
-
-                </a>
-
-            </li>
 
 
             <li class="nav-item">

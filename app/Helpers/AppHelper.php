@@ -87,24 +87,6 @@ class AppHelper
         }
     }
 
-    public static function getNepaliDate($date)
-    {
-        $splitDate = explode("-", $date);
-        $cal = new Nepali_Calendar();
-        $nep = $cal->eng_to_nep($splitDate[0], $splitDate[1], $splitDate[2]);
-
-        return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' .str_pad($nep["date"], 2, '0', STR_PAD_LEFT) );
-
-    }
-
-    public static function getTodayNepaliDate()
-    {
-
-        $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
-        return getNepaliDate($currentDate);
-
-    }
-
     public static function convertNepaliToEnglishDate($nepaliDate)
     {
 
@@ -125,7 +107,23 @@ class AppHelper
 
     }
 
+    public static function getNepaliDate($date)
+    {
+        $splitDate = explode("-", $date);
+        $cal = new Nepali_Calendar();
+        $nep = $cal->eng_to_nep($splitDate[0], $splitDate[1], $splitDate[2]);
 
+        return ($nep["year"] . '-' . str_pad($nep["month"], 2, '0', STR_PAD_LEFT) . '-' .str_pad($nep["date"], 2, '0', STR_PAD_LEFT) );
+
+    }
+
+    public static function getTodayNepaliDate()
+    {
+
+        $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
+        return getNepaliDate($currentDate);
+
+    }
 
     // return formatted currency
     public function formattedCurrency($amount)
