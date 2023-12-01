@@ -1,4 +1,4 @@
-<h3>Summary of Tape Production Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3>
+<h3>Performance Report for Date: {{ $request->given_date }} </h3>
 <table class="table table-bordered table-responsive">
     <thead class="text-bold">
         <tr>
