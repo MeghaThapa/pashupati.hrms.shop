@@ -60,49 +60,52 @@ class PerformenceReportController extends Controller
 
     private function data($request)
         {
-            $plantName= [1, 2, 3, 4, 9, 14];
+            $plantName= [1, 2, 3, 4,9,13];
             $result = DB::table('tape_entry_items')
             ->join('tape_entry', 'tape_entry_items.tape_entry_id', '=', 'tape_entry.id')
             ->join('processing_subcats', 'tape_entry_items.plantName_id', '=', 'processing_subcats.id')
             ->where('tape_entry.tape_entry_date', '=', $request->given_date)
-            ->whereIn('processing_subcats.id',[1,2,3,4,9,14])
+            ->whereIn('processing_subcats.id', [1, 2, 3, 4,9,13])
             ->groupBy('tape_entry_items.plantName_id', 'tape_entry.tape_entry_date')
-            ->select('tape_entry_items.plantName_id', 
-                    'tape_entry.tape_entry_date',
-                    DB::raw('SUM(tape_entry_items.tape_qty_in_kg) as today_total_tape_qty'), 
-                    DB::raw('SUM(tape_entry_items.bypass_wast) as today_total_bypass_wast'))
+            ->select(
+                'tape_entry_items.plantName_id',
+                'tape_entry.tape_entry_date',
+                DB::raw('SUM(tape_entry_items.tape_qty_in_kg) as today_total_tape_qty'),
+                DB::raw('SUM(tape_entry_items.bypass_wast + tape_entry_items.loading + tape_entry_items.running) as today_total_waste')
+            )
             ->get()
             ->toArray();
+        
             // dd($result);
-
-
             $result1 = DB::table('tape_entry_items')
             ->join('tape_entry', 'tape_entry_items.tape_entry_id', '=', 'tape_entry.id')
             ->join('processing_subcats', 'tape_entry_items.plantName_id', '=', 'processing_subcats.id')
             ->whereBetween('tape_entry.tape_entry_date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
-            ->whereIn('processing_subcats.id', [1, 2, 3, 4, 9, 14])
-            ->groupBy('tape_entry_items.plantName_id', DB::raw('MONTH(tape_entry.tape_entry_date)'))
+            ->whereIn('processing_subcats.id', [1, 2, 3, 4,9,13])
+            ->groupBy('processing_subcats.id','processing_subcats.name', DB::raw('MONTH(tape_entry.tape_entry_date)'))
             ->select(
-                'tape_entry_items.plantName_id',
+                'processing_subcats.id as plantName_id',
+                'processing_subcats.name', // Include the plant name in the select clause
                 DB::raw('MONTH(tape_entry.tape_entry_date) as month'),
                 DB::raw('SUM(tape_entry_items.tape_qty_in_kg) as monthly_total_tape_qty'),
-                DB::raw('SUM(tape_entry_items.bypass_wast) as monthly_total_bypass_wast')
+                DB::raw('SUM(tape_entry_items.bypass_wast + tape_entry_items.loading + tape_entry_items.running) as monthly_total_waste')
             )
             ->get()
             ->toArray();
-            // dd($result1);
+
+            //  dd($result1);
            
             $result2 = DB::table('tape_entry_items')
             ->join('tape_entry', 'tape_entry_items.tape_entry_id', '=', 'tape_entry.id')
             ->join('processing_subcats', 'tape_entry_items.plantName_id', '=', 'processing_subcats.id')
             ->whereBetween('tape_entry.tape_entry_date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])      
-            ->whereIn('processing_subcats.id',[1,2,3,4,9,14])
+            ->whereIn('processing_subcats.id',[1, 2, 3, 4,9,13])
             ->groupBy('tape_entry_items.plantName_id', DB::raw('YEAR(tape_entry.tape_entry_date)'))
             ->select(
                 'tape_entry_items.plantName_id',
                 DB::raw('YEAR(tape_entry.tape_entry_date) as year'),
                 DB::raw('SUM(tape_entry_items.tape_qty_in_kg) as yearly_total_tape_qty'),
-                DB::raw('SUM(tape_entry_items.bypass_wast) as yearly_total_bypass_wast')
+                DB::raw('SUM(tape_entry_items.bypass_wast + tape_entry_items.loading + tape_entry_items.running) as yearly_total_waste')
             )
             ->get()
             ->toArray();
@@ -115,21 +118,21 @@ class PerformenceReportController extends Controller
                 foreach($result as $todayData){
                     if( $todayData->plantName_id == $plant_id){
                         $mergeData[$processingSubcat->name]['today_tape_quantity'] =  $todayData->today_total_tape_qty;
-                        $mergeData[$processingSubcat->name]['today_waste'] =  $todayData->today_total_bypass_wast;
+                        $mergeData[$processingSubcat->name]['today_waste'] =  $todayData->today_total_waste;
                     }                 
                 }
 
                 foreach($result1 as $monthly){
                     if( $monthly->plantName_id == $plant_id){
                     $mergeData[$processingSubcat->name]['monthly_tape_quantity'] =  $monthly->monthly_total_tape_qty;
-                    $mergeData[$processingSubcat->name]['monthly_total_wastages'] =  $monthly->monthly_total_bypass_wast;
+                    $mergeData[$processingSubcat->name]['monthly_total_wastages'] =  $monthly->monthly_total_waste;
                  }   
                 }
 
                 foreach($result2 as $yearly){
                     if( $yearly->plantName_id == $plant_id){
                     $mergeData[$processingSubcat->name]['yearly_tape_quantity'] =  $yearly->yearly_total_tape_qty;
-                    $mergeData[$processingSubcat->name]['yearly_total_waste'] =  $yearly->yearly_total_bypass_wast;
+                    $mergeData[$processingSubcat->name]['yearly_total_waste'] =  $yearly->yearly_total_waste;
                  }   
                 }
 
@@ -141,12 +144,12 @@ class PerformenceReportController extends Controller
                 $resultData[$data['plant_name']]['today_tape_quantity'] = isset($data['today_tape_quantity']) ? $data['today_tape_quantity']:0;
                 $resultData[$data['plant_name']]['today_waste'] = isset($data['today_waste']) ? $data['today_waste']:0;
                 $resultData[$data['plant_name']]['monthly_tape_quantity'] = isset($data['monthly_tape_quantity']) ? $data['monthly_tape_quantity']:0;
-                $resultData[$data['plant_name']]['monthly_total_waste'] = isset($data['monthly_total_waste']) ? $data['monthly_total_waste']:0;
+                $resultData[$data['plant_name']]['monthly_total_wastages'] = isset($data['monthly_total_wastages']) ? $data['monthly_total_wastages']:0;
                 $resultData[$data['plant_name']]['yearly_tape_quantity'] = isset($data['yearly_tape_quantity']) ? $data['yearly_tape_quantity']:0;
                 $resultData[$data['plant_name']]['yearly_total_waste'] = isset($data['yearly_total_waste']) ? $data['yearly_total_waste']:0;
 
             }
-
+            // dd($resultData);
             $tapePlantData=[];
             foreach($resultData as $data){
                 $tapePlantData[$data['plant_name']]['plant_name'] = $data['plant_name'];
@@ -160,12 +163,12 @@ class PerformenceReportController extends Controller
                     : 0;
                 
                 $tapePlantData[$data['plant_name']]['monthly_tape_quantity'] = isset($data['monthly_tape_quantity']) ? $data['monthly_tape_quantity']:0;
-                $tapePlantData[$data['plant_name']]['monthly_total_waste'] = isset($data['monthly_total_waste']) ? $data['monthly_total_waste']:0;
-                $monthly_total_waste = isset($data['monthly_total_waste']) ? $data['monthly_total_waste'] : 0;
+                $tapePlantData[$data['plant_name']]['monthly_total_wastages'] = isset($data['monthly_total_wastages']) ? $data['monthly_total_wastages']:0;
+                $monthly_total_wastages = isset($data['monthly_total_wastages']) ? $data['monthly_total_wastages'] : 0;
                 $monthly_tape_quantity = isset($data['monthly_tape_quantity']) ? $data['monthly_tape_quantity'] : 1; // Use 1 as a default value to avoid division by zero
                 
                 $tapePlantData[$data['plant_name']]['monthly_wastage_perc'] = $monthly_tape_quantity != 0
-                    ? ($monthly_total_waste / $monthly_tape_quantity * 100)
+                    ? ($monthly_total_wastages / $monthly_tape_quantity * 100)
                     : 0;
                 
                 $tapePlantData[$data['plant_name']]['yearly_tape_quantity'] = isset($data['yearly_tape_quantity']) ? $data['yearly_tape_quantity']:0;
@@ -186,8 +189,10 @@ class PerformenceReportController extends Controller
 
             $todayResult = FabricDetail::whereDate('bill_date_en', '=', $request->given_date)
             ->join('godam', 'fabric_details.godam_id', '=', 'godam.id')
-            ->select('godam_id','fabric_details.bill_date_en', 'godam.name',
-             DB::raw('SUM(total_netweight) as today_netweight_sum'),
+            ->select('godam_id',
+            'fabric_details.bill_date_en', 
+            'godam.name',
+              DB::raw('SUM(total_netweight) as today_netweight_sum'),
               DB::raw('SUM(total_wastage) as today_wastage_sum'))
             ->groupBy('godam_id', 'godam.name','fabric_details.bill_date_en')
             ->get()
@@ -419,12 +424,14 @@ class PerformenceReportController extends Controller
     } 
     private function data3($request)
         {
+            //issue
                 $plantName= [6, 5, 10, 14];   
                 //today     
                 $result = FabricSendAndReceiveEntry::join('fabric_send_and_receive_dana_consumption', 'fabric_send_and_receive_entry.id', '=', 'fabric_send_and_receive_dana_consumption.fsr_entry_id')
                 ->join('processing_subcats', 'fabric_send_and_receive_dana_consumption.plant_name_id', '=', 'processing_subcats.id')
                 ->where('fabric_send_and_receive_entry.bill_date', '=', $request->given_date)
                 ->selectRaw('processing_subcats.id as plantName_id, 
+                            fabric_send_and_receive_entry.bill_date,
                             SUM(fabric_send_and_receive_entry.polo_waste) as today_total_polo_waste, 
                             SUM(fabric_send_and_receive_dana_consumption.consumption_quantity) as today_total_consumption_quantity')
                 ->whereIn('processing_subcats.id', [6, 5, 10, 14])

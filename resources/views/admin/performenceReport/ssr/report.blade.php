@@ -65,9 +65,9 @@
                     @endphp
                 </td>
                 <td>
-                    {{ $item['monthly_total_waste']}}
+                    {{ $item['monthly_total_wastages']}}
                     @php
-                    $total_monthly_total_waste += $item['monthly_total_waste'];
+                    $total_monthly_total_waste += $item['monthly_total_wastages'];
                     @endphp
                 </td>
                 <td>
