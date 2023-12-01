@@ -29,14 +29,14 @@ class RawMaterialController extends Controller
      */
     public function index()
     {
-      $reprocessWastes=ReprocessWaste::get();
-      foreach ($reprocessWastes as $reprocessWaste) {
-            $find = ReprocessWaste::find($reprocessWaste->id);
-            // dd($find->bill_date);
-            $value = AppHelper::convertNepaliToEnglishDate($find->date);
-            // dd($value);
-            $find->update(['date_en' => $value]);
-        }
+    //   $reprocessWastes=ReprocessWaste::get();
+    //   foreach ($reprocessWastes as $reprocessWaste) {
+    //         $find = ReprocessWaste::find($reprocessWaste->id);
+    //         // dd($find->bill_date);
+    //         $value = AppHelper::convertNepaliToEnglishDate($find->date);
+    //         // dd($value);
+    //         $find->update(['date_en' => $value]);
+    //     }
         return view('admin.rawMaterial.index');
     }
 

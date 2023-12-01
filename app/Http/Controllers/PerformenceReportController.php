@@ -28,10 +28,10 @@ class PerformenceReportController extends Controller
             $laminationProdReport= $this->data3($request);  
             $nonWovenProduction = $this->data4($request);
           
-            // $ppBags=$this->data5($request);
+            $ppBags=$this->data5($request);
 
             $erimaPlantProd =$this->data6($request);
-             $ccplant = $this->data7($request);
+            $ccplant = $this->data7($request);
 
             $view = view('admin.performenceReport.ssr.report', compact('datas', 'request'))->render();
             $view1 = view('admin.performenceReport.ssr.loomRollDown', compact('loomRollDown', 'request'))->render();
@@ -41,6 +41,9 @@ class PerformenceReportController extends Controller
             $view5 = view('admin.performenceReport.ssr.eremaPlant', compact('erimaPlantProd', 'request'))->render();
             $view6 = view('admin.performenceReport.ssr.ccprod', compact('ccplant', 'request'))->render();
 
+            $view7 = view('admin.performenceReport.ssr.ppbag', compact('ppBags', 'request'))->render();
+
+
             return response(['status' => true,
              'data'=>$view, 
              'loomRollDown'=> $view1, 
@@ -49,6 +52,7 @@ class PerformenceReportController extends Controller
              'nonWovenProduction' =>$view4,
              'erimaPlantProd' => $view5,
              'ccplant' =>$view6,
+             'ppBags' =>$view7,
             ]);
         }
         return view('admin.performenceReport.report');
@@ -675,7 +679,7 @@ class PerformenceReportController extends Controller
         ->groupBy('printed_and_cutted_rolls_entry.date')
         ->get()
         ->toArray();
-        // dd($todayWaste );
+       
         $todayKgspcs = BagBundelEntry::join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
         ->where('bag_bundel_entries.receipt_date', '=', $request->given_date)
         ->selectRaw('bag_bundel_entries.receipt_date,
@@ -684,178 +688,257 @@ class PerformenceReportController extends Controller
         ->groupBy('bag_bundel_entries.receipt_date')
         ->get()
         ->toArray();
-        // dd($todayKgspcs );
         $today_waste_perc = [];
 
         // Iterate through each entry in $todayWaste
         foreach ($todayWaste as $wasteEntry) {
             $date = $wasteEntry['date'];
-
+        
             // Find the corresponding entry in $todayKgspcs based on the date
             $correspondingKgspcsEntry = current(array_filter($todayKgspcs, function ($kgspcsEntry) use ($date) {
                 return $kgspcsEntry['receipt_date'] === $date;
             }));
-
-            // Calculate the waste percentage if a corresponding entry is found
+        
+            // Initialize an array for the current iteration
             if ($correspondingKgspcsEntry) {
                 $todayTotalWastage = $wasteEntry['today_total_wastage'];
                 $todayTotalQtyPcs = $correspondingKgspcsEntry['today_total_qty_in_kg'];
-
+        
                 // Avoid division by zero
                 if ($todayTotalQtyPcs != 0) {
                     $today_waste_perc['today_waste_perc'] = ($todayTotalWastage / $todayTotalQtyPcs) * 100;
                 } else {
                     $today_waste_perc['today_waste_perc'] = null; // Handle division by zero, set to null or any other desired value
                 }
-            } else {
-                $today_waste_perc['today_waste_perc'] = null; // No corresponding entry found in $todayKgspcs
             }
         }
+        
+        // If no data is found, set a default value
+        if (empty($today_waste_perc)) {
+            $today_waste_perc['today_waste_perc'] = 0;
+        }
+        
+        // dd($today_waste_perc);  
+            $monthlyWaste = PrintedAndCuttedRollsEntry::join('printing_and_cutting_bag_items', 'printed_and_cutted_rolls_entry.id', '=', 'printing_and_cutting_bag_items.printAndCutEntry_id')
+            ->whereBetween('printed_and_cutted_rolls_entry.date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
+            ->selectRaw('SUM(printing_and_cutting_bag_items.wastage) as monthly_total_wastage,
+            MONTH(printed_and_cutted_rolls_entry.date) as month')
+            ->groupBy( 'month')
+            ->get()
+            ->toArray();
 
-        // dd($today_waste_perc );
+            $monthlyKgspcs = BagBundelEntry::join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
+            ->whereBetween('bag_bundel_entries.receipt_date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
+            ->selectRaw('        
+            SUM(bag_bundel_items.qty_in_kg) as monthly_total_qty_in_kg,
+            SUM(bag_bundel_items.qty_pcs) as monthly_total_qty_pcs,
+            MONTH(bag_bundel_entries.receipt_date) as month'
+            )
+            ->groupBy('month')
+            ->get()
+            ->toArray();
 
-     
+            // $monthly_waste_perc = [];
 
-        $monthlyWaste = PrintedAndCuttedRollsEntry::join('printing_and_cutting_bag_items', 'printed_and_cutted_rolls_entry.id', '=', 'printing_and_cutting_bag_items.printAndCutEntry_id')
-        ->whereBetween('printed_and_cutted_rolls_entry.date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
-        ->selectRaw('SUM(printing_and_cutting_bag_items.wastage) as monthly_total_wastage,
-        MONTH(printed_and_cutted_rolls_entry.date) as month')
-        ->groupBy( 'month')
-        ->get()
-        ->toArray();
+            // // Iterate through each entry in $todayWaste
+            // foreach ($monthlyWaste as $wasteEntry) {
+            //     $date = $wasteEntry['month'];
 
-        $monthlyKgspcs = BagBundelEntry::join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
-        ->whereBetween('bag_bundel_entries.receipt_date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
-        ->selectRaw('        
-        SUM(bag_bundel_items.qty_in_kg) as monthly_total_qty_in_kg,
-         SUM(bag_bundel_items.qty_pcs) as monthly_total_qty_pcs,
-         MONTH(bag_bundel_entries.receipt_date) as month'
-         )
-        ->groupBy('month')
-        ->get()
-        ->toArray();
+            //     // Find the corresponding entry in $todayKgspcs based on the date
+            //     $correspondingKgspcsEntry = current(array_filter($monthlyKgspcs, function ($kgspcsEntry) use ($date) {
+            //         return $kgspcsEntry['month'] === $date;
+            //     }));
 
-        $monthly_waste_perc = [];
+            //     // Calculate the waste percentage if a corresponding entry is found
+            //     if ($correspondingKgspcsEntry) {
+            //         $monthlyTotalWastage = $wasteEntry['monthly_total_wastage'];
+            //         $monthlyTotalQtyPcs = $correspondingKgspcsEntry['monthly_total_qty_in_kg'];
 
-        // Iterate through each entry in $todayWaste
-        foreach ($monthlyWaste as $wasteEntry) {
-            $date = $wasteEntry['month'];
+            //         // Avoid division by zero
+            //         if ($monthlyTotalQtyPcs != 0) {
+            //             $monthly_waste_perc['monthly_waste_perc'] = ( $monthlyTotalWastage / $monthlyTotalQtyPcs) * 100;
+            //         } else {
+            //             $monthly_waste_perc['monthly_waste_perc'] = null; // Handle division by zero, set to null or any other desired value
+            //         }
+            //     } else {
+            //         $monthly_waste_perc['monthly_waste_perc'] = null; // No corresponding entry found in $todayKgspcs
+            //     }
+            // }
+            $monthly_waste_perc = [];
 
-            // Find the corresponding entry in $todayKgspcs based on the date
-            $correspondingKgspcsEntry = current(array_filter($monthlyKgspcs, function ($kgspcsEntry) use ($date) {
-                return $kgspcsEntry['month'] === $date;
-            }));
+            // Iterate through each entry in $monthlyWaste
+            foreach ($monthlyWaste as $wasteEntry) {
+                $date = $wasteEntry['month'];
 
-            // Calculate the waste percentage if a corresponding entry is found
-            if ($correspondingKgspcsEntry) {
-                $monthlyTotalWastage = $wasteEntry['monthly_total_wastage'];
-                $monthlyTotalQtyPcs = $correspondingKgspcsEntry['monthly_total_qty_in_kg'];
+                // Find the corresponding entry in $monthlyKgspcs based on the date
+                $correspondingKgspcsEntry = current(array_filter($monthlyKgspcs, function ($kgspcsEntry) use ($date) {
+                    return $kgspcsEntry['month'] === $date;
+                }));
 
-                // Avoid division by zero
-                if ($todayTotalQtyPcs != 0) {
-                    $monthly_waste_perc['monthly_waste_perc'] = ( $monthlyTotalWastage / $monthlyTotalQtyPcs) * 100;
+                // Calculate the waste percentage if a corresponding entry is found
+                if ($correspondingKgspcsEntry) {
+                    $monthlyTotalWastage = $wasteEntry['monthly_total_wastage'];
+                    $monthlyTotalQtyPcs = $correspondingKgspcsEntry['monthly_total_qty_in_kg'];
+
+                    // Avoid division by zero
+                    if ($monthlyTotalQtyPcs != 0) {
+                        $monthly_waste_perc["monthly_waste_perc"] = ($monthlyTotalWastage / $monthlyTotalQtyPcs) * 100;
+                    } else {
+                        $monthly_waste_perc["monthly_waste_perc"] = null; // Handle division by zero, set to null or any other desired value
+                    }
                 } else {
-                    $monthly_waste_perc['monthly_waste_perc'] = null; // Handle division by zero, set to null or any other desired value
+                    $monthly_waste_perc["monthly_waste_perc"] = null; // No corresponding entry found in $monthlyKgspcs
                 }
-            } else {
-                $monthly_waste_perc['monthly_waste_perc'] = null; // No corresponding entry found in $todayKgspcs
             }
-        }
-        // dd($monthly_waste_perc );
 
-        $yearlyWaste = PrintedAndCuttedRollsEntry::join('printing_and_cutting_bag_items', 'printed_and_cutted_rolls_entry.id', '=', 'printing_and_cutting_bag_items.printAndCutEntry_id')
-        ->whereBetween('printed_and_cutted_rolls_entry.date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
-        ->selectRaw('SUM(printing_and_cutting_bag_items.wastage) as yearly_total_wastage,
-        YEAR(printed_and_cutted_rolls_entry.date) as year')
-        ->groupBy('year')
-        ->get()
-        ->toArray();
-        // dd($yearlyWaste);
+            // If no data is found, set a default value
+            if (empty($monthly_waste_perc)) {
+                $monthly_waste_perc["monthly_waste_perc"] = 0;
+            }
 
-        $yearlyKgspcs = BagBundelEntry::join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
-        ->whereBetween('bag_bundel_entries.receipt_date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
-        ->selectRaw('        
-        SUM(bag_bundel_items.qty_in_kg) as yearly_total_qty_in_kg,
-         SUM(bag_bundel_items.qty_pcs) as yearly_total_qty_pcs,
-         YEAR(bag_bundel_entries.receipt_date) as year'
-         )
-        ->groupBy('year')
-        ->get()
-        ->toArray();
-        // dd($yearlyKgspcs);
+            // dd($monthly_waste_perc );
 
-        $yearly_waste_perc = [];
+            $yearlyWaste = PrintedAndCuttedRollsEntry::join('printing_and_cutting_bag_items', 'printed_and_cutted_rolls_entry.id', '=', 'printing_and_cutting_bag_items.printAndCutEntry_id')
+            ->whereBetween('printed_and_cutted_rolls_entry.date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+            ->selectRaw('SUM(printing_and_cutting_bag_items.wastage) as yearly_total_wastage,
+            YEAR(printed_and_cutted_rolls_entry.date) as year')
+            ->groupBy('year')
+            ->get()
+            ->toArray();
+            // dd($yearlyWaste);
 
-        // Iterate through each entry in $todayWaste
-        foreach ($yearlyWaste as $wasteEntry) {
-            $date = $wasteEntry['year'];
+            $yearlyKgspcs = BagBundelEntry::join('bag_bundel_items', 'bag_bundel_entries.id', '=', 'bag_bundel_items.bag_bundel_entry_id')
+            ->whereBetween('bag_bundel_entries.receipt_date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+            ->selectRaw('        
+            SUM(bag_bundel_items.qty_in_kg) as yearly_total_qty_in_kg,
+            SUM(bag_bundel_items.qty_pcs) as yearly_total_qty_pcs,
+            YEAR(bag_bundel_entries.receipt_date) as year'
+            )
+            ->groupBy('year')
+            ->get()
+            ->toArray();
+            // dd($yearlyKgspcs);
 
-            // Find the corresponding entry in $todayKgspcs based on the date
-            $correspondingKgspcsEntry = current(array_filter($yearlyKgspcs, function ($kgspcsEntry) use ($date) {
-                return $kgspcsEntry['year'] === $date;
-            }));
+            $yearly_waste_perc = [];
 
-            // Calculate the waste percentage if a corresponding entry is found
-            if ($correspondingKgspcsEntry) {
-                $yearlyTotalWastage = $wasteEntry['yearly_total_wastage'];
-                $yearlyTotalQtyPcs = $correspondingKgspcsEntry['yearly_total_qty_in_kg'];
+            // Iterate through each entry in $todayWaste
+            foreach ($yearlyWaste as $wasteEntry) {
+                $date = $wasteEntry['year'];
 
-                // Avoid division by zero
-                if ($todayTotalQtyPcs != 0) {
-                    $yearly_waste_perc['yearly_waste_perc'] = ( $yearlyTotalWastage/ $yearlyTotalQtyPcs) * 100;
+                // Find the corresponding entry in $todayKgspcs based on the date
+                $correspondingKgspcsEntry = current(array_filter($yearlyKgspcs, function ($kgspcsEntry) use ($date) {
+                    return $kgspcsEntry['year'] === $date;
+                }));
+
+                // Calculate the waste percentage if a corresponding entry is found
+                if ($correspondingKgspcsEntry) {
+                    $yearlyTotalWastage = $wasteEntry['yearly_total_wastage'];
+                    $yearlyTotalQtyPcs = $correspondingKgspcsEntry['yearly_total_qty_in_kg'];
+
+                    // Avoid division by zero
+                    if ($yearlyTotalQtyPcs != 0) {
+                        $yearly_waste_perc['yearly_waste_perc'] = ( $yearlyTotalWastage/ $yearlyTotalQtyPcs) * 100;
+                    } else {
+                        $yearly_waste_perc['yearly_waste_perc'] = null; // Handle division by zero, set to null or any other desired value
+                    }
                 } else {
-                    $yearly_waste_perc['yearly_waste_perc'] = null; // Handle division by zero, set to null or any other desired value
+                    $yearly_waste_perc['yearly_waste_perc'] = null; // No corresponding entry found in $todayKgspcs
                 }
-            } else {
-                $yearly_waste_perc['yearly_waste_perc'] = null; // No corresponding entry found in $todayKgspcs
             }
-        }
+            if (empty($yearly_waste_perc)) {
+                $yearly_waste_perc["yearly_waste_perc"] = 0;
+            }
+
+         
        
         // dd($yearly_waste_perc );
         $kgsPcs = ['kg', 'pcs'];
+        // $mergeData = [];
+        
+        // foreach ($kgsPcs as $key) {
+        //     $mergeData[$key] = [];
+        
+        //     if ($key === 'kg') {
+        //         $mergeData[$key]['today_total_qty_in_kg'] = null;
+        //         $mergeData[$key]['monthly_total_qty_in_kg'] = null;
+        //         $mergeData[$key]['yearly_total_qty_in_kg'] = null;
+        //     } elseif ($key === 'pcs') {
+        //         $mergeData[$key]['today_total_qty_pcs'] = null;
+        //         $mergeData[$key]['monthly_total_qty_pcs'] = null;
+        //         $mergeData[$key]['yearly_total_qty_pcs'] = null;
+        //     }
+        
+        //     foreach ($todayKgspcs as $todayData) {
+        //         if ($key === 'kg') {
+        //             $mergeData[$key]['today_total_qty_in_kg'] = $todayData['today_total_qty_in_kg'];
+        //         } elseif ($key === 'pcs') {
+        //             $mergeData[$key]['today_total_qty_pcs'] = $todayData['today_total_qty_pcs'];
+        //         }
+        //     }
+        
+        //     foreach ($monthlyKgspcs as $monthly) {
+        //         if ($key === 'kg') {
+        //             $mergeData[$key]['monthly_total_qty_in_kg'] = $monthly['monthly_total_qty_in_kg'];
+        //         } elseif ($key === 'pcs') {
+        //             $mergeData[$key]['monthly_total_qty_pcs'] = $monthly['monthly_total_qty_pcs'];
+        //         }
+        //     }
+        
+        //     foreach ($yearlyKgspcs as $yearly) {
+        //         if ($key === 'kg') {
+        //             $mergeData[$key]['yearly_total_qty_in_kg'] = $yearly['yearly_total_qty_in_kg'];
+        //         } elseif ($key === 'pcs') {
+        //             $mergeData[$key]['yearly_total_qty_pcs'] = $yearly['yearly_total_qty_pcs'];
+        //         }
+        //     }
+        // }
         $mergeData = [];
-        
-        foreach ($kgsPcs as $key) {
-            $mergeData[$key] = [];
-        
-            if ($key === 'kg') {
-                $mergeData[$key]['today_total_qty_in_kg'] = null;
-                $mergeData[$key]['monthly_total_qty_in_kg'] = null;
-                $mergeData[$key]['yearly_total_qty_in_kg'] = null;
-            } elseif ($key === 'pcs') {
-                $mergeData[$key]['today_total_qty_pcs'] = null;
-                $mergeData[$key]['monthly_total_qty_pcs'] = null;
-                $mergeData[$key]['yearly_total_qty_pcs'] = null;
-            }
-        
-            foreach ($todayKgspcs as $todayData) {
-                if ($key === 'kg') {
-                    $mergeData[$key]['today_total_qty_in_kg'] = $todayData['today_total_qty_in_kg'];
-                } elseif ($key === 'pcs') {
-                    $mergeData[$key]['today_total_qty_pcs'] = $todayData['today_total_qty_pcs'];
-                }
-            }
-        
-            foreach ($monthlyKgspcs as $monthly) {
-                if ($key === 'kg') {
-                    $mergeData[$key]['monthly_total_qty_in_kg'] = $monthly['monthly_total_qty_in_kg'];
-                } elseif ($key === 'pcs') {
-                    $mergeData[$key]['monthly_total_qty_pcs'] = $monthly['monthly_total_qty_pcs'];
-                }
-            }
-        
-            foreach ($yearlyKgspcs as $yearly) {
-                if ($key === 'kg') {
-                    $mergeData[$key]['yearly_total_qty_in_kg'] = $yearly['yearly_total_qty_in_kg'];
-                } elseif ($key === 'pcs') {
-                    $mergeData[$key]['yearly_total_qty_pcs'] = $yearly['yearly_total_qty_pcs'];
-                }
-            }
+
+foreach ($kgsPcs as $key) {
+    $mergeData[$key] = ['type' => $key]; // Add the 'type' key to each sub-array
+
+    if ($key === 'kg') {
+        $mergeData[$key]['today_total_qty_in_kg'] = null;
+        $mergeData[$key]['monthly_total_qty_in_kg'] = null;
+        $mergeData[$key]['yearly_total_qty_in_kg'] = null;
+    } elseif ($key === 'pcs') {
+        $mergeData[$key]['today_total_qty_pcs'] = null;
+        $mergeData[$key]['monthly_total_qty_pcs'] = null;
+        $mergeData[$key]['yearly_total_qty_pcs'] = null;
+    }
+
+    foreach ($todayKgspcs as $todayData) {
+        if ($key === 'kg') {
+            $mergeData[$key]['today_total_qty_in_kg'] = $todayData['today_total_qty_in_kg'];
+        } elseif ($key === 'pcs') {
+            $mergeData[$key]['today_total_qty_pcs'] = $todayData['today_total_qty_pcs'];
         }
+    }
+
+    foreach ($monthlyKgspcs as $monthly) {
+        if ($key === 'kg') {
+            $mergeData[$key]['monthly_total_qty_in_kg'] = $monthly['monthly_total_qty_in_kg'];
+        } elseif ($key === 'pcs') {
+            $mergeData[$key]['monthly_total_qty_pcs'] = $monthly['monthly_total_qty_pcs'];
+        }
+    }
+
+    foreach ($yearlyKgspcs as $yearly) {
+        if ($key === 'kg') {
+            $mergeData[$key]['yearly_total_qty_in_kg'] = $yearly['yearly_total_qty_in_kg'];
+        } elseif ($key === 'pcs') {
+            $mergeData[$key]['yearly_total_qty_pcs'] = $yearly['yearly_total_qty_pcs'];
+        }
+    }
+}
+
+// Output $mergeData
+
+        // dd($yearlyWaste);
         return [
             'mergeData' => $mergeData,
             'todayWaste' => $todayWaste,
-            'today_waste_per' => $today_waste_per,
+            'today_waste_per' => $today_waste_perc,
             'monthlyWaste' => $monthlyWaste,
             'monthly_waste_perc' => $monthly_waste_perc,
             'yearlyWaste' => $yearlyWaste,

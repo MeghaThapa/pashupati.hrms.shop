@@ -63,6 +63,8 @@
                 </div>
                 <div class="table-custom card-body table-responsive" id="reportViewccplant">
                 </div>
+                <div class="table-custom card-body table-responsive" id="reportViewppBags">
+                </div>
                 
                 
             </div>
@@ -89,7 +91,7 @@
                         $('#reportViewnonwoven').empty();
                         $('#reportViewerimaPlantProd').empty();
                         $('#reportViewccplant').empty();
-                        
+                        $('#reportViewppBags').empty();
                         if (response.status == false) {
                             alert(response.message);
                             return;
@@ -100,7 +102,8 @@
                         $('#reportViewthree').append(response.laminationProdReport);  
                         $('#reportViewnonwoven').append(response.nonWovenProduction);  
                         $('#reportViewerimaPlantProd').append(response.erimaPlantProd);  
-                        $('#reportViewccplant').append(response.ccplant);  
+                        $('#reportViewccplant').append(response.ccplant); 
+                        $('#reportViewppBags').append(response.ppBags);  
                         
                         alert('Report Fetched');
                     },
