@@ -284,6 +284,22 @@ class NepaliConverter
         }
         return $n_month;
     }
+
+    public function getnepaliShrawanYear($nepDate){
+        $array=explode('-',$nepDate);
+        if((int)$array[1]<=3){
+            $year= (int) $array[0] -1;
+        }else{
+            $year= (int) $array[0];
+        }
+      
+        return (string)$year.'-04-01';
+    }
+
+    public function getnepaliYearMonth($nepDate){
+        $array=explode('-',$nepDate);
+        return $array[0].'-'.$array[1].'-01';
+    }
     /**
      * Check if date range is in english
      *
