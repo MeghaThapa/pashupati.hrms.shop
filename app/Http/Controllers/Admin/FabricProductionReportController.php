@@ -30,7 +30,7 @@ class FabricProductionReportController extends Controller
     private function generateReportData($request)
     {
         $fabricItems = FabricDetail::select(
-            'bill_date',
+            'bill_date_en',
             'godam_id',
             DB::raw('SUM(pipe_cutting) as total_pipe_cutting'),
             DB::raw('SUM(bd_wastage) as total_bd_wastage'),
@@ -39,14 +39,14 @@ class FabricProductionReportController extends Controller
             DB::raw('SUM(run_loom) as total_run_loom'),
             DB::raw('SUM(total_meter) as grand_total_meter'),
         )
-            ->where('bill_date', '>=', $request->start_date)
-            ->where('bill_date', '<=', $request->end_date)
-            ->groupBy('bill_date', 'godam_id')->get();
+            ->where('bill_date_en', '>=', $request->start_date)
+            ->where('bill_date_en', '<=', $request->end_date)
+            ->groupBy('bill_date_en', 'godam_id')->get();
         $resultArray = [];
 
         foreach ($fabricItems as $item) {
-            $resultArray[$item->bill_date][] = [
-                'date' => $item->bill_date,
+            $resultArray[$item->bill_date_en][] = [
+                'date' => $item->bill_date_en,
                 'godam_id' => $item->godam_id,
                 'total_pipe_cutting' => $item->total_pipe_cutting,
                 'total_bd_wastage' => $item->total_bd_wastage,

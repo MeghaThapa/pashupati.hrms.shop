@@ -587,7 +587,7 @@
 
 
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
 
                     <a href=" {{ route('staff.index') }} "
                         class="nav-link {{ request()->is('admin/staff*') ? 'active' : '' }}">
@@ -598,7 +598,7 @@
 
                     </a>
 
-                </li>
+                </li> --}}
 
                 <li class="nav-item">
 
@@ -850,7 +850,7 @@
 
             </li>
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
 
                 <a href="{{ route('expCategories.index') }}"
                     class="nav-link {{ request()->is('admin/expense-categories*') ? 'active' : '' }}">
@@ -861,35 +861,27 @@
 
                 </a>
 
-            </li>
+            </li> --}}
+            <li class="nav-item has-treeview {{ request()->is('home/main-entry/*') ? 'menu-open' : '' }}">
 
-            <li class="nav-item">
+                <a href="#" class="nav-link {{ request()->is('home/main-entry/*') ? 'active' : '' }}">
 
-                <a href="{{ route('BswLamFabSendForPrinting.index') }}"
-                    class="nav-link {{ request()->routeIs('BswLamFabSendForPrinting.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-star"></i>
 
-                    <i class="nav-icon fas fa-tags"></i>
+                    <p>
 
-                    <p>Bsw Laminated Fabric Send For Printing</p>
+                        Entire Report
 
-                </a>
+                        <i class="fas fa-angle-left right"></i>
 
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('fabSendCuetxReceivePatchValveEntry.index') }}"
-                    class="nav-link {{ request()->routeIs('fabSendCuetxReceivePatchValveEntry.index') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-tags"></i>
-
-                    <p>Bsw Fabric Sent to curtex receive patch/valve</p>
+                    </p>
 
                 </a>
+                <ul class="nav nav-treeview ">
 
-            </li>
+          
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
 
                 <a href="{{ route('expenses.index') }}"
                     class="nav-link {{ request()->is('admin/expenses*') ? 'active' : '' }}">
@@ -900,7 +892,7 @@
 
                 </a>
 
-            </li>
+            </li> --}}
 
             <li class="nav-item">
 
@@ -990,9 +982,7 @@
 
             </li>
             <li class="nav-item">
-                {{-- <a href="{{ route('fabric-groups.index') }}"
-                    class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}"> --}}
-
+   
                 <a href="{{ route('bag.production.report') }}"
                     class="nav-link {{ request()->is('bag.production.report') ? 'active' : '' }}">
 
@@ -1026,17 +1016,16 @@
                 </a>
 
             </li>
-
-            <li class="nav-header text-bold">{{ __('PURCHASE') }}</li>
-
+                </ul>
+            </li>
             <li class="nav-item">
 
-                <a href="{{ route('purchases.index') }}"
-                    class="nav-link {{ request()->is('admin/purchases*') ? 'active' : '' }}">
+                <a href="{{ route('BswLamFabSendForPrinting.index') }}"
+                    class="nav-link {{ request()->routeIs('BswLamFabSendForPrinting.index') ? 'active' : '' }}">
 
-                    <i class="nav-icon fas fa-shopping-basket"></i>
+                    <i class="nav-icon fas fa-tags"></i>
 
-                    <p>{{ __('Purchases') }}</p>
+                    <p>Bsw Laminated Fabric Send For Printing</p>
 
                 </a>
 
@@ -1044,45 +1033,34 @@
 
             <li class="nav-item">
 
-                <a href="{{ route('purchaseReturn.index') }}"
-                    class="nav-link {{ request()->is('admin/return-purchases*') ? 'active' : '' }}">
+                <a href="{{ route('fabSendCuetxReceivePatchValveEntry.index') }}"
+                    class="nav-link {{ request()->routeIs('fabSendCuetxReceivePatchValveEntry.index') ? 'active' : '' }}">
 
-                    <i class="nav-icon fas fa-undo-alt"></i>
+                    <i class="nav-icon fas fa-tags"></i>
 
-                    <p>{{ __('Return Purchases') }}</p>
-
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('purchaseDamage.index') }}"
-                    class="nav-link {{ request()->is('admin/damage-purchases*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-trash-alt"></i>
-
-                    <p>{{ __('Damage Purchases') }}</p>
-
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('purchaseInventory.index') }}"
-                    class="nav-link {{ request()->is('admin/purchase-inventory*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-boxes"></i>
-
-                    <p>{{ __('Purchase Inventory') }}</p>
+                    <p>Bsw Fabric Sent to curtex receive patch/valve</p>
 
                 </a>
 
             </li>
 
             <li class="nav-header text-bold">{{ __('TRIPAL') }}</li>
+            <li class="nav-item has-treeview {{ request()->is('home/main-entry/*') ? 'menu-open' : '' }}">
 
+            <a href="#" class="nav-link {{ request()->is('home/main-entry/*') ? 'active' : '' }}">
+
+                <i class="nav-icon fas fa-star"></i>
+
+                <p>
+
+               Tripal
+
+                    <i class="fas fa-angle-left right"></i>
+
+                </p>
+
+            </a>
+            <ul class="nav nav-treeview ">
             <li class="nav-item">
 
                 <a href="{{ route('tripal.index') }}"
@@ -1121,34 +1099,14 @@
                 </a>
 
             </li>
-
-
-
-
-
-
-
-
-
-
-
-
-
+            </ul>
+            </li>
             <li class="nav-header text-bold">{{ __('Fabric') }}</li>
-
-
-
             <li class="nav-item">
-
                 <a href="{{ route('fabric-groups.index') }}"
                     class="nav-link {{ request()->is('admin/fabric-groups*') ? 'active' : '' }}">
-
                     <i class="nav-icon fas fa-tags"></i>
-
                     <p>Fabric Group</p>
-
-                    {{-- <p>{{ __('Categories') }}</p> --}}
-
                 </a>
 
             </li>
@@ -1162,9 +1120,6 @@
                     <i class="nav-icon fas fa-tags"></i>
 
                     <p>Fabric</p>
-
-                    {{-- <p>{{ __('Categories') }}</p> --}}
-
                 </a>
 
             </li>
@@ -1293,11 +1248,6 @@
                 </a>
 
             </li>
-
-
-
-
-
             <li class="nav-item">
 
                 <a href="{{ route('nonwovenfabrics.index') }}"
@@ -1306,9 +1256,6 @@
                     <i class="nav-icon fas fa-tags"></i>
 
                     <p>Non Woven Fabric</p>
-
-                    {{-- <p>{{ __('Categories') }}</p> --}}
-
                 </a>
 
             </li>
@@ -1327,117 +1274,6 @@
                 </a>
 
             </li>
-
-
-
-
-
-
-
-            {{-- <li class="nav-item">
-
-                      <a href="{{ route('nonwovenfabrics-receiveentry.index') }}"
-
-                          class="nav-link {{ request()->is('admin/nonwovenfabrics-receiveentry*') ? 'active' : '' }}">
-
-                          <i class="nav-icon fas fa-tags"></i>
-
-                          <p>Non Woven Fabric Received Entry</p>
-
-                      </a>
-
-                  </li> --}}
-
-
-
-            <li class="nav-header text-bold">{{ __('PRODUCT') }}</li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('items.index') }}"
-                    class="nav-link {{ request()->is('admin/items*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-tags"></i>
-
-                    <p>{{ __('Item') }}</p>
-
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('categories.index') }}"
-                    class="nav-link {{ request()->is('admin/categories*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-tags"></i>
-
-                    <p>{{ __('Categories') }}</p>
-
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('subCategories.index') }}"
-                    class="nav-link {{ request()->is('admin/sub-categories*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-code-branch"></i>
-
-                    <p>{{ __('Sub Categories') }}</p>
-
-                </a>
-
-            </li>
-
-
-
-
-
-
-
-
-
-            <li class="nav-item">
-
-                <a href="{{ route('processing.index') }}"
-                    class="nav-link {{ request()->is('admin/processing-products*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-tools"></i>
-
-                    <p>{{ __('Processing') }}</p>
-
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('finished.index') }}"
-                    class="nav-link {{ request()->is('admin/finished-products*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-th-list"></i>
-
-                    <p>{{ __('Finished') }}</p>
-
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{ route('transferred.index') }}"
-                    class="nav-link {{ request()->is('admin/transferred-products*') ? 'active' : '' }}">
-
-                    <i class="nav-icon fas fa-random"></i>
-
-                    <p>{{ __('Transferred') }}</p>
-
-                </a>
-
-            </li>
-
 
             <li class="nav-header text-bold">{{ __('Storein/out') }}</li>
 
