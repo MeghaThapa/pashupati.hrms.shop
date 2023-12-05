@@ -30,11 +30,15 @@
                     <h3>Performence Report Acc Date</h3>
                 </div>
                 <div class="row container">
-                    <div class="col-sm-3">
+                                                                             {{-- <div class="col-sm-3">
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
                             <input type="date" class="form-control" id="given_date" name="given_date" value="">
                         </div>
+                    </div> --}}
+                    <div class="col-md-6">
+                        <label for="receipt_number">Start Date:</label>
+                        <input type="text" name="given_date" class="nepali-date-picker form-control" id="given_date">
                     </div>
                     {{-- <div class="col-sm-3">
                         <div class="form-group">
@@ -72,9 +76,10 @@
     </div>
 @endsection
 @section('extra-script')
+<script src="{{ asset('js/nepaliDatePicker/nepali.datepicker.v4.0.1.min.js') }}"></script>
     <script>
         $(function() {
-
+            $(".nepali-date-picker").nepaliDatePicker({});
             $("#generateReport").click(function(e) {
                 e.preventDefault()
                 $.ajax({
