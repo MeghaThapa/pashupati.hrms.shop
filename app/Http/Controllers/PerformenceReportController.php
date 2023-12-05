@@ -11,6 +11,7 @@ use App\Models\PrintedAndCuttedRollsEntry;
 use App\Models\Godam;
 use App\Models\BagBundelEntry;
 use App\Models\DanaGroup;
+use App\Models\AutoloadItems;
 use DB;
 
 class PerformenceReportController extends Controller
@@ -424,72 +425,169 @@ class PerformenceReportController extends Controller
     } 
     private function data3($request)
         {
-            //issue
                 $plantName= [6, 5, 10, 14];   
-                //today     
-                $result = FabricSendAndReceiveEntry::join('fabric_send_and_receive_dana_consumption', 'fabric_send_and_receive_entry.id', '=', 'fabric_send_and_receive_dana_consumption.fsr_entry_id')
-                ->join('processing_subcats', 'fabric_send_and_receive_dana_consumption.plant_name_id', '=', 'processing_subcats.id')
+                $result = FabricSendAndReceiveEntry::
+                join('processing_subcats', 'fabric_send_and_receive_entry.plantname_id', '=', 'processing_subcats.id')
                 ->where('fabric_send_and_receive_entry.bill_date', '=', $request->given_date)
                 ->selectRaw('processing_subcats.id as plantName_id, 
                             fabric_send_and_receive_entry.bill_date,
-                            SUM(fabric_send_and_receive_entry.polo_waste) as today_total_polo_waste, 
-                            SUM(fabric_send_and_receive_dana_consumption.consumption_quantity) as today_total_consumption_quantity')
+                            SUM(fabric_send_and_receive_entry.polo_waste) as today_total_polo_waste'
+                            )
                 ->whereIn('processing_subcats.id', [6, 5, 10, 14])
                 ->groupBy('processing_subcats.id', 'fabric_send_and_receive_entry.bill_date')
                 ->get()
                 ->toArray();
                 // dd($result);
-            
-                $result1 = FabricSendAndReceiveEntry::join('fabric_send_and_receive_dana_consumption', 'fabric_send_and_receive_entry.id', '=', 'fabric_send_and_receive_dana_consumption.fsr_entry_id')
-                ->join('processing_subcats', 'fabric_send_and_receive_dana_consumption.plant_name_id', '=', 'processing_subcats.id')
+
+                $date = $request->given_date; // replace this with your actual date variable
+                $plantIds = [6, 5, 10, 14]; // replace this with your desired plant IDs
+
+                    $quantityResult = AutoloadItems::join('auto_loads', 'autoload_items.autoload_id', '=', 'auto_loads.id')
+                    ->join('processing_subcats', 'autoload_items.plant_name_id', '=', 'processing_subcats.id')
+                    ->where('auto_loads.transfer_date', '=', $request->given_date)
+                    ->whereIn('processing_subcats.id', [6, 5, 10, 14])
+                    ->selectRaw('
+                        auto_loads.transfer_date,
+                        processing_subcats.id as plantName_id,
+                        SUM(autoload_items.quantity) as today_total_quantity
+                    ')
+                    ->groupBy('plantName_id', 'auto_loads.transfer_date') // Remove 'auto_loads.transfer_date'
+                    ->get()
+                    ->toArray();
+                    // dd($quantityResult);
+                    $combinedArray = [];
+
+                    // Merge data from the first array
+                    foreach ($result as $item) {
+                        $key = $item['bill_date'] . '_' . $item['plantName_id'];
+                        $combinedArray[$key] = $item + ($combinedArray[$key] ?? []);
+                        $combinedArray[$key] += ['transfer_date' => null, 'today_total_quantity' => null];
+                    }
+                    
+                    // Merge data from the second array
+                    foreach ($quantityResult as $item) {
+                        $key = $item['transfer_date'] . '_' . $item['plantName_id'];
+                        $combinedArray[$key] = $item + ($combinedArray[$key] ?? []);
+                        $combinedArray[$key] += ['bill_date' => null, 'today_total_polo_waste' => null];
+                    }
+                    $mergedResult = array_values($combinedArray);
+                // dd($mergedResult);
+                $result1 = FabricSendAndReceiveEntry::
+                join('processing_subcats', 'fabric_send_and_receive_entry.plantname_id', '=', 'processing_subcats.id')
                 ->whereBetween('fabric_send_and_receive_entry.bill_date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
-                ->whereIn('processing_subcats.id', [6, 5, 10, 14])
-                ->selectRaw('processing_subcats.id as plantName_id,  
+                ->selectRaw('processing_subcats.id as plantName_id, 
                             MONTH(fabric_send_and_receive_entry.bill_date) as month, 
-                            SUM(fabric_send_and_receive_entry.polo_waste) as monthly_total_polo_waste, 
-                            SUM(fabric_send_and_receive_dana_consumption.consumption_quantity) as montly_total_consumption_quantity')
-                ->groupBy('processing_subcats.id', 'month')
+                            SUM(fabric_send_and_receive_entry.polo_waste) as monthly_total_polo_waste'
+                            )
+                ->whereIn('processing_subcats.id', [6, 5, 10, 14])
+                ->groupBy('processing_subcats.id','month')
                 ->get()
                 ->toArray();
                 // dd($result1);
-                
-                //yearly
-                $result2 = FabricSendAndReceiveEntry::join('fabric_send_and_receive_dana_consumption', 'fabric_send_and_receive_entry.id', '=', 'fabric_send_and_receive_dana_consumption.fsr_entry_id')
-                ->join('processing_subcats', 'fabric_send_and_receive_dana_consumption.plant_name_id', '=', 'processing_subcats.id')
-                ->whereBetween('fabric_send_and_receive_entry.bill_date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+
+                $quantityResult1 = AutoloadItems::join('auto_loads', 'autoload_items.autoload_id', '=', 'auto_loads.id')
+                ->join('processing_subcats', 'autoload_items.plant_name_id', '=', 'processing_subcats.id')
+                ->whereBetween('auto_loads.transfer_date', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
                 ->whereIn('processing_subcats.id', [6, 5, 10, 14])
-                ->selectRaw('processing_subcats.id as plantName_id,  
-                                YEAR(fabric_send_and_receive_entry.bill_date) as year, 
-                                SUM(fabric_send_and_receive_entry.polo_waste) as yearly_total_polo_waste, 
-                                SUM(fabric_send_and_receive_dana_consumption.consumption_quantity) as yearly_total_consumption_quantity')
-                ->groupBy('processing_subcats.id', 'year')
+                ->selectRaw('
+                MONTH(auto_loads.transfer_date) as month, 
+                    processing_subcats.id as plantName_id,
+                    SUM(autoload_items.quantity) as monthly_total_quantity
+                ')
+                ->groupBy('plantName_id', 'month') // Remove 'auto_loads.transfer_date'
+                ->get()
+                ->toArray();
+                // dd($quantityResult1);
+                $combinedArray1 = [];
+
+                // Merge data from the first array
+                foreach ($result1 as $item) {
+                    $key = $item['month'] . '_' . $item['plantName_id'];
+                    $combinedArray1[$key] = $item + ($combinedArray1[$key] ?? []);
+                    $combinedArray1[$key] += ['month' => null, 'monthly_total_quantity' => null];
+                }
+                
+                // Merge data from the second array
+                foreach ($quantityResult1 as $item) {
+                    $key = $item['month'] . '_' . $item['plantName_id'];
+                    $combinedArray1[$key] = $item + ($combinedArray1[$key] ?? []);
+                    $combinedArray1[$key] += ['month' => null, 'monthly_total_polo_waste' => null];
+                }
+                $mergedResult1 = array_values($combinedArray1);
+
+                // dd($mergedResult1);
+                //yearly
+                $result2 = FabricSendAndReceiveEntry::
+                join('processing_subcats', 'fabric_send_and_receive_entry.plantname_id', '=', 'processing_subcats.id')
+                ->whereBetween('fabric_send_and_receive_entry.bill_date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+                ->selectRaw('processing_subcats.id as plantName_id, 
+                            YEAR(fabric_send_and_receive_entry.bill_date) as year, 
+                            SUM(fabric_send_and_receive_entry.polo_waste) as yearly_total_polo_waste'
+                            )
+                ->whereIn('processing_subcats.id', [6, 5, 10, 14])
+                ->groupBy('processing_subcats.id','year')
                 ->get()
                 ->toArray();
                 // dd($result2);
+
+                $quantityResult2 = AutoloadItems::join('auto_loads', 'autoload_items.autoload_id', '=', 'auto_loads.id')
+                ->join('processing_subcats', 'autoload_items.plant_name_id', '=', 'processing_subcats.id')
+                ->whereBetween('auto_loads.transfer_date', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+                ->whereIn('processing_subcats.id', [6, 5, 10, 14])
+                ->selectRaw('
+                    YEAR(auto_loads.transfer_date) as year, 
+                    processing_subcats.id as plantName_id,
+                    SUM(autoload_items.quantity) as yearly_total_quantity
+                ')
+                ->groupBy('plantName_id', 'year') // Remove 'auto_loads.transfer_date'
+                ->get()
+                ->toArray();
+            // dd($quantityResult2);
+            
+
+                $combinedArray2 = [];
+
+                // Merge data from the first array
+                foreach ($result2 as $item) {
+                    $key = $item['year'] . '_' . $item['plantName_id'];
+                    $combinedArray2[$key] = $item + ($combinedArray2[$key] ?? []);
+                    $combinedArray2[$key] += ['year' => null, 'yearly_total_quantity' => null];
+                }
+                
+                // Merge data from the second array
+                foreach ($quantityResult2 as $item) {
+                    $key = $item['year'] . '_' . $item['plantName_id'];
+                    $combinedArray2[$key] = $item + ($combinedArray2[$key] ?? []);
+                    $combinedArray2[$key] += ['year' => null, 'yearly_total_polo_waste' => null];
+                }
+                $mergedResult2 = array_values($combinedArray2);
+
+                // dd($mergedResult2);
+               
        
              $mergeData=[];       
                 foreach( $plantName as $plant_id){
                     $processingSubcat =ProcessingSubcat::find($plant_id);
                     $mergeData[$processingSubcat->name]['plant_name'] =  $processingSubcat->name;
                     
-                    foreach($result as $todayData){
+                    foreach($mergedResult as $todayData){
                         if( $todayData['plantName_id'] == $plant_id){
                             $mergeData[$processingSubcat->name]['today_total_polo_waste'] =  $todayData['today_total_polo_waste'];
-                            $mergeData[$processingSubcat->name]['today_total_consumption_quantity'] =  $todayData['today_total_consumption_quantity'];
+                            $mergeData[$processingSubcat->name]['today_total_consumption_quantity'] =  $todayData['today_total_quantity'];
                         }                 
                     }
 
-                    foreach($result1 as $monthly){
+                    foreach($mergedResult1 as $monthly){
                         if( $monthly['plantName_id'] == $plant_id){
                         $mergeData[$processingSubcat->name]['monthly_total_polo_waste'] =  $monthly['monthly_total_polo_waste'];
-                        $mergeData[$processingSubcat->name]['montly_total_consumption_quantity'] =  $monthly['montly_total_consumption_quantity'];
+                        $mergeData[$processingSubcat->name]['montly_total_consumption_quantity'] =  $monthly['monthly_total_quantity'];
                     }   
                     }
 
-                    foreach($result2 as $yearly){
+                    foreach($mergedResult2 as $yearly){
                         if( $yearly['plantName_id'] == $plant_id){
                         $mergeData[$processingSubcat->name]['yearly_total_polo_waste'] =  $yearly['yearly_total_polo_waste'];
-                        $mergeData[$processingSubcat->name]['yearly_total_consumption_quantity'] =  $yearly['yearly_total_consumption_quantity'];
+                        $mergeData[$processingSubcat->name]['yearly_total_consumption_quantity'] =  $yearly['yearly_total_quantity'];
                     }   
                     }
 
@@ -547,8 +645,24 @@ class PerformenceReportController extends Controller
             $plantName= [7];   
             //today   
             
+            // $result = DB::table('nonwoven_bills')
+            // ->join('fabric_non_woven_recive_entries', 'nonwoven_bills.id', '=', 'fabric_non_woven_recive_entries.bill_id')
+            // ->join('processing_subcats', 'nonwoven_bills.plantname_id', '=', 'processing_subcats.id')
+            // ->where('nonwoven_bills.bill_date_en', '=', $request->given_date)
+            // ->whereIn('processing_subcats.id', [7])
+            // ->selectRaw('processing_subcats.id as plantName_id,
+            //             processing_subcats.name as plant_name,
+            //             nonwoven_bills.bill_date_en as date,
+            //             SUM(nonwoven_bills.total_waste) as today_total_waste,
+            //             SUM(fabric_non_woven_recive_entries.net_weight) as today_total_net_weight')
+            // ->groupBy('processing_subcats.id', 'processing_subcats.name', 'nonwoven_bills.bill_date_en')
+            // ->get()
+            // ->toArray();
             $result = DB::table('nonwoven_bills')
-            ->join('fabric_non_woven_recive_entries', 'nonwoven_bills.id', '=', 'fabric_non_woven_recive_entries.bill_id')
+            ->join(
+                DB::raw('(SELECT bill_id, SUM(net_weight) as total_net_weight FROM fabric_non_woven_recive_entries GROUP BY bill_id) as fabric_recive'),
+                'nonwoven_bills.id', '=', 'fabric_recive.bill_id'
+            )
             ->join('processing_subcats', 'nonwoven_bills.plantname_id', '=', 'processing_subcats.id')
             ->where('nonwoven_bills.bill_date_en', '=', $request->given_date)
             ->whereIn('processing_subcats.id', [7])
@@ -556,35 +670,57 @@ class PerformenceReportController extends Controller
                         processing_subcats.name as plant_name,
                         nonwoven_bills.bill_date_en as date,
                         SUM(nonwoven_bills.total_waste) as today_total_waste,
-                        SUM(fabric_non_woven_recive_entries.net_weight) as today_total_net_weight')
+                        COALESCE(SUM(fabric_recive.total_net_weight), 0) as today_total_net_weight')
             ->groupBy('processing_subcats.id', 'processing_subcats.name', 'nonwoven_bills.bill_date_en')
             ->get()
             ->toArray();
-        
-            // dd($result);
-        
+
             $result1 = DB::table('nonwoven_bills')
-            ->join('fabric_non_woven_recive_entries', 'nonwoven_bills.id', '=', 'fabric_non_woven_recive_entries.bill_id')
+            ->join(
+                DB::raw('(SELECT bill_id, SUM(net_weight) as total_net_weight FROM fabric_non_woven_recive_entries GROUP BY bill_id) as fabric_recive'),
+                'nonwoven_bills.id', '=', 'fabric_recive.bill_id'
+            )
             ->join('processing_subcats', 'nonwoven_bills.plantname_id', '=', 'processing_subcats.id')
             ->whereBetween('nonwoven_bills.bill_date_en', [
                 date('Y-m-01', strtotime($request->given_date)),
-                $request->given_date
+                $request->given_date // This should be the end of the date range, e.g., '2023-11-29'
             ])
             ->whereIn('processing_subcats.id', [7])
             ->selectRaw('processing_subcats.id as plantName_id,
                         processing_subcats.name as plant_name,
                         MONTH(nonwoven_bills.bill_date_en) as month,
                         SUM(nonwoven_bills.total_waste) as monthly_total_waste,
-                        SUM(fabric_non_woven_recive_entries.net_weight) as monthly_total_net_weight')
+                        COALESCE(SUM(fabric_recive.total_net_weight), 0) as monthly_total_net_weight')
             ->groupBy('processing_subcats.id', 'processing_subcats.name', 'month')
             ->get()
             ->toArray();
         
+        
             // dd($result1);
             
             //yearly
+            // $result2 = DB::table('nonwoven_bills')
+            // ->join('fabric_non_woven_recive_entries', 'nonwoven_bills.id', '=', 'fabric_non_woven_recive_entries.bill_id')
+            // ->join('processing_subcats', 'nonwoven_bills.plantname_id', '=', 'processing_subcats.id')
+            // ->whereBetween('nonwoven_bills.bill_date_en', [
+            //     date('Y-01-01', strtotime($request->given_date)),
+            //     $request->given_date
+            // ])
+            // ->whereIn('processing_subcats.id', [7])
+            // ->selectRaw('processing_subcats.id as plantName_id,
+            //             processing_subcats.name as plant_name,
+            //             YEAR(nonwoven_bills.bill_date_en) as year,
+            //             SUM(nonwoven_bills.total_waste) as yearly_total_waste,
+            //             SUM(fabric_non_woven_recive_entries.net_weight) as yearly_total_net_weight')
+            // ->groupBy('processing_subcats.id', 'processing_subcats.name', 'year')
+            // ->get()
+            // ->toArray();
+
             $result2 = DB::table('nonwoven_bills')
-            ->join('fabric_non_woven_recive_entries', 'nonwoven_bills.id', '=', 'fabric_non_woven_recive_entries.bill_id')
+            ->join(
+                DB::raw('(SELECT bill_id, SUM(net_weight) as total_net_weight FROM fabric_non_woven_recive_entries GROUP BY bill_id) as fabric_recive'),
+                'nonwoven_bills.id', '=', 'fabric_recive.bill_id'
+            )
             ->join('processing_subcats', 'nonwoven_bills.plantname_id', '=', 'processing_subcats.id')
             ->whereBetween('nonwoven_bills.bill_date_en', [
                 date('Y-01-01', strtotime($request->given_date)),
@@ -595,7 +731,7 @@ class PerformenceReportController extends Controller
                         processing_subcats.name as plant_name,
                         YEAR(nonwoven_bills.bill_date_en) as year,
                         SUM(nonwoven_bills.total_waste) as yearly_total_waste,
-                        SUM(fabric_non_woven_recive_entries.net_weight) as yearly_total_net_weight')
+                        COALESCE(SUM(fabric_recive.total_net_weight), 0) as yearly_total_net_weight')
             ->groupBy('processing_subcats.id', 'processing_subcats.name', 'year')
             ->get()
             ->toArray();
@@ -745,32 +881,6 @@ class PerformenceReportController extends Controller
             ->get()
             ->toArray();
 
-            // $monthly_waste_perc = [];
-
-            // // Iterate through each entry in $todayWaste
-            // foreach ($monthlyWaste as $wasteEntry) {
-            //     $date = $wasteEntry['month'];
-
-            //     // Find the corresponding entry in $todayKgspcs based on the date
-            //     $correspondingKgspcsEntry = current(array_filter($monthlyKgspcs, function ($kgspcsEntry) use ($date) {
-            //         return $kgspcsEntry['month'] === $date;
-            //     }));
-
-            //     // Calculate the waste percentage if a corresponding entry is found
-            //     if ($correspondingKgspcsEntry) {
-            //         $monthlyTotalWastage = $wasteEntry['monthly_total_wastage'];
-            //         $monthlyTotalQtyPcs = $correspondingKgspcsEntry['monthly_total_qty_in_kg'];
-
-            //         // Avoid division by zero
-            //         if ($monthlyTotalQtyPcs != 0) {
-            //             $monthly_waste_perc['monthly_waste_perc'] = ( $monthlyTotalWastage / $monthlyTotalQtyPcs) * 100;
-            //         } else {
-            //             $monthly_waste_perc['monthly_waste_perc'] = null; // Handle division by zero, set to null or any other desired value
-            //         }
-            //     } else {
-            //         $monthly_waste_perc['monthly_waste_perc'] = null; // No corresponding entry found in $todayKgspcs
-            //     }
-            // }
             $monthly_waste_perc = [];
 
             // Iterate through each entry in $monthlyWaste
@@ -855,50 +965,7 @@ class PerformenceReportController extends Controller
             if (empty($yearly_waste_perc)) {
                 $yearly_waste_perc["yearly_waste_perc"] = 0;
             }
-
-         
-       
-        // dd($yearly_waste_perc );
         $kgsPcs = ['kg', 'pcs'];
-        // $mergeData = [];
-        
-        // foreach ($kgsPcs as $key) {
-        //     $mergeData[$key] = [];
-        
-        //     if ($key === 'kg') {
-        //         $mergeData[$key]['today_total_qty_in_kg'] = null;
-        //         $mergeData[$key]['monthly_total_qty_in_kg'] = null;
-        //         $mergeData[$key]['yearly_total_qty_in_kg'] = null;
-        //     } elseif ($key === 'pcs') {
-        //         $mergeData[$key]['today_total_qty_pcs'] = null;
-        //         $mergeData[$key]['monthly_total_qty_pcs'] = null;
-        //         $mergeData[$key]['yearly_total_qty_pcs'] = null;
-        //     }
-        
-        //     foreach ($todayKgspcs as $todayData) {
-        //         if ($key === 'kg') {
-        //             $mergeData[$key]['today_total_qty_in_kg'] = $todayData['today_total_qty_in_kg'];
-        //         } elseif ($key === 'pcs') {
-        //             $mergeData[$key]['today_total_qty_pcs'] = $todayData['today_total_qty_pcs'];
-        //         }
-        //     }
-        
-        //     foreach ($monthlyKgspcs as $monthly) {
-        //         if ($key === 'kg') {
-        //             $mergeData[$key]['monthly_total_qty_in_kg'] = $monthly['monthly_total_qty_in_kg'];
-        //         } elseif ($key === 'pcs') {
-        //             $mergeData[$key]['monthly_total_qty_pcs'] = $monthly['monthly_total_qty_pcs'];
-        //         }
-        //     }
-        
-        //     foreach ($yearlyKgspcs as $yearly) {
-        //         if ($key === 'kg') {
-        //             $mergeData[$key]['yearly_total_qty_in_kg'] = $yearly['yearly_total_qty_in_kg'];
-        //         } elseif ($key === 'pcs') {
-        //             $mergeData[$key]['yearly_total_qty_pcs'] = $yearly['yearly_total_qty_pcs'];
-        //         }
-        //     }
-        // }
         $mergeData = [];
 
 foreach ($kgsPcs as $key) {
@@ -953,72 +1020,88 @@ foreach ($kgsPcs as $key) {
         ];
     } 
     private function data6($request){
-        $result = DB::table('reprocess_wastes')
-        ->whereDate('reprocess_wastes.date_en', '=', $request->given_date)
-        ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
-        ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
-        ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
-        ->join('dana_names', 'wastage_danas.dana_id', '=', 'dana_names.id') // Add this join
+        // $result = DB::table('reprocess_wastes')
+        // ->whereDate('reprocess_wastes.date_en', '=', $request->given_date)
+        // ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
+        // ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
+        // ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
+        // ->join('dana_names', 'wastage_danas.dana_id', '=', 'dana_names.id') // Add this join
+        // ->whereIn('wastage_danas.dana_id', [97, 59, 66, 67, 62, 60, 64, 57, 68, 56, 91, 89, 65, 63, 61, 96, 88, 55])
+        // ->select(
+        //     'reprocess_wastes.date_en',
+        //     'dana_names.name as dana_name', // Include dana_name
+        //     'wastage_danas.dana_id as danaName_id',
+        //     DB::raw('SUM(wastage_danas.quantity) as today_total_quantity'),
+        //     DB::raw('SUM(reprocess_wastage_details.dye_quantity) as today_total_dye_quantity'),
+        //     DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as today_total_cutter_quantity'),
+        //     DB::raw('SUM(reprocess_wastage_details.melt_quantity) as today_total_melt_quantity'),
+        //     DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as today_total_waste')
+        // )
+        // ->groupBy('reprocess_wastes.date_en', 'wastage_danas.dana_id', 'dana_names.name') // Group by dana_name
+        // ->get()
+        // ->toArray();
+
+        $result = DB::table('dana_names')
+        ->leftJoin('wastage_danas', 'dana_names.id', '=', 'wastage_danas.dana_id')
+        ->join('reprocess_wastes', 'wastage_danas.reprocess_wastage_id', '=', 'reprocess_wastes.id')
+        ->leftJoin('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
         ->whereIn('wastage_danas.dana_id', [97, 59, 66, 67, 62, 60, 64, 57, 68, 56, 91, 89, 65, 63, 61, 96, 88, 55])
+        ->whereDate('reprocess_wastes.date_en', '=', $request->given_date)
+        ->groupBy('reprocess_wastes.date_en','wastage_danas.dana_id', 'dana_names.name')
         ->select(
             'reprocess_wastes.date_en',
-            'dana_names.name as dana_name', // Include dana_name
+            'dana_names.name as dana_name',
             'wastage_danas.dana_id as danaName_id',
-            DB::raw('SUM(wastage_danas.quantity) as today_total_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.dye_quantity) as today_total_dye_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as today_total_cutter_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.melt_quantity) as today_total_melt_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as today_total_waste')
+            DB::raw('SUM(COALESCE(wastage_danas.quantity, 0)) as today_total_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.dye_quantity, 0)) as today_total_dye_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.cutter_quantity, 0)) as today_total_cutter_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.melt_quantity, 0)) as today_total_melt_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.dye_quantity, 0) + COALESCE(reprocess_wastage_details.cutter_quantity, 0) + COALESCE(reprocess_wastage_details.melt_quantity, 0)) as today_total_waste')
         )
-        ->groupBy('reprocess_wastes.date_en', 'wastage_danas.dana_id', 'dana_names.name') // Group by dana_name
         ->get()
         ->toArray();
         // dd($result);
-
-        $result1 = DB::table('reprocess_wastes')
-        ->whereBetween('reprocess_wastes.date_en', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
-        ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
-        ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
-        ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
-        ->join('dana_names', 'wastage_danas.dana_id', '=', 'dana_names.id') // Add this join
+        
+        $result1 = DB::table('dana_names')
+        ->leftJoin('wastage_danas', 'dana_names.id', '=', 'wastage_danas.dana_id')
+        ->join('reprocess_wastes', 'wastage_danas.reprocess_wastage_id', '=', 'reprocess_wastes.id')
+        ->leftJoin('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
         ->whereIn('wastage_danas.dana_id', [97, 59, 66, 67, 62, 60, 64, 57, 68, 56, 91, 89, 65, 63, 61, 96, 88, 55])
+        ->whereBetween('reprocess_wastes.date_en', [date('Y-m-01', strtotime($request->given_date)), $request->given_date])
+        ->groupBy('month','wastage_danas.dana_id', 'dana_names.name')
         ->select(
-            'dana_names.name as dana_name', // Include dana_name
+            'dana_names.name as dana_name',
             'wastage_danas.dana_id as danaName_id',
             DB::raw('MONTH(reprocess_wastes.date_en) as month'),
-            DB::raw('SUM(wastage_danas.quantity) as monthly_total_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.dye_quantity) as monthly_total_dye_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as monthly_total_cutter_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.melt_quantity) as monthly_total_melt_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as monthly_total_waste')
+            DB::raw('SUM(COALESCE(wastage_danas.quantity, 0)) as monthly_total_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.dye_quantity, 0)) as monthly_total_dye_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.cutter_quantity, 0)) as monthly_total_cutter_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.melt_quantity, 0)) as monthly_total_melt_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.dye_quantity, 0) + COALESCE(reprocess_wastage_details.cutter_quantity, 0) + COALESCE(reprocess_wastage_details.melt_quantity, 0)) as monthly_total_waste')
         )
-        ->groupBy('month', 'wastage_danas.dana_id', 'dana_names.name') // Group by dana_name
         ->get()
         ->toArray();
-        // dd($result1);
-        
-        $result2 = DB::table('reprocess_wastes')
-        ->whereBetween('reprocess_wastes.date_en', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
-        ->join('wastage_danas', 'reprocess_wastes.id', '=', 'wastage_danas.reprocess_wastage_id')
-        ->join('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
-        ->join('processing_subcats', 'wastage_danas.plantname_id', '=', 'processing_subcats.id')
-        ->join('dana_names', 'wastage_danas.dana_id', '=', 'dana_names.id') // Add this join
+
+        $result2 = DB::table('dana_names')
+        ->leftJoin('wastage_danas', 'dana_names.id', '=', 'wastage_danas.dana_id')
+        ->join('reprocess_wastes', 'wastage_danas.reprocess_wastage_id', '=', 'reprocess_wastes.id')
+        ->leftJoin('reprocess_wastage_details', 'reprocess_wastes.id', '=', 'reprocess_wastage_details.reprocess_waste_id')
         ->whereIn('wastage_danas.dana_id', [97, 59, 66, 67, 62, 60, 64, 57, 68, 56, 91, 89, 65, 63, 61, 96, 88, 55])
+        ->whereBetween('reprocess_wastes.date_en', [date('Y-01-01', strtotime($request->given_date)), $request->given_date])
+        ->groupBy('year','wastage_danas.dana_id', 'dana_names.name')
         ->select(
-            'dana_names.name as dana_name', // Include dana_name
+            'dana_names.name as dana_name',
             'wastage_danas.dana_id as danaName_id',
             DB::raw('YEAR(reprocess_wastes.date_en) as year'),
-            DB::raw('SUM(wastage_danas.quantity) as yearly_total_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.dye_quantity) as yearly_total_dye_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.cutter_quantity) as yearly_total_cutter_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.melt_quantity) as yearly_total_melt_quantity'),
-            DB::raw('SUM(reprocess_wastage_details.dye_quantity + reprocess_wastage_details.cutter_quantity + reprocess_wastage_details.melt_quantity) as yearly_total_waste')
+            DB::raw('SUM(COALESCE(wastage_danas.quantity, 0)) as yearly_total_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.dye_quantity, 0)) as yearly_total_dye_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.cutter_quantity, 0)) as yearly_total_cutter_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.melt_quantity, 0)) as yearly_total_melt_quantity'),
+            DB::raw('SUM(COALESCE(reprocess_wastage_details.dye_quantity, 0) + COALESCE(reprocess_wastage_details.cutter_quantity, 0) + COALESCE(reprocess_wastage_details.melt_quantity, 0)) as yearly_total_waste')
         )
-        ->groupBy('year', 'wastage_danas.dana_id', 'dana_names.name') // Group by dana_name
         ->get()
         ->toArray();
-        // dd($result2 );
-        
+       
         $wasteKeysMapping = [
             'rafia' => [97, 59, 66, 67, 62, 60, 64, 57, 68, 56],
             'nw' => [91, 89],
@@ -1032,12 +1115,12 @@ foreach ($kgsPcs as $key) {
         foreach ($wasteKeysMapping as $key => $processingStepIds) {
             $mergeData[$key] = [
                 'wastage_key' => $key,
-                'today_total_quantity' => null,
-                'today_total_waste' => null,
-                'monthly_total_quantity' => null,
-                'monthly_total_waste' => null,
-                'yearly_total_quantity' => null,
-                'yearly_total_waste' => null,
+                'today_total_quantity' => 0,
+                'today_total_waste' => 0,
+                'monthly_total_quantity' => 0,
+                'monthly_total_waste' => 0,
+                'yearly_total_quantity' => 0,
+                'yearly_total_waste' => 0,
             ];
         
             foreach ($result as $todayData) {

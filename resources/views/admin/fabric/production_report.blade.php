@@ -33,14 +33,14 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
-                            <input type="text" class="form-control ndp-nepali-calendar" id="start_date" name="start_date"
+                            <input type="date" class="form-control " id="start_date" name="start_date"
                                 value="">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="text" class="form-control ndp-nepali-calendar" id="end_date" name="end_date"
+                            <input type="date" class="form-control " id="end_date" name="end_date"
                                 value="">
                         </div>
                     </div>
@@ -63,19 +63,19 @@
 
             var currentDate = NepaliFunctions.ConvertDateFormat(NepaliFunctions.GetCurrentBsDate(), "YYYY-MM-DD");
 
-            $('#start_date').val(currentDate);
-            $('#start_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-            });
+            // $('#start_date').val(currentDate);
+            // $('#start_date').nepaliDatePicker({
+            //     ndpYear: true,
+            //     ndpMonth: true,
+            //     disableAfter: currentDate,
+            // });
 
-            $('#end_date').val(currentDate);
-            $('#end_date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                disableAfter: currentDate,
-            });
+            // $('#end_date').val(currentDate);
+            // $('#end_date').nepaliDatePicker({
+            //     ndpYear: true,
+            //     ndpMonth: true,
+            //     disableAfter: currentDate,
+            // });
 
             $("#generateReport").click(function(e) {
                 e.preventDefault()
