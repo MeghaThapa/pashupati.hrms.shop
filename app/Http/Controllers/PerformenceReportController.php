@@ -104,43 +104,23 @@ class PerformenceReportController extends Controller
             )
             ->get()
             ->toArray();
-
-            //  dd($result1);
-           
-            // $result2 = DB::table('tape_entry_items')
-            // ->join('tape_entry', 'tape_entry_items.tape_entry_id', '=', 'tape_entry.id')
-            // ->join('processing_subcats', 'tape_entry_items.plantName_id', '=', 'processing_subcats.id')
-            // ->whereBetween('tape_entry.tape_entry_date', ['2023-07-17', $currentDate])      
-            // ->whereIn('processing_subcats.id',[1, 2, 3, 4,9,13])
-            // ->groupBy('processing_subcats.id','processing_subcats.name')
-            // ->select(
-            //     'processing_subcats.id'
-            //     ,'processing_subcats.name',
-            //     DB::raw('SUM(tape_entry_items.tape_qty_in_kg) as yearly_total_tape_qty'),
-            //     DB::raw('SUM(tape_entry_items.bypass_wast + tape_entry_items.loading + tape_entry_items.running) as yearly_total_waste')
-            // )
-            // ->get()
-            // ->toArray();    
             $result2 = DB::table('tape_entry_items')
-            ->join('processing_subcats', 'tape_entry_items.plantName_id', '=', 'processing_subcats.id')
             ->join('tape_entry', 'tape_entry_items.tape_entry_id', '=', 'tape_entry.id')
-            ->whereIn('tape_entry_items.plantName_id', [1, 2, 3, 4, 9, 13]) // Plant IDs
-            // ->whereYear('tape_entry.tape_entry_date', 2023)
-            ->whereBetween('tape_entry.tape_entry_date',[$engStartOfYear,$currentDate]) // Year 2023
+            ->join('processing_subcats', 'tape_entry_items.plantName_id', '=', 'processing_subcats.id')
+            ->whereBetween('tape_entry.tape_entry_date', [$engStartOfYear, $currentDate])
+            ->whereIn('processing_subcats.id', [1, 2, 3, 4, 9, 13])
             ->groupBy('processing_subcats.id', 'processing_subcats.name')
             ->select(
-                'processing_subcats.id',
+                'processing_subcats.id as plantName_id',
                 'processing_subcats.name',
                 DB::raw('SUM(tape_entry_items.tape_qty_in_kg) as yearly_total_tape_qty'),
                 DB::raw('SUM(tape_entry_items.bypass_wast + tape_entry_items.loading + tape_entry_items.running) as yearly_total_waste')
             )
-            ->get()
-            ->toArray();
-        
+            ->get();
         
         
 
-            dd($result2);
+            // dd($result2);
             $mergeData=[];       
             foreach( $plantName as $plant_id){
                 $processingSubcat =ProcessingSubcat::find($plant_id);
