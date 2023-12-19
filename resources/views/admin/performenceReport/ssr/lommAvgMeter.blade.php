@@ -1,5 +1,5 @@
 {{-- <h3>Summary of Tape Production Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3> --}}
-<table class="table table-bordered table-responsive">
+<table class="table table-bordered">
     <thead class="text-bold">
         <tr>
             <th colspan="1" style="text-align: center;border: 2px solid black;">Looms</th>
@@ -100,14 +100,14 @@
             <tr style="font-weight: bold">
                 <td>Total</td>
                 <td>{{$total_today_run_loom_sum }}</td>
-                <td>{{  $total_today_total_meter}}</td>
-                <td>{{ number_format($total_today_loomAvg_meter,2) }}</td>
-                <td>{{ $total_monthly_run_loom_sum }}</td>
-                <td>{{ $total_monthly_total_meter_sum }}</td>
-                <td>{{number_format($total_monthly_loomAvg_meter,2)}}</td>
+                <td>{{$total_today_total_meter}}</td>
+                <td>{{number_format($total_today_total_meter/$total_today_run_loom_sum,2) }}</td>
+                <td>{{$total_monthly_run_loom_sum }}</td>
+                <td>{{$total_monthly_total_meter_sum }}</td>
+                <td>{{number_format($total_monthly_total_meter_sum/$total_monthly_run_loom_sum,2)}}</td>
                 <td>{{$total_yearly_run_loom_sum  }}</td>
-                <td>{{ $total_yearly_total_meter_sum }}</td>
-                <td>{{ number_format($total_yearly_loomAvg_meter,2) }}</td>
+                <td>{{$total_yearly_total_meter_sum }}</td>
+                <td>{{number_format($total_yearly_total_meter_sum/$total_yearly_run_loom_sum,2) }}</td>
                
             </tr>
         </tfoot>

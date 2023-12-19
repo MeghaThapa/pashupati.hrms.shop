@@ -1,5 +1,5 @@
 {{-- <h3>Summary of Tape Production Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3> --}}
-<table class="table table-bordered table-responsive">
+<table class="table table-bordered">
     <thead class="text-bold">
         <tr>
             {{-- <th style="text-align: center;border: 2px solid black;"></th> --}}
