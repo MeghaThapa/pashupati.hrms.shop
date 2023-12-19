@@ -704,10 +704,12 @@ class PerformenceReportController extends Controller
                         SUM(nonwoven_bills.total_waste) as yearly_total_waste,
                         COALESCE(SUM(fabric_recive.total_net_weight), 0) as yearly_total_net_weight')
             ->groupBy('processing_subcats.id', 'processing_subcats.name', 'year')
+            // $sql = $result2->toSql();
+
             ->get()
             ->toArray();
         
-            // dd($result2);
+            //  dd($sql);
    
          $mergeData=[];       
             foreach( $plantName as $plant_id){
@@ -990,8 +992,7 @@ foreach ($kgsPcs as $key) {
             'yearly_waste_perc' => $yearly_waste_perc,
         ];
     } 
-    private function data6($currentDate, $engStartOfYear,$engStartOfMonth){
-       
+    private function data6($currentDate, $engStartOfYear,$engStartOfMonth){      
         $result = DB::table('dana_names')
         ->leftJoin('wastage_danas', 'dana_names.id', '=', 'wastage_danas.dana_id')
         ->join('reprocess_wastes', 'wastage_danas.reprocess_wastage_id', '=', 'reprocess_wastes.id')

@@ -1,5 +1,5 @@
 <h3>Performance Report for Date: {{ $request->given_date }} </h3>
-<table class="table table-bordered table-responsive">
+<table class="table table-bordered">
     <thead class="text-bold">
         <tr>
             {{-- <th style="text-align: center;border: 2px solid black;"></th> --}}
@@ -105,10 +105,27 @@
                 <td>{{ $total_today_waste }}</td>
                 <td>{{ $total_monthly_total_waste }}</td>
                 <td>{{ $total_yearly_total_waste }}</td>
-                <td>{{number_format($total_today_wastage_perc ,2) }}</td>
-                <td>{{ number_format($total_monthly_wastage_perc,2) }}</td>
-                <td>{{ number_format($total_yearly_wastage_perc,2) }}</td>
-               
+                <td>
+                    @if ($total_today_tape_quantity != 0)
+                        {{ number_format($total_today_waste / $total_today_tape_quantity * 100, 2) }}
+                    @else
+                       0
+                    @endif
+                </td>
+                <td>
+                    @if ($total_monthly_tape_quantity != 0)
+                        {{ number_format($total_monthly_total_waste / $total_monthly_tape_quantity * 100, 2) }}
+                    @else
+                       0
+                    @endif
+                </td>
+                <td>
+                    @if ($total_yearly_tape_quantity != 0)
+                        {{ number_format($total_yearly_total_waste / $total_yearly_tape_quantity * 100, 2) }}
+                    @else
+                        0
+                    @endif
+                </td>
             </tr>
         </tfoot>
     </tbody>

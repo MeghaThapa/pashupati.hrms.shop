@@ -1,5 +1,5 @@
 {{-- <h3>Summary of Tape Production Report for Date: {{ $request->start_date }} To {{ $request->end_date }}</h3> --}}
-<table class="table table-bordered table-responsive">
+<table class="table table-bordered">
     <thead class="text-bold">
         <tr>
             {{-- <th style="text-align: center;border: 2px solid black;"></th> --}}
@@ -105,10 +105,9 @@
                 <td>{{ $total_today_waste }}</td>
                 <td>{{ $total_monthly_total_waste }}</td>
                 <td>{{ $total_yearly_total_waste }}</td>
-                <td>{{ $total_today_wastage_perc }}</td>
-                <td>{{ $total_monthly_wastage_perc }}</td>
-                <td>{{ $total_yearly_wastage_perc }}</td>
-               
+                <td>{{number_format($total_today_waste/$total_today_netweight_sum*100,2) }}</td>
+                <td>{{number_format($total_monthly_total_waste/$total_monthly_netweight_sum*100,2) }}</td>
+                <td>{{number_format($total_yearly_total_waste/$total_yearly_netweight_sum*100,2) }}</td>
             </tr>
         </tfoot>
     </tbody>

@@ -146,7 +146,7 @@ class PrintingAndFinishingController extends Controller
         }
 
         $rowData = [];
-
+        dd($resultArray);
         foreach ($resultArray as $date => $data) {
             $rowData[$date]['date'] = $date;
             $rowData[$date]['rollIssue_total_net_wt'] = 0;
@@ -173,6 +173,7 @@ class PrintingAndFinishingController extends Controller
             // Add the dana_name and corresponding total_quantity to the result
             $rowData[$date]['dana_quantities'] = $danaQuantities;
         }
+        //  dd($rowData);
         return $rowData;
     }
 }

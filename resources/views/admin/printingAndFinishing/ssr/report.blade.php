@@ -30,149 +30,166 @@
     </thead>
     <tbody>
         @php
-        $i = 0;
-        $totalRollIssue = 0;
-        $totalCuttingBag = 0;
-        $totalIssueToFinishing = 0;
-        $totalwaste = 0;
+            $i = 0;
+            $totalRollIssue = 0;
+            $totalCuttingBag = 0;
+            $totalIssueToFinishing = 0;
+            $totalwaste = 0;
         @endphp
 
         @foreach ($datas as $date => $item)
             <tr>
                 @php
-                $subTotalsundarUnlam = 0;
-                $subTotalsundarLam = 0;
-                $subTotalsundarProdMeter= 0;
-                $subTotalsundarWaste = 0;
-                $subTotalSundarPerc = 0;
+                    $subTotalsundarUnlam = 0;
+                    $subTotalsundarLam = 0;
+                    $subTotalsundarProdMeter = 0;
+                    $subTotalsundarWaste = 0;
+                    $subTotalSundarPerc = 0;
 
-                $subTotaljpUnlam = 0;
-                $subTotaljpLam = 0;
-                $subTotaljpProdMeter= 0;
-                $subTotaljpWaste = 0;
-                $subTotaljpPerc = 0;
+                    $subTotaljpUnlam = 0;
+                    $subTotaljpLam = 0;
+                    $subTotaljpProdMeter = 0;
+                    $subTotaljpWaste = 0;
+                    $subTotaljpPerc = 0;
 
-                $subTotalbswUnlam = 0;
-                $subTotalbswLam = 0;
-                $subTotalbswProdMeter= 0;
-                $subTotalbswWaste = 0;
-                $subTotalbswPerc = 0;
-            
+                    $subTotalbswUnlam = 0;
+                    $subTotalbswLam = 0;
+                    $subTotalbswProdMeter = 0;
+                    $subTotalbswWaste = 0;
+                    $subTotalbswPerc = 0;
+
                 @endphp
 
                 <td>{{ ++$i }}</td>
                 <td>{{ $item['date'] }}</td>
+
+                <td>
+                    @if (isset($item['rollIssue_total_net_wt']))
+                        {{ $item['rollIssue_total_net_wt'] }}
+                        @php
+                            $totalRollIssue += $item['rollIssue_total_net_wt'];
+                        @endphp
+                    @else
+                        0
+                    @endif
+                </td>
+
+                <td>
+                    @if (isset($item['cuttingBag_total_quantity_piece']))
+                        {{ $item['cuttingBag_total_quantity_piece'] }}
+                        @php
+                            $totalCuttingBag += $item['cuttingBag_total_quantity_piece'];
+                        @endphp
+                    @else
+                        0
+                    @endif
+                </td>
+
+
+                @foreach ($item['dana_quantities'] as $color => $quantity)
+                @php
+                    $totalInk=0;
+                @endphp
+                    @if (strtolower($color) == 'black')
+                        <td class="black-column">{{ $quantity }}</td>
+                        @php
+                           $totalInk += $quantity;
+                        @endphp
+                    @else
+                        <td class="black-column">0</td>
+                    @endif
+
+                    @if (strtolower($color) == 'red')
+                        <td class="red-column">{{ $quantity }}</td>
+                        @php
+                        $totalInk += $quantity;
+                     @endphp
+                    @else
+                        <td class="red-column">0</td>
+                    @endif
+
+                    @if (strtolower($color) == 'green')
+                        <td class="green-column">{{ $quantity }}</td>
+                        @php
+                        $totalInk += $quantity;
+                     @endphp
+                    @else
+                        <td class="green-column">0</td>
+                    @endif
+
+                    @if (strtolower($color) == 'blue')
+                        <td class="blue-column">{{ $quantity }}</td>
+                        @php
+                        $totalInk += $quantity;
+                     @endphp
+                    @else
+                        <td class="blue-column">0</td>
+                    @endif
+                    @if (strtolower($color) == 'orange')
+                        <td class="orange-column">{{ $quantity }}</td>
+                        @php
+                        $totalInk += $quantity;
+                     @endphp
+                    @else
+                        <td class="orange-column">0</td>
+                    @endif
+
+                    @if (strtolower($color) == 'yellow')
+                        <td class="yellow-column">{{ $quantity }}</td>
+                    @else
+                        <td class="yellow-column">0</td>
+                    @endif
+
+                  
+                    <td class="totalInk-column">{{ $totalInk }}</td>
                 
-                <td>@if( isset($item['rollIssue_total_net_wt']))
-                    {{ $item['rollIssue_total_net_wt'] }}
-                    @php
-                    $totalRollIssue += $item['rollIssue_total_net_wt'];
-                    @endphp
-                    @else 0 
+
+                    @if (strtolower($color) == 'diesel')
+                        <td class="diesel-column">{{ $quantity }}</td>
+                    @else
+                        <td class="diesel-column">0</td>
                     @endif
-                </td>
-               
-                <td>@if( isset($item['cuttingBag_total_quantity_piece']))
-                    {{ $item['cuttingBag_total_quantity_piece'] }}
-                    @php
-                    $totalCuttingBag += $item['cuttingBag_total_quantity_piece'];
-                    @endphp
-                    @else 0 
+
+                    @if (strtolower($color) == 'tape')
+                        <td class="tape-column">{{ $quantity }}</td>
+                    @else
+                        <td class="tape-column">0</td>
                     @endif
-                </td>
-                <td colspan="11"></td>
-                {{-- <td>
-                    @if( isset($item['sundar_waste_perc']))
-                    {{ $item['sundar_waste_perc'] }}
-                    @php
-                    $subTotalSundarPerc  += $item['sundar_waste_perc'];
-                    $totalSundarPerc += $item['sundar_waste_perc'];
-                    @endphp
-                    @else 0 
+
+                    @if (strtolower($color) == 'nba')
+                        <td class="nba-column">{{ $quantity }}</td>
+                    @else
+                        <td class="nba-column">0</td>
                     @endif
-                </td>
-                <td>@if( isset($item['jp_total_unlam']))
-                    {{ $item['jp_total_unlam'] }}
-                    @php
-                    $subTotaljpUnlam += $item['jp_total_unlam'];
-                    $totaljpUnlam += $item['jp_total_unlam'];
-                    @endphp
-                    @else 0 
+
+                    @if (strtolower($color) == 'pp yarn')
+                        <td class="pp yarn-column">{{ $quantity }}</td>
+                    @else
+                        <td class="pp yarn-column">0</td>
                     @endif
-                </td>
-                <td>@if( isset($item['jp_total_lam']))
-                    {{ $item['jp_total_lam'] }}
-                    @php
-                    $subTotaljpLam += $item['jp_total_lam'];
-                    $totaljpLam += $item['jp_total_lam'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>@if( isset($item['jp_total_meter']))
-                    {{ $item['jp_total_meter'] }}
-                    @php
-                    $subTotaljpProdMeter += $item['jp_total_meter'];
-                    $totaljpProdMeter += $item['jp_total_meter'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>@if( isset($item['jp_total_waste']))
-                    {{ $item['jp_total_waste'] }}
-                    @php
-                    $subTotaljpWaste += $item['jp_total_waste'];
-                    $totaljpWaste += $item['jp_total_waste'];
-                    @endphp
-                    @else 0 
+                @endforeach
+
+                <td>
+                    @if (isset($item['tot_total_quantity']))
+                        {{ $item['tot_total_quantity'] }}
+                        @php
+                            $totalIssueToFinishing += $item['tot_total_quantity'];
+                        @endphp
+                    @else
+                        0
                     @endif
                 </td>
                 <td>
-                    @if( isset($item['jp_waste_perc']))
-                    {{ $item['jp_waste_perc'] }}
-                    @php
-                    $subTotaljpPerc += $item['jp_waste_perc'];
-                    $totaljpPerc += $item['jp_waste_perc'];
-                    @endphp
-                    @else 0 
+                    @if (isset($item['tot_total_wastage']))
+                        {{ $item['tot_total_wastage'] }}
+                        @php
+                            $totalwaste += $item['tot_total_wastage'];
+                        @endphp
+                    @else
+                        0
                     @endif
-                </td> --}}
+                </td>
 
-                {{-- <td>@if( isset($item['bsw_total_unlam']))
-                    {{ $item['bsw_total_unlam'] }}
-                    @php
-                    $subTotalbswUnlam += $item['bsw_total_unlam'];
-                    $totalbswUnlam += $item['bsw_total_unlam'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>@if( isset($item['bsw_total_lam']))
-                    {{ $item['bsw_total_lam'] }}
-                    @php
-                    $subTotalbswLam += $item['bsw_total_lam'];
-                    $totalbswLam += $item['bsw_total_lam'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td> --}}
-                <td>@if( isset($item['tot_total_quantity']))
-                    {{ $item['tot_total_quantity'] }}
-                    @php
-                    $totalIssueToFinishing += $item['tot_total_quantity'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-                <td>@if( isset($item['tot_total_wastage']))
-                    {{ $item['tot_total_wastage'] }}
-                    @php
-                    $totalwaste += $item['tot_total_wastage'];
-                    @endphp
-                    @else 0 
-                    @endif
-                </td>
-             
                 {{-- <td>
                     @php
                     $totalunlam = $subTotalsundarUnlam + $subTotaljpUnlam + $subTotalbswUnlam;
@@ -210,27 +227,27 @@
                 </td> --}}
             </tr>
         @endforeach
-        <tfoot>
-            <tr>
-                <td></td>
-                <td>Total</td>
-                <td>{{ $totalRollIssue }}</td>
-                <td>{{ $totalCuttingBag}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>{{ $totalIssueToFinishing }}</td>
-                <td>{{ $totalwaste }}</td>
-            </tr>
-        </tfoot>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td>Total</td>
+            <td>{{ $totalRollIssue }}</td>
+            <td>{{ $totalCuttingBag }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{ $totalIssueToFinishing }}</td>
+            <td>{{ $totalwaste }}</td>
+        </tr>
+    </tfoot>
     </tbody>
 
 </table>
