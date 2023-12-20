@@ -85,95 +85,72 @@
                     @endif
                 </td>
 
+                @if (!empty($item['dana_consumpt']) && is_array($item['dana_consumpt']))
+                    @php
+                        $totalInk = 0;
+                    @endphp
 
-                @foreach ($item['dana_quantities'] as $color => $quantity)
-                @php
-                    $totalInk=0;
-                @endphp
-                    @if (strtolower($color) == 'black')
-                        <td class="black-column">{{ $quantity }}</td>
+                    <td>{{ optional($item['dana_consumpt'])['Black'] ?? 0 }}
                         @php
-                           $totalInk += $quantity;
+                            $totalInk += optional($item['dana_consumpt'])['Black'] ?? 0;
                         @endphp
-                    @else
-                        <td class="black-column">0</td>
-                    @endif
-
-                    @if (strtolower($color) == 'red')
-                        <td class="red-column">{{ $quantity }}</td>
+                    </td>
+                    <td>{{ optional($item['dana_consumpt'])['Red'] ?? 0 }}
                         @php
-                        $totalInk += $quantity;
-                     @endphp
-                    @else
-                        <td class="red-column">0</td>
-                    @endif
-
-                    @if (strtolower($color) == 'green')
-                        <td class="green-column">{{ $quantity }}</td>
+                            $totalInk += optional($item['dana_consumpt'])['Red'] ?? 0;
+                        @endphp
+                    </td>
+                    <td>{{ optional($item['dana_consumpt'])['Green'] ?? 0 }}
                         @php
-                        $totalInk += $quantity;
-                     @endphp
-                    @else
-                        <td class="green-column">0</td>
-                    @endif
-
-                    @if (strtolower($color) == 'blue')
-                        <td class="blue-column">{{ $quantity }}</td>
+                            $totalInk += optional($item['dana_consumpt'])['Green'] ?? 0;
+                        @endphp
+                    </td>
+                    <td>{{ optional($item['dana_consumpt'])['Blue'] ?? 0 }}
                         @php
-                        $totalInk += $quantity;
-                     @endphp
-                    @else
-                        <td class="blue-column">0</td>
-                    @endif
-                    @if (strtolower($color) == 'orange')
-                        <td class="orange-column">{{ $quantity }}</td>
+                            $totalInk += optional($item['dana_consumpt'])['Blue'] ?? 0;
+                        @endphp
+                    </td>
+                    <td>{{ optional($item['dana_consumpt'])['Orange'] ?? 0 }}
                         @php
-                        $totalInk += $quantity;
-                     @endphp
-                    @else
-                        <td class="orange-column">0</td>
-                    @endif
+                            $totalInk += optional($item['dana_consumpt'])['Orange'] ?? 0;
+                        @endphp
+                    </td>
+                    <td>{{ optional($item['dana_consumpt'])['Yellow'] ?? 0 }}
+                        @php
+                            $totalInk += optional($item['dana_consumpt'])['Yellow'] ?? 0;
+                        @endphp
+                    </td>
 
-                    @if (strtolower($color) == 'yellow')
-                        <td class="yellow-column">{{ $quantity }}</td>
-                    @else
-                        <td class="yellow-column">0</td>
-                    @endif
+                    {{-- Calculate $totalInk --}}
 
-                  
-                    <td class="totalInk-column">{{ $totalInk }}</td>
-                
 
-                    @if (strtolower($color) == 'diesel')
-                        <td class="diesel-column">{{ $quantity }}</td>
-                    @else
-                        <td class="diesel-column">0</td>
-                    @endif
+                    <td>{{ $totalInk }}</td>
 
-                    @if (strtolower($color) == 'tape')
-                        <td class="tape-column">{{ $quantity }}</td>
-                    @else
-                        <td class="tape-column">0</td>
-                    @endif
+                    <td>{{ optional($item['dana_consumpt'])['Diesel'] ?? 0 }}</td>
+                    <td>{{ optional($item['dana_consumpt'])['Tape'] ?? 0 }}</td>
+                    <td>{{ optional($item['dana_consumpt'])['NBA Reducer'] ?? 0 }}</td>
+                    <td>{{ optional($item['dana_consumpt'])['PP Yarn Thread'] ?? 0 }}</td>
+                @else
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                    <td>{{ 0 }}</td>
+                @endif
 
-                    @if (strtolower($color) == 'nba')
-                        <td class="nba-column">{{ $quantity }}</td>
-                    @else
-                        <td class="nba-column">0</td>
-                    @endif
 
-                    @if (strtolower($color) == 'pp yarn')
-                        <td class="pp yarn-column">{{ $quantity }}</td>
-                    @else
-                        <td class="pp yarn-column">0</td>
-                    @endif
-                @endforeach
 
                 <td>
-                    @if (isset($item['tot_total_quantity']))
-                        {{ $item['tot_total_quantity'] }}
+                    @if (isset($item['tot_total_bag_quantity_piece']))
+                        {{ $item['tot_total_bag_quantity_piece'] }}
                         @php
-                            $totalIssueToFinishing += $item['tot_total_quantity'];
+                            $totalIssueToFinishing += $item['tot_total_bag_quantity_piece'];
                         @endphp
                     @else
                         0
@@ -190,45 +167,11 @@
                     @endif
                 </td>
 
-                {{-- <td>
-                    @php
-                    $totalunlam = $subTotalsundarUnlam + $subTotaljpUnlam + $subTotalbswUnlam;
-                    $finalTotalunlam += $totalunlam;
-                    @endphp
-                    {{ $totalunlam }}
-                </td>
-                <td>
-                    @php
-                    $totallam = $subTotalsundarLam + $subTotaljpLam + $subTotalbswLam;
-                    $finalTotallam += $totallam;
-                    @endphp
-                    {{ $totallam }}
-                </td>
-                <td>
-                    @php
-                    $totalmeter = $subTotalsundarProdMeter+ $subTotaljpProdMeter +$subTotalbswProdMeter;
-                    $finalTotalmeter +=  $totalmeter;
-                    @endphp
-                    {{ $totalmeter }}
-                </td>
-                <td>
-                    @php
-                    $totalwaste = $subTotalsundarWaste+ $subTotaljpWaste +$subTotalbswWaste;
-                    $finalTotalwaste +=  $totalwaste;
-                    @endphp
-                    {{ $totalwaste }}
-                </td>
-                <td>
-                    @php
-                    $totalwastepercent = $subTotalSundarPerc+ $subTotaljpPerc +$subTotalbswPerc;
-                    $finalTotalwastePerc +=  $totalwastepercent;
-                    @endphp
-                    {{ $totalwastepercent }}
-                </td> --}}
+
             </tr>
         @endforeach
     <tfoot>
-        <tr>
+        <tr style="font-weight: bold">
             <td></td>
             <td>Total</td>
             <td>{{ $totalRollIssue }}</td>
