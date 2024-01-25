@@ -36,13 +36,14 @@ class LaminationProductionController extends Controller
             'processing_subcats.name as plantName',
             'fabrics.net_wt as fabNetWt'
         )
-            ->join('fabric_send_and_receive_laminated_sent', 'fabric_send_and_receive_entry.id', '=', 'fabric_send_and_receive_laminated_sent.fsr_entry_id')
-            ->join('processing_subcats', 'fabric_send_and_receive_entry.plantname_id', '=', 'processing_subcats.id')
-            ->join('fabrics', 'fabric_send_and_receive_laminated_sent.fabid', '=', 'fabrics.id')
+            ->leftJoin('fabric_send_and_receive_laminated_sent', 'fabric_send_and_receive_entry.id', '=', 'fabric_send_and_receive_laminated_sent.fsr_entry_id')
+            ->leftJoin('processing_subcats', 'fabric_send_and_receive_entry.plantname_id', '=', 'processing_subcats.id')
+            ->leftJoin('fabrics', 'fabric_send_and_receive_laminated_sent.fabid', '=', 'fabrics.id')
             ->where('fabric_send_and_receive_entry.bill_date', '>=', $request->start_date)
             ->where('fabric_send_and_receive_entry.bill_date', '<=', $request->end_date)
             ->where('fabric_send_and_receive_entry.godam_id', $request->godam_id)
             ->where('fabric_send_and_receive_entry.status', 'completed')
+            ->orderBy('fabric_send_and_receive_entry.bill_date', 'asc')
             ->get()->toArray();
 
         $fabricEntries =  FabricSendAndReceiveEntry::select(
@@ -164,6 +165,9 @@ class LaminationProductionController extends Controller
             $rowData[$date]['bsw_waste_perc'] = 0;
 
             foreach ($data as $item) {
+                if(!isset($item['plantName'])){
+                    dd($item);
+                }
                 if ($item['plantName'] == 'sunder lam') {
                     $rowData[$date]['sundar_total_unlam'] = $rowData[$date]['sundar_total_unlam'] + $item['fabNetWt'];
                     $rowData[$date]['sundar_total_lam'] = $rowData[$date]['sundar_total_lam'] + $item['net_wt'];

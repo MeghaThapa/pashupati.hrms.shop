@@ -70,13 +70,14 @@ class PrintingAndCuttingBagItemController extends Controller
                 "waste_type_id" => 'required',
             ]);
 
+
             $stockData = BagFabricReceiveItemSentStock::where('roll_no', $request->roll_no)
                 ->where('average', $request->average)
                 ->where('gross_wt', $request->gross_weight)
                 ->where('net_wt', $request->net_weight)
                 ->where('meter', $request->meter)
                 ->first();
-
+            //    dd($stockData);
             DB::beginTransaction();
             $printingAndCuttingBagItem = new PrintingAndCuttingBagItem();
             $printingAndCuttingBagItem->printAndCutEntry_id = $request->printAndCutEntry_id;
@@ -95,16 +96,15 @@ class PrintingAndCuttingBagItemController extends Controller
             $printingAndCuttingBagItem->req_bag = $request->req_bag;
             $printingAndCuttingBagItem->godam_id = $request->godam_id;
             $printingAndCuttingBagItem->wastage_id = $request->waste_type_id;
+
             $printingAndCuttingBagItem->bag_fabric_receive_item_sent_stock_id = $stockData->id;
-            $printingAndCuttingBagItem->status = 'sent';
             $printingAndCuttingBagItem->save();
-           
             //find wastage stock and add up or create new waste stock if no stock exists
 
             //transfer the stock to Print And Cutting
             $stockData->status = 'Print And Cutting';
             $stockData->save();
-            
+
 
             $wastageStock = WasteStock::where('godam_id', $request->godam_id)
                 ->where('waste_id', $request->waste_type_id)
@@ -126,12 +126,11 @@ class PrintingAndCuttingBagItemController extends Controller
                 'printingAndCuttingBagItem' => $printingAndCuttingBagItem
             ]);
         } catch (Exception $e) {
-            DB::rollback();
+            DB::rollback();;
             return response()->json([
-                'status'=>false,
-                'message' => $e,
-                'error_line'=> $e->getLine(),
-            ],500);
+                'message' => 'error',
+
+            ]);
         }
     }
 

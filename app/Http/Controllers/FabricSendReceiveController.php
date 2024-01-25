@@ -1252,7 +1252,7 @@ class FabricSendReceiveController extends Controller
 
     public function finalsubmitfsrrevised(Request $request)
     { //latest
-       
+
         if ($request->ajax()) {
 
             $consumption = $request->consumption;
@@ -1406,21 +1406,21 @@ class FabricSendReceiveController extends Controller
                 // }
                 //polo waste is lumps & fabric is rafia
                 if ($request->polo_waste && $request->polo_waste != null) {
-                   
+
                     $waste_id = Wastages::where('name', 'lumps')->first()->id;
                     $godam_id = $fabric_entry->godam_id;
                     $polo_waste = $request->polo_waste;
-                
+
                     $existingWasteStock = WasteStock::where('godam_id', $godam_id)
                         ->where('waste_id', $waste_id)
                         ->first();
-                    
+
                     if ($existingWasteStock) {
                         // If a record with the same godam_id and waste_id exists, update the quantity_in_kg
                         $existingWasteStock->quantity_in_kg += $polo_waste;
                         $existingWasteStock->save();
-                        
-                        // dd($existingWasteStock->quantity_in_kg);    
+
+                        // dd($existingWasteStock->quantity_in_kg);
                     } else {
                          dd('laxmi');
                         // If no matching record exists, create a new row
@@ -1431,17 +1431,17 @@ class FabricSendReceiveController extends Controller
                         ]);
                     }
                 }
-                
+
                 if ($request->fabric_waste && $request->fabric_waste !=null){
                     // dd($request->fabric_waste);
                     $waste_id = Wastages::where('name', 'rafia')->first()->id;
                     $godam_id = $fabric_entry->godam_id;
                     $fabric_waste = $request->fabric_waste;
-                
+
                     $existingWasteStock = WasteStock::where('godam_id', $godam_id)
                         ->where('waste_id', $waste_id)
                         ->first();
-                
+
                     if ($existingWasteStock) {
                         // If a record with the same godam_id and waste_id exists, update the quantity_in_kg
                         $existingWasteStock->quantity_in_kg += $fabric_waste;
@@ -1456,8 +1456,8 @@ class FabricSendReceiveController extends Controller
                             'quantity_in_kg' => $fabric_waste,
                         ]);
                     }
-                }           
-                                      
+                }
+
                 FabricSendAndReceiveLaminatedFabricDetails::with('temporarylamfabric')
 
                     ->whereHas('temporarylamfabric', function ($query) use ($fsr_entry_id) {

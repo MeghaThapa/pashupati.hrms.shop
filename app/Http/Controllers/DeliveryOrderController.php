@@ -11,6 +11,7 @@ use App\Models\DeliveryOrderForItem;
 use App\Http\Requests\DeliveryOrder\DeliveryOrderStoreRequest;
 use App\Http\Requests\DeliveryOrder\DeliveryOrderUpdateRequest;
 use App\Models\FabricSaleEntry;
+use Illuminate\Support\Facades\Artisan;
 
 class DeliveryOrderController extends Controller
 {

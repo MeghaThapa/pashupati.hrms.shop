@@ -13,11 +13,10 @@ class PrintingAndCuttingBagStockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     public function index(Request $request)
-    {
+    public function index(Request $request)
+    {  
         $printingAndCuttingBagStock=PrintingAndCuttingBagStock::with('group:id,name','bagBrand:id,name')->get();
-        $groupedDatas = $printingAndCuttingBagStock->groupBy('group_id');
-        // return($groupedDatas);
+        $groupedDatas = $printingAndCuttingBagStock->groupBy('group_id');  
         $formattedDatas = [];
         foreach ($groupedDatas as $groupId => $group) {
             $totalQuantity = 0;

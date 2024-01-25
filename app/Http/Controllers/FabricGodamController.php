@@ -29,7 +29,7 @@ class FabricGodamController extends Controller
     }
 
     public function tests(){
-        // dd('ll');
+        dd('hello');
         // $finalt
         $tape_opening = TapeEntryOpening::where('godam_id',3)->sum('qty');
         $tape_entry = TapeEntryItemModel::where('toGodam_id',3)->sum('tape_qty_in_kg');
@@ -40,8 +40,8 @@ class FabricGodamController extends Controller
         $final = $tape_opening + $tape_entry - $fabric_wastage - $fabric_net;
 
         dd($tape_opening,$tape_entry,$fabric_wastage,$fabric_net,$final);
-
-
+       
+     
 
 
     }
@@ -80,14 +80,14 @@ class FabricGodamController extends Controller
                 $gsm = round($gsms, 3);
                 // dd($gsms,$gsm);
 
-
-
+             
+               
                 // dd($input,$parts,$firstString);
 
 
-                $sa = FinalTripal::where('status','sent')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('average_wt',$value->average_wt)->update(['gram' => $gsm]);
+                $sa = FinalTripal::where('status','completed')->where('roll_no',$value->roll_no)->where('net_wt',$value->net_wt)->where('meter',$value->meter)->where('average_wt',$value->average_wt)->update(['gram' => $gsm]);
 
-
+             
             }
 
 
@@ -134,7 +134,7 @@ class FabricGodamController extends Controller
         $list = FabricGodamList::where('fabricgodam_id',$fabricgodam_id)->where('status','sent')->count();
 
         $total_net = FabricGodamList::where('fabricgodam_id',$fabricgodam_id)->where('status','sent')->sum('net_wt');
-
+        
         $total_roll = FabricGodamList::where('fabricgodam_id',$fabricgodam_id)->where('status','sent')->count();
         // dd($total_roll);
 
@@ -164,32 +164,32 @@ class FabricGodamController extends Controller
     }
 
     public function getFabricGodamTransfer(Request $request){
-
+    
 
         if($request->ajax()){
             $bill_id = $request->fabricgodam_id;
-
+            
             $fabrics = FabricGodamList::where("fabricgodam_id",$bill_id)->where('status','sent')->get();
             $find_bill = FabricGodam::find($bill_id);
-
+            
 
             return DataTables::of($fabrics)
                     ->addIndexColumn()
                     ->addColumn("bill_no",function($find_bill){
                         return $find_bill->bill_no;
                     })
-
+                   
                     ->addColumn("action",function($row){
                         return "
-                        <a class='btn btn-danger deleteGodamEntry'
-                                 data-id='{$row->id}'
+                        <a class='btn btn-danger deleteGodamEntry'  
+                                 data-id='{$row->id}' 
                                  href='{$row->id}'>Delete</a>";
                     })
                     ->rawColumns(["bill_no","action"])
                     ->make(true);
 
         }
-
+      
     }
 
     public function deleteFabricGodamList(Request $request)
@@ -198,12 +198,12 @@ class FabricGodamController extends Controller
         $unit = FabricGodamList::find($request->data_id);
 
         $data = FabricStock::find($unit->stock_id);
-
+        
 
         $data->status_type = 'active';
-        $data->update();
+        $data->update(); 
 
-
+        
         $unit->delete();
         return response([
             "message" => "Deleted Successfully"
@@ -268,7 +268,8 @@ class FabricGodamController extends Controller
                     'fabric_id' => $find_name->fabric_id,
                 ]);
             $find_name->status_type = 'inactive';
-            $find_name->update();
+            $find_name->update();    
+
 
         return response(['message'=>'Godam Transferred Successfully']);
         }

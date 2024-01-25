@@ -23,7 +23,7 @@ use Yajra\DataTables\DataTables;
 class TapeEntryController extends Controller
 {
     public function openingcreate(){
-        $godam = Godam::where("status","active")->get();
+        $godam = Godam::where("status","active")->get(); 
         return view("admin.TapeEntry.opening")->with([
             "godam" => $godam,
         ]);
@@ -50,7 +50,7 @@ class TapeEntryController extends Controller
         $getStock = TapeEntryStockModel::where('toGodam_id', $request->to_godam)
           ->first();
           // dd($getStock);
-
+        
 
         if ($stock == 1) {
             $getStock->tape_qty_in_kg += $request->tape_quantity;
@@ -67,8 +67,8 @@ class TapeEntryController extends Controller
                "cause" => "opening"
            ]);
         }
-
-
+        
+       
         return  back()->with([
             "message" => "Tape Opening added successfully"
         ]);
@@ -346,9 +346,9 @@ class TapeEntryController extends Controller
     }
 
     function wastemgmt($totalwaste,$department,$wastetype){
-
+        
         $wastage_type = Wastages::where("name" ,"like" , "raffia"."%")->value("id");
-
+        
         WasteStock::create([
             'godam_id' => $department,
             'quantity_in_kg' => $totalwaste,
@@ -410,7 +410,7 @@ class TapeEntryController extends Controller
                 ->rawColumns(["receipt_entry_date","receipt_number","wastage","godam"])
                 ->make(true);
         }
-    }
+    }   
 
     public function tape_report_amounts_ajax($godam){
         $tape_entries= TapeEntryItemModel::where("toGodam_id",$godam)->get();

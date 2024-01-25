@@ -273,9 +273,27 @@ class RawMaterialReportController extends Controller
                     $fromGodam = isset($dateData['import_from']) && $dateData['import_from'] == 'godam' && $dateData['from_godam_id'] == 2 && $dateData['to_godam_id'] == 1 ? $dateData['total_quantity'] : 0;
                     $rawMaterialDanaDateWiseReport->from_godam = $fromGodam;
 
-                    $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
-                    $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
-                    $rawMaterialDanaDateWiseReport->nw_plant = $dateData['nonwoven plant'] ?? 0;
+                    if(isset($dateData['tape plant']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 1){
+                        $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->tape = 0;
+                    }
+
+                    if(isset($dateData['lamination plant']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 1){
+                        $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->lam = 0;
+                    }
+
+                    if(isset($dateData['nonwoven plant']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 1){
+                        $rawMaterialDanaDateWiseReport->nw_plant = $dateData['nonwoven plant'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->nw_plant = 0;
+                    }
+
+                    // $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
+                    // $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
+                    // $rawMaterialDanaDateWiseReport->nw_plant = $dateData['nonwoven plant'] ?? 0;
                     $rawMaterialDanaDateWiseReport->sales = $dateData['sales_quantity'] ?? 0;
 
                     $toGodam = isset($dateData['import_from']) && $dateData['from_godam_id'] == 1 && $dateData['to_godam_id'] == 2 && $dateData['import_from'] == 'godam' ? $dateData['total_quantity'] : 0;
@@ -335,6 +353,24 @@ class RawMaterialReportController extends Controller
                         $rawMaterialDanaDateWiseReport->from_godam = 0;
                     }
 
+                    if(isset($dateData['tape plant']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 2){
+                        $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->tape = 0;
+                    }
+
+                    if(isset($dateData['lamination plant']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 2){
+                        $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->lam = 0;
+                    }
+
+                    if(isset($dateData['cc_plant_quantity']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 2){
+                        $rawMaterialDanaDateWiseReport->cc_plant_quantity = $dateData['cc_plant_quantity'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->cc_plant_quantity = 0;
+                    }
+
                     // Set the dana_name_id
                     $dana = DanaName::where('name', $danaName)->firstOrFail();
                     if ($dana) {
@@ -357,9 +393,11 @@ class RawMaterialReportController extends Controller
                     $local = isset($dateData['import_from']) && $dateData['import_from'] == 'local' ? $dateData['total_quantity'] : 0;
                     $rawMaterialDanaDateWiseReport->local = $local;
 
-                    $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
-                    $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
-                    $rawMaterialDanaDateWiseReport->cc_plant_quantity = $dateData['cc_plant_quantity'] ?? 0;
+
+
+                    // $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
+                    // $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
+                    // $rawMaterialDanaDateWiseReport->cc_plant_quantity = $dateData['cc_plant_quantity'] ?? 0;
 
                     $closing = $rawMaterialDanaDateWiseReport->opening_amount + $rawMaterialDanaDateWiseReport->import + $rawMaterialDanaDateWiseReport->local + $rawMaterialDanaDateWiseReport->cc_plant_quantity + $rawMaterialDanaDateWiseReport->from_godam - $rawMaterialDanaDateWiseReport->tape - $rawMaterialDanaDateWiseReport->lam - $rawMaterialDanaDateWiseReport->to_godam_quantity;
                     $rawMaterialDanaDateWiseReport->closing = $closing;
@@ -437,8 +475,21 @@ class RawMaterialReportController extends Controller
                     $local = isset($dateData['import_from']) && $dateData['import_from'] == 'local' ? $dateData['total_quantity'] : 0;
                     $rawMaterialDanaDateWiseReport->local = $local;
 
-                    $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
-                    $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
+
+                    if(isset($dateData['tape plant']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 3){
+                        $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->tape = 0;
+                    }
+
+                    if(isset($dateData['lamination plant']) && isset($dateData['from_godam_id']) && $dateData['from_godam_id'] == 3){
+                        $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'];
+                    }else{
+                        $rawMaterialDanaDateWiseReport->lam = 0;
+                    }
+
+                    // $rawMaterialDanaDateWiseReport->tape = $dateData['tape plant'] ?? 0;
+                    // $rawMaterialDanaDateWiseReport->lam = $dateData['lamination plant'] ?? 0;
 
                     $closing = $rawMaterialDanaDateWiseReport->opening_amount + $rawMaterialDanaDateWiseReport->import + $rawMaterialDanaDateWiseReport->local + $rawMaterialDanaDateWiseReport->from_godam - $rawMaterialDanaDateWiseReport->tape - $rawMaterialDanaDateWiseReport->lam - $rawMaterialDanaDateWiseReport->to_godam_quantity;
                     $rawMaterialDanaDateWiseReport->closing = $closing;

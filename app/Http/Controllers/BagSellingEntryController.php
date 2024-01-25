@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\BagSellingEntry;
 use App\Models\Supplier;
 use App\Models\BagBundelStock;
-use App\Models\BagSellingItem;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Services\NepaliConverter;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class BagSellingEntryController extends Controller
 {
@@ -33,31 +32,7 @@ class BagSellingEntryController extends Controller
         // ->get(['challan_no','date','nepali_date','supplier_id','gp_no','lorry_no','do_no','rem'])
         // ->first();
         // return $bagSellingEntryData;
-        // return (self::compareData());
-
         return view('admin.bag.bagSelling.index');
-    }
-    private function compareData()
-    {
-        $bagSellingItems = BagSellingItem::all();
-        foreach ($bagSellingItems as $item) {
-            $stock = BagBundelStock::where('bundle_no', $item->bundel_no)->get()->first();
-            if (!$stock) {
-                $bagBundelStock = new BagBundelStock();
-                $bagBundelStock->group_id = $item->group_id;
-                $bagBundelStock->bag_brand_id = $item->brand_bag_id;
-                $bagBundelStock->bundle_no = $item->bundel_no;
-                $bagBundelStock->qty_pcs = $item->pcs;
-                $bagBundelStock->qty_in_kg = $item->weight;
-                $bagBundelStock->average_weight = $item->average;
-                $bagBundelStock->type = "transaction";
-                $bagBundelStock->status = 'sold';
-                $bagBundelStock->save();
-            }
-        }
-        return 'done';
-
-        // return view('comparison', ['missingBundelStocks' => $missingBundelStocks]);
     }
 
     /**
@@ -92,10 +67,12 @@ class BagSellingEntryController extends Controller
         return DataTables::of($bagSellingEntryDatas)
             ->addIndexColumn()
             ->addColumn('statusBtn', function ($bagSellingEntryData) {
-                if ($bagSellingEntryData->status == 'completed') {
-                    return '<span class="badge badge-pill badge-success">' . $bagSellingEntryData->status . '</span>';
-                } else {
-                    return '<span class="badge badge-pill badge-primary">' . $bagSellingEntryData->status . '</span>';
+                if($bagSellingEntryData->status == 'completed'){
+                return '<span class="badge badge-pill badge-success">' . $bagSellingEntryData->status . '</span>';
+
+                }else{
+                return '<span class="badge badge-pill badge-primary">' . $bagSellingEntryData->status . '</span>';
+
                 }
             })
             ->addColumn('action', function ($bagSellingEntryData) {

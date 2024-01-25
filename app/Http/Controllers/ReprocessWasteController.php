@@ -352,10 +352,22 @@ class ReprocessWasteController extends Controller
                 "plantname_id" => $this->request->plant_name_id,
             ]);
 
-            RawMaterialStock::where('godam_id',$reprocessWastage->godam_id)->where('dana_name_id',$request->dana_name_id)->increment('quantity',$request->quantity);
-
+            $rawMaterialStock = RawMaterialStock::where('godam_id',$request->godam_id)
+                                ->where('dana_name_id',$request->dana_name_id)->first();
+            if($rawMaterialStock){
+                RawMaterialStock::where('godam_id',$reprocessWastage->godam_id)->where('dana_name_id',$request->dana_name_id)->increment('quantity',$request->quantity);
+            }else{
+                RawMaterialStock::create([
+                    "godam_id" => $reprocessWastage->godam_id,
+                    "dana_group_id" => $request->dana_group_id,
+                    "dana_name_id" => $request->dana_name_id,
+                    "quantity" => $request->quantity
+                ]);
+            }
             $rawMaterialStock =  RawMaterialStock::where('godam_id',$request->godam_id)
                 ->where('dana_name_id',$request->dana_name_id)->first();
+
+
 
             DB::commit();
             return response(['status'=>true,'data'=>$rawMaterialStock]);

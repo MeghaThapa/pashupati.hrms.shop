@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\BagFabricReceiveItemSentStock;
+use App\Models\PrintingAndCuttingBagItem;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use DB;
 
 class BagFabricReceiveItemSentStockController extends Controller
 {
@@ -15,8 +17,9 @@ class BagFabricReceiveItemSentStockController extends Controller
      */
     public function index(Request $request)
     {
+    
         if ($request->ajax()) {
-            $query = BagFabricReceiveItemSentStock::with('fabric:id,name')->where('status', 'Stock');
+            $query = BagFabricReceiveItemSentStock::with('fabric:id,name');
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->editColumn("fabric_id", function ($row) {
@@ -25,6 +28,48 @@ class BagFabricReceiveItemSentStockController extends Controller
                 ->make(true);
         }
         return view('admin.bag.printsandcuts.bagFabricItemSentReceiveStock');
+    }
+
+    private function fixprintingxCuttingBagitems(){
+ 
+        $unmatchedItems = PrintingAndCuttingBagItem::whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('bag_fabric_receive_item_sent_stock')
+                ->whereRaw('bag_fabric_receive_item_sent_stock.id = printing_and_cutting_bag_items.bag_fabric_receive_item_sent_stock_id');
+        })
+        ->get();
+     
+        foreach ($unmatchedItems as $item) {
+            $rollNo = $item->roll_no;
+            $netWeight = $item->net_weight;
+        
+            // Find the corresponding record in BagFabricReceiveItemSentStock based on roll_no and net_wt
+            $stock = DB::table('bag_fabric_receive_item_sent_stock')
+            ->where('roll_no', $rollNo)
+            ->where('net_wt', $netWeight)
+            ->first();        
+                if ($stock === null) {
+                    // Dump and die if no data is found
+                    return("No data found for roll_no: $rollNo and net_wt: $netWeight");
+                }
+        
+            if ($stock) {
+                // Update the PrintingAndCuttingBagItem record with the found stock_id
+                DB::table('bag_fabric_receive_item_sent_stock')
+                ->where('id', $stock->id)
+                ->update([
+                    'status' => 'Print And Cutting',
+                    'deleted_at' => now(),
+                ]);
+        
+            // Update the PrintingAndCuttingBagItem record with the found stock_id
+            DB::table('printing_and_cutting_bag_items')
+                ->where('id', $item->id)
+                ->update(['bag_fabric_receive_item_sent_stock_id' => $stock->id]);
+            }   
+         
+        }
+        return 'done';
     }
 
     /**

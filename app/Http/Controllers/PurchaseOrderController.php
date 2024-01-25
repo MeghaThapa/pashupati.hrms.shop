@@ -153,7 +153,7 @@ class PurchaseOrderController extends Controller
             'storein_department_id'=>'required',
             'store_in_item_id'=>'required',
             'req_quantity'=>'required|numeric',
-            'remarks' => 'required',
+            'remarks' => 'nullable',
         ]);
         $itemOfStoreIn = ItemsOfStorein::where('id',$request->store_in_item_id)->firstOrFail();
         $latestPurchaseStoreInItem = StoreinItem::with('storeIn.supplier')->where('storein_item_id',$itemOfStoreIn->id)->latest()->first();

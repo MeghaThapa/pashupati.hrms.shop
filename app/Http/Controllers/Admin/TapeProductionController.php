@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Godam;
 use Illuminate\Http\Request;
 use App\Models\ProcessingSubcat;
 use App\Models\TapeEntryItemModel;
@@ -19,7 +20,8 @@ class TapeProductionController extends Controller
             $view = view('admin.TapeEntry.ssr.reportview', compact('plantArray', 'request'))->render();
             return response(['status' => true, 'data' => $view]);
         }
-        return view('admin.TapeEntry.report');
+        $godams = Godam::all();
+        return view('admin.TapeEntry.report', compact('godams'));
     }
 
     private function getPlantArray($request)
@@ -54,8 +56,9 @@ class TapeProductionController extends Controller
                 'total_bypass_wastage' => $item->total_bypass_wastage
             ];
         }
-        // dd($resultArray);
+
         $rowData = [];
+
         foreach ($resultArray as $date => $data) {
             $rowData[$date]['date'] = $date;
 
@@ -69,13 +72,11 @@ class TapeProductionController extends Controller
 
             $rowData[$date]['godam_three_total_loading'] = 0;
             $rowData[$date]['godam_three_total_running'] = 0;
+            $rowData[$date]['godam_three_total_bypass_wastage'] = 0;
 
-
-            $rowData[$date]['godam_three_total_bypass_wastage'] = 0;     
             foreach ($data as $item) {
                 $plantName = ProcessingSubcat::whereId($item['plantName_id'])->first()->name;
                 $rowData[$date][$plantName] = $item['tape_qty_in_kg'];
-                //for me              
 
                 if($item['toGodam_id'] == 1){
                     $rowData[$date]['godam_one_total_loading'] = $rowData[$date]['godam_one_total_loading']+$item['total_loading'];
@@ -97,7 +98,6 @@ class TapeProductionController extends Controller
 
             }
         }
-        // dd($rowData);
         return $rowData;
     }
 }

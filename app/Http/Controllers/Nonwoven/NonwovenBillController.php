@@ -9,7 +9,7 @@ use App\Helpers\AppHelper;
 
 use Illuminate\Support\Facades\DB;
 
-class NonWovenBillController extends Controller
+class NonwovenBillController extends Controller
 {
     public function store(Request $request){
         try{
@@ -25,7 +25,6 @@ class NonWovenBillController extends Controller
                 'planttype_id' => $request['plant_type_id'],
                 'plantname_id' =>  $request['plant_name_id'],
                 'shift_id' =>  $request['shift_name_id'],
-                'status' =>  'pending',
             ]);
 
            DB::commit();

@@ -260,10 +260,62 @@ class FabricStockController extends Controller
 
     }
 
+    public function viewBillNew(Request $request){
+        $query = FabricStock::query();
+        if($request->godam_id){
+            $query->where('godam_id',$request->godam_id);
+        }
+        if($request->fabric_id){
+            $fbstock = FabricStock::where('id',$request->fabric_id)->first();
+            $query->where('name','LIKE','%'.$fbstock->name.'%');
+        }
+        if($request->type){
+            $query->where('is_laminated',$request->type);
+        }
+        if($request->group){
+            $query->where('fabricgroup_id',$request->group);
+        }
+        $fabrics = $query->get();
+        $fabricsData = [];
+        foreach ($fabrics as $fabric) {
+            $name = $fabric->name;
 
+            if (!isset($fabricsData[$name])) {
+                $fabricsData[$name] = [];
+            }
+
+            $fabricsData[$name][] = [
+                'name' => $fabric->name,
+                'roll_no' => $fabric->roll_no,
+                'gross_wt' => $fabric->gross_wt,
+                'net_wt' => $fabric->net_wt,
+                'meter' => $fabric->meter,
+                'average_wt' => $fabric->average_wt,
+            ];
+        }
+
+        $summaryData = $query->select(
+                    'name',
+                    DB::raw('SUM(gross_wt) as total_gross'),
+                    DB::raw('SUM(net_wt) as total_net'),
+                    DB::raw('SUM(meter) as total_meter'),
+                    DB::raw('COUNT(name) as total_count')
+                )
+                ->groupBy('name')
+                ->get();
+
+        $summaryData = [];
+
+        $total_gross = $fabrics->sum('gross_wt');
+
+        $total_net = $fabrics->sum('net_wt');
+
+        $total_meter = $fabrics->sum('meter');
+
+        return view('admin.fabric.fabric_stock.view_bill_new',compact('fabrics','fabricsData','summaryData','total_gross','total_net','total_meter'));
+    }
 
     public function viewBill(Request $request){
-
 
         $helper= new AppHelper();
 

@@ -1,10 +1,10 @@
-<?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-
-class OpeningStoreinReportController extends Controller
-{
-    //
-}
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class OpeningStoreinReportController extends Controller
+{
+    //
+}
