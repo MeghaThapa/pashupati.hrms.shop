@@ -59,6 +59,14 @@ class User extends Authenticatable
     {
         return $this->role == 1 ? true : false;
     }
+    public function isReport()
+    {
+        return $this->role == 3 ? true : false;
+    }
+    public function isGeneralUser()
+    {
+        return $this->role == 2 ? true : false;
+    }
 
     /**
      * Return true if the user is active
